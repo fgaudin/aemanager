@@ -1,0 +1,33 @@
+Virtualenv
+----------
+First install it :
+
+$ easy_install virtualenv
+
+And create your virtualenv :
+
+$ mkdir ~/venv
+$ virtualenv --no-site-packages ~/venv/django1.2
+$ source ~/venv/django1.2/bin/activate
+
+Django and other stuff
+------
+easy_install django django-extensions werkzeug south reportlab rst2pdf
+
+Aemanager
+---------
+In aemanager directory, if it's your first install :
+
+$ python manage.py syncdb --noinput
+$ python manage.py migrate
+$ python manage.py createsuperuser
+
+For an update just do :
+
+$ python manage.py migrate
+
+Then to run it, do not forget to activate your virtualenv then do :
+
+$ python manage.py runserver_plus
+
+Then go to http://localhost:8000
