@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block extrahead %}
+<script src="{% load adminmedia %}{% admin_media_prefix %}js/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+(function($){
+    cancelEdit = function(el){
+        jQuery(el).prev().show()
+        jQuery(el).remove();
+    };
+
+    $.clear_errors = function(){
+        jQuery('.messages').remove();
+    };
+
+    $.display_errors = function(errors){
+        if(errors.length) {
+            jQuery.clear_errors();
+            el = jQuery('<ul class="messages"></ul>');
+            jQuery(errors).each(function(){
+                jQuery(el).append('<li class="error">' + this + '</li>');
+            });
+            jQuery(el).appendTo("#title");
+        }
+    };
+
+    $.fn.editable = function()
+    {
+        return this.each(function()
+        {
+            jQuery('.edit-row', this).click(function(e){
+                e.preventDefault();
+                valueRow = jQuery(e.target).parents('tr');
+                jQuery('.cancel').click();
+                editRow = jQuery('#add-row').clone();
+                jQuery(editRow).attr('id',jQuery(valueRow).attr('id'));
+                jQuery(editRow).removeClass().addClass(jQuery(valueRow).attr('class'));
+                jQuery('#id_date', editRow).val(jQuery('.date-col',valueRow).text());
+                jQuery('#id_reference', editRow).val(jQuery('.reference-col',valueRow).text());
+                jQuery('#id_amount', editRow).val(jQuery('.amount-col',valueRow).text());
+                jQuery('#id_payment_type option:selected', editRow).attr('selected','');
+                payment_type = jQuery('.payment-type-value',valueRow).text();
+                jQuery('#id_payment_type option[value='+payment_type+']', editRow).attr('selected', 'selected');
+                jQuery('#id_description', editRow).val(jQuery('.description-col',valueRow).text());
+                jQuery('.action-col', editRow).html('<input type="submit" id="ok" value="Ok" /> <a href="#" class="cancel">{% trans "cancel" %}</a>');
+                jQuery(editRow).insertAfter(valueRow);
+                jQuery(valueRow).hide();
+                jQuery('.cancel').click(function(e){
+                    e.preventDefault();
+                    cancelEdit(jQuery(e.target).parents('tr'));
+                });
+                jQuery('#ok').click(function(e){
+                    e.preventDefault();
+                    row = jQuery(e.target).parents('tr');
+                    id = jQuery(row).attr('id');
+                    date = jQuery('#id_date',row).val();
+                    reference = jQuery('#id_reference',row).val();
+                    amount = jQuery('#id_amount',row).val();
+                    payment_type = jQuery('#id_payment_type',row).val();
+                    description = jQuery('#id_description',row).val();
+                    jQuery.post("{% url expense_edit %}?id="+id,
+                                {"date": date,
+                                 "reference": reference,
+                                 "amount": amount,
+                                 "payment_type": payment_type,
+                                 "description": description },
+                                function(data){
+                                    if(data.error == 'ok') {
+                                        row = jQuery('#' + data.id);
+                                        jQuery('.date-col',row).text(data.date);
+                                        jQuery('.reference-col',row).text(data.reference);
+                                        jQuery('.amount-col',row).text(data.amount);
+                                        jQuery('.payment-type-col',row).html('<span class="payment-type-value" style="display:none">' + data.payment_type + '</span>' + data.payment_type_label);
+                                        jQuery('.description-col',row).text(data.description);
+                                        jQuery(row).show();
+                                        jQuery(row).next().remove();
+                                        jQuery.clear_errors();
+                                    } else {
+                                        jQuery.display_errors(data.error_msg);
+                                    }
+                                },
+                                "json");
+
+                });
+            });
+        });
+    };
+
+    $.fn.deletable = function()
+    {
+        return this.each(function()
+        {
+            jQuery('.delete-row', this).click(function(e){
+                e.preventDefault();
+                if (window.confirm('{% trans "Are you sure to want to delete this row" %}')) {
+                    expense_id = jQuery(e.target).parents('tr').attr('id');
+                    jQuery.post("{% url expense_delete %}",
+                                {"id": expense_id},
+                                function(data){
+                                    if(data.error == 'ok') {
+                                        jQuery('tr#'+data.id).remove();
+                                        redraw_background();
+                                    }
+                                },
+                                "json");
+                }
+            });
+        });
+    };
+})(jQuery);
+
+jQuery(document).ready(function(){
+    redraw_background = function(){
+        var rowClass = 'row2';
+        jQuery('#add-row').nextAll().each(function(){
+            jQuery(this).removeClass();
+            jQuery(this).addClass(rowClass);
+            jQuery(this).addClass('row');
+            if (rowClass == 'row1') {
+                rowClass = 'row2';
+            } else {
+                rowClass = 'row1';
+            }
+        });
+    };
+
+    jQuery('#add').click(function(e){
+        e.preventDefault();
+        date = jQuery('#id_date').val();
+        reference = jQuery('#id_reference').val();
+        amount = jQuery('#id_amount').val();
+        payment_type = jQuery('#id_payment_type').val();
+        description = jQuery('#id_description').val();
+        jQuery.post("{% url expense_add %}",
+                    {"date": date,
+                     "reference": reference,
+                     "amount": amount,
+                     "payment_type": payment_type,
+                     "description": description },
+                    function(data){
+                        if(data.error == 'ok') {
+                            row = jQuery('#add-row').clone();
+                            jQuery(row).attr('id',data.id);
+                            jQuery('.date-col',row).text(data.date);
+                            jQuery('.reference-col',row).text(data.reference);
+                            jQuery('.amount-col',row).text(data.amount);
+                            jQuery('.payment-type-col',row).html('<span class="payment-type-value" style="display:none">' + data.payment_type + '</span>' + data.payment_type_label);
+                            jQuery('.description-col',row).text(data.description);
+                            jQuery('.action-col', row).html('<a href="#" class="edit-row">{% trans "edit" %}</a> <a href="#" class="delete-row">{% trans "delete" %}</a>')
+                            jQuery(row).insertAfter('#add-row');
+                            jQuery(row).editable().deletable();
+                            redraw_background();
+                            jQuery.clear_errors();
+                            jQuery('#id_reference').val('');
+                            jQuery('#id_amount').val('');
+                            jQuery('#id_payment_type').val('');
+                            jQuery('#id_description').val('');
+                        } else {
+                            jQuery.display_errors(data.error_msg);
+                        }
+                    },
+                    "json");
+    });
+
+    jQuery('.row').editable().deletable();
+
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="search-list">
+    <table>
+        <thead>
+            <tr>
+                <th>{% trans "Date" %}</th>
+                <th>{% trans "Reference" %}</th>
+                <th>{% trans "Amount" %}</th>
+                <th>{% trans "Payment type" %}</th>
+                <th>{% trans "Description" %}</th>
+                <th>{% trans "Action" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="row1" id="add-row">
+                <td class="date-col">{{ form.date }}</td>
+                <td class="reference-col">{{ form.reference }}</td>
+                <td class="amount-col">{{ form.amount }}</td>
+                <td class="payment-type-col">{{ form.payment_type }}</td>
+                <td class="description-col">{{ form.description }}</td>
+                <td class="action-col"><input type="submit" id="add" value="{% trans "Add" %}" /></td>
+            </tr>
+        {% for expense in expenses %}
+           <tr id="{{ expense.id }}" class="{% cycle 'row2' 'row1' %} row">
+                <td class="date-col">{{ expense.date }}</td>
+                <td class="reference-col">{{ expense.reference }}</td>
+                <td class="amount-col">{{ expense.amount }}</td>
+                <td class="payment-type-col"><span style="display:none" class="payment-type-value">{{ expense.payment_type }}</span>{{ expense.get_payment_type_display }}</td>
+                <td class="description-col">{{ expense.description }}</td>
+                <td class="action-col"><a href="#" class="edit-row">{% trans "edit" %}</a> <a href="#" class="delete-row">{% trans "delete" %}</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

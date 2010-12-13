@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load modeltags %}
+
+{% block context_menu %}
+<div><a href="{% url project_edit project.id %}">{% trans "Edit" %}</a></div>
+<div><a href="{% url project_delete project.id %}">{% trans "Delete" %}</a></div>
+{% endblock %}
+
+{% block content %}
+<fieldset class="module aligned">
+    <div class="detail-row">
+      <div><label>{{ project|verbose_name:"customer" }} :</label> <a href="{% url contact_detail project.customer.id %}">{{ project.customer|default:'' }}</a>
+      </div>
+    </div>
+    <div class="detail-row">
+      <div><label>{{ project|verbose_name:"state" }} :</label> {{ project.get_state_display }}
+      </div>
+    </div>
+</fieldset>
+
+<div class="context-menu"><a href="{% url proposal_add project_id=project.id %}">{% trans "Add a proposal" %}</a></div>
+<h1>{% trans "Proposals" %}</h1>
+{% if project.proposal_set.all %}
+<div class="search-list">
+    <table>
+        <thead>
+            <tr>
+                <th>{% trans "Reference" %}</th>
+                <th>{% trans "Dates" %}</th>
+                <th>{% trans "State" %}</th>
+                <th>{% trans "Amount" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for proposal in project.proposal_set.all %}
+           <tr class="{% cycle 'row1' 'row2' %}">
+                <td><a href="{% url proposal_detail proposal.id %}">{{ proposal.reference }}</a></td>
+                <td><a href="{% url proposal_detail proposal.id %}">{% blocktrans with proposal.begin_date as begin_date and proposal.end_date as end_date %}{{ begin_date }} to {{ end_date }}{% endblocktrans %}</a></td>
+                <td><a href="{% url proposal_detail proposal.id %}">{{ proposal.get_state_display }}</a></td>
+                <td><a href="{% url proposal_detail proposal.id %}">{{ proposal.amount|default:"" }}</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div>{% trans "No proposals" %}</div>
+{% endif %}
+
+<h1>{% trans "Invoices" %}</h1>
+{% if invoices %}
+<div class="search-list">
+    <table>
+        <thead>
+            <tr>
+                <th>{% trans "Id" %}</th>
+                <th>{% trans "State" %}</th>
+                <th>{% trans "Amount" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for invoice in invoices %}
+           <tr class="{% cycle 'row1' 'row2' %}">
+                <td><a href="{% url invoice_detail invoice.id %}">{{ invoice.invoice_id }}</a></td>
+                <td><a href="{% url invoice_detail invoice.id %}">{{ invoice.get_state_display }}</a></td>
+                <td><a href="{% url invoice_detail invoice.id %}">{{ invoice.amount|default:"" }}</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div>{% trans "No invoices" %}</div>
+{% endif %}
+{% endblock %}

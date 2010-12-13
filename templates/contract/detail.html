@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load modeltags %}
+{% load rsttags %}
+
+{% block context_menu %}
+<div><a href="{% url contract_edit contract.id %}">{% trans "Edit" %}</a></div>
+<div><a href="{% url contract_delete contract.id %}">{% trans "Delete" %}</a></div>
+{% endblock %}
+
+{% block content %}
+<fieldset class="module aligned">
+    <div class="detail-row">
+      <div><label>{{ contract|verbose_name:"customer" }} :</label> <a href="{% url contact_detail contract.customer.id %}">{{ contract.customer|default:'' }}</a>
+      </div>
+    </div>
+    {% with contract as object %}{% with "update_date" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}{% endwith %}
+    <div class="detail-row">
+      <div><label>{% trans "Contract" %} :</label><a href="{% url contract_download contract.id %}">{% trans "download pdf file" %}</a></div>
+    </div>
+
+    {% with contract as object %}{% with "content" as name %}
+    <div class="detail-row">
+      <div class="html">{{ object|value:name|to_html }}</div>
+    </div>
+    {% endwith %}{% endwith %}
+</fieldset>
+{% endblock %}

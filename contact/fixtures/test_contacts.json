@@ -1,0 +1,70 @@
+[
+    {
+        "pk": 10,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 1,
+        "model": "contact.address",
+        "fields": {
+            "city": "",
+            "street": "",
+            "zipcode": "",
+            "country": null
+        }
+    },
+    {
+        "pk": 10,
+        "model": "contact.contact",
+        "fields": {
+            "function": "",
+            "name": "Contact 1",
+            "firstname": "",
+            "contact_type": 2,
+            "contacts": [],
+            "company_id": "1234",
+            "legal_form": "Soci\u00e9t\u00e9 \u00c0 Responsabilit\u00e9s Limit\u00e9es",
+            "representative_function": "CTO",
+            "representative": "John Doe",
+            "address": 1,
+            "email": ""
+        }
+    },
+    {
+        "pk": 11,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 2,
+        "model": "contact.address",
+        "fields": {
+            "city": "",
+            "street": "",
+            "zipcode": "",
+            "country": null
+        }
+    },
+    {
+        "pk": 11,
+        "model": "contact.contact",
+        "fields": {
+            "function": "",
+            "name": "Contact 2",
+            "firstname": "",
+            "contact_type": 2,
+            "contacts": [],
+            "company_id": "12345",
+            "legal_form": "Soci\u00e9t\u00e9 \u00c0 Responsabilit\u00e9s Limit\u00e9es",
+            "representative_function": "CTO",
+            "representative": "John Doe",
+            "address": 2,
+            "email": ""
+        }
+    }
+]

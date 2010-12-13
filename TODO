@@ -1,0 +1,18 @@
+- faire liste des factures (migrer facture dans accounts)
+- TU taxes sur tableau de bord
+- TU sur dépenses
+- gérer localisation des nombres
+- PDF : générer dynamiquemnt, stocker quand nécessaire
+- TU génération PDF
+- TU facture solde devis
+- afficher courbe CA - dépense
+- afficher courbe paiement en attente
+- passer méthodes pour dashboard dans classes métier
+- Bouton "payer" taxes
+- gérer pagination dans les dépenses
+- TU changement d'année
+- débugger contacts (contacts liés)
+- faire page changement de mot de passe
+- faire page création utilisateur
+- TU prospects sur tableau de bord
+- switcher sur postgres

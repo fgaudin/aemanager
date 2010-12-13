@@ -1,0 +1,430 @@
+# -*- coding: utf-8 -*-
+from decimal import Decimal
+from django.db import models
+from django.utils.translation import ugettext_lazy as _, ugettext, gettext
+from contact.models import Contact
+from core.models import OwnedObject
+from django.db.models.signals import post_save, pre_save
+from django.core.urlresolvers import reverse
+from django.utils.formats import localize
+from django.db.models.aggregates import Sum
+from django.contrib.auth.models import User
+import sys
+from rst2pdf import createpdf
+
+class Contract(OwnedObject):
+    customer = models.ForeignKey(Contact, verbose_name=_('Customer'), related_name="contracts")
+    title = models.CharField(max_length=255, verbose_name=_('Title'))
+    content = models.TextField(verbose_name=_('Content'), help_text=_('The content should be restructured text'))
+    update_date = models.DateField(verbose_name=_('Update date'))
+
+    def __unicode__(self):
+        return self.title
+
+    @staticmethod
+    def get_substitution_map():
+        substitution_map = {ugettext('reference'): '',
+                            ugettext('customer'): '',
+                            ugettext('customer_legal_form'): '',
+                            ugettext('customer_street'): '',
+                            ugettext('customer_zipcode'): '',
+                            ugettext('customer_city'): '',
+                            ugettext('customer_country'): '',
+                            ugettext('customer_national_id'): '',
+                            ugettext('customer_representative'): '',
+                            ugettext('customer_representative_function'): '',
+                            ugettext('firstname'): '',
+                            ugettext('lastname'): '',
+                            ugettext('street'): '',
+                            ugettext('zipcode'): '',
+                            ugettext('city'): '',
+                            ugettext('country'): '',
+                            ugettext('national_id'): '',
+                            }
+
+        return substitution_map
+
+    def to_pdf(self, user):
+        substitution_map = Contract.get_substitution_map()
+
+        substitution_map[ugettext('customer')] = unicode(self.customer)
+        substitution_map[ugettext('customer_legal_form')] = self.customer.legal_form
+        substitution_map[ugettext('customer_street')] = self.customer.address.street
+        substitution_map[ugettext('customer_zipcode')] = self.customer.address.zipcode
+        substitution_map[ugettext('customer_city')] = self.customer.address.city
+        substitution_map[ugettext('customer_country')] = unicode(self.customer.address.country)
+        substitution_map[ugettext('customer_national_id')] = self.customer.company_id
+        substitution_map[ugettext('customer_representative')] = self.customer.representative
+        substitution_map[ugettext('customer_representative_function')] = self.customer.representative_function
+        substitution_map[ugettext('firstname')] = user.first_name
+        substitution_map[ugettext('lastname')] = user.last_name
+        substitution_map[ugettext('street')] = user.get_profile().address.street
+        substitution_map[ugettext('zipcode')] = user.get_profile().address.zipcode
+        substitution_map[ugettext('city')] = user.get_profile().address.city
+        substitution_map[ugettext('country')] = unicode(user.get_profile().address.country)
+        substitution_map[ugettext('national_id')] = user.get_profile().company_id
+
+        export_dir = "export/"
+        filename = "contract_%s_%s.pdf" % (self.id, self.customer.id)
+        fse = sys.getfilesystemencoding()
+        title = self.title.encode(fse)
+        title_markup = "".ljust(len(title), "=")
+        rst_string = "%s\n%s\n%s\n\n%s" % (title_markup, title, title_markup, self.content.encode(fse))
+
+        for tag, value in substitution_map.items():
+            rst_string = rst_string.replace('{{ %s }}' % (tag.encode(fse)), value.encode(fse))
+
+        # adding footer for signatures of user and customer
+        customer_footer = []
+        user_footer = []
+        customer_footer.append(gettext("The customer"))
+        user_footer.append(gettext("The provider"))
+        customer_footer.append(gettext("Name : %s") % (self.customer.representative.encode(fse)))
+        user_footer.append(gettext("Name : %(first_name)s %(last_name)s") % {'first_name': user.first_name.encode(fse), 'last_name': user.last_name.encode(fse)})
+        customer_footer.append(gettext("Quality : %s") % (self.customer.representative_function.encode(fse)))
+        user_footer.append(gettext("Quality : Auto-entrepreneur"))
+        customer_footer.append(gettext("Date :"))
+        user_footer.append(gettext("Date :"))
+        customer_footer.append(gettext("Signature :"))
+        user_footer.append(gettext("Signature :"))
+
+        max_customer_footer_length = 0
+        max_user_footer_length = 0
+        for customer_footer_str in customer_footer:
+            max_customer_footer_length = max(len(customer_footer_str.decode('utf-8')), max_customer_footer_length)
+
+        for user_footer_str in user_footer:
+            max_user_footer_length = max(len(user_footer_str.decode('utf-8')), max_user_footer_length)
+
+        footer_str = "\n\n.. class:: base\n\n"
+        footer_str = footer_str + "+---".ljust(max_customer_footer_length + 5, "-")
+        footer_str = footer_str + "+---".ljust(max_user_footer_length + 5, "-")
+        footer_str = footer_str + "+\n"
+
+        for i in range(len(customer_footer)):
+            footer_str = footer_str + "| | %s | | %s |\n" % (customer_footer[i].decode('utf-8').ljust(max_customer_footer_length),
+                                                             user_footer[i].decode('utf-8').ljust(max_user_footer_length))
+
+        for i in range(4):
+            footer_str = footer_str + "| | ".ljust(max_customer_footer_length + 5)
+            footer_str = footer_str + "| | ".ljust(max_user_footer_length + 5)
+            footer_str = footer_str + "|\n"
+
+        footer_str = footer_str + "|   ".ljust(max_customer_footer_length + 5)
+        footer_str = footer_str + "|   ".ljust(max_user_footer_length + 5)
+        footer_str = footer_str + "|\n"
+
+        footer_str = footer_str + "+---".ljust(max_customer_footer_length + 5, "-")
+        footer_str = footer_str + "+---".ljust(max_user_footer_length + 5, "-")
+        footer_str = footer_str + "+\n\n"
+
+        rst_string = rst_string + footer_str.encode(fse)
+
+        rst2pdf = createpdf.RstToPdf(breaklevel=0)
+        rst2pdf.createPdf(text=rst_string,
+                          output=export_dir + filename)
+
+PROJECT_STATE_PROSPECT = 1
+PROJECT_STATE_PROPOSAL_SENT = 2
+PROJECT_STATE_PROPOSAL_ACCEPTED = 3
+PROJECT_STATE_STARTED = 4
+PROJECT_STATE_FINISHED = 5
+PROJECT_STATE_CANCELED = 6
+PROJECT_STATE = ((PROJECT_STATE_PROSPECT, _('Prospect')),
+                 (PROJECT_STATE_PROPOSAL_SENT, _('Proposal sent')),
+                 (PROJECT_STATE_PROPOSAL_ACCEPTED, _('Proposal accepted')),
+                 (PROJECT_STATE_STARTED, _('Started')),
+                 (PROJECT_STATE_FINISHED, _('Finished')),
+                 (PROJECT_STATE_CANCELED, _('Canceled')),)
+
+class Project(OwnedObject):
+    name = models.CharField(max_length=255, verbose_name=_('Name'))
+    customer = models.ForeignKey(Contact, blank=True, null=True, verbose_name=_('Customer'))
+    state = models.IntegerField(choices=PROJECT_STATE, default=PROJECT_STATE_PROSPECT, verbose_name=_('State'))
+
+    def __unicode__(self):
+        return self.name
+
+    def is_proposal_accepted(self):
+        if self.state >= PROJECT_STATE_PROPOSAL_ACCEPTED:
+            return True
+        return False
+
+class ProposalAmountError(Exception):
+    pass
+
+PROPOSAL_STATE_DRAFT = 1
+PROPOSAL_STATE_SENT = 2
+PROPOSAL_STATE_ACCEPTED = 3
+PROPOSAL_STATE_BALANCED = 4
+PROPOSAL_STATE_REFUSED = 5
+PROPOSAL_STATE = ((PROPOSAL_STATE_DRAFT, _('Draft')),
+                  (PROPOSAL_STATE_SENT, _('Sent')),
+                  (PROPOSAL_STATE_ACCEPTED, _('Accepted')),
+                  (PROPOSAL_STATE_BALANCED, _('Balanced')),
+                  (PROPOSAL_STATE_REFUSED, _('Refused')))
+
+class Proposal(OwnedObject):
+    project = models.ForeignKey(Project)
+    reference = models.CharField(max_length=20, blank=True, null=True, verbose_name=_('Reference'))
+    state = models.IntegerField(choices=PROPOSAL_STATE, default=PROPOSAL_STATE_DRAFT, verbose_name=_('State'))
+    amount = models.DecimalField(blank=True, null=True, max_digits=12, decimal_places=2, verbose_name=_('Amount'))
+    begin_date = models.DateField(blank=True, null=True, verbose_name=_('Begin date'))
+    end_date = models.DateField(blank=True, null=True, verbose_name=_('End date'))
+    contract_content = models.TextField(blank=True, default="", verbose_name=_('Contract'), help_text=_('The contract should be restructured text'))
+    update_date = models.DateField(verbose_name=_('Update date'))
+
+    def __unicode__(self):
+        return _('Proposal from %(begin_date)s to %(end_date)s for %(project)s') % {'begin_date': localize(self.begin_date),
+                                                                                    'end_date': localize(self.end_date),
+                                                                                    'project' : self.project}
+
+    def save(self, force_insert=False, force_update=False, using=None, user=None):
+        if self.id:
+            invoicerow_sum = float(self.invoice_rows.all().aggregate(sum=Sum('amount'))['sum'] or 0)
+            if float(self.amount) < invoicerow_sum :
+                raise ProposalAmountError(ugettext("Proposal amount can't be less sum of invoices"))
+        super(Proposal, self).save(force_insert, force_update, using, user)
+
+
+    def is_accepted(self):
+        return self.state == PROPOSAL_STATE_ACCEPTED or self.state == PROPOSAL_STATE_BALANCED
+
+    def get_next_states(self):
+        if self.state == PROPOSAL_STATE_DRAFT:
+            return (PROPOSAL_STATE[PROPOSAL_STATE_SENT - 1],)
+        elif self.state == PROPOSAL_STATE_SENT:
+            return (PROPOSAL_STATE[PROPOSAL_STATE_ACCEPTED - 1], PROPOSAL_STATE[PROPOSAL_STATE_REFUSED - 1])
+
+        return ()
+
+    def get_remaining_to_invoice(self):
+        has_balancing_invoice = self.invoice_rows.filter(balance_payments=True).count()
+        if has_balancing_invoice:
+            return 0
+
+        invoice_amount = self.invoice_rows.filter(invoice__state__gte=INVOICE_STATE_EDITED).aggregate(amount=Sum('amount'))
+        return self.amount - (invoice_amount['amount'] or 0)
+
+    """
+    Set amount equals to sum of proposal rows if none
+    """
+    def update_amount(self):
+        amount = 0
+        for row in self.proposal_rows.all():
+            amount = amount + row.quantity * row.unit_price
+
+        self.amount = amount
+        self.save(user=self.owner)
+
+    """
+    Generate a PDF file for the proposal
+    """
+    def to_pdf(self, user):
+        substitution_map = Contract.get_substitution_map()
+
+        substitution_map[ugettext('reference')] = unicode(self.reference)
+        substitution_map[ugettext('customer')] = unicode(self.project.customer)
+        substitution_map[ugettext('customer_legal_form')] = self.project.customer.legal_form
+        substitution_map[ugettext('customer_street')] = self.project.customer.address.street
+        substitution_map[ugettext('customer_zipcode')] = self.project.customer.address.zipcode
+        substitution_map[ugettext('customer_city')] = self.project.customer.address.city
+        substitution_map[ugettext('customer_country')] = unicode(self.project.customer.address.country)
+        substitution_map[ugettext('customer_national_id')] = self.project.customer.company_id
+        substitution_map[ugettext('customer_representative')] = self.project.customer.representative
+        substitution_map[ugettext('customer_representative_function')] = self.project.customer.representative_function
+        substitution_map[ugettext('firstname')] = user.first_name
+        substitution_map[ugettext('lastname')] = user.last_name
+        substitution_map[ugettext('street')] = user.get_profile().address.street
+        substitution_map[ugettext('zipcode')] = user.get_profile().address.zipcode
+        substitution_map[ugettext('city')] = user.get_profile().address.city
+        substitution_map[ugettext('country')] = unicode(user.get_profile().address.country)
+        substitution_map[ugettext('national_id')] = user.get_profile().company_id
+
+        export_dir = "export/"
+        filename = "project_contract_%s_%s.pdf" % (self.id, self.project.customer.id)
+        fse = sys.getfilesystemencoding()
+        rst_string = self.contract_content.encode(fse)
+
+        for tag, value in substitution_map.items():
+            rst_string = rst_string.replace('{{ %s }}' % (tag.encode(fse)), value.encode(fse))
+
+        # adding footer for signatures of user and customer
+        customer_footer = []
+        user_footer = []
+        customer_footer.append("%s" % (self.project.customer.name.encode(fse)))
+        user_footer.append(gettext("The provider"))
+        customer_footer.append(gettext("%(customer_representative)s, %(representative_function)s") % {'customer_representative': self.project.customer.representative.encode(fse), 'representative_function' : self.project.customer.representative_function.encode(fse)})
+        user_footer.append(gettext("%(first_name)s %(last_name)s, Auto-entrepreneur") % {'first_name': user.first_name.encode(fse), 'last_name': user.last_name.encode(fse)})
+        customer_footer.append(gettext("Date :"))
+        user_footer.append(gettext("Date :"))
+        customer_footer.append(gettext("Signature :"))
+        user_footer.append(gettext("Signature :"))
+
+        max_customer_footer_length = 0
+        max_user_footer_length = 0
+        for customer_footer_str in customer_footer:
+            max_customer_footer_length = max(len(customer_footer_str.decode('utf-8')), max_customer_footer_length)
+
+        for user_footer_str in user_footer:
+            max_user_footer_length = max(len(user_footer_str.decode('utf-8')), max_user_footer_length)
+
+        footer_str = "\n\n.. class:: base\n\n"
+        footer_str = footer_str + "+---".ljust(max_customer_footer_length + 5, "-")
+        footer_str = footer_str + "+---".ljust(max_user_footer_length + 5, "-")
+        footer_str = footer_str + "+\n"
+
+        for i in range(len(customer_footer)):
+            footer_str = footer_str + "| | %s | | %s |\n" % (customer_footer[i].decode('utf-8').ljust(max_customer_footer_length),
+                                                             user_footer[i].decode('utf-8').ljust(max_user_footer_length))
+
+        for i in range(4):
+            footer_str = footer_str + "| | ".ljust(max_customer_footer_length + 5)
+            footer_str = footer_str + "| | ".ljust(max_user_footer_length + 5)
+            footer_str = footer_str + "|\n"
+
+        footer_str = footer_str + "|   ".ljust(max_customer_footer_length + 5)
+        footer_str = footer_str + "|   ".ljust(max_user_footer_length + 5)
+        footer_str = footer_str + "|\n"
+
+        footer_str = footer_str + "+---".ljust(max_customer_footer_length + 5, "-")
+        footer_str = footer_str + "+---".ljust(max_user_footer_length + 5, "-")
+        footer_str = footer_str + "+\n\n"
+
+        rst_string = rst_string + footer_str.encode(fse)
+
+        rst2pdf = createpdf.RstToPdf(breaklevel=0)
+        rst2pdf.createPdf(text=rst_string,
+                          output=export_dir + filename)
+
+def update_project_state(sender, instance, created, **kwargs):
+    proposal = instance
+    project = proposal.project
+    if project.state != PROJECT_STATE_STARTED:
+        if proposal.state == PROPOSAL_STATE_SENT:
+            project.state = PROJECT_STATE_PROPOSAL_SENT
+        elif proposal.state == PROPOSAL_STATE_ACCEPTED:
+            project.state = PROJECT_STATE_PROPOSAL_ACCEPTED
+
+    try:
+        project.save(user=proposal.owner)
+    except:
+        pass
+
+post_save.connect(update_project_state, sender=Proposal)
+
+class InvoiceAmountError(Exception):
+    pass
+
+class InvoiceIdNotUniqueError(Exception):
+    pass
+
+INVOICE_STATE_EDITED = 1
+INVOICE_STATE_SENT = 2
+INVOICE_STATE_PAID = 3
+INVOICE_STATE = ((INVOICE_STATE_EDITED, _('Edited')),
+              (INVOICE_STATE_SENT, _('Sent')),
+              (INVOICE_STATE_PAID, _('Paid')))
+
+class Invoice(OwnedObject):
+    customer = models.ForeignKey(Contact, blank=True, null=True, verbose_name=_('Customer'))
+    invoice_id = models.IntegerField(verbose_name=_("Invoice id"))
+    state = models.IntegerField(choices=INVOICE_STATE, default=INVOICE_STATE_EDITED, verbose_name=_("State"))
+    amount = models.DecimalField(blank=True, null=True, max_digits=12, decimal_places=2, verbose_name=_("Amount"))
+    edition_date = models.DateField(verbose_name=_("Edition date"))
+    payment_date = models.DateField(blank=True, null=True, verbose_name=_("Payment date"))
+    paid_date = models.DateField(blank=True, null=True, verbose_name=_("Paid date"))
+    execution_begin_date = models.DateField(blank=True, null=True, verbose_name=_("Execution begin date"))
+    execution_end_date = models.DateField(blank=True, null=True, verbose_name=_("Execution end date"))
+    penalty_date = models.DateField(blank=True, null=True, verbose_name=_("Penalty date"))
+    penalty_rate = models.DecimalField(blank=True, null=True, max_digits=4, decimal_places=2, verbose_name=_("Penalty rate"))
+    discount_conditions = models.CharField(max_length=100, blank=True, null=True, verbose_name=_("Discount conditions"))
+
+    def __unicode__(self):
+        return "<a href=\"%s\">%s</a>" % (reverse('invoice_detail', kwargs={'id' : self.id}), ugettext("invoice #%d") % (self.invoice_id))
+
+    def isInvoiceIdUnique(self, owner):
+        invoices = Invoice.objects.filter(owner=owner,
+                                          invoice_id=self.invoice_id)
+        if self.id:
+            invoices = invoices.exclude(id=self.id)
+
+        if len(invoices):
+            return False
+
+        return True
+
+    def save(self, force_insert=False, force_update=False, using=None, user=None):
+        if not self.isInvoiceIdUnique(user):
+            raise InvoiceIdNotUniqueError(ugettext("Invoice id must be unique"))
+        super(Invoice, self).save(force_insert, force_update, using, user)
+
+    def toPdf(self):
+        """
+        Generate a PDF file for the invoice
+        """
+        pass
+
+ROW_CATEGORY_SERVICE = 1
+ROW_CATEGORY_PRODUCT = 2
+ROW_CATEGORY = ((ROW_CATEGORY_SERVICE, _('Service')),
+                (ROW_CATEGORY_PRODUCT, _('Product')))
+
+class Row(OwnedObject):
+    label = models.CharField(max_length=255)
+    category = models.IntegerField(choices=ROW_CATEGORY)
+    quantity = models.DecimalField(max_digits=5, decimal_places=1)
+    unit_price = models.DecimalField(max_digits=12, decimal_places=2)
+    amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+
+    class Meta:
+        abstract = True
+
+def update_row_amount(sender, instance, **kwargs):
+    row = instance
+    row.amount = Decimal(row.quantity) * Decimal(row.unit_price)
+
+class ProposalRow(Row):
+    proposal = models.ForeignKey(Proposal, related_name="proposal_rows")
+
+def update_proposal_amount(sender, instance, created, **kwargs):
+    row = instance
+    proposal = row.proposal
+    proposal.amount = proposal.proposal_rows.all().aggregate(sum=Sum('amount'))['sum'] or 0
+    proposal.save(user=proposal.owner)
+
+pre_save.connect(update_row_amount, sender=ProposalRow)
+post_save.connect(update_proposal_amount, sender=ProposalRow)
+
+class InvoiceRowAmountError(Exception):
+    pass
+
+class InvoiceRow(Row):
+    invoice = models.ForeignKey(Invoice, related_name="invoice_rows")
+    proposal = models.ForeignKey(Proposal, related_name="invoice_rows")
+    balance_payments = models.BooleanField(verbose_name=_('Balance payments for the proposal'))
+
+    def isAmountValid(self):
+        invoicerows = InvoiceRow.objects.filter(proposal=self.proposal)
+        if self.id:
+            invoicerows = invoicerows.exclude(id=self.id)
+        invoicerow_sum = float(invoicerows.aggregate(sum=Sum('amount'))['sum'] or 0)
+        invoicerow_amount = float(self.unit_price) * float(self.quantity)
+        if float(self.proposal.amount) < (invoicerow_sum + invoicerow_amount):
+            return False
+
+        return True
+
+    def save(self, force_insert=False, force_update=False, using=None, user=None):
+        if not self.isAmountValid():
+            raise InvoiceRowAmountError(ugettext("Sum of invoice row amount can't exceed proposal amount"))
+        super(InvoiceRow, self).save(force_insert, force_update, using, user)
+
+def update_invoice_amount(sender, instance, created, **kwargs):
+    row = instance
+    invoice = row.invoice
+    invoice.amount = invoice.invoice_rows.all().aggregate(sum=Sum('amount'))['sum'] or 0
+    invoice.save(user=invoice.owner)
+
+pre_save.connect(update_row_amount, sender=InvoiceRow)
+post_save.connect(update_invoice_amount, sender=InvoiceRow)

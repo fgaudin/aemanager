@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<form action="" method="post" id="invoice-edit-form">
+    {% csrf_token %}
+    <fieldset class="module aligned">
+    {% for hidden in invoiceForm.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+    {% with invoiceForm.invoice_id as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with invoiceForm.state as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with invoiceForm.edition_date as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with invoiceForm.payment_date as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with invoiceForm.paid_date as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with invoiceForm.execution_begin_date as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with invoiceForm.execution_end_date as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with invoiceForm.penalty_date as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with invoiceForm.penalty_rate as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with invoiceForm.discount_conditions as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    <div class="form-row">
+    <div><label>{% trans "Detail rows" %} :</label></div>
+    {{ invoicerowformset.management_form }}
+    {% for form in invoicerowformset.forms %}
+        <div class="inline-formset">
+            {{ form.ownedobject_ptr }}{{ form.label }} {{ form.proposal }} {{ form.balance_payments.label }} : {{ form.balance_payments }} {{ form.category }} {{ form.quantity.label }} : {{ form.quantity }} {{ form.unit_price.label }} {{ form.unit_price }} : {{ form.default }} {{ form.DELETE.label }} : {{ form.DELETE }}
+        </div>
+    {% endfor %}
+    </div>
+    </fieldset>
+
+    <div class="submit-row">
+    <input class="default" type="submit" name="action" value="{% trans "Save" %}" />
+    </div>
+</form>
+{% endblock %}

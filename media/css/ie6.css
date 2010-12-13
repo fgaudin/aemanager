@@ -1,0 +1,34 @@
+.nav {
+	behavior: url("csshover.htc");
+}
+* html .nav li ul {
+	background:none;
+	filter:progid:dximagetransform.microsoft.alphaimageloader(src='images/submenu_bg.png', sizingmethod='scale');
+}
+* html .nav .btm-bg {
+	background:none;
+	filter:progid:dximagetransform.microsoft.alphaimageloader(src='images/submenu_bottom.png', sizingmethod='none');
+}
+* html .nav li .sub {
+	background:none;
+	filter:progid:dximagetransform.microsoft.alphaimageloader(src='images/submenu_top.png', sizingmethod='crop');
+}
+* html .content {
+	background:none;
+	filter:progid:dximagetransform.microsoft.alphaimageloader(src='images/content_bg.png', sizingmethod='scale');
+}
+* html .content-bottom {
+	background: none;
+	filter:progid:dximagetransform.microsoft.alphaimageloader(src='images/content_bottom.png', sizingmethod='none');
+}
+* html .nav-left {
+	background: none;
+	filter:progid:dximagetransform.microsoft.alphaimageloader(src='images/nav_left.png', sizingmethod='crop');
+}
+* html .nav-right {
+	background: none;
+	filter:progid:dximagetransform.microsoft.alphaimageloader(src='images/nav_right.png', sizingmethod='crop');
+}
+.nav ul {
+	width: 688px;
+}

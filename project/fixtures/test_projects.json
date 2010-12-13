@@ -1,0 +1,18 @@
+[
+    {
+        "pk": 30,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 30,
+        "model": "project.project",
+        "fields": {
+            "customer": 10,
+            "state": 1,
+            "name": "Project 1"
+        }
+    }
+]

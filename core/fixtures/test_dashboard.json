@@ -1,0 +1,582 @@
+[
+    {
+        "pk": 1,
+        "model": "autoentrepreneur.userprofile",
+        "fields": {
+            "payment_option": 1,
+            "creation_help": false,
+            "address": 1,
+            "company_id": "",
+            "bank_information": "",
+            "freeing_tax_payment": false,
+            "user": 1,
+            "activity": 4,
+            "creation_date": "2010-07-01",
+            "company_name": ""
+        }
+    },
+    {
+        "pk": 1,
+        "model": "contact.address",
+        "fields": {
+            "city": "",
+            "street": "",
+            "zipcode": "",
+            "country": null
+        }
+    },
+    {
+        "pk": 2,
+        "model": "contact.address",
+        "fields": {
+            "city": "",
+            "street": "",
+            "zipcode": "",
+            "country": null
+        }
+    },
+    {
+        "pk": 4,
+        "model": "contact.address",
+        "fields": {
+            "city": "",
+            "street": "",
+            "zipcode": "",
+            "country": null
+        }
+    },
+    {
+        "pk": 3,
+        "model": "contact.contact",
+        "fields": {
+            "function": "",
+            "name": "Customer 1",
+            "firstname": "",
+            "contact_type": 2,
+            "contacts": [],
+            "company_id": "123456789",
+            "legal_form": "SARL",
+            "representative_function": "",
+            "representative": "",
+            "address": 2,
+            "email": ""
+        }
+    },
+    {
+        "pk": 5,
+        "model": "contact.contact",
+        "fields": {
+            "function": "",
+            "name": "Customer 2",
+            "firstname": "",
+            "contact_type": 2,
+            "contacts": [],
+            "company_id": "987654321",
+            "legal_form": "SA",
+            "representative_function": "",
+            "representative": "",
+            "address": 4,
+            "email": ""
+        }
+    },
+    {
+        "pk": 1,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 2,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 3,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 4,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 5,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 6,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 7,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 8,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 9,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 10,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 11,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 12,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 13,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 14,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 15,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 16,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 17,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 18,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 19,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 20,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 21,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 22,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 23,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 24,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 25,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 26,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 27,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 6,
+        "model": "project.project",
+        "fields": {
+            "customer": 3,
+            "state": 3,
+            "name": "Project 1"
+        }
+    },
+    {
+        "pk": 17,
+        "model": "project.project",
+        "fields": {
+            "customer": 5,
+            "state": 4,
+            "name": "Project 2"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "project.proposal",
+        "fields": {
+            "contract_content": "",
+            "begin_date": "2010-07-01",
+            "end_date": "2010-07-15",
+            "update_date": "2010-10-20",
+            "amount": "2000",
+            "project": 6,
+            "state": 4
+        }
+    },
+    {
+        "pk": 13,
+        "model": "project.proposal",
+        "fields": {
+            "contract_content": "",
+            "begin_date": "2010-07-16",
+            "end_date": "2010-07-31",
+            "update_date": "2010-10-20",
+            "amount": "3000",
+            "project": 6,
+            "state": 4
+        }
+    },
+    {
+        "pk": 18,
+        "model": "project.proposal",
+        "fields": {
+            "contract_content": "",
+            "begin_date": "2010-08-01",
+            "end_date": "2010-08-20",
+            "update_date": "2010-10-20",
+            "amount": "2250",
+            "project": 17,
+            "state": 3
+        }
+    },
+    {
+        "pk": 24,
+        "model": "project.proposal",
+        "fields": {
+            "contract_content": "",
+            "begin_date": "2010-09-01",
+            "end_date": "2010-09-30",
+            "update_date": "2010-10-20",
+            "amount": "7000",
+            "project": 17,
+            "state": 1
+        }
+    },
+    {
+        "pk": 26,
+        "model": "project.proposal",
+        "fields": {
+            "contract_content": "",
+            "begin_date": "2010-09-01",
+            "end_date": "2010-09-30",
+            "update_date": "2010-10-20",
+            "amount": "2500",
+            "project": 6,
+            "state": 1
+        }
+    },
+    {
+        "pk": 9,
+        "model": "project.invoice",
+        "fields": {
+            "payment_date": "2010-07-12",
+            "balance_payments": false,
+            "execution_end_date": null,
+            "penalty_rate": null,
+            "invoice_id": 1,
+            "amount": "1400",
+            "penalty_date": null,
+            "state": 3,
+            "execution_begin_date": null,
+            "paid_date": "2010-07-15",
+            "discount_conditions": "",
+            "proposal": 7,
+            "edition_date": "2010-07-10"
+        }
+    },
+    {
+        "pk": 11,
+        "model": "project.invoice",
+        "fields": {
+            "payment_date": "2010-07-17",
+            "balance_payments": true,
+            "execution_end_date": null,
+            "penalty_rate": null,
+            "invoice_id": 2,
+            "amount": "600",
+            "penalty_date": null,
+            "state": 3,
+            "execution_begin_date": null,
+            "paid_date": "2010-07-20",
+            "discount_conditions": "",
+            "proposal": 7,
+            "edition_date": "2010-07-15"
+        }
+    },
+    {
+        "pk": 15,
+        "model": "project.invoice",
+        "fields": {
+            "payment_date": "2010-08-05",
+            "balance_payments": true,
+            "execution_end_date": null,
+            "penalty_rate": null,
+            "invoice_id": 3,
+            "amount": "3000",
+            "penalty_date": null,
+            "state": 3,
+            "execution_begin_date": null,
+            "paid_date": "2010-08-10",
+            "discount_conditions": "",
+            "proposal": 13,
+            "edition_date": "2010-07-31"
+        }
+    },
+    {
+        "pk": 20,
+        "model": "project.invoice",
+        "fields": {
+            "payment_date": "2010-08-15",
+            "balance_payments": false,
+            "execution_end_date": null,
+            "penalty_rate": null,
+            "invoice_id": 4,
+            "amount": 1500,
+            "penalty_date": null,
+            "state": 2,
+            "execution_begin_date": null,
+            "paid_date": null,
+            "discount_conditions": "",
+            "proposal": 18,
+            "edition_date": "2010-08-10"
+        }
+    },
+    {
+        "pk": 22,
+        "model": "project.invoice",
+        "fields": {
+            "payment_date": "2010-08-30",
+            "balance_payments": true,
+            "execution_end_date": null,
+            "penalty_rate": null,
+            "invoice_id": 5,
+            "amount": 750,
+            "penalty_date": null,
+            "state": 1,
+            "execution_begin_date": null,
+            "paid_date": null,
+            "discount_conditions": "",
+            "proposal": 18,
+            "edition_date": "2010-08-20"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "project.proposalrow",
+        "fields": {
+            "category": 1,
+            "ownedobject_ptr": 8,
+            "unit_price": "200",
+            "label": "Service",
+            "proposal": 7,
+            "quantity": "10"
+        }
+    },
+    {
+        "pk": 14,
+        "model": "project.proposalrow",
+        "fields": {
+            "category": 1,
+            "ownedobject_ptr": 14,
+            "unit_price": "300",
+            "label": "Service",
+            "proposal": 13,
+            "quantity": "10"
+        }
+    },
+    {
+        "pk": 19,
+        "model": "project.proposalrow",
+        "fields": {
+            "category": 1,
+            "ownedobject_ptr": 19,
+            "unit_price": "150",
+            "label": "Service",
+            "proposal": 18,
+            "quantity": "15"
+        }
+    },
+    {
+        "pk": 25,
+        "model": "project.proposalrow",
+        "fields": {
+            "category": 1,
+            "ownedobject_ptr": 25,
+            "unit_price": "350",
+            "label": "Service",
+            "proposal": 24,
+            "quantity": "20"
+        }
+    },
+    {
+        "pk": 27,
+        "model": "project.proposalrow",
+        "fields": {
+            "category": 1,
+            "ownedobject_ptr": 27,
+            "unit_price": "250",
+            "label": "Service",
+            "proposal": 26,
+            "quantity": "10"
+        }
+    },
+    {
+        "pk": 10,
+        "model": "project.invoicerow",
+        "fields": {
+            "category": 1,
+            "quantity": "7",
+            "invoice": 9,
+            "unit_price": "200",
+            "label": "Service"
+        }
+    },
+    {
+        "pk": 12,
+        "model": "project.invoicerow",
+        "fields": {
+            "category": 1,
+            "quantity": "3",
+            "invoice": 11,
+            "unit_price": "200",
+            "label": "Service"
+        }
+    },
+    {
+        "pk": 16,
+        "model": "project.invoicerow",
+        "fields": {
+            "category": 1,
+            "quantity": "10",
+            "invoice": 15,
+            "unit_price": "300",
+            "label": "Service"
+        }
+    },
+    {
+        "pk": 21,
+        "model": "project.invoicerow",
+        "fields": {
+            "category": 1,
+            "quantity": "10",
+            "invoice": 20,
+            "unit_price": "150",
+            "label": "Service"
+        }
+    },
+    {
+        "pk": 23,
+        "model": "project.invoicerow",
+        "fields": {
+            "category": 1,
+            "quantity": "5",
+            "invoice": 22,
+            "unit_price": "150",
+            "label": "Service"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "auth.user",
+        "fields": {
+            "username": "test",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": true,
+            "is_staff": true,
+            "last_login": "2010-10-20 23:27:35",
+            "groups": [],
+            "user_permissions": [],
+            "password": "sha1$48fcb$16ec7192e10c51d005ac11827ffe8ff62220307e",
+            "email": "test@example.com",
+            "date_joined": "2010-10-20 23:27:15"
+        }
+    }
+]

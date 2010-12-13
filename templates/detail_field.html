@@ -1,0 +1,5 @@
+{% load modeltags %}
+<div class="detail-row">
+  <div><label>{{ object|verbose_name:name }} :</label> {{ object|value:name|default:'' }}
+  </div>
+</div>

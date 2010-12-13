@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load modeltags %}
+{% load arithmetictags %}
+{% load rsttags %}
+
+{% block title %}{% url project_detail proposal.project.id as project_url %}{% blocktrans with proposal.project as project and project_url as project_url %}Proposal for <a href="{{ project_url }}">{{ project }}</a>{% endblocktrans %}{% endblock %}
+
+{% block context_menu %}
+<div><a href="{% url proposal_edit proposal.id %}">{% trans "Edit" %}</a></div>
+<div><a href="{% url proposal_delete proposal.id %}">{% trans "Delete" %}</a></div>
+{% endblock %}
+
+{% block content %}
+<fieldset class="module aligned">
+    {% with proposal as object %}{% with "reference" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}{% endwith %}
+    <div class="detail-row">
+      <div>
+      <label>{{ proposal|verbose_name:"state" }} :</label> {{ proposal.get_state_display }}
+      {% for next_state in next_states %}
+      <form action="{% url proposal_change_state proposal.id %}" method="POST">
+      {% csrf_token %}
+      <input type="hidden" name="next_state" value="{{ next_state.0 }}" />
+      <input class="" type="submit" name="state_action" value="{{ next_state.1 }}" />
+      </form>
+      {% endfor %}
+      </div>
+    </div>
+    {% with proposal as object %}{% with "amount" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}{% endwith %}
+    <div class="detail-row">
+      <div><label>{% trans "Remaining to invoice" %} :</label> {{ proposal.get_remaining_to_invoice }}
+      </div>
+    </div>
+    {% with proposal as object %}{% with "begin_date" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}{% endwith %}
+    {% with proposal as object %}{% with "end_date" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}{% endwith %}
+</fieldset>
+
+<h1>{% trans "Detail rows" %}</h1>
+{% if proposal.proposal_rows.all %}
+<div class="search-list">
+    <table>
+        <thead>
+            <tr>
+                <th>{% trans "Label" %}</th>
+                <th>{% trans "Category" %}</th>
+                <th>{% trans "Quantity" %}</th>
+                <th>{% trans "Unit price" %}</th>
+                <th>{% trans "Total price" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for proposalrow in proposal.proposal_rows.all %}
+           <tr class="{% cycle 'row1' 'row2' %}">
+                <td>{{ proposalrow.label }}</td>
+                <td>{{ proposalrow.get_category_display }}</td>
+                <td>{{ proposalrow.quantity }}</td>
+                <td>{{ proposalrow.unit_price }}</td>
+                <td>{{ proposalrow.unit_price|multiply:proposalrow.quantity }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div>{% trans "No rows" %}</div>
+{% endif %}
+
+<h1>{% trans "Invoices" %}</h1>
+{% if invoices %}
+<div class="search-list">
+    <table>
+        <thead>
+            <tr>
+                <th>{% trans "Id" %}</th>
+                <th>{% trans "State" %}</th>
+                <th>{% trans "Amount" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for invoice in invoices %}
+           <tr class="{% cycle 'row1' 'row2' %}">
+                <td><a href="{% url invoice_detail invoice.id %}">{{ invoice.invoice_id }}</a></td>
+                <td><a href="{% url invoice_detail invoice.id %}">{{ invoice.get_state_display }}</a></td>
+                <td><a href="{% url invoice_detail invoice.id %}">{{ invoice.amount|default:"" }}</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div>{% trans "No invoices" %}</div>
+{% endif %}
+
+<fieldset class="module aligned">
+    <div class="detail-row">
+      <div><label>{% trans "Contract" %} :</label><a href="{% url proposal_download proposal.id %}">{% trans "download pdf file" %}</a></div>
+    </div>
+    {% with proposal as object %}{% with "contract_content" as name %}
+    <div class="detail-row">
+      <div class="html">{{ object|value:name|to_html }}</div>
+    </div>
+    {% endwith %}{% endwith %}
+</fieldset>
+{% endblock %}

@@ -1,0 +1,6 @@
+{% load i18n %}
+
+<h2>{% trans "Invoices" %}</h2>
+<div>{% trans "Waiting payments" %} : {{ sales.waiting }}</div>
+<div>{% trans "Late invoices" %} : {% autoescape off %}{{ invoices.late|default:""|join:", " }}{% endautoescape %}</div>
+<div>{% trans "Invoices to send" %} : {% autoescape off %}{{ invoices.to_send|default:""|join:", " }}{% endautoescape %}</div>

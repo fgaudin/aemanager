@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load modeltags %}
+{% load arithmetictags %}
+
+{% block title %}{% url customer_detail invoice.customer.id as customer_url %}{% blocktrans with invoice.customer as customer and customer_url as customer_url %}Invoice for <a href="{{ customer_url }}">{{ customer }}</a>{% endblocktrans %}{% endblock %}
+
+{% block context_menu %}
+<div><a href="{% url invoice_edit invoice.id %}">{% trans "Edit" %}</a></div>
+<div><a href="{% url invoice_delete invoice.id %}">{% trans "Delete" %}</a></div>
+{% endblock %}
+
+{% block content %}
+<fieldset class="module aligned">
+    {% with invoice as object %}{% with "invoice_id" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}{% endwith %}
+    <div class="detail-row">
+      <div>
+      <label>{{ invoice|verbose_name:"state" }} :</label> {{ invoice.get_state_display }}
+      </div>
+    </div>
+    <div class="detail-row">
+      <div>
+      <label>{% trans "Amount" %} :</label> {{ invoice.amount }}
+      </div>
+    </div>
+    {% with invoice as object %}{% with "edition_date" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}{% endwith %}
+    {% with invoice as object %}{% with "payment_date" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}{% endwith %}
+    {% with invoice as object %}{% with "paid_date" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}{% endwith %}
+    {% with invoice as object %}{% with "execution_begin_date" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}{% endwith %}
+    {% with invoice as object %}{% with "execution_end_date" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}{% endwith %}
+    {% with invoice as object %}{% with "penalty_date" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}{% endwith %}
+    {% with invoice as object %}{% with "penalty_rate" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}{% endwith %}
+    {% with invoice as object %}{% with "discount_conditions" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}{% endwith %}
+    <div class="detail-row">
+      <div><label>{% trans "Exported file" %} :</label><a href="{% url invoice_download invoice.id %}">{% trans "download pdf file" %}</a></div>
+    </div>
+</fieldset>
+
+<h1>{% trans "Detail rows" %}</h1>
+{% if invoice.invoice_rows.all %}
+<div class="search-list">
+    <table>
+        <thead>
+            <tr>
+                <th>{% trans "Label" %}</th>
+                <th>{% trans "Proposal" %}</th>
+                <th>{% trans "Balance payments" %}</th>
+                <th>{% trans "Category" %}</th>
+                <th>{% trans "Quantity" %}</th>
+                <th>{% trans "Unit price" %}</th>
+                <th>{% trans "Total price" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for invoicerow in invoice.invoice_rows.all %}
+           <tr class="{% cycle 'row1' 'row2' %}">
+                <td>{{ invoicerow.label }}</td>
+                <td><a href="{% url proposal_detail invoicerow.proposal.id %}">{{ invoicerow.proposal }}</a></td>
+                <td>{{ invoicerow.balance_payments }}</td>
+                <td>{{ invoicerow.get_category_display }}</td>
+                <td>{{ invoicerow.quantity }}</td>
+                <td>{{ invoicerow.unit_price }}</td>
+                <td>{{ invoicerow.amount }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div>{% trans "No rows" %}</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<form action="" method="post" id="project-edit-form">
+    {% csrf_token %}
+    <fieldset class="module aligned">
+    {% for hidden in projectForm.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+    {% with projectForm.name as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with projectForm.customer as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with projectForm.state as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    </fieldset>
+
+    <div class="submit-row">
+    <input class="default" type="submit" name="action" value="{% trans "Save" %}" />
+    </div>
+</form>
+{% endblock %}

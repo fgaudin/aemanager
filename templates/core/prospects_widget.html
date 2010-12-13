@@ -1,0 +1,11 @@
+{% load i18n %}
+
+<h2>{% trans "Prospects" %}</h2>
+<div>{% trans "Potential sales" %} : {% blocktrans with prospects.potential_sales as potential_sales and prospects.percentage_of_remaining|floatformat:0 as percentage_of_remaining %}{{ potential_sales }} ({{ percentage_of_remaining }}% of remaining){% endblocktrans %}</div>
+<div>{% trans "Potential duration" %} : {{ prospects.duration }}</div>
+<div>{% trans "Average unit price" %} : {{ prospects.average_unit_price|floatformat:0 }}</div>
+<div>{% trans "Proposals to send" %} : <ul>
+{% for proposal in prospects.proposals_to_send %}
+    <li><a href="{% url proposal_detail proposal.id %}">{{ proposal }}</a></li>
+{% endfor %}
+</div>

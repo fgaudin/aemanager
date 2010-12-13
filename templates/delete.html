@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<form action="" method="post" id="delete-form">
+    {% csrf_token %}
+    <div>{% blocktrans with object_label as object_label %}Are you sure to delete {{ object_label }}{% endblocktrans %}</div>
+
+    <div class="submit-row">
+    <input class="default" type="submit" name="cancel" value="{% trans "Cancel" %}" />
+    <input type="submit" name="delete" value="{% trans "Delete" %}" />
+    </div>
+</form>
+{% endblock %}

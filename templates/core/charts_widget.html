@@ -1,0 +1,44 @@
+{% load i18n %}
+{% load arithmetictags %}
+
+<h2>{% trans "Charts" %}</h2>
+<script language="javascript" type="text/javascript">
+jQuery(function () {
+    var paid = [[0, {{ sales.paid }}]];
+    var waiting = [[0, {{ sales.waiting }}]];
+    var to_be_invoiced = [[0, {{ sales.to_be_invoiced }}]];
+    var remaining = [[0, {{ sales.remaining|absolute }}]];
+
+    jQuery.plot(jQuery("#sales-chart"), [ {label : "{% trans "Paid sales" %}", data: paid},
+                                          {label : "{% trans "Waiting" %}", data: waiting},
+                                          {label: "{% trans "To be invoiced" %}", data: to_be_invoiced},
+                                          {% if sales.remaining >= 0 %}
+                                          {label : "{% trans "Remaining" %}", data : remaining}
+                                          {% endif %}
+                                         ], {
+        series: {
+            stack: false,
+            lines: { show: false, steps: false },
+            bars: { show: true, barWidth: 0.6 }
+        },
+        legend: { position: 'se' },
+        xaxis: {mode:"time"} ,
+    });
+});
+
+jQuery(function () {
+    var sales = {{ charts.sales_progression }};
+    var expenses = {{ charts.expenses_progression }};
+    jQuery.plot(jQuery("#sales-progression-chart"),
+                [{label: "{% trans "Sales" %}", data: sales},
+                 {label: "{% trans "Expenses" %}", data: expenses}],
+                { xaxis: { mode: "time" } ,
+                  grid: { backgroundColor: { colors: ["#fff", "#eee"] }},
+                legend: { position: 'nw' },
+    });
+
+});
+</script>
+<div id="sales-chart" style="width:420px;height:200px;"></div>
+<br/>
+<div id="sales-progression-chart" style="width:420px;height:200px;"></div>

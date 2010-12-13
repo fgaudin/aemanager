@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>{{ title }}</title>
+    <style media="all" type="text/css">@import "{% load adminmedia %}{% admin_media_prefix %}css/base.css";</style>
+    <style media="all" type="text/css">@import "{% load adminmedia %}{% admin_media_prefix %}css/forms.css";</style>
+    <style media="all" type="text/css">@import "{{ MEDIA_URL }}css/style.css";</style>
+    <!--[if lt IE 7]>
+      <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ie6.css" media="screen"/>
+    <![endif]-->
+    {% block extrahead %}
+
+    {% endblock %}
+  </head>
+
+  <body>
+    <div class="wrapper1">
+      <div class="wrapper">
+        {% include "menu.html" %}
+
+        <div class="content">
+        <div class="context-menu">
+        {% block context_menu %}
+        {% endblock %}
+        </div>
+        <h1 id="title">{% block title %}{{ title }}{% endblock %}</h1>
+        {% if messages %}
+
+        <ul class="messages">
+        {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+        </ul>
+
+        {% endif %}
+        {% block content %}
+        {% endblock %}
+        </div>
+      <div class="content-bottom"></div>
+    </div>
+  </body>
+</html>

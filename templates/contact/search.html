@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<form action="" method="get">
+    <fieldset class="module aligned">
+    {{ form.name.label }} : {{ form.name }}
+    {{ form.email.label }} : {{ form.email }}
+    {{ form.phonenumber.label }} : {{ form.phonenumber }}
+    <input class="default" type="submit" name="action" value="{% trans "Search" %}" />
+    </fieldset>
+</form>
+
+<div class="search-list">
+    <table>
+        <thead>
+            <tr>
+                <th><a href="?name={{ search_criteria.name }}&email={{ search_criteria.email }}&phonenumber={{ search_criteria.phonenumber }}&page={{ contacts.number }}&o=name&ot={% if o == "name" and ot == "asc"%}desc{% else %}asc{% endif %}">{% trans "Name" %}</a></th>
+                <th><a href="?name={{ search_criteria.name }}&email={{ search_criteria.email }}&phonenumber={{ search_criteria.phonenumber }}&page={{ contacts.number }}&o=email&ot={% if o == "email" and ot == "asc"%}desc{% else %}asc{% endif %}">{% trans "Email" %}</a></th>
+                <th><a href="?name={{ search_criteria.name }}&email={{ search_criteria.email }}&phonenumber={{ search_criteria.phonenumber }}&page={{ contacts.number }}&o=phonenumber&ot={% if o == "phonenumber" and ot == "asc"%}desc{% else %}asc{% endif %}">{% trans "Phone number" %}</a></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for contact in contacts.object_list %}
+           <tr class="{% cycle 'row1' 'row2' %}">
+                <td><a href="{% url contact_detail contact.id %}">{{ contact }}</a></td>
+                <td><a href="mailto:{{ contact.email }}">{{ contact.email }}</a></td>
+                <td>{{ contact.default_phonenumber|default:'' }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if contacts.has_previous %}
+            <a href="?name={{ search_criteria.name }}&email={{ search_criteria.email }}&phonenumber={{ search_criteria.phonenumber }}&page={{ contacts.previous_page_number }}&o={{ o }}&ot={{ ot }}">{% trans "previous" %}</a>
+        {% endif %}
+
+        <span class="current">
+            {% blocktrans with contacts.number as number and contacts.paginator.num_pages as num_pages %}Page {{ number }} of {{ num_pages }}.{% endblocktrans %}
+        </span>
+
+        {% if contacts.has_next %}
+            <a href="?name={{ search_criteria.name }}&email={{ search_criteria.email }}&phonenumber={{ search_criteria.phonenumber }}&page={{ contacts.next_page_number }}&o={{ o }}&ot={{ ot }}">{% trans "next" %}</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}

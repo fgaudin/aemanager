@@ -1,0 +1,14 @@
+{% load i18n %}
+{% load arithmetictags %}
+
+<h2>{% trans "Sales" %}</h2>
+<div>{% trans "Paid sales" %} : {{ sales.paid }}</div>
+<div>{% trans "Waiting payments" %} : {{ sales.waiting }}</div>
+<div>{% trans "To be invoiced" %} : {{ sales.to_be_invoiced }}</div>
+<div>{% trans "Total" %} : {{ sales.total }}</div>
+{% if sales.remaining >= 0 %}
+<div>{% trans "Remaining" %} : {{ sales.remaining }}</div>
+{% else %}
+<div class="overrun">{% trans "Overrun" %} : {{ sales.remaining|absolute }}</div>
+{% endif %}
+<div>{% trans "Limit" %} : {{ sales.limit }}</div>

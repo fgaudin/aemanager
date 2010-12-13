@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block extrahead %}
+<script src="{% load adminmedia %}{% admin_media_prefix %}js/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+jQuery(document).ready(function(){
+    show_person_fields = function(){
+        jQuery('#id_contact-company_id').parent('div').parent('div').hide();
+        jQuery('#id_contact-legal_form').parent('div').parent('div').hide();
+        jQuery('#id_contact-representative').parent('div').parent('div').hide();
+        jQuery('#id_contact-representative_function').parent('div').parent('div').hide();
+        jQuery('#id_contact-firstname').parent('div').parent('div').show();
+        jQuery('#id_contact-function').parent('div').parent('div').show();
+    };
+
+    show_company_fields = function(){
+        jQuery('#id_contact-company_id').parent('div').parent('div').show();
+        jQuery('#id_contact-legal_form').parent('div').parent('div').show();
+        jQuery('#id_contact-representative').parent('div').parent('div').show();
+        jQuery('#id_contact-representative_function').parent('div').parent('div').show();
+        jQuery('#id_contact-firstname').parent('div').parent('div').hide();
+        jQuery('#id_contact-function').parent('div').parent('div').hide();
+    };
+
+    jQuery("#id_contact-contact_type_0").click(function(e){
+        show_person_fields();
+    });
+    jQuery("#id_contact-contact_type_1").click(function(e){
+        show_company_fields();
+    });
+
+    if (jQuery("#id_contact-contact_type_1:checked").length) {
+        show_company_fields();
+    } else {
+        show_person_fields();
+    }
+
+    jQuery("#contact-edit-form").submit(function(){
+        if (jQuery("#id_contact-contact_type_0:checked").length) {
+            jQuery('#id_contact-company_id').val('');
+        } else {
+            jQuery('#id_contact-firstname').val('');
+            jQuery('#id_contact-function').val('');
+        }
+        return true;
+    });
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<form action="" method="post" id="contact-edit-form">
+    {% csrf_token %}
+    <fieldset class="module aligned">
+    {% for hidden in contactForm.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+    {% with contactForm.name as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with contactForm.contact_type as field %}
+    <div class="form-row">
+    {{ field.errors }}
+    <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label>
+       <label for="id_contact-contact_type_0"><input type="radio" name="contact-contact_type" value="1" id="id_contact-contact_type_0"{% ifequal contactForm.instance.contact_type 1 %} checked="checked"{% endifequal %}> {% trans "Person" %}</label>
+       <label for="id_contact-contact_type_1"><input type="radio" name="contact-contact_type" value="2" id="id_contact-contact_type_1"{% ifequal contactForm.instance.contact_type 2 %} checked="checked"{% endifequal %}> {% trans "Company" %}</label>
+    </div>
+    </div>
+    {% endwith %}
+    {% with contactForm.firstname as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with contactForm.company_id as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with contactForm.legal_form as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with contactForm.representative as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with contactForm.representative_function as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with contactForm.function as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    <div class="form-row">
+    <div><label>{% trans "Phone numbers" %} :</label></div>
+    {{ phonenumberformset.management_form }}
+    {% for form in phonenumberformset.forms %}
+        <div class="inline-formset">
+            {{ form.ownedobject_ptr }}{{ form.contact }}{{ form.type }} {{ form.number }} {{ form.default.label }} : {{ form.default }} {{ form.DELETE.label }} : {{ form.DELETE }}
+        </div>
+    {% endfor %}
+    </div>
+    {% with contactForm.email as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with addressForm.street as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with addressForm.zipcode as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with addressForm.city as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with addressForm.country as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with contactForm.contacts as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    </fieldset>
+
+    <div class="submit-row">
+    <input class="default" type="submit" name="action" value="{% trans "Save" %}" />
+    </div>
+</form>
+{% endblock %}

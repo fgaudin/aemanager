@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<form action="" method="get">
+    <fieldset class="module aligned">
+    {{ form.name.label }} : {{ form.name }}
+    {{ form.customer.label }} : {{ form.customer }}
+    {{ form.state.label }} : {{ form.state }}
+    <input class="default" type="submit" name="action" value="{% trans "Search" %}" />
+    </fieldset>
+</form>
+
+<div class="search-list">
+    <table>
+        <thead>
+            <tr>
+                <th><a href="?name={{ search_criteria.name }}&customer={{ search_criteria.customer }}&state={{ search_criteria.state }}&page={{ projects.number }}&o=name&ot={% if o == "name" and ot == "asc"%}desc{% else %}asc{% endif %}">{% trans "Name" %}</a></th>
+                <th><a href="?name={{ search_criteria.name }}&customer={{ search_criteria.customer }}&state={{ search_criteria.state }}&page={{ projects.number }}&o=customer&ot={% if o == "customer" and ot == "asc"%}desc{% else %}asc{% endif %}">{% trans "Customer" %}</a></th>
+                <th><a href="?name={{ search_criteria.name }}&customer={{ search_criteria.customer }}&state={{ search_criteria.state }}&page={{ projects.number }}&o=state&ot={% if o == "state" and ot == "asc"%}desc{% else %}asc{% endif %}">{% trans "State" %}</a></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for project in projects.object_list %}
+           <tr class="{% cycle 'row1' 'row2' %}">
+                <td><a href="{% url project_detail project.id %}">{{ project.name }}</a></td>
+                <td><a href="{% url contact_detail project.customer.id %}">{{ project.customer }}</a></td>
+                <td>{{ project.get_state_display }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if projects.has_previous %}
+            <a href="?name={{ search_criteria.name }}&customer={{ search_criteria.customer }}&state={{ search_criteria.state }}&page={{ projects.previous_page_number }}&o={{ o }}&ot={{ ot }}">{% trans "previous" %}</a>
+        {% endif %}
+
+        <span class="current">
+            {% blocktrans with projects.number as number and projects.paginator.num_pages as num_pages %}Page {{ number }} of {{ num_pages }}.{% endblocktrans %}
+        </span>
+
+        {% if projects.has_next %}
+            <a href="?name={{ search_criteria.name }}&customer={{ search_criteria.customer }}&state={{ search_criteria.state }}&page={{ projects.next_page_number }}&o={{ o }}&ot={{ ot }}">{% trans "next" %}</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}

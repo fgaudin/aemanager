@@ -1,0 +1,94 @@
+{% load i18n %}
+<div class="nav-wrapper">
+    <div class="nav-left"></div>
+    <div class="nav">
+        <ul id="navigation">
+            <li class="{% if active == "dashboard" %}active{% endif %}">
+                <a href="/">
+                    <span class="menu-left"></span>
+                    <span class="menu-mid">{% trans "Dashboard" %}</span>
+                    <span class="menu-right"></span>
+                </a>
+            </li>
+            <li class="{% if active == "business" %}active{% endif %}">
+                <a href="{% url project_running_list %}">
+                    <span class="menu-left"></span>
+                    <span class="menu-mid">{% trans "Business" %}</span>
+                    <span class="menu-right"></span>
+                </a>
+                <div class="sub">
+                    <ul>
+                        <li>
+                            <a href="{% url project_running_list %}">{% trans "Running projects" %}</a>
+                        </li>
+                        <li>
+                            <a href="{% url project_finished_list %}">{% trans "Finished projects" %}</a>
+                        </li>
+                        <li>
+                            <a href="{% url project_add %}">{% trans "Add" %}</a>
+                        </li>
+                    </ul>
+                    <div class="btm-bg"></div>
+                </div>
+            </li>
+            <li class="{% if active == "accounts" %}active{% endif %}">
+                <a href="#">
+                    <span class="menu-left"></span>
+                    <span class="menu-mid">{% trans "Accounts" %}</span>
+                    <span class="menu-right"></span>
+                </a>
+                <div class="sub">
+                    <ul>
+                        <li>
+                            <a href="#">{% trans "Invoices" %}</a>
+                            </li>
+                        <li>
+                            <a href="{% url expense_list %}">{% trans "Expenses" %}</a>
+                        </li>
+                    </ul>
+                    <div class="btm-bg"></div>
+                </div>
+            </li>
+            <li class="{% if active == "contact" %}active{% endif %}">
+                <a href="{% url contact_search %}">
+                    <span class="menu-left"></span>
+                    <span class="menu-mid">{% trans "Contacts" %}</span>
+                    <span class="menu-right"></span>
+                </a>
+                <div class="sub">
+                    <ul>
+                        <li>
+                            <a href="{% url contact_search %}">{% trans "Search" %}</a>
+                            </li>
+                        <li>
+                            <a href="{% url contact_add %}">{% trans "Add" %}</a>
+                        </li>
+                    </ul>
+                    <div class="btm-bg"></div>
+                </div>
+            </li>
+            <li class="last{% if active == "account" %} active{% endif %}">
+                <a href="{% url settings_edit %}">
+                    <span class="menu-left"></span>
+                    <span class="menu-mid">{% trans "My account" %}</span>
+                    <span class="menu-right"></span>
+                </a>
+                <div class="sub">
+                    <ul>
+                        <li>
+                            <a href="{% url settings_edit %}">{% trans "Settings" %}</a>
+                            </li>
+                        <li>
+                            <a href="#">{% trans "Change password" %}</a>
+                        </li>
+                    </ul>
+                    <div class="btm-bg"></div>
+                </div>
+            </li>
+        </ul>
+        <div class="user-information">
+           <a href="{% url logout %}">{% trans "Logout" %}</a>
+        </div>
+    </div>
+    <div class="nav-right"></div>
+</div>

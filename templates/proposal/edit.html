@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block extrahead %}
+<script src="{% load adminmedia %}{% admin_media_prefix %}js/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+jQuery(document).ready(function(){
+    jQuery('#id_proposal-contract_model').change(function(){
+        var proposal_id = jQuery('#id_proposal-contract_model option:selected').val();
+        jQuery.getJSON('{% url proposal_get_contract %}', {'id': proposal_id}, function(data){
+            jQuery('#id_proposal-contract_content').html(data);
+        });
+    });
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<form action="" method="post" id="proposal-edit-form">
+    {% csrf_token %}
+    <fieldset class="module aligned">
+    {% for hidden in proposalForm.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+    {% with proposalForm.reference as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with proposalForm.state as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with proposalForm.amount as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with proposalForm.begin_date as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with proposalForm.end_date as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    <div class="form-row">
+    <div><label>{% trans "Detail rows" %} :</label></div>
+    {{ proposalrowformset.management_form }}
+    {% for form in proposalrowformset.forms %}
+        <div class="inline-formset">
+            {{ form.ownedobject_ptr }}{{ form.label }} {{ form.category }} {{ form.quantity.label }} : {{ form.quantity }} {{ form.unit_price.label }} {{ form.unit_price }} : {{ form.default }} {{ form.DELETE.label }} : {{ form.DELETE }}
+        </div>
+    {% endfor %}
+    </div>
+    {% with proposalForm.contract_model as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    <div class="big-textarea">
+    {% with proposalForm.contract_content as field %}
+    <div class="form-row">
+    {{ field.errors }}
+      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label>
+      {{ field }}
+      {% if field.field.help_text %}
+        <p class="help">{{ field.field.help_text|safe }}</p>
+        <p class="help">{% trans "Keywords you can use" %} : {{ substitution_keys }}</p>
+      {% endif %}
+      </div>
+    </div>
+    {% endwith %}
+    </div>
+    </fieldset>
+
+    <div class="submit-row">
+    <input class="default" type="submit" name="action" value="{% trans "Save" %}" />
+    </div>
+</form>
+{% endblock %}
