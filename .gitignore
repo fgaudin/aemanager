@@ -2,3 +2,5 @@
 .pydevproject
 *.pyc
 .settings
+*.pdf
+*.sql

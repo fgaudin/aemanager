@@ -1,3 +1,8 @@
+Python
+------
+
+Install python-2.6 with you package manager
+
 Virtualenv
 ----------
 First install it :
@@ -16,6 +21,12 @@ easy_install django django-extensions werkzeug south reportlab rst2pdf
 
 Aemanager
 ---------
+Clone the git repository :
+
+$ git clone https://github.com/fgaudin/aemanager.git
+
+or fork it on github and clone your own repository
+
 In aemanager directory, if it's your first install :
 
 $ python manage.py syncdb --noinput
