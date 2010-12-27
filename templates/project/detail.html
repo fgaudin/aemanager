@@ -48,6 +48,7 @@
 <div>{% trans "No proposals" %}</div>
 {% endif %}
 
+<div class="context-menu"><a href="{% url invoice_add customer_id=project.customer.id %}">{% trans "Draw up an invoice" %}</a></div>
 <h1>{% trans "Invoices" %}</h1>
 {% if invoices %}
 <div class="search-list">
