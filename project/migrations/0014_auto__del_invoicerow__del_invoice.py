@@ -7,81 +7,51 @@ from django.db import models
 class Migration(SchemaMigration):
 
     depends_on = (
-        ("core", "0001_initial"),
+        ("accounts", "0006_auto__del_invoice2row__del_invoice2"),
     )
 
     def forwards(self, orm):
 
-        # Adding model 'Country'
-        db.create_table('contact_country', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('country_code2', self.gf('django.db.models.fields.CharField')(max_length=2)),
-            ('country_code3', self.gf('django.db.models.fields.CharField')(max_length=3)),
-            ('country_name', self.gf('django.db.models.fields.CharField')(max_length=50)),
-        ))
-        db.send_create_signal('contact', ['Country'])
+        # Deleting model 'InvoiceRow'
+        db.delete_table('project_invoicerow')
 
-        # Adding model 'Address'
-        db.create_table('contact_address', (
-            ('ownedobject_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.OwnedObject'], unique=True, primary_key=True)),
-            ('street', self.gf('django.db.models.fields.TextField')(default='', blank=True)),
-            ('zipcode', self.gf('django.db.models.fields.CharField')(default='', max_length=10, blank=True)),
-            ('city', self.gf('django.db.models.fields.CharField')(default='', max_length=255, blank=True)),
-            ('country', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contact.Country'], null=True, blank=True)),
-        ))
-        db.send_create_signal('contact', ['Address'])
-
-        # Adding model 'Contact'
-        db.create_table('contact_contact', (
-            ('ownedobject_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.OwnedObject'], unique=True, primary_key=True)),
-            ('contact_type', self.gf('django.db.models.fields.IntegerField')()),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('firstname', self.gf('django.db.models.fields.CharField')(default='', max_length=255, blank=True)),
-            ('function', self.gf('django.db.models.fields.CharField')(default='', max_length=100, blank=True)),
-            ('company_id', self.gf('django.db.models.fields.CharField')(default='', max_length=50, blank=True)),
-            ('legal_form', self.gf('django.db.models.fields.CharField')(default='', max_length=255, blank=True)),
-            ('representative', self.gf('django.db.models.fields.CharField')(default='', max_length=255, blank=True)),
-            ('representative_function', self.gf('django.db.models.fields.CharField')(default='', max_length=100, blank=True)),
-            ('email', self.gf('django.db.models.fields.EmailField')(default='', max_length=75, blank=True)),
-            ('address', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contact.Address'])),
-        ))
-        db.send_create_signal('contact', ['Contact'])
-
-        # Adding M2M table for field contacts on 'Contact'
-        db.create_table('contact_contact_contacts', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('from_contact', models.ForeignKey(orm['contact.contact'], null=False)),
-            ('to_contact', models.ForeignKey(orm['contact.contact'], null=False))
-        ))
-        db.create_unique('contact_contact_contacts', ['from_contact_id', 'to_contact_id'])
-
-        # Adding model 'PhoneNumber'
-        db.create_table('contact_phonenumber', (
-            ('ownedobject_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.OwnedObject'], unique=True, primary_key=True)),
-            ('type', self.gf('django.db.models.fields.IntegerField')()),
-            ('number', self.gf('django.db.models.fields.CharField')(max_length=20)),
-            ('default', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('contact', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contact.Contact'])),
-        ))
-        db.send_create_signal('contact', ['PhoneNumber'])
+        # Deleting model 'Invoice'
+        db.delete_table('project_invoice')
 
 
     def backwards(self, orm):
 
-        # Deleting model 'Country'
-        db.delete_table('contact_country')
+        # Adding model 'InvoiceRow'
+        db.create_table('project_invoicerow', (
+            ('category', self.gf('django.db.models.fields.IntegerField')()),
+            ('amount', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=12, decimal_places=2, blank=True)),
+            ('invoice', self.gf('django.db.models.fields.related.ForeignKey')(related_name='invoice_rows', to=orm['project.Invoice'])),
+            ('balance_payments', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('ownedobject_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.OwnedObject'], unique=True, primary_key=True)),
+            ('quantity', self.gf('django.db.models.fields.DecimalField')(max_digits=5, decimal_places=1)),
+            ('proposal', self.gf('django.db.models.fields.related.ForeignKey')(related_name='invoice_rows', to=orm['project.Proposal'])),
+            ('unit_price', self.gf('django.db.models.fields.DecimalField')(max_digits=12, decimal_places=2)),
+            ('label', self.gf('django.db.models.fields.CharField')(max_length=255)),
+        ))
+        db.send_create_signal('project', ['InvoiceRow'])
 
-        # Deleting model 'Address'
-        db.delete_table('contact_address')
-
-        # Deleting model 'Contact'
-        db.delete_table('contact_contact')
-
-        # Removing M2M table for field contacts on 'Contact'
-        db.delete_table('contact_contact_contacts')
-
-        # Deleting model 'PhoneNumber'
-        db.delete_table('contact_phonenumber')
+        # Adding model 'Invoice'
+        db.create_table('project_invoice', (
+            ('execution_end_date', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
+            ('state', self.gf('django.db.models.fields.IntegerField')(default=1)),
+            ('ownedobject_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.OwnedObject'], unique=True, primary_key=True)),
+            ('execution_begin_date', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
+            ('customer', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contact.Contact'], null=True, blank=True)),
+            ('payment_date', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
+            ('penalty_rate', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=4, decimal_places=2, blank=True)),
+            ('invoice_id', self.gf('django.db.models.fields.IntegerField')()),
+            ('penalty_date', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
+            ('amount', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=12, decimal_places=2, blank=True)),
+            ('paid_date', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
+            ('discount_conditions', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
+            ('edition_date', self.gf('django.db.models.fields.DateField')()),
+        ))
+        db.send_create_signal('project', ['Invoice'])
 
 
     models = {
@@ -144,14 +114,6 @@ class Migration(SchemaMigration):
             'country_name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
         },
-        'contact.phonenumber': {
-            'Meta': {'object_name': 'PhoneNumber', '_ormbases': ['core.OwnedObject']},
-            'contact': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contact.Contact']"}),
-            'default': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'number': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
-            'ownedobject_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.OwnedObject']", 'unique': 'True', 'primary_key': 'True'}),
-            'type': ('django.db.models.fields.IntegerField', [], {})
-        },
         'contenttypes.contenttype': {
             'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
             'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
@@ -163,7 +125,44 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'OwnedObject'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
+        },
+        'project.contract': {
+            'Meta': {'object_name': 'Contract', '_ormbases': ['core.OwnedObject']},
+            'content': ('django.db.models.fields.TextField', [], {}),
+            'customer': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'contracts'", 'to': "orm['contact.Contact']"}),
+            'ownedobject_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.OwnedObject']", 'unique': 'True', 'primary_key': 'True'}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'update_date': ('django.db.models.fields.DateField', [], {})
+        },
+        'project.project': {
+            'Meta': {'object_name': 'Project', '_ormbases': ['core.OwnedObject']},
+            'customer': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contact.Contact']", 'null': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'ownedobject_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.OwnedObject']", 'unique': 'True', 'primary_key': 'True'}),
+            'state': ('django.db.models.fields.IntegerField', [], {'default': '1'})
+        },
+        'project.proposal': {
+            'Meta': {'object_name': 'Proposal', '_ormbases': ['core.OwnedObject']},
+            'amount': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '12', 'decimal_places': '2', 'blank': 'True'}),
+            'begin_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
+            'contract_content': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
+            'end_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
+            'ownedobject_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.OwnedObject']", 'unique': 'True', 'primary_key': 'True'}),
+            'project': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['project.Project']"}),
+            'reference': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
+            'state': ('django.db.models.fields.IntegerField', [], {'default': '1'}),
+            'update_date': ('django.db.models.fields.DateField', [], {})
+        },
+        'project.proposalrow': {
+            'Meta': {'object_name': 'ProposalRow'},
+            'amount': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '12', 'decimal_places': '2', 'blank': 'True'}),
+            'category': ('django.db.models.fields.IntegerField', [], {}),
+            'label': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'ownedobject_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.OwnedObject']", 'unique': 'True'}),
+            'proposal': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'proposal_rows'", 'to': "orm['project.Proposal']"}),
+            'quantity': ('django.db.models.fields.DecimalField', [], {'max_digits': '5', 'decimal_places': '1'}),
+            'unit_price': ('django.db.models.fields.DecimalField', [], {'max_digits': '12', 'decimal_places': '2'})
         }
     }
 
-    complete_apps = ['contact']
+    complete_apps = ['project']

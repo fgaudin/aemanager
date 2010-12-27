@@ -4,11 +4,11 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from contact.models import Address
 from django.db.models.signals import post_save
-from project.models import Invoice, INVOICE_STATE_PAID, Proposal, \
-    INVOICE_STATE_SENT, PROPOSAL_STATE_SENT, ProposalRow, PROPOSAL_STATE_DRAFT, \
-    PROPOSAL_STATE_ACCEPTED, INVOICE_STATE_EDITED, InvoiceRow
+from project.models import Proposal, PROPOSAL_STATE_SENT, ProposalRow, PROPOSAL_STATE_DRAFT, PROPOSAL_STATE_ACCEPTED
+
 from django.db.models.aggregates import Sum
-from django.db.models.query_utils import Q
+from accounts.models import Invoice, INVOICE_STATE_PAID, INVOICE_STATE_SENT, \
+    InvoiceRow, INVOICE_STATE_EDITED
 import datetime
 
 AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC = 1
@@ -78,10 +78,10 @@ class UserProfile(models.Model):
 
     def get_to_be_invoiced(self):
         accepted_proposal_amount_sum = Proposal.objects.filter(state=PROPOSAL_STATE_ACCEPTED,
-                                                               owner=self).extra(where=['project_proposal.ownedobject_ptr_id NOT IN (SELECT proposal_id FROM project_invoicerow irow JOIN project_invoice i ON irow.invoice_id = i.ownedobject_ptr_id WHERE i.state IN (%s,%s) AND irow.balance_payments = %s)'],
+                                                               owner=self).extra(where=['project_proposal.ownedobject_ptr_id NOT IN (SELECT proposal_id FROM accounts_invoicerow irow JOIN accounts_invoice i ON irow.invoice_id = i.ownedobject_ptr_id WHERE i.state IN (%s,%s) AND irow.balance_payments = %s)'],
                                                                                  params=[INVOICE_STATE_SENT, INVOICE_STATE_PAID, True]).aggregate(amount=Sum('amount'))
-        invoicerows_to_exclude = InvoiceRow.objects.extra(where=['project_invoicerow.proposal_id NOT IN (SELECT proposal_id FROM project_invoicerow irow JOIN project_invoice i ON irow.invoice_id = i.ownedobject_ptr_id WHERE i.state IN (%s,%s) AND irow.balance_payments = %s)'],
-                                                            params=[INVOICE_STATE_SENT, INVOICE_STATE_PAID, True]).exclude(invoice__state=INVOICE_STATE_EDITED).filter(owner=self).aggregate(amount=Sum('amount'))
+        invoicerows_to_exclude = InvoiceRow.objects.extra(where=['accounts_invoicerow.proposal_id NOT IN (SELECT proposal_id FROM accounts_invoicerow irow JOIN accounts_invoice i ON irow.invoice_id = i.ownedobject_ptr_id WHERE i.state IN (%s,%s) AND irow.balance_payments = %s)'],
+                                                          params=[INVOICE_STATE_SENT, INVOICE_STATE_PAID, True]).exclude(invoice__state=INVOICE_STATE_EDITED).filter(owner=self).aggregate(amount=Sum('amount'))
         return (accepted_proposal_amount_sum['amount'] or 0) - (invoicerows_to_exclude['amount'] or 0)
 
     def get_late_invoices(self):

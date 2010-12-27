@@ -6,8 +6,12 @@ from django.db import models
 
 class Migration(SchemaMigration):
 
+    depends_on = (
+        ("core", "0001_initial"),
+    )
+
     def forwards(self, orm):
-        
+
         # Adding model 'Expense'
         db.create_table('accounts_expense', (
             ('ownedobject_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.OwnedObject'], unique=True, primary_key=True)),
@@ -21,7 +25,7 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
-        
+
         # Deleting model 'Expense'
         db.delete_table('accounts_expense')
 

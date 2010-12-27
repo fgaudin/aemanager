@@ -64,22 +64,4 @@ urlpatterns = patterns('project.views',
     url(regex=r'^proposal/contract/ajax/$',
         view='proposal_get_contract',
         name='proposal_get_contract'),
-
-    # invoices
-    url(regex=r'^invoice/add/(?P<customer_id>\d+)/$',
-        view='invoice_create_or_edit',
-        name='invoice_add'),
-    url(regex=r'^invoice/edit/(?P<id>\d+)/$',
-        view='invoice_create_or_edit',
-        name='invoice_edit'),
-    url(regex=r'^invoice/(?P<id>\d+)/$',
-        view='invoice_detail',
-        name='invoice_detail'),
-    url(regex=r'^invoice/delete/(?P<id>\d+)/$',
-        view='invoice_delete',
-        name='invoice_delete'),
-    url(regex=r'^invoice/download/(?P<id>\d+)/$',
-        view='invoice_download',
-        name='invoice_download'),
-
 )

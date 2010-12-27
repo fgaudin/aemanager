@@ -7,47 +7,29 @@ from django.db import models
 class Migration(SchemaMigration):
 
     depends_on = (
-        ("core", "0001_initial"),
+        ("project", "0012_auto__add_field_proposal_reference"),
     )
 
     def forwards(self, orm):
 
-        # Adding model 'Contract'
-        db.create_table('project_contract', (
+        # Adding model 'Invoice2Row'
+        db.create_table('accounts_invoice2row', (
             ('ownedobject_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.OwnedObject'], unique=True, primary_key=True)),
-            ('customer', self.gf('django.db.models.fields.related.ForeignKey')(related_name='contracts', to=orm['contact.Contact'])),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('content', self.gf('django.db.models.fields.TextField')()),
-            ('update_date', self.gf('django.db.models.fields.DateField')()),
-        ))
-        db.send_create_signal('project', ['Contract'])
-
-        # Adding model 'Project'
-        db.create_table('project_project', (
-            ('ownedobject_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.OwnedObject'], unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('customer', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contact.Contact'], null=True, blank=True)),
-            ('state', self.gf('django.db.models.fields.IntegerField')(default=1)),
-        ))
-        db.send_create_signal('project', ['Project'])
-
-        # Adding model 'Proposal'
-        db.create_table('project_proposal', (
-            ('ownedobject_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.OwnedObject'], unique=True, primary_key=True)),
-            ('project', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['project.Project'])),
-            ('state', self.gf('django.db.models.fields.IntegerField')(default=1)),
+            ('label', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('category', self.gf('django.db.models.fields.IntegerField')()),
+            ('quantity', self.gf('django.db.models.fields.DecimalField')(max_digits=5, decimal_places=1)),
+            ('unit_price', self.gf('django.db.models.fields.DecimalField')(max_digits=12, decimal_places=2)),
             ('amount', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=12, decimal_places=2, blank=True)),
-            ('begin_date', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
-            ('end_date', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
-            ('contract_content', self.gf('django.db.models.fields.TextField')(default='', blank=True)),
-            ('update_date', self.gf('django.db.models.fields.DateField')()),
+            ('invoice', self.gf('django.db.models.fields.related.ForeignKey')(related_name='invoice2_rows', to=orm['accounts.Invoice2'])),
+            ('proposal', self.gf('django.db.models.fields.related.ForeignKey')(related_name='invoice2_rows', to=orm['project.Proposal'])),
+            ('balance_payments', self.gf('django.db.models.fields.BooleanField')(default=False)),
         ))
-        db.send_create_signal('project', ['Proposal'])
+        db.send_create_signal('accounts', ['Invoice2Row'])
 
-        # Adding model 'Invoice'
-        db.create_table('project_invoice', (
+        # Adding model 'Invoice2'
+        db.create_table('accounts_invoice2', (
             ('ownedobject_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.OwnedObject'], unique=True, primary_key=True)),
-            ('proposal', self.gf('django.db.models.fields.related.ForeignKey')(related_name='invoices', to=orm['project.Proposal'])),
+            ('customer', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contact.Contact'], null=True, blank=True)),
             ('invoice_id', self.gf('django.db.models.fields.IntegerField')()),
             ('state', self.gf('django.db.models.fields.IntegerField')(default=1)),
             ('amount', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=12, decimal_places=2, blank=True)),
@@ -59,55 +41,57 @@ class Migration(SchemaMigration):
             ('penalty_date', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
             ('penalty_rate', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=4, decimal_places=2, blank=True)),
             ('discount_conditions', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
-            ('balance_payments', self.gf('django.db.models.fields.BooleanField')(default=False)),
         ))
-        db.send_create_signal('project', ['Invoice'])
-
-        # Adding model 'ProposalRow'
-        db.create_table('project_proposalrow', (
-            ('ownedobject_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.OwnedObject'], unique=True, primary_key=True)),
-            ('label', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('category', self.gf('django.db.models.fields.IntegerField')()),
-            ('quantity', self.gf('django.db.models.fields.DecimalField')(max_digits=5, decimal_places=1)),
-            ('unit_price', self.gf('django.db.models.fields.DecimalField')(max_digits=12, decimal_places=2)),
-            ('proposal', self.gf('django.db.models.fields.related.ForeignKey')(related_name='proposal_rows', to=orm['project.Proposal'])),
-        ))
-        db.send_create_signal('project', ['ProposalRow'])
-
-        # Adding model 'InvoiceRow'
-        db.create_table('project_invoicerow', (
-            ('ownedobject_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.OwnedObject'], unique=True, primary_key=True)),
-            ('label', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('category', self.gf('django.db.models.fields.IntegerField')()),
-            ('quantity', self.gf('django.db.models.fields.DecimalField')(max_digits=5, decimal_places=1)),
-            ('unit_price', self.gf('django.db.models.fields.DecimalField')(max_digits=12, decimal_places=2)),
-            ('invoice', self.gf('django.db.models.fields.related.ForeignKey')(related_name='invoice_rows', to=orm['project.Invoice'])),
-        ))
-        db.send_create_signal('project', ['InvoiceRow'])
+        db.send_create_signal('accounts', ['Invoice2'])
 
 
     def backwards(self, orm):
 
-        # Deleting model 'Contract'
-        db.delete_table('project_contract')
+        # Deleting model 'Invoice2Row'
+        db.delete_table('accounts_invoice2row')
 
-        # Deleting model 'Project'
-        db.delete_table('project_project')
-
-        # Deleting model 'Proposal'
-        db.delete_table('project_proposal')
-
-        # Deleting model 'Invoice'
-        db.delete_table('project_invoice')
-
-        # Deleting model 'ProposalRow'
-        db.delete_table('project_proposalrow')
-
-        # Deleting model 'InvoiceRow'
-        db.delete_table('project_invoicerow')
+        # Deleting model 'Invoice2'
+        db.delete_table('accounts_invoice2')
 
 
     models = {
+        'accounts.expense': {
+            'Meta': {'object_name': 'Expense', '_ormbases': ['core.OwnedObject']},
+            'amount': ('django.db.models.fields.DecimalField', [], {'max_digits': '12', 'decimal_places': '2'}),
+            'date': ('django.db.models.fields.DateField', [], {}),
+            'description': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'ownedobject_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.OwnedObject']", 'unique': 'True', 'primary_key': 'True'}),
+            'payment_type': ('django.db.models.fields.IntegerField', [], {}),
+            'reference': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'})
+        },
+        'accounts.invoice2': {
+            'Meta': {'object_name': 'Invoice2', '_ormbases': ['core.OwnedObject']},
+            'amount': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '12', 'decimal_places': '2', 'blank': 'True'}),
+            'customer': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contact.Contact']", 'null': 'True', 'blank': 'True'}),
+            'discount_conditions': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'edition_date': ('django.db.models.fields.DateField', [], {}),
+            'execution_begin_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
+            'execution_end_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
+            'invoice_id': ('django.db.models.fields.IntegerField', [], {}),
+            'ownedobject_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.OwnedObject']", 'unique': 'True', 'primary_key': 'True'}),
+            'paid_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
+            'payment_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
+            'penalty_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
+            'penalty_rate': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '4', 'decimal_places': '2', 'blank': 'True'}),
+            'state': ('django.db.models.fields.IntegerField', [], {'default': '1'})
+        },
+        'accounts.invoice2row': {
+            'Meta': {'object_name': 'Invoice2Row'},
+            'amount': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '12', 'decimal_places': '2', 'blank': 'True'}),
+            'balance_payments': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'category': ('django.db.models.fields.IntegerField', [], {}),
+            'invoice': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'invoice2_rows'", 'to': "orm['accounts.Invoice2']"}),
+            'label': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'ownedobject_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.OwnedObject']", 'unique': 'True', 'primary_key': 'True'}),
+            'proposal': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'invoice2_rows'", 'to': "orm['project.Proposal']"}),
+            'quantity': ('django.db.models.fields.DecimalField', [], {'max_digits': '5', 'decimal_places': '1'}),
+            'unit_price': ('django.db.models.fields.DecimalField', [], {'max_digits': '12', 'decimal_places': '2'})
+        },
         'auth.group': {
             'Meta': {'object_name': 'Group'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -179,40 +163,6 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
         },
-        'project.contract': {
-            'Meta': {'object_name': 'Contract', '_ormbases': ['core.OwnedObject']},
-            'content': ('django.db.models.fields.TextField', [], {}),
-            'customer': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'contracts'", 'to': "orm['contact.Contact']"}),
-            'ownedobject_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.OwnedObject']", 'unique': 'True', 'primary_key': 'True'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'update_date': ('django.db.models.fields.DateField', [], {})
-        },
-        'project.invoice': {
-            'Meta': {'object_name': 'Invoice', '_ormbases': ['core.OwnedObject']},
-            'amount': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '12', 'decimal_places': '2', 'blank': 'True'}),
-            'balance_payments': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'discount_conditions': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
-            'edition_date': ('django.db.models.fields.DateField', [], {}),
-            'execution_begin_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
-            'execution_end_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
-            'invoice_id': ('django.db.models.fields.IntegerField', [], {}),
-            'ownedobject_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.OwnedObject']", 'unique': 'True', 'primary_key': 'True'}),
-            'paid_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
-            'payment_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
-            'penalty_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
-            'penalty_rate': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '4', 'decimal_places': '2', 'blank': 'True'}),
-            'proposal': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'invoices'", 'to': "orm['project.Proposal']"}),
-            'state': ('django.db.models.fields.IntegerField', [], {'default': '1'})
-        },
-        'project.invoicerow': {
-            'Meta': {'object_name': 'InvoiceRow'},
-            'category': ('django.db.models.fields.IntegerField', [], {}),
-            'invoice': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'invoice_rows'", 'to': "orm['project.Invoice']"}),
-            'label': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'ownedobject_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.OwnedObject']", 'unique': 'True', 'primary_key': 'True'}),
-            'quantity': ('django.db.models.fields.DecimalField', [], {'max_digits': '5', 'decimal_places': '1'}),
-            'unit_price': ('django.db.models.fields.DecimalField', [], {'max_digits': '12', 'decimal_places': '2'})
-        },
         'project.project': {
             'Meta': {'object_name': 'Project', '_ormbases': ['core.OwnedObject']},
             'customer': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contact.Contact']", 'null': 'True', 'blank': 'True'}),
@@ -228,18 +178,10 @@ class Migration(SchemaMigration):
             'end_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
             'ownedobject_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.OwnedObject']", 'unique': 'True', 'primary_key': 'True'}),
             'project': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['project.Project']"}),
+            'reference': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
             'state': ('django.db.models.fields.IntegerField', [], {'default': '1'}),
             'update_date': ('django.db.models.fields.DateField', [], {})
-        },
-        'project.proposalrow': {
-            'Meta': {'object_name': 'ProposalRow'},
-            'category': ('django.db.models.fields.IntegerField', [], {}),
-            'label': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'ownedobject_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.OwnedObject']", 'unique': 'True', 'primary_key': 'True'}),
-            'proposal': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'proposal_rows'", 'to': "orm['project.Proposal']"}),
-            'quantity': ('django.db.models.fields.DecimalField', [], {'max_digits': '5', 'decimal_places': '1'}),
-            'unit_price': ('django.db.models.fields.DecimalField', [], {'max_digits': '12', 'decimal_places': '2'})
         }
     }
 
-    complete_apps = ['project']
+    complete_apps = ['accounts']

@@ -1,7 +1,7 @@
 from django.forms import ModelForm
 from django.utils.translation import ugettext_lazy as _
 from project.models import Project, PROJECT_STATE, PROJECT_STATE_STARTED, \
-    Proposal, ProposalRow, Invoice, InvoiceRow, Contract
+    Proposal, ProposalRow, Contract
 from django import forms
 
 class ContractForm(ModelForm):
@@ -38,14 +38,4 @@ class ProposalForm(ModelForm):
 class ProposalRowForm(ModelForm):
     class Meta:
         model = ProposalRow
-        exclude = ['owner']
-
-class InvoiceForm(ModelForm):
-    class Meta:
-        model = Invoice
-        exclude = ['owner', 'proposal']
-
-class InvoiceRowForm(ModelForm):
-    class Meta:
-        model = InvoiceRow
         exclude = ['owner']
