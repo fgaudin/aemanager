@@ -3,7 +3,8 @@ from core.models import OwnedObject
 from django.utils.translation import ugettext_lazy as _, ugettext
 from contact.models import Contact
 from django.core.urlresolvers import reverse
-from project.models import Row, Proposal, update_row_amount
+from project.models import Row, Proposal, update_row_amount, \
+    ROW_CATEGORY_SERVICE, ROW_CATEGORY
 from django.db.models.aggregates import Sum
 from django.db.models.signals import post_save, pre_save
 
@@ -43,6 +44,7 @@ class Invoice(OwnedObject):
     amount = models.DecimalField(blank=True, null=True, max_digits=12, decimal_places=2, verbose_name=_("Amount"))
     edition_date = models.DateField(verbose_name=_("Edition date"))
     payment_date = models.DateField(blank=True, null=True, verbose_name=_("Payment date"))
+    payment_type = models.IntegerField(choices=PAYMENT_TYPE, verbose_name=_('Payment type'))
     paid_date = models.DateField(blank=True, null=True, verbose_name=_("Paid date"))
     execution_begin_date = models.DateField(blank=True, null=True, verbose_name=_("Execution begin date"))
     execution_end_date = models.DateField(blank=True, null=True, verbose_name=_("Execution end date"))
@@ -63,6 +65,16 @@ class Invoice(OwnedObject):
             return False
 
         return True
+
+    def getNature(self):
+        natures = self.invoice_rows.values('category').distinct()
+        result = []
+        natures_dict = dict(ROW_CATEGORY)
+        for nature in natures:
+            result.append(unicode(natures_dict[nature['category']]))
+
+        return " & ".join(result)
+
 
     def save(self, force_insert=False, force_update=False, using=None, user=None):
         if not self.isInvoiceIdUnique(user):

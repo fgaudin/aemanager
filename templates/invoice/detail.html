@@ -31,6 +31,11 @@
     {% with invoice as object %}{% with "payment_date" as name %}
     {% include "detail_field.html" %}
     {% endwith %}{% endwith %}
+    <div class="detail-row">
+      <div>
+      <label>{{ invoice|verbose_name:"payment_type" }} :</label> {{ invoice.get_payment_type_display }}
+      </div>
+    </div>
     {% with invoice as object %}{% with "paid_date" as name %}
     {% include "detail_field.html" %}
     {% endwith %}{% endwith %}

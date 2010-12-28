@@ -20,6 +20,9 @@
     {% with invoiceForm.payment_date as field %}
     {% include "field.html" %}
     {% endwith %}
+    {% with invoiceForm.payment_type as field %}
+    {% include "field.html" %}
+    {% endwith %}
     {% with invoiceForm.paid_date as field %}
     {% include "field.html" %}
     {% endwith %}
