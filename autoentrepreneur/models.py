@@ -6,7 +6,7 @@ from contact.models import Address
 from django.db.models.signals import post_save
 from project.models import Proposal, PROPOSAL_STATE_SENT, ProposalRow, PROPOSAL_STATE_DRAFT, PROPOSAL_STATE_ACCEPTED
 
-from django.db.models.aggregates import Sum
+from django.db.models.aggregates import Sum, Min
 from accounts.models import Invoice, INVOICE_STATE_PAID, INVOICE_STATE_SENT, \
     InvoiceRow, INVOICE_STATE_EDITED
 import datetime
@@ -210,10 +210,19 @@ class UserProfile(models.Model):
 
         return tax_rate
 
-    def get_paid_invoices(self):
-        return Invoice.objects.filter(state=INVOICE_STATE_PAID,
-                               owner=self,
-                               paid_date__year=datetime.date.today().year).order_by('paid_date')
+    def get_first_invoice_paid_date(self):
+        return Invoice.objects.aggregate(min_date=Min('paid_date'))['min_date']
+
+    def get_paid_invoices(self, begin_date=None):
+        if not begin_date:
+            return Invoice.objects.filter(state=INVOICE_STATE_PAID,
+                                          owner=self,
+                                          paid_date__year=datetime.date.today().year).order_by('paid_date')
+        else:
+            return Invoice.objects.filter(state=INVOICE_STATE_PAID,
+                                          owner=self,
+                                          paid_date__lte=datetime.date.today(),
+                                          paid_date__gte=begin_date).order_by('paid_date')
 
 def user_post_save(sender, instance, created, **kwargs):
     if created:

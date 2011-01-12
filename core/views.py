@@ -30,7 +30,14 @@ def index(request):
     tax_rate = user.get_profile().get_tax_rate()
     amount_to_pay = float(amount_paid_for_tax) * float(tax_rate) / 100
 
-    invoices = user.get_profile().get_paid_invoices()
+    min_date = user.get_profile().get_first_invoice_paid_date()
+    today = datetime.date.today()
+    one_year_back = datetime.date(today.year - 1, today.month, today.day)
+    if min_date < one_year_back:
+        begin_date = one_year_back
+    else:
+        begin_date = min_date
+    invoices = user.get_profile().get_paid_invoices(begin_date=begin_date)
     sales_progression = []
     last = 0.0
     for invoice in invoices:
@@ -38,12 +45,16 @@ def index(request):
         sales_progression.append([int(time.mktime(invoice.paid_date.timetuple())*1000), amount])
         last = amount
 
+    sales_progression.append([int(time.mktime(today.timetuple())*1000), last])
+
     expenses_progression = []
     last = 0.0
-    for expense in Expense.objects.all().order_by(('date')):
+    for expense in Expense.objects.filter(date__gte=begin_date).order_by(('date')):
         amount = last + float(expense.amount)
         expenses_progression.append([int(time.mktime(expense.date.timetuple())*1000), amount])
         last = amount
+
+    expenses_progression.append([int(time.mktime(today.timetuple())*1000), last])
 
     pay_date = None
     if end_date:
