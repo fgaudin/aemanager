@@ -1,4 +1,7 @@
 - imprimer livre des recettes (export pdf, avec choix de l'année, ordre chrono)
+- patcher graphique dépense/CA (afficher 1 an)
+- ajouter dans onglet widget CA N-1
+- ajouter dans onglet widget taxe en cours
 - TU taxes sur tableau de bord
 - TU sur dépenses
 - gérer localisation des nombres

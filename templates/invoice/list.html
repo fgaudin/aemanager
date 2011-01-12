@@ -2,6 +2,16 @@
 {% load i18n %}
 
 {% block content %}
+<div>
+    <form action="{% url invoice_list_export %}" method="get">
+        {% trans "Export invoice book" %} &nbsp;<select name="year">
+        {% for year in years %}
+            <option value="{{ year }}">{{ year }}</option>
+        {% endfor %}
+        </select>&nbsp;<input type="submit" value="{% trans "Export" %}" />
+    </form>
+</div>
+
 <div class="search-list">
     <table>
         <thead>

@@ -5,7 +5,7 @@ from django.template.context import RequestContext
 from django.utils.translation import ugettext_lazy as _, ugettext
 from accounts.forms import ExpenseForm, InvoiceRowForm, InvoiceForm
 from accounts.models import Expense, Invoice, InvoiceRow, InvoiceRowAmountError, \
-    InvoiceIdNotUniqueError
+    InvoiceIdNotUniqueError, INVOICE_STATE_PAID
 from django.http import HttpResponse
 from django.utils import simplejson
 from django.utils.formats import localize
@@ -18,10 +18,11 @@ from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.db.models.aggregates import Max
+from custom_canvas import NumberedCanvas
 import datetime
 from reportlab.pdfgen.canvas import Canvas
-from reportlab.platypus import Paragraph, Frame, Spacer
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import Paragraph, Frame, Spacer, BaseDocTemplate, PageTemplate
+from reportlab.lib.styles import ParagraphStyle
 from reportlab.rl_config import defaultPageSize
 from reportlab.lib.units import inch
 from reportlab.lib.enums import TA_CENTER
@@ -114,12 +115,70 @@ def expense_delete(request):
 def invoice_list(request):
     user = request.user
     invoices = Invoice.objects.filter(owner=user).order_by('-invoice_id')
+    years = range(datetime.date.today().year, user.get_profile().creation_date.year - 1, -1)
     return render_to_response('invoice/list.html',
                               {'active': 'accounts',
                                'title': _('Invoices'),
-                               'invoices': invoices},
+                               'invoices': invoices,
+                               'years': years},
                               context_instance=RequestContext(request))
 
+@login_required
+def invoice_list_export(request):
+    user = request.user
+
+    def invoice_list_footer(canvas, doc):
+        canvas.saveState()
+        canvas.setFont('Times-Roman', 10)
+        PAGE_WIDTH = defaultPageSize[0]
+        canvas.drawCentredString(PAGE_WIDTH / 2.0, 0.5 * inch, "%s %s - SIRET : %s - %s, %s %s, %s" % (user.first_name,
+                                                                                     user.last_name,
+                                                                                     user.get_profile().company_id,
+                                                                                     user.get_profile().address.street,
+                                                                                     user.get_profile().address.zipcode,
+                                                                                     user.get_profile().address.city,
+                                                                                     user.get_profile().address.country.country_name))
+        canvas.restoreState()
+
+    year = int(request.GET.get('year'))
+    invoices = Invoice.objects.filter(owner=user,
+                                      state__gte=INVOICE_STATE_PAID,
+                                      paid_date__year=year).order_by('invoice_id')
+    filename = ugettext('invoice_book_%(year)d.pdf') % {'year': year}
+    response = HttpResponse(mimetype='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename=%s' % (filename)
+
+    doc = BaseDocTemplate(response)
+    frameT = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='normal')
+    doc.addPageTemplates([PageTemplate(id='all', frames=frameT, onPage=invoice_list_footer), ])
+
+    styleH = ParagraphStyle({})
+    styleH.fontSize = 14
+    styleH.borderColor = colors.black
+    styleH.alignment = TA_CENTER
+
+    p = Paragraph(ugettext('Invoice book %(year)d') % {'year': year}, styleH)
+    spacer = Spacer(1 * inch, 0.5 * inch)
+
+    data = [[ugettext('Date'), ugettext('Ref.'), ugettext('Customer'), ugettext('Nature'), ugettext('Amount'), ugettext('Payment type')]]
+
+    for invoice in invoices:
+        data.append([localize(invoice.paid_date), invoice.invoice_id, invoice.customer, invoice.getNature(), invoice.amount, invoice.get_payment_type_display()])
+    t = Table(data, [0.8 * inch, 0.4 * inch, 2.5 * inch, 1.2 * inch, 0.8 * inch, 1.2 * inch], (len(invoices) + 1) * [0.3 * inch])
+    t.setStyle(TableStyle([('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+                           ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
+                           ('ALIGN', (2, 1), (2, -1), 'LEFT'),
+                           ('FONT', (0, 0), (-1, 0), 'Times-Bold'),
+                           ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+                           ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+                           ]))
+
+    story = []
+    story.append(p)
+    story.append(spacer)
+    story.append(t)
+    doc.build(story, canvasmaker=NumberedCanvas)
+    return response
 
 @login_required
 @commit_on_success
@@ -372,12 +431,12 @@ def invoice_download(request, id):
     story = []
     footer = Frame(0.5 * inch, 0.2 * inch, WIDTH - 1 * inch, 0.37 * inch, showBoundary=showBoundary)
     story.append(Paragraph("%s %s - SIRET : %s - %s, %s %s, %s" % (user.first_name,
-                                                           user.last_name,
-                                                           user.get_profile().company_id,
-                                                           user.get_profile().address.street,
-                                                           user.get_profile().address.zipcode,
-                                                           user.get_profile().address.city,
-                                                           user.get_profile().address.country.country_name),
+                                                                   user.last_name,
+                                                                   user.get_profile().company_id,
+                                                                   user.get_profile().address.street,
+                                                                   user.get_profile().address.zipcode,
+                                                                   user.get_profile().address.city,
+                                                                   user.get_profile().address.country.country_name),
                            styleF))
 
     footer.addFromList(story, c)
