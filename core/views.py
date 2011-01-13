@@ -25,7 +25,7 @@ def index(request):
     paid = user.get_profile().get_paid_sales()
     if not first_year:
         paid_previous_year = user.get_profile().get_paid_sales(year=one_year_back.year)
-    waiting = user.get_profile().get_waiting_invoices()
+    waiting = user.get_profile().get_waiting_payments()
     to_be_invoiced = user.get_profile().get_to_be_invoiced()
     limit = user.get_profile().get_sales_limit()
     if not first_year:
@@ -54,6 +54,14 @@ def index(request):
         last = amount
 
     sales_progression.append([int(time.mktime(today.timetuple())*1000), last])
+
+    waiting_progression = []
+    waiting_progression.append([int(time.mktime(today.timetuple())*1000), last])
+    waiting_invoices = user.get_profile().get_waiting_invoices()
+    for invoice in waiting_invoices:
+        amount = last + float(invoice.amount)
+        waiting_progression.append([int(time.mktime(invoice.payment_date.timetuple())*1000), amount])
+        last = amount
 
     expenses_progression = []
     last = 0.0
@@ -131,6 +139,7 @@ def index(request):
              'tax_due_date': pay_date}
 
     charts = {'sales_progression':simplejson.dumps(sales_progression),
+              'waiting_progression':simplejson.dumps(waiting_progression),
               'expenses_progression':simplejson.dumps(expenses_progression),
               'profit_progression':simplejson.dumps(profit_progression)}
 

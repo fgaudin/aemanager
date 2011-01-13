@@ -75,7 +75,7 @@ class UserProfile(models.Model):
                                             paid_date__year=year).aggregate(sales=Sum('amount'))
         return amount_sum['sales'] or 0
 
-    def get_waiting_invoices(self):
+    def get_waiting_payments(self):
         amount_sum = Invoice.objects.filter(state=INVOICE_STATE_SENT,
                                             owner=self).aggregate(sales=Sum('amount'))
         return amount_sum['sales'] or 0
@@ -227,6 +227,11 @@ class UserProfile(models.Model):
                                           owner=self,
                                           paid_date__lte=datetime.date.today(),
                                           paid_date__gte=begin_date).order_by('paid_date')
+
+    def get_waiting_invoices(self):
+            return Invoice.objects.filter(state__lte=INVOICE_STATE_SENT,
+                                          owner=self).order_by('payment_date')
+
 
 def user_post_save(sender, instance, created, **kwargs):
     if created:
