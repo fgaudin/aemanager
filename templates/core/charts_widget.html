@@ -29,9 +29,11 @@ jQuery(function () {
 jQuery(function () {
     var sales = {{ charts.sales_progression }};
     var expenses = {{ charts.expenses_progression }};
+    var profit = {{ charts.profit_progression }};
     jQuery.plot(jQuery("#sales-progression-chart"),
                 [{label: "{% trans "Sales" %}", data: sales},
-                 {label: "{% trans "Expenses" %}", data: expenses}],
+                 {label: "{% trans "Expenses" %}", data: expenses},
+                 {label: "{% trans "Profit" %}", data: profit},],
                 { xaxis: { mode: "time" } ,
                   grid: { backgroundColor: { colors: ["#fff", "#eee"] }},
                 legend: { position: 'nw' },

@@ -64,6 +64,26 @@ def index(request):
 
     expenses_progression.append([int(time.mktime(today.timetuple())*1000), last])
 
+    profit_progression = []
+    if len(sales_progression) and len(expenses_progression):
+        invoice_counter = 0
+        expense_counter = 0
+        current_invoice = None
+        current_expense = None
+        invoice_amount = 0.0
+        expense_amount = 0.0
+        while invoice_counter < len(sales_progression) and expense_counter < len(expenses_progression):
+            current_invoice = sales_progression[invoice_counter]
+            current_expense = expenses_progression[expense_counter]
+            if current_invoice[0] < current_expense[0]:
+                invoice_amount = current_invoice[1]
+                profit_progression.append([current_invoice[0], invoice_amount - expense_amount])
+                invoice_counter = invoice_counter + 1
+            else:
+                expense_amount = current_expense[1]
+                profit_progression.append([current_expense[0], invoice_amount - expense_amount])
+                expense_counter = expense_counter + 1
+
     pay_date = None
     if end_date:
         year = end_date.year
@@ -111,7 +131,8 @@ def index(request):
              'tax_due_date': pay_date}
 
     charts = {'sales_progression':simplejson.dumps(sales_progression),
-              'expenses_progression':simplejson.dumps(expenses_progression)}
+              'expenses_progression':simplejson.dumps(expenses_progression),
+              'profit_progression':simplejson.dumps(profit_progression)}
 
     return render_to_response('core/index.html',
                               {'active': 'dashboard',
