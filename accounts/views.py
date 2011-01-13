@@ -32,7 +32,7 @@ from reportlab.lib import colors
 @login_required
 def expense_list(request):
     user = request.user
-    expenses = Expense.objects.filter(owner=user).order_by('-date')
+    expenses = Expense.objects.filter(owner=user).order_by('-date', '-reference')
     if request.method == 'POST':
         form = ExpenseForm(request.POST)
     else:
