@@ -1,7 +1,44 @@
 {% load i18n %}
 
+<script language="javascript" type="text/javascript">
+jQuery(document).ready(function(){
+    show_current_period = function(e){
+        e.preventDefault();
+        jQuery('#show_next_period').html('<a href="#">' + jQuery('#show_next_period').text() + '</a>');
+        jQuery('#show_current_period').html('<strong>' + jQuery('#show_current_period').text() + '</strong>');
+        jQuery('#current_period').show();
+        jQuery('#next_period').hide();
+    };
+
+    show_next_period = function(e){
+        e.preventDefault();
+        jQuery('#show_current_period').html('<a href="#">' + jQuery('#show_current_period').text() + '</a>');
+        jQuery('#show_next_period').html('<strong>' + jQuery('#show_next_period').text() + '</strong>');
+        jQuery('#next_period').show();
+        jQuery('#current_period').hide();
+    };
+
+    jQuery('#show_current_period').click(show_current_period);
+    jQuery('#show_next_period').click(show_next_period);
+    jQuery('#show_current_period').click();
+});
+</script>
+
 <h2>{% trans "Taxes" %}</h2>
-<div>{% trans "Period" %} : {% blocktrans with taxes.period_begin as period_begin and taxes.period_end as period_end %}{{ period_begin }} to {{ period_end }}{% endblocktrans %}</div>
-<div>{% trans "Paid sales" %} : {{ taxes.paid_sales_for_period }}</div>
-<div>{% trans "Rate" %} : {{ taxes.tax_rate }}%</div>
-<div>{% trans "Amount to pay" %} : {% blocktrans with taxes.amount_to_pay as amount_to_pay and taxes.tax_due_date as tax_due_date %}{{ amount_to_pay }} before {{ tax_due_date }}{% endblocktrans %}</div>
+<span id="show_current_period">{% trans "current period" %}</span>
+&nbsp;-&nbsp;
+<span id="show_next_period">{% trans "next period" %}</span>
+
+<div id="current_period">
+    <div>{% trans "Period" %} : {% blocktrans with taxes.period_begin as period_begin and taxes.period_end as period_end %}{{ period_begin }} to {{ period_end }}{% endblocktrans %}</div>
+    <div>{% trans "Paid sales" %} : {{ taxes.paid_sales_for_period }}</div>
+    <div>{% trans "Rate" %} : {{ taxes.tax_rate }}%</div>
+    <div>{% trans "Amount to pay" %} : {% blocktrans with taxes.amount_to_pay as amount_to_pay and taxes.tax_due_date as tax_due_date %}{{ amount_to_pay }} before {{ tax_due_date }}{% endblocktrans %}</div>
+</div>
+
+<div id="next_period">
+    <div>{% trans "Period" %} : {% blocktrans with next_taxes.period_begin as period_begin and next_taxes.period_end as period_end %}{{ period_begin }} to {{ period_end }}{% endblocktrans %}</div>
+    <div>{% trans "Paid sales" %} : {{ next_taxes.paid_sales_for_period }}</div>
+    <div>{% trans "Rate" %} : {{ next_taxes.tax_rate }}%</div>
+    <div>{% trans "Amount to pay" %} : {% blocktrans with next_taxes.amount_to_pay as amount_to_pay and next_taxes.tax_due_date as tax_due_date %}{{ amount_to_pay }} before {{ tax_due_date }}{% endblocktrans %}</div>
+</div>

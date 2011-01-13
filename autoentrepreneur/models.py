@@ -115,9 +115,9 @@ class UserProfile(models.Model):
                                                   owner=self).aggregate(quantity=Sum('quantity'))
         return quantity_sum['quantity'] or 0
 
-    def get_period_for_tax(self):
+    def get_period_for_tax(self, reference_date=None):
         begin_date = end_date = None
-        current_date = datetime.date.today()
+        current_date = reference_date or datetime.date.today()
 
         if self.payment_option == AUTOENTREPRENEUR_PAYMENT_OPTION_MONTHLY:
             if current_date.month == 1:
@@ -169,11 +169,11 @@ class UserProfile(models.Model):
                                             paid_date__lte=end_date).aggregate(sales=Sum('amount'))
         return amount_sum['sales'] or 0
 
-    def get_tax_rate(self):
+    def get_tax_rate(self, reference_date=None):
         tax_rate = 0
         if not self.activity:
             return tax_rate
-        today = datetime.date.today()
+        today = reference_date or datetime.date.today()
 
         if self.creation_help:
             year = self.creation_date.year + 1
@@ -213,6 +213,18 @@ class UserProfile(models.Model):
                 tax_rate = TAX_RATE_WITHOUT_FREEING[self.activity][3]
 
         return tax_rate
+
+    def get_pay_date(self, end_date=None):
+        pay_date = None
+        if end_date:
+            year = end_date.year
+            if end_date.month == 12:
+                year = year + 1
+            pay_date = datetime.date(year,
+                                     (end_date.month + 2) % 12 or 12,
+                                     1) - datetime.timedelta(1)
+        return pay_date
+
 
     def get_first_invoice_paid_date(self):
         return Invoice.objects.aggregate(min_date=Min('paid_date'))['min_date']

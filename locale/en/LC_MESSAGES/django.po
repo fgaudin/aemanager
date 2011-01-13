@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-13 02:07+0100\n"
+"POT-Creation-Date: 2011-01-14 00:08+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -146,7 +146,7 @@ msgid "Sum of invoice row amount can't exceed proposal amount"
 msgstr ""
 
 #: accounts/views.py:42 templates/menu.html:46
-#: templates/core/charts_widget.html:35
+#: templates/core/charts_widget.html:37
 msgid "Expenses"
 msgstr ""
 
@@ -190,7 +190,7 @@ msgstr ""
 msgid "Amount invoiced for proposal can't be greater than proposal amount"
 msgstr ""
 
-#: accounts/views.py:235 contact/views.py:66 core/views.py:169
+#: accounts/views.py:235 contact/views.py:66 core/views.py:185
 #: project/views.py:61 project/views.py:153 project/views.py:351
 msgid "Data provided are invalid"
 msgstr ""
@@ -433,15 +433,15 @@ msgstr ""
 msgid "Delete a contact"
 msgstr ""
 
-#: core/views.py:139 templates/menu.html:9 templates/core/index.html:3
+#: core/views.py:154 templates/menu.html:9 templates/core/index.html:3
 msgid "Dashboard"
 msgstr ""
 
-#: core/views.py:166
+#: core/views.py:182
 msgid "Your settings have been updated successfully"
 msgstr ""
 
-#: core/views.py:177 templates/menu.html:79
+#: core/views.py:193 templates/menu.html:79
 msgid "Settings"
 msgstr ""
 
@@ -831,11 +831,12 @@ msgid "Charts"
 msgstr ""
 
 #: templates/core/charts_widget.html:12 templates/core/sales_widget.html:35
-#: templates/core/sales_widget.html:48 templates/core/taxes_widget.html:5
+#: templates/core/sales_widget.html:48 templates/core/taxes_widget.html:34
+#: templates/core/taxes_widget.html:41
 msgid "Paid sales"
 msgstr ""
 
-#: templates/core/charts_widget.html:13
+#: templates/core/charts_widget.html:13 templates/core/charts_widget.html:36
 msgid "Waiting"
 msgstr ""
 
@@ -848,11 +849,11 @@ msgstr ""
 msgid "Remaining"
 msgstr ""
 
-#: templates/core/charts_widget.html:34 templates/core/sales_widget.html:28
+#: templates/core/charts_widget.html:35 templates/core/sales_widget.html:28
 msgid "Sales"
 msgstr ""
 
-#: templates/core/charts_widget.html:36
+#: templates/core/charts_widget.html:38
 msgid "Profit"
 msgstr ""
 
@@ -916,28 +917,36 @@ msgstr ""
 msgid "Limit"
 msgstr ""
 
-#: templates/core/taxes_widget.html:3
+#: templates/core/taxes_widget.html:27
 msgid "Taxes"
 msgstr ""
 
-#: templates/core/taxes_widget.html:4
+#: templates/core/taxes_widget.html:28
+msgid "current period"
+msgstr ""
+
+#: templates/core/taxes_widget.html:30
+msgid "next period"
+msgstr ""
+
+#: templates/core/taxes_widget.html:33 templates/core/taxes_widget.html:40
 msgid "Period"
 msgstr ""
 
-#: templates/core/taxes_widget.html:4
+#: templates/core/taxes_widget.html:33 templates/core/taxes_widget.html:40
 #, python-format
 msgid "%(period_begin)s to %(period_end)s"
 msgstr ""
 
-#: templates/core/taxes_widget.html:6
+#: templates/core/taxes_widget.html:35 templates/core/taxes_widget.html:42
 msgid "Rate"
 msgstr ""
 
-#: templates/core/taxes_widget.html:7
+#: templates/core/taxes_widget.html:36 templates/core/taxes_widget.html:43
 msgid "Amount to pay"
 msgstr ""
 
-#: templates/core/taxes_widget.html:7
+#: templates/core/taxes_widget.html:36 templates/core/taxes_widget.html:43
 #, python-format
 msgid "%(amount_to_pay)s before %(tax_due_date)s"
 msgstr ""

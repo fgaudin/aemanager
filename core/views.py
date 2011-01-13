@@ -40,12 +40,20 @@ def index(request):
     tax_rate = user.get_profile().get_tax_rate()
     amount_to_pay = float(amount_paid_for_tax) * float(tax_rate) / 100
 
+    pay_date = user.get_profile().get_pay_date(end_date)
+
+    next_begin_date, next_end_date = user.get_profile().get_period_for_tax(pay_date + datetime.timedelta(1))
+    next_pay_date = user.get_profile().get_pay_date(next_end_date)
+    next_amount_paid_for_tax = user.get_profile().get_paid_sales_for_period(next_begin_date, next_end_date)
+    next_tax_rate = user.get_profile().get_tax_rate(next_begin_date)
+    next_amount_to_pay = float(next_amount_paid_for_tax) * float(next_tax_rate) / 100
+
     min_date = user.get_profile().get_first_invoice_paid_date()
     if min_date < one_year_back:
-        begin_date = one_year_back
+        chart_begin_date = one_year_back
     else:
-        begin_date = min_date
-    invoices = user.get_profile().get_paid_invoices(begin_date=begin_date)
+        chart_begin_date = min_date
+    invoices = user.get_profile().get_paid_invoices(begin_date=chart_begin_date)
     sales_progression = []
     last = 0.0
     for invoice in invoices:
@@ -65,7 +73,7 @@ def index(request):
 
     expenses_progression = []
     last = 0.0
-    for expense in Expense.objects.filter(date__gte=begin_date).order_by(('date')):
+    for expense in Expense.objects.filter(date__gte=chart_begin_date).order_by(('date')):
         amount = last + float(expense.amount)
         expenses_progression.append([int(time.mktime(expense.date.timetuple())*1000), amount])
         last = amount
@@ -91,15 +99,6 @@ def index(request):
                 expense_amount = current_expense[1]
                 profit_progression.append([current_expense[0], invoice_amount - expense_amount])
                 expense_counter = expense_counter + 1
-
-    pay_date = None
-    if end_date:
-        year = end_date.year
-        if end_date.year == 12:
-            year = end_date.year + 1
-        pay_date = datetime.date(year,
-                                 (end_date.month + 2) % 12 or 12,
-                                 1) - datetime.timedelta(1)
 
     sales = {'paid': paid,
              'waiting': waiting,
@@ -138,6 +137,13 @@ def index(request):
              'amount_to_pay': amount_to_pay,
              'tax_due_date': pay_date}
 
+    next_taxes = {'period_begin': next_begin_date,
+                  'period_end': next_end_date,
+                  'paid_sales_for_period': next_amount_paid_for_tax,
+                  'tax_rate': next_tax_rate,
+                  'amount_to_pay': next_amount_to_pay,
+                  'tax_due_date': next_pay_date}
+
     charts = {'sales_progression':simplejson.dumps(sales_progression),
               'waiting_progression':simplejson.dumps(waiting_progression),
               'expenses_progression':simplejson.dumps(expenses_progression),
@@ -152,6 +158,7 @@ def index(request):
                                'invoices': invoices,
                                'prospects': prospects,
                                'taxes': taxes,
+                               'next_taxes': next_taxes,
                                'charts': charts},
                               context_instance=RequestContext(request))
 
