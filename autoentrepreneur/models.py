@@ -54,21 +54,25 @@ class UserProfile(models.Model):
     freeing_tax_payment = models.BooleanField(verbose_name=_('Freeing tax payment')) # versement liberatoire
     payment_option = models.IntegerField(choices=AUTOENTREPRENEUR_PAYMENT_OPTION, blank=True, null=True, verbose_name=_('Payment option'))
 
-    def get_sales_limit(self):
+    def get_sales_limit(self, year=None):
         today = datetime.date.today()
+        if not year:
+            year = today.year
         if self.activity:
-            if self.creation_date and self.creation_date.year == today.year:
-                worked_days = datetime.date(today.year + 1, 1, 1) - self.creation_date
-                days_in_year = datetime.date(today.year + 1, 1, 1) - datetime.date(today.year, 1, 1)
+            if self.creation_date and self.creation_date.year == year:
+                worked_days = datetime.date(year + 1, 1, 1) - self.creation_date
+                days_in_year = datetime.date(year + 1, 1, 1) - datetime.date(year, 1, 1)
                 return int(round(float(SALES_LIMIT[self.activity]) * worked_days.days / days_in_year.days))
             else:
                 return SALES_LIMIT[self.activity]
         return 0
 
-    def get_paid_sales(self):
+    def get_paid_sales(self, year=None):
+        if not year:
+            year = datetime.date.today().year
         amount_sum = Invoice.objects.filter(state=INVOICE_STATE_PAID,
                                             owner=self,
-                                            paid_date__year=datetime.date.today().year).aggregate(sales=Sum('amount'))
+                                            paid_date__year=year).aggregate(sales=Sum('amount'))
         return amount_sum['sales'] or 0
 
     def get_waiting_invoices(self):

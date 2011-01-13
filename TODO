@@ -1,4 +1,5 @@
-- ajouter dans onglet widget CA N-1
+- afficher courbe CA - dépense
+- afficher courbe paiement en attente
 - ajouter dans onglet widget taxe en cours
 - TU taxes sur tableau de bord
 - TU sur dépenses
@@ -6,8 +7,6 @@
 - PDF : générer dynamiquemnt, stocker quand nécessaire
 - TU génération PDF
 - TU facture solde devis
-- afficher courbe CA - dépense
-- afficher courbe paiement en attente
 - passer méthodes pour dashboard dans classes métier
 - Bouton "payer" taxes
 - gérer pagination dans les dépenses

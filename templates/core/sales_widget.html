@@ -1,14 +1,56 @@
 {% load i18n %}
 {% load arithmetictags %}
 
+<script language="javascript" type="text/javascript">
+jQuery(document).ready(function(){
+    show_current_year = function(e){
+        e.preventDefault();
+        jQuery('#show_previous_year').html('<a href="#">' + jQuery('#show_previous_year').text() + '</a>');
+        jQuery('#show_current_year').html('<strong>' + jQuery('#show_current_year').text() + '</strong>');
+        jQuery('#current_year').show();
+        jQuery('#previous_year').hide();
+    };
+
+    show_previous_year = function(e){
+        e.preventDefault();
+        jQuery('#show_current_year').html('<a href="#">' + jQuery('#show_current_year').text() + '</a>');
+        jQuery('#show_previous_year').html('<strong>' + jQuery('#show_previous_year').text() + '</strong>');
+        jQuery('#previous_year').show();
+        jQuery('#current_year').hide();
+    };
+
+    jQuery('#show_current_year').click(show_current_year);
+    jQuery('#show_previous_year').click(show_previous_year);
+    jQuery('#show_current_year').click();
+});
+</script>
+
 <h2>{% trans "Sales" %}</h2>
-<div>{% trans "Paid sales" %} : {{ sales.paid }}</div>
-<div>{% trans "Waiting payments" %} : {{ sales.waiting }}</div>
-<div>{% trans "To be invoiced" %} : {{ sales.to_be_invoiced }}</div>
-<div>{% trans "Total" %} : {{ sales.total }}</div>
-{% if sales.remaining >= 0 %}
-<div>{% trans "Remaining" %} : {{ sales.remaining }}</div>
-{% else %}
-<div class="overrun">{% trans "Overrun" %} : {{ sales.remaining|absolute }}</div>
+{% if sales_previous_year %}
+<span id="show_current_year">{{ years.0 }}</span>
+&nbsp;-&nbsp;
+<span id="show_previous_year">{{ years.1 }}</span>
 {% endif %}
-<div>{% trans "Limit" %} : {{ sales.limit }}</div>
+<div id="current_year">
+    <div>{% trans "Paid sales" %} : {{ sales.paid }}</div>
+    <div>{% trans "Waiting payments" %} : {{ sales.waiting }}</div>
+    <div>{% trans "To be invoiced" %} : {{ sales.to_be_invoiced }}</div>
+    <div>{% trans "Total" %} : {{ sales.total }}</div>
+    {% if sales.remaining >= 0 %}
+    <div>{% trans "Remaining" %} : {{ sales.remaining }}</div>
+    {% else %}
+    <div class="overrun">{% trans "Overrun" %} : {{ sales.remaining|absolute }}</div>
+    {% endif %}
+    <div>{% trans "Limit" %} : {{ sales.limit }}</div>
+</div>
+{% if sales_previous_year %}
+<div id="previous_year">
+    <div>{% trans "Paid sales" %} : {{ sales_previous_year.paid }}</div>
+    {% if sales_previous_year.remaining >= 0 %}
+    <div>{% trans "Remaining" %} : {{ sales_previous_year.remaining }}</div>
+    {% else %}
+    <div class="overrun">{% trans "Overrun" %} : {{ sales_previous_year.remaining|absolute }}</div>
+    {% endif %}
+    <div>{% trans "Limit" %} : {{ sales_previous_year.limit }}</div>
+</div>
+{% endif %}
