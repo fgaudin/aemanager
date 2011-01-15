@@ -1,6 +1,24 @@
 [
     {
         "pk": 1,
+        "model": "auth.user",
+        "fields": {
+            "username": "test",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": true,
+            "is_staff": true,
+            "last_login": "2010-10-20 23:27:35",
+            "groups": [],
+            "user_permissions": [],
+            "password": "sha1$48fcb$16ec7192e10c51d005ac11827ffe8ff62220307e",
+            "email": "test@example.com",
+            "date_joined": "2010-10-20 23:27:15"
+        }
+    },
+    {
+        "pk": 1,
         "model": "autoentrepreneur.userprofile",
         "fields": {
             "payment_option": 1,
@@ -353,10 +371,9 @@
     },
     {
         "pk": 9,
-        "model": "project.invoice",
+        "model": "accounts.invoice",
         "fields": {
             "payment_date": "2010-07-12",
-            "balance_payments": false,
             "execution_end_date": null,
             "penalty_rate": null,
             "invoice_id": 1,
@@ -365,17 +382,16 @@
             "state": 3,
             "execution_begin_date": null,
             "paid_date": "2010-07-15",
+            "payment_type": 1,
             "discount_conditions": "",
-            "proposal": 7,
             "edition_date": "2010-07-10"
         }
     },
     {
         "pk": 11,
-        "model": "project.invoice",
+        "model": "accounts.invoice",
         "fields": {
             "payment_date": "2010-07-17",
-            "balance_payments": true,
             "execution_end_date": null,
             "penalty_rate": null,
             "invoice_id": 2,
@@ -384,17 +400,16 @@
             "state": 3,
             "execution_begin_date": null,
             "paid_date": "2010-07-20",
+            "payment_type": 1,
             "discount_conditions": "",
-            "proposal": 7,
             "edition_date": "2010-07-15"
         }
     },
     {
         "pk": 15,
-        "model": "project.invoice",
+        "model": "accounts.invoice",
         "fields": {
             "payment_date": "2010-08-05",
-            "balance_payments": true,
             "execution_end_date": null,
             "penalty_rate": null,
             "invoice_id": 3,
@@ -403,17 +418,16 @@
             "state": 3,
             "execution_begin_date": null,
             "paid_date": "2010-08-10",
+            "payment_type": 1,
             "discount_conditions": "",
-            "proposal": 13,
             "edition_date": "2010-07-31"
         }
     },
     {
         "pk": 20,
-        "model": "project.invoice",
+        "model": "accounts.invoice",
         "fields": {
             "payment_date": "2010-08-15",
-            "balance_payments": false,
             "execution_end_date": null,
             "penalty_rate": null,
             "invoice_id": 4,
@@ -422,17 +436,16 @@
             "state": 2,
             "execution_begin_date": null,
             "paid_date": null,
+            "payment_type": 1,
             "discount_conditions": "",
-            "proposal": 18,
             "edition_date": "2010-08-10"
         }
     },
     {
         "pk": 22,
-        "model": "project.invoice",
+        "model": "accounts.invoice",
         "fields": {
             "payment_date": "2010-08-30",
-            "balance_payments": true,
             "execution_end_date": null,
             "penalty_rate": null,
             "invoice_id": 5,
@@ -441,8 +454,8 @@
             "state": 1,
             "execution_begin_date": null,
             "paid_date": null,
+            "payment_type": 1,
             "discount_conditions": "",
-            "proposal": 18,
             "edition_date": "2010-08-20"
         }
     },
@@ -508,75 +521,67 @@
     },
     {
         "pk": 10,
-        "model": "project.invoicerow",
+        "model": "accounts.invoicerow",
         "fields": {
             "category": 1,
             "quantity": "7",
             "invoice": 9,
+            "balance_payments": false,
+            "proposal": 7,
             "unit_price": "200",
             "label": "Service"
         }
     },
     {
         "pk": 12,
-        "model": "project.invoicerow",
+        "model": "accounts.invoicerow",
         "fields": {
             "category": 1,
             "quantity": "3",
             "invoice": 11,
+            "balance_payments": true,
+            "proposal": 7,
             "unit_price": "200",
             "label": "Service"
         }
     },
     {
         "pk": 16,
-        "model": "project.invoicerow",
+        "model": "accounts.invoicerow",
         "fields": {
             "category": 1,
             "quantity": "10",
             "invoice": 15,
+            "balance_payments": true,
+            "proposal": 13,
             "unit_price": "300",
             "label": "Service"
         }
     },
     {
         "pk": 21,
-        "model": "project.invoicerow",
+        "model": "accounts.invoicerow",
         "fields": {
             "category": 1,
             "quantity": "10",
             "invoice": 20,
+            "balance_payments": false,
+            "proposal": 18,
             "unit_price": "150",
             "label": "Service"
         }
     },
     {
         "pk": 23,
-        "model": "project.invoicerow",
+        "model": "accounts.invoicerow",
         "fields": {
             "category": 1,
             "quantity": "5",
             "invoice": 22,
+            "balance_payments": true,
+            "proposal": 18,
             "unit_price": "150",
             "label": "Service"
-        }
-    },
-    {
-        "pk": 1,
-        "model": "auth.user",
-        "fields": {
-            "username": "test",
-            "first_name": "",
-            "last_name": "",
-            "is_active": true,
-            "is_superuser": true,
-            "is_staff": true,
-            "last_login": "2010-10-20 23:27:35",
-            "groups": [],
-            "user_permissions": [],
-            "password": "sha1$48fcb$16ec7192e10c51d005ac11827ffe8ff62220307e",
-            "email": "test@example.com",
-            "date_joined": "2010-10-20 23:27:15"
         }
     }
 ]

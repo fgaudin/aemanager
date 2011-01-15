@@ -1,3 +1,4 @@
+from project.models import PROPOSAL_STATE_BALANCED
 import datetimestub
 import autoentrepreneur
 autoentrepreneur.models.datetime = datetimestub.DatetimeStub()
@@ -6,7 +7,7 @@ from core.models import OwnedObject
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.core.urlresolvers import reverse
-from project.models import Invoice
+from accounts.models import Invoice
 
 class PermissionTest(TestCase):
     def test_save_owned_object(self):
@@ -84,11 +85,15 @@ class DashboardTest(TestCase):
         Tests computation of overrun
         """
         i = Invoice.objects.get(invoice_id=4)
-        p = i.proposal
+        row = i.invoice_rows.all()[0]
+        p = row.proposal
         p.amount = p.amount + 8933
         p.save()
         i.amount = i.amount + 8933
         i.save()
+        row.quantity = 1
+        row.unit_price = i.amount
+        row.save()
         response = self.client.get(reverse('index'))
         self.assertEqual(response.context['sales']['remaining'], -1)
 

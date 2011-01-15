@@ -1,4 +1,3 @@
-- corriger TU accounts
 - TU taxes sur tableau de bord
 - TU sur dépenses
 - gérer localisation des nombres
@@ -13,4 +12,5 @@
 - faire page changement de mot de passe
 - faire page création utilisateur
 - TU prospects sur tableau de bord
+- ajouter statut "abandonné" sur devis
 - switcher sur postgres

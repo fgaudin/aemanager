@@ -6,7 +6,8 @@ from project.models import Project, PROJECT_STATE_PROSPECT, \
     PROJECT_STATE_FINISHED, Proposal, PROPOSAL_STATE_DRAFT, ROW_CATEGORY_SERVICE, \
     PROPOSAL_STATE_SENT, ROW_CATEGORY_PRODUCT, ProposalRow, \
     ProposalAmountError
-from accounts.models import Invoice, InvoiceRow, INVOICE_STATE_EDITED
+from accounts.models import Invoice, InvoiceRow, INVOICE_STATE_EDITED, \
+    PAYMENT_TYPE_CHECK
 import datetime
 
 class ProjectTest(TestCase):
@@ -397,6 +398,7 @@ class ProposalTest(TestCase):
                                    edition_date=datetime.date(2010, 8, 31),
                                    payment_date=datetime.date(2010, 9, 30),
                                    paid_date=None,
+                                   payment_type=PAYMENT_TYPE_CHECK,
                                    execution_begin_date=datetime.date(2010, 8, 1),
                                    execution_end_date=datetime.date(2010, 8, 7),
                                    penalty_date=datetime.date(2010, 10, 8),
@@ -443,6 +445,7 @@ class ProposalTest(TestCase):
                                    edition_date=datetime.date(2010, 8, 31),
                                    payment_date=datetime.date(2010, 9, 30),
                                    paid_date=None,
+                                   payment_type=PAYMENT_TYPE_CHECK,
                                    execution_begin_date=datetime.date(2010, 8, 1),
                                    execution_end_date=datetime.date(2010, 8, 7),
                                    penalty_date=datetime.date(2010, 10, 8),
@@ -466,6 +469,7 @@ class ProposalTest(TestCase):
                                     edition_date=datetime.date(2010, 8, 31),
                                     payment_date=datetime.date(2010, 9, 30),
                                     paid_date=None,
+                                    payment_type=PAYMENT_TYPE_CHECK,
                                     execution_begin_date=datetime.date(2010, 8, 1),
                                     execution_end_date=datetime.date(2010, 8, 7),
                                     penalty_date=datetime.date(2010, 10, 8),
