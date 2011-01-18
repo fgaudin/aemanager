@@ -125,16 +125,26 @@ class UserProfile(models.Model):
             next_year = next_year + 1
         return (next_quarter, next_year)
 
-    def get_first_period_payment_date(self, creation_date):
-        first_quarter = self.get_quarter(self.creation_date)
-        second_quarter = self.get_next_quarter(first_quarter[0], first_quarter[1])
-        third_quarter = self.get_next_quarter(second_quarter[0], second_quarter[1])
-        payment_date = datetime.date(third_quarter[1], third_quarter[0] * 3 - 1, 1) - datetime.timedelta(1)
+    def get_first_period_payment_date(self):
+        if self.payment_option == AUTOENTREPRENEUR_PAYMENT_OPTION_QUATERLY:
+            first_quarter = self.get_quarter(self.creation_date)
+            second_quarter = self.get_next_quarter(first_quarter[0], first_quarter[1])
+            third_quarter = self.get_next_quarter(second_quarter[0], second_quarter[1])
+            payment_date = datetime.date(third_quarter[1], third_quarter[0] * 3 - 1, 1) - datetime.timedelta(1)
+        else:
+            payment_date = datetime.date(self.creation_date.year + self.creation_date.month // 9,
+                                         (self.creation_date.month + 3) % 12 + 1,
+                                         1)
         return payment_date
 
     def get_period_for_tax(self, reference_date=None):
         begin_date = end_date = None
         current_date = reference_date or datetime.date.today()
+        first_period = False
+        first_payment_date = self.get_first_period_payment_date()
+        if current_date <= first_payment_date:
+            current_date = first_payment_date
+            first_period = True
 
         if self.payment_option == AUTOENTREPRENEUR_PAYMENT_OPTION_MONTHLY:
             if current_date.month == 1:
@@ -142,24 +152,9 @@ class UserProfile(models.Model):
                 end_date = datetime.date(current_date.year - 1, 12, 31)
             else:
                 begin_date = datetime.date(current_date.year, current_date.month - 1, 1)
-                end_date = datetime.date(current_date.year, current_date.month - 1, 31)
-
-            year = self.creation_date.year
-            if self.creation_date.month >= 10:
-                year = self.creation_date.year + 1
-            first_date = datetime.date(year,
-                                       (self.creation_date.month + 4) % 12 or 12,
-                                       1) - datetime.timedelta(1)
-
-            if begin_date < first_date:
-                begin_date = self.creation_date
+                end_date = datetime.date(current_date.year, current_date.month, 1) - datetime.timedelta(1)
 
         elif self.payment_option == AUTOENTREPRENEUR_PAYMENT_OPTION_QUATERLY:
-            first_period = False
-            first_payment_date = self.get_first_period_payment_date(self.creation_date)
-            if current_date <= first_payment_date:
-                current_date = first_payment_date
-                first_period = True
             if current_date.month == 1:
                 begin_date = datetime.date(current_date.year - 1, 10, 1)
                 end_date = datetime.date(current_date.year - 1, 12, 31)
@@ -175,8 +170,8 @@ class UserProfile(models.Model):
             else:
                 begin_date = datetime.date(current_date.year, 10, 1)
                 end_date = datetime.date(current_date.year, 12, 31)
-            if first_period:
-                begin_date = self.creation_date
+        if first_period:
+            begin_date = self.creation_date
 
         return begin_date, end_date
 
