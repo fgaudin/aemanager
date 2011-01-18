@@ -1,5 +1,8 @@
 from autoentrepreneur.models import AUTOENTREPRENEUR_PAYMENT_OPTION_QUATERLY, \
-    AUTOENTREPRENEUR_PAYMENT_OPTION_MONTHLY
+    AUTOENTREPRENEUR_PAYMENT_OPTION_MONTHLY, \
+    AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC, \
+    AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC, AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC, \
+    AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC
 import datetimestub
 import autoentrepreneur
 autoentrepreneur.models.datetime = datetimestub.DatetimeStub()
@@ -425,3 +428,65 @@ class TaxTest(TestCase):
         begin_date, end_date = profile.get_period_for_tax()
         self.assertEquals(begin_date, datetimestub.DatetimeStub.date(2010, 11, 1))
         self.assertEquals(end_date, datetimestub.DatetimeStub.date(2010, 11, 30))
+
+    def testBaseRate(self):
+        """
+        Without creation help and without freeing tax payment
+        http://www.lautoentrepreneur.fr/questions_reponses.htm#Couts1
+        """
+        profile = self.user.get_profile()
+        profile.creation_date = datetimestub.DatetimeStub.date(2011, 1, 1)
+        profile.freeing_tax_payment = False
+        profile.creation_help = False
+        profile.save()
+
+        autoentrepreneur.models.datetime.date.mock_year = 2011
+        autoentrepreneur.models.datetime.date.mock_month = 1
+        autoentrepreneur.models.datetime.date.mock_day = 1
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 12.0)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 21.3)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 21.3)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 18.3)
+
+    def testRateWithFreeingTaxPayment(self):
+        """
+        Without creation help and with freeing tax payment
+        http://www.lautoentrepreneur.fr/questions_reponses.htm#Couts1
+        """
+        profile = self.user.get_profile()
+        profile.creation_date = datetimestub.DatetimeStub.date(2011, 1, 1)
+        profile.freeing_tax_payment = True
+        profile.creation_help = False
+        profile.save()
+
+        autoentrepreneur.models.datetime.date.mock_year = 2011
+        autoentrepreneur.models.datetime.date.mock_month = 1
+        autoentrepreneur.models.datetime.date.mock_day = 1
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 13.0)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 23.0)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 23.5)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 20.5)
