@@ -115,6 +115,23 @@ class UserProfile(models.Model):
                                                   owner=self).aggregate(quantity=Sum('quantity'))
         return quantity_sum['quantity'] or 0
 
+    def get_quarter(self, date):
+        return ((date.month + 2) // 3, date.year)
+
+    def get_next_quarter(self, quarter, year):
+        next_quarter = quarter % 4 + 1
+        next_year = year
+        if quarter == 4:
+            next_year = next_year + 1
+        return (next_quarter, next_year)
+
+    def get_first_period_payment_date(self, creation_date):
+        first_quarter = self.get_quarter(self.creation_date)
+        second_quarter = self.get_next_quarter(first_quarter[0], first_quarter[1])
+        third_quarter = self.get_next_quarter(second_quarter[0], second_quarter[1])
+        payment_date = datetime.date(third_quarter[1], third_quarter[0] * 3 - 1, 1) - datetime.timedelta(1)
+        return payment_date
+
     def get_period_for_tax(self, reference_date=None):
         begin_date = end_date = None
         current_date = reference_date or datetime.date.today()
@@ -138,8 +155,11 @@ class UserProfile(models.Model):
                 begin_date = self.creation_date
 
         elif self.payment_option == AUTOENTREPRENEUR_PAYMENT_OPTION_QUATERLY:
-            if self.creation_date > current_date - datetime.timedelta(90):
-                current_date = current_date + datetime.timedelta(90)
+            first_period = False
+            first_payment_date = self.get_first_period_payment_date(self.creation_date)
+            if current_date <= first_payment_date:
+                current_date = first_payment_date
+                first_period = True
             if current_date.month == 1:
                 begin_date = datetime.date(current_date.year - 1, 10, 1)
                 end_date = datetime.date(current_date.year - 1, 12, 31)
@@ -155,8 +175,8 @@ class UserProfile(models.Model):
             else:
                 begin_date = datetime.date(current_date.year, 10, 1)
                 end_date = datetime.date(current_date.year, 12, 31)
-            if self.creation_date > begin_date - datetime.timedelta(90):
-                    begin_date = self.creation_date
+            if first_period:
+                begin_date = self.creation_date
 
         return begin_date, end_date
 

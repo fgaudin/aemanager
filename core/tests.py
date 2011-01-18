@@ -1,4 +1,4 @@
-from project.models import PROPOSAL_STATE_BALANCED
+from autoentrepreneur.models import AUTOENTREPRENEUR_PAYMENT_OPTION_QUATERLY
 import datetimestub
 import autoentrepreneur
 autoentrepreneur.models.datetime = datetimestub.DatetimeStub()
@@ -118,3 +118,132 @@ class DashboardTest(TestCase):
         """
         response = self.client.get(reverse('index'))
         self.assertEqual(set(response.context['invoices']['to_send']), set([Invoice.objects.get(invoice_id=5)]))
+
+class TaxTest(TestCase):
+
+    def setUp(self):
+        user = User.objects.create_user('test_user', 'test@example.com', 'test')
+        self.user = authenticate(username='test_user', password='test')
+
+    def testGetQuarter(self):
+        self.assertEquals(self.user.get_profile().get_quarter(datetimestub.DatetimeStub.date(2011, 1, 1)), (1, 2011))
+        self.assertEquals(self.user.get_profile().get_quarter(datetimestub.DatetimeStub.date(2011, 2, 1)), (1, 2011))
+        self.assertEquals(self.user.get_profile().get_quarter(datetimestub.DatetimeStub.date(2011, 3, 1)), (1, 2011))
+        self.assertEquals(self.user.get_profile().get_quarter(datetimestub.DatetimeStub.date(2011, 4, 1)), (2, 2011))
+        self.assertEquals(self.user.get_profile().get_quarter(datetimestub.DatetimeStub.date(2011, 5, 1)), (2, 2011))
+        self.assertEquals(self.user.get_profile().get_quarter(datetimestub.DatetimeStub.date(2011, 6, 1)), (2, 2011))
+        self.assertEquals(self.user.get_profile().get_quarter(datetimestub.DatetimeStub.date(2011, 7, 1)), (3, 2011))
+        self.assertEquals(self.user.get_profile().get_quarter(datetimestub.DatetimeStub.date(2011, 8, 1)), (3, 2011))
+        self.assertEquals(self.user.get_profile().get_quarter(datetimestub.DatetimeStub.date(2011, 9, 1)), (3, 2011))
+        self.assertEquals(self.user.get_profile().get_quarter(datetimestub.DatetimeStub.date(2011, 10, 1)), (4, 2011))
+        self.assertEquals(self.user.get_profile().get_quarter(datetimestub.DatetimeStub.date(2011, 11, 1)), (4, 2011))
+        self.assertEquals(self.user.get_profile().get_quarter(datetimestub.DatetimeStub.date(2011, 12, 1)), (4, 2011))
+
+    def testPeriodQuaterlyFirstPayment(self):
+        """
+        Periodicite trimestrielle
+        La premiere declaration trimestrielle porte sur la periode comprise
+        entre le debut d'activite et la fin du trimestre civil qui suit.
+        http://www.lautoentrepreneur.fr/questions_reponses.htm#Couts5
+        """
+        profile = self.user.get_profile()
+        profile.payment_option = AUTOENTREPRENEUR_PAYMENT_OPTION_QUATERLY
+        profile.save()
+
+        autoentrepreneur.models.datetime.date.mock_year = 2011
+        autoentrepreneur.models.datetime.date.mock_month = 1
+        autoentrepreneur.models.datetime.date.mock_day = 1
+
+        profile.creation_date = datetimestub.DatetimeStub.date(2011, 1, 1)
+        profile.save()
+        begin_date, end_date = profile.get_period_for_tax()
+        self.assertEquals(begin_date, datetimestub.DatetimeStub.date(2011, 1, 1))
+        self.assertEquals(end_date, datetimestub.DatetimeStub.date(2011, 6, 30))
+
+        profile.creation_date = datetimestub.DatetimeStub.date(2010, 12, 31)
+        profile.save()
+        begin_date, end_date = profile.get_period_for_tax()
+        self.assertEquals(begin_date, datetimestub.DatetimeStub.date(2010, 12, 31))
+        self.assertEquals(end_date, datetimestub.DatetimeStub.date(2011, 3, 31))
+
+        # first case of www.lautoentrepreneur.fr
+        profile.creation_date = datetimestub.DatetimeStub.date(2010, 2, 1)
+        profile.save()
+
+        autoentrepreneur.models.datetime.date.mock_year = 2010
+        autoentrepreneur.models.datetime.date.mock_month = 2
+        autoentrepreneur.models.datetime.date.mock_day = 1
+
+        begin_date, end_date = profile.get_period_for_tax()
+        self.assertEquals(begin_date, datetimestub.DatetimeStub.date(2010, 2, 1))
+        self.assertEquals(end_date, datetimestub.DatetimeStub.date(2010, 6, 30))
+
+        autoentrepreneur.models.datetime.date.mock_year = 2010
+        autoentrepreneur.models.datetime.date.mock_month = 3
+        autoentrepreneur.models.datetime.date.mock_day = 1
+        begin_date, end_date = profile.get_period_for_tax()
+        self.assertEquals(begin_date, datetimestub.DatetimeStub.date(2010, 2, 1))
+        self.assertEquals(end_date, datetimestub.DatetimeStub.date(2010, 6, 30))
+
+        autoentrepreneur.models.datetime.date.mock_year = 2010
+        autoentrepreneur.models.datetime.date.mock_month = 5
+        autoentrepreneur.models.datetime.date.mock_day = 31
+        begin_date, end_date = profile.get_period_for_tax()
+        self.assertEquals(begin_date, datetimestub.DatetimeStub.date(2010, 2, 1))
+        self.assertEquals(end_date, datetimestub.DatetimeStub.date(2010, 6, 30))
+
+        autoentrepreneur.models.datetime.date.mock_year = 2010
+        autoentrepreneur.models.datetime.date.mock_month = 6
+        autoentrepreneur.models.datetime.date.mock_day = 30
+        begin_date, end_date = profile.get_period_for_tax()
+        self.assertEquals(begin_date, datetimestub.DatetimeStub.date(2010, 2, 1))
+        self.assertEquals(end_date, datetimestub.DatetimeStub.date(2010, 6, 30))
+
+        autoentrepreneur.models.datetime.date.mock_year = 2010
+        autoentrepreneur.models.datetime.date.mock_month = 7
+        autoentrepreneur.models.datetime.date.mock_day = 1
+        begin_date, end_date = profile.get_period_for_tax()
+        self.assertEquals(begin_date, datetimestub.DatetimeStub.date(2010, 2, 1))
+        self.assertEquals(end_date, datetimestub.DatetimeStub.date(2010, 6, 30))
+
+
+        # second case of www.lautoentrepreneur.fr
+        profile.creation_date = datetimestub.DatetimeStub.date(2010, 7, 10)
+        profile.save()
+
+        autoentrepreneur.models.datetime.date.mock_year = 2010
+        autoentrepreneur.models.datetime.date.mock_month = 7
+        autoentrepreneur.models.datetime.date.mock_day = 10
+
+        begin_date, end_date = profile.get_period_for_tax()
+        self.assertEquals(begin_date, datetimestub.DatetimeStub.date(2010, 7, 10))
+        self.assertEquals(end_date, datetimestub.DatetimeStub.date(2010, 12, 31))
+
+        autoentrepreneur.models.datetime.date.mock_year = 2010
+        autoentrepreneur.models.datetime.date.mock_month = 8
+        autoentrepreneur.models.datetime.date.mock_day = 10
+
+        begin_date, end_date = profile.get_period_for_tax()
+        self.assertEquals(begin_date, datetimestub.DatetimeStub.date(2010, 7, 10))
+        self.assertEquals(end_date, datetimestub.DatetimeStub.date(2010, 12, 31))
+
+        autoentrepreneur.models.datetime.date.mock_year = 2010
+        autoentrepreneur.models.datetime.date.mock_month = 12
+        autoentrepreneur.models.datetime.date.mock_day = 31
+
+        begin_date, end_date = profile.get_period_for_tax()
+        self.assertEquals(begin_date, datetimestub.DatetimeStub.date(2010, 7, 10))
+        self.assertEquals(end_date, datetimestub.DatetimeStub.date(2010, 12, 31))
+
+        autoentrepreneur.models.datetime.date.mock_year = 2011
+        autoentrepreneur.models.datetime.date.mock_month = 1
+        autoentrepreneur.models.datetime.date.mock_day = 31
+
+        begin_date, end_date = profile.get_period_for_tax()
+        self.assertEquals(begin_date, datetimestub.DatetimeStub.date(2010, 7, 10))
+        self.assertEquals(end_date, datetimestub.DatetimeStub.date(2010, 12, 31))
+
+    def testPeriodQuaterlySecondPayment(self):
+        pass
+
+
