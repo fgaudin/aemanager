@@ -5,4 +5,8 @@ urlpatterns = patterns('core.views',
         regex=r'^$',
         view='settings_edit',
         name='settings_edit'),
+    url(
+        regex=r'^change_password/$',
+        view='change_password',
+        name='change_password'),
 )

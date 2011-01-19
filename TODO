@@ -6,10 +6,11 @@
 - gérer pagination dans les dépenses
 - TU changement d'année
 - débugger contacts (contacts liés)
-- faire page changement de mot de passe
 - faire page création utilisateur
 - TU prospects sur tableau de bord
 - ajouter statut "abandonné" sur devis
 - secu sur toutes les vues pour n'accéder qu'aux objets qu'on possède
+- supprimer utilisation du rst
+- refaire génération facture (comme livre des recettes) avec multipage
 - switcher sur postgres
 - import fichier QIF pour dépenses

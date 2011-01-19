@@ -3,6 +3,7 @@ from autoentrepreneur.models import AUTOENTREPRENEUR_PAYMENT_OPTION_QUATERLY, \
     AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC, \
     AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC, AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC, \
     AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC
+from django.utils.translation import ugettext
 import datetimestub
 import autoentrepreneur
 autoentrepreneur.models.datetime = datetimestub.DatetimeStub()
@@ -34,6 +35,50 @@ class PermissionTest(TestCase):
         ownedObject2 = OwnedObject()
         ownedObject2.save(user=admin)
         self.assertEqual(ownedObject2.owner, admin)
+
+class ChangePasswordTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user('test_user', 'test@example.com', 'test')
+        self.client.login(username='test_user', password='test')
+
+    def test_get_page(self):
+        response = self.client.get(reverse('change_password'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_fields_mandatory(self):
+        response = self.client.post(reverse('change_password'),
+                                    {'current_password': '',
+                                     'new_password': '',
+                                     'retyped_new_password': ''})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('current_password' in response.context['passwordform'].errors)
+        self.assertTrue('new_password' in response.context['passwordform'].errors)
+        self.assertTrue('retyped_new_password' in response.context['passwordform'].errors)
+
+    def test_wrong_current_password(self):
+        response = self.client.post(reverse('change_password'),
+                                    {'current_password': 'test2',
+                                     'new_password': 'test3',
+                                     'retyped_new_password': 'test3'})
+        self.assertContains(response, ugettext("Wrong password"), status_code=200)
+
+    def test_password_doesnt_match(self):
+        response = self.client.post(reverse('change_password'),
+                                    {'current_password': 'test',
+                                     'new_password': 'test1',
+                                     'retyped_new_password': 'test2'})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('retyped_new_password' in response.context['passwordform'].errors)
+
+    def test_password_changed(self):
+        response = self.client.post(reverse('change_password'),
+                                    {'current_password': 'test',
+                                     'new_password': 'test2',
+                                     'retyped_new_password': 'test2'})
+        self.assertContains(response, ugettext("Your password has been modified successfully"), status_code=200)
+        self.client.logout()
+        logged_in = self.client.login(username='test_user', password='test2')
+        self.assertTrue(logged_in)
 
 class DashboardTest(TestCase):
     fixtures = ['test_dashboard']

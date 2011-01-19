@@ -1,7 +1,7 @@
 from django.shortcuts import render_to_response, redirect
 from django.template.context import RequestContext
 from django.utils.translation import ugettext_lazy as _
-from core.forms import UserForm
+from core.forms import UserForm, PasswordForm
 from autoentrepreneur.forms import UserProfileForm
 from contact.forms import AddressForm
 from django.db.transaction import commit_on_success
@@ -194,4 +194,28 @@ def settings_edit(request):
                                'userform': userform,
                                'profileform': profileform,
                                'addressform': addressform},
+                              context_instance=RequestContext(request))
+
+@login_required
+@commit_on_success
+def change_password(request):
+    user = request.user
+    if request.method == 'POST':
+        passwordform = PasswordForm(request.POST)
+        if passwordform.is_valid():
+            if user.check_password(passwordform.cleaned_data.get('current_password')):
+                user.set_password(passwordform.cleaned_data.get('new_password'))
+                user.save()
+                messages.success(request, _('Your password has been modified successfully'))
+            else:
+                messages.error(request, _('Wrong password'))
+        else:
+            messages.error(request, _('Your password has not been modified'))
+    else:
+        passwordform = PasswordForm()
+
+    return render_to_response('core/change_password.html',
+                              {'active': 'account',
+                               'title': _('Change password'),
+                               'passwordform': passwordform},
                               context_instance=RequestContext(request))
