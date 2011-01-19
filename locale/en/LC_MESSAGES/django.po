@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-14 00:08+0100\n"
+"POT-Creation-Date: 2011-01-20 00:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,6 +31,15 @@ msgstr ""
 #: templates/project/detail.html:32 templates/project/detail.html.py:60
 #: templates/proposal/detail.html:84
 msgid "Amount"
+msgstr ""
+
+#: accounts/forms.py:14 accounts/models.py:52
+msgid "Penalty rate"
+msgstr ""
+
+#: accounts/forms.py:21 accounts/views.py:384 project/forms.py:39
+#: templates/invoice/detail.html:73 templates/proposal/detail.html:55
+msgid "Unit price"
 msgstr ""
 
 #: accounts/models.py:15
@@ -118,10 +127,6 @@ msgstr ""
 
 #: accounts/models.py:51
 msgid "Penalty date"
-msgstr ""
-
-#: accounts/models.py:52
-msgid "Penalty rate"
 msgstr ""
 
 #: accounts/models.py:53
@@ -226,11 +231,6 @@ msgstr ""
 #: accounts/views.py:384 templates/invoice/detail.html:72
 #: templates/proposal/detail.html:54
 msgid "Quantity"
-msgstr ""
-
-#: accounts/views.py:384 templates/invoice/detail.html:73
-#: templates/proposal/detail.html:55
-msgid "Unit price"
 msgstr ""
 
 #: accounts/views.py:384 templates/core/sales_widget.html:38
@@ -433,6 +433,30 @@ msgstr ""
 msgid "Delete a contact"
 msgstr ""
 
+#: core/forms.py:13
+msgid "Current password"
+msgstr ""
+
+#: core/forms.py:14
+msgid "New password"
+msgstr ""
+
+#: core/forms.py:15
+msgid "Retype password"
+msgstr ""
+
+#: core/forms.py:23
+msgid "Password doesn't match"
+msgstr ""
+
+#: core/tests.py:63 core/views.py:211
+msgid "Wrong password"
+msgstr ""
+
+#: core/tests.py:78 core/views.py:209
+msgid "Your password has been modified successfully"
+msgstr ""
+
 #: core/views.py:154 templates/menu.html:9 templates/core/index.html:3
 msgid "Dashboard"
 msgstr ""
@@ -443,6 +467,14 @@ msgstr ""
 
 #: core/views.py:193 templates/menu.html:79
 msgid "Settings"
+msgstr ""
+
+#: core/views.py:213
+msgid "Your password has not been modified"
+msgstr ""
+
+#: core/views.py:219 templates/menu.html:82
+msgid "Change password"
 msgstr ""
 
 #: project/forms.py:8 project/forms.py:30
@@ -768,10 +800,6 @@ msgstr ""
 msgid "My account"
 msgstr ""
 
-#: templates/menu.html:82
-msgid "Change password"
-msgstr ""
-
 #: templates/menu.html:90
 msgid "Logout"
 msgstr ""
@@ -800,7 +828,7 @@ msgstr ""
 
 #: templates/contact/edit.html:119 templates/contract/edit.html:49
 #: templates/core/settings_edit.html:20 templates/invoice/edit.html:56
-#: templates/project/edit.html:23 templates/proposal/edit.html:69
+#: templates/project/edit.html:23 templates/proposal/edit.html:66
 msgid "Save"
 msgstr ""
 
@@ -822,8 +850,12 @@ msgstr ""
 msgid "download pdf file"
 msgstr ""
 
-#: templates/contract/edit.html:40 templates/proposal/edit.html:60
+#: templates/contract/edit.html:40 templates/proposal/edit.html:57
 msgid "Keywords you can use"
+msgstr ""
+
+#: templates/core/change_password.html:14
+msgid "Change"
 msgstr ""
 
 #: templates/core/charts_widget.html:4
@@ -981,7 +1013,7 @@ msgid "Exported file"
 msgstr ""
 
 #: templates/invoice/detail.html:62 templates/invoice/edit.html:45
-#: templates/proposal/detail.html:46 templates/proposal/edit.html:41
+#: templates/proposal/detail.html:46 templates/proposal/edit.html:38
 msgid "Detail rows"
 msgstr ""
 
