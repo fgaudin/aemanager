@@ -192,7 +192,7 @@ class UserProfile(models.Model):
 
         if self.creation_help:
             year = self.creation_date.year + 1
-            month = (self.creation_date.month - 1) // 3 * 3 + 1
+            month = self.get_quarter(self.creation_date)[0] * 3 - 1
             first_period_end_date = datetime.date(year, month, 1) - datetime.timedelta(1)
             second_period_end_date = datetime.date(first_period_end_date.year + 1,
                                                    first_period_end_date.month,

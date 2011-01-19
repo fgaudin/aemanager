@@ -490,3 +490,306 @@ class TaxTest(TestCase):
         profile.activity = AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC
         profile.save()
         self.assertEquals(profile.get_tax_rate(), 20.5)
+
+    def testRateWithCreationHelpWithoutFreeingTaxPayment(self):
+        """
+        With creation help and without freeing tax payment
+        http://www.lautoentrepreneur.fr/questions_reponses.htm#Couts1
+        """
+        profile = self.user.get_profile()
+        profile.creation_date = datetimestub.DatetimeStub.date(2007, 1, 1)
+        profile.freeing_tax_payment = False
+        profile.creation_help = True
+        profile.save()
+
+        autoentrepreneur.models.datetime.date.mock_year = 2007
+        autoentrepreneur.models.datetime.date.mock_month = 1
+        autoentrepreneur.models.datetime.date.mock_day = 1
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 3.0)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 5.4)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 5.4)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 5.3)
+
+        autoentrepreneur.models.datetime.date.mock_year = 2008
+        autoentrepreneur.models.datetime.date.mock_month = 1
+        autoentrepreneur.models.datetime.date.mock_day = 31
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 3.0)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 5.4)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 5.4)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 5.3)
+
+        autoentrepreneur.models.datetime.date.mock_year = 2008
+        autoentrepreneur.models.datetime.date.mock_month = 2
+        autoentrepreneur.models.datetime.date.mock_day = 1
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 6.0)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 10.7)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 10.7)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 9.2)
+
+        autoentrepreneur.models.datetime.date.mock_year = 2009
+        autoentrepreneur.models.datetime.date.mock_month = 1
+        autoentrepreneur.models.datetime.date.mock_day = 31
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 6.0)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 10.7)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 10.7)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 9.2)
+
+        autoentrepreneur.models.datetime.date.mock_year = 2009
+        autoentrepreneur.models.datetime.date.mock_month = 2
+        autoentrepreneur.models.datetime.date.mock_day = 1
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 9.0)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 16.0)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 16.0)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 13.8)
+
+        autoentrepreneur.models.datetime.date.mock_year = 2010
+        autoentrepreneur.models.datetime.date.mock_month = 1
+        autoentrepreneur.models.datetime.date.mock_day = 31
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 9.0)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 16.0)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 16.0)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 13.8)
+
+        autoentrepreneur.models.datetime.date.mock_year = 2010
+        autoentrepreneur.models.datetime.date.mock_month = 2
+        autoentrepreneur.models.datetime.date.mock_day = 1
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 12.0)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 21.3)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 21.3)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 18.3)
+
+    def testRateWithCreationHelpWithFreeingTaxPayment(self):
+        """
+        With creation help and freeing tax payment
+        http://www.lautoentrepreneur.fr/questions_reponses.htm#Couts1
+        """
+        profile = self.user.get_profile()
+        profile.creation_date = datetimestub.DatetimeStub.date(2007, 1, 1)
+        profile.freeing_tax_payment = True
+        profile.creation_help = True
+        profile.save()
+
+        autoentrepreneur.models.datetime.date.mock_year = 2007
+        autoentrepreneur.models.datetime.date.mock_month = 1
+        autoentrepreneur.models.datetime.date.mock_day = 1
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 4.0)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 7.1)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 7.6)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 7.5)
+
+        autoentrepreneur.models.datetime.date.mock_year = 2008
+        autoentrepreneur.models.datetime.date.mock_month = 1
+        autoentrepreneur.models.datetime.date.mock_day = 31
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 4.0)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 7.1)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 7.6)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 7.5)
+
+        autoentrepreneur.models.datetime.date.mock_year = 2008
+        autoentrepreneur.models.datetime.date.mock_month = 2
+        autoentrepreneur.models.datetime.date.mock_day = 1
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 7.0)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 12.4)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 12.9)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 11.4)
+
+        autoentrepreneur.models.datetime.date.mock_year = 2009
+        autoentrepreneur.models.datetime.date.mock_month = 1
+        autoentrepreneur.models.datetime.date.mock_day = 31
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 7.0)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 12.4)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 12.9)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 11.4)
+
+        autoentrepreneur.models.datetime.date.mock_year = 2009
+        autoentrepreneur.models.datetime.date.mock_month = 2
+        autoentrepreneur.models.datetime.date.mock_day = 1
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 10.0)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 17.7)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 18.2)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 16.0)
+
+        autoentrepreneur.models.datetime.date.mock_year = 2010
+        autoentrepreneur.models.datetime.date.mock_month = 1
+        autoentrepreneur.models.datetime.date.mock_day = 31
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 10.0)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 17.7)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 18.2)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 16.0)
+
+        autoentrepreneur.models.datetime.date.mock_year = 2010
+        autoentrepreneur.models.datetime.date.mock_month = 2
+        autoentrepreneur.models.datetime.date.mock_day = 1
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 13.0)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 23.0)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 23.5)
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 20.5)
+

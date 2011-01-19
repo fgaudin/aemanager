@@ -1,4 +1,3 @@
-- TU taxes sur tableau de bord
 - secu sur toutes les vues pour n'accéder qu'aux objets qu'on possède
 - TU sur dépenses
 - gérer localisation des nombres
@@ -14,4 +13,5 @@
 - faire page création utilisateur
 - TU prospects sur tableau de bord
 - ajouter statut "abandonné" sur devis
+- import fichier QIF pour dépenses
 - switcher sur postgres
