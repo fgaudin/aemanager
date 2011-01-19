@@ -4,8 +4,10 @@ from project.models import Proposal, PROPOSAL_STATE_DRAFT, ROW_CATEGORY_SERVICE,
     ROW_CATEGORY_PRODUCT
 from accounts.models import INVOICE_STATE_EDITED, Invoice, InvoiceRow, \
     INVOICE_STATE_SENT, InvoiceRowAmountError, PAYMENT_TYPE_CHECK, \
-    PAYMENT_TYPE_CASH
+    PAYMENT_TYPE_CASH, Expense
 from django.contrib.auth.models import User
+from django.utils import simplejson
+from django.utils.formats import localize
 import datetime
 
 class InvoiceTest(TestCase):
@@ -465,3 +467,107 @@ class InvoiceTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTrue('invoice_id' in response.context['invoiceForm'].errors)
+
+class ExpenseTest(TestCase):
+    fixtures = ['test_users', ]
+
+    def setUp(self):
+        self.client.login(username='test', password='test')
+
+    def testList(self):
+        expense1 = Expense.objects.create(date=datetime.date(2010, 1, 1),
+                                          reference='ABCD',
+                                          amount='100.0',
+                                          payment_type=PAYMENT_TYPE_CHECK,
+                                          description='First expense',
+                                          owner_id=1)
+        expense2 = Expense.objects.create(date=datetime.date(2010, 2, 1),
+                                          reference='BCDE',
+                                          amount='200.0',
+                                          payment_type=PAYMENT_TYPE_CASH,
+                                          description='Second expense',
+                                          owner_id=1)
+        expense3 = Expense.objects.create(date=datetime.date(2010, 3, 1),
+                                          reference='CDEF',
+                                          amount='300.0',
+                                          payment_type=PAYMENT_TYPE_CHECK,
+                                          description='Third expense',
+                                          owner_id=1)
+
+        expenses = [expense1, expense2, expense3]
+
+        response = self.client.get(reverse('expense_list'))
+        expense_list = response.context['expenses'].all()
+        self.assertEquals(set(expense_list), set(expenses))
+
+    def testPostAdd(self):
+        response = self.client.post(reverse('expense_add'),
+                                    {'date': datetime.date(2010, 4, 1),
+                                     'reference': 'DEFG',
+                                     'amount': '400',
+                                     'payment_type': PAYMENT_TYPE_CASH,
+                                     'description': 'Add payment'})
+
+        result = Expense.objects.filter(date=datetime.date(2010, 4, 1),
+                                        reference='DEFG',
+                                        amount='400.0',
+                                        payment_type=PAYMENT_TYPE_CASH,
+                                        description='Add payment',
+                                        owner__id=1)
+        self.assertEqual(len(result), 1)
+        json_response = simplejson.loads(response.content)
+        self.assertEquals(json_response, {u'date': localize(datetime.date(2010, 4, 1)),
+                                          u'reference': 'DEFG',
+                                          u'amount': '400',
+                                          u'payment_type': PAYMENT_TYPE_CASH,
+                                          u'payment_type_label': 'Cash',
+                                          u'description': 'Add payment',
+                                          u'id': result[0].id,
+                                          u'error': 'ok'})
+
+    def testPostEdit(self):
+        expense1 = Expense.objects.create(date=datetime.date(2010, 1, 1),
+                                          reference='ABCD',
+                                          amount='100.0',
+                                          payment_type=PAYMENT_TYPE_CHECK,
+                                          description='First expense',
+                                          owner_id=1)
+        response = self.client.post(reverse('expense_edit') + '?id=%d' % (expense1.id),
+                                    {'date': datetime.date(2010, 4, 1),
+                                     'reference': 'DEFG',
+                                     'amount': '400',
+                                     'payment_type': PAYMENT_TYPE_CASH,
+                                     'description': 'Edit payment'})
+
+        result = Expense.objects.filter(date=datetime.date(2010, 4, 1),
+                                        reference='DEFG',
+                                        amount='400.0',
+                                        payment_type=PAYMENT_TYPE_CASH,
+                                        description='Edit payment',
+                                        owner__id=1)
+        self.assertEqual(len(result), 1)
+        json_response = simplejson.loads(response.content)
+        self.assertEquals(json_response, {u'date': localize(datetime.date(2010, 4, 1)),
+                                          u'reference': 'DEFG',
+                                          u'amount': '400',
+                                          u'payment_type': PAYMENT_TYPE_CASH,
+                                          u'payment_type_label': 'Cash',
+                                          u'description': 'Edit payment',
+                                          u'id': expense1.id,
+                                          u'error': 'ok'})
+
+    def testPostDelete(self):
+        expense1 = Expense.objects.create(date=datetime.date(2010, 1, 1),
+                                          reference='ABCD',
+                                          amount='100.0',
+                                          payment_type=PAYMENT_TYPE_CHECK,
+                                          description='First expense',
+                                          owner_id=1)
+        response = self.client.post(reverse('expense_delete'),
+                                    {'id': expense1.id})
+
+        result = Expense.objects.all()
+        self.assertEqual(len(result), 0)
+        json_response = simplejson.loads(response.content)
+        self.assertEquals(json_response, {u'id': expense1.id,
+                                          u'error': 'ok'})
