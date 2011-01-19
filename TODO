@@ -1,4 +1,3 @@
-- gérer localisation des nombres
 - PDF : générer dynamiquemnt, stocker quand nécessaire
 - TU génération PDF
 - TU facture solde devis
@@ -11,6 +10,6 @@
 - faire page création utilisateur
 - TU prospects sur tableau de bord
 - ajouter statut "abandonné" sur devis
-- import fichier QIF pour dépenses
 - secu sur toutes les vues pour n'accéder qu'aux objets qu'on possède
 - switcher sur postgres
+- import fichier QIF pour dépenses

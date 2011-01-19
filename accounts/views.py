@@ -248,7 +248,7 @@ def invoice_create_or_edit(request, id=None, customer_id=None):
 
 
     return render_to_response('invoice/edit.html',
-                              {'active': 'business',
+                              {'active': 'accounts',
                                'title': title,
                                'invoiceForm': invoiceForm,
                                'invoicerowformset': invoicerowformset},
@@ -259,7 +259,7 @@ def invoice_detail(request, id):
     invoice = get_object_or_404(Invoice, pk=id, owner=request.user)
 
     return render_to_response('invoice/detail.html',
-                              {'active': 'business',
+                              {'active': 'accounts',
                                'title': _('Invoice for %s') % (invoice.customer),
                                'invoice': invoice},
                                context_instance=RequestContext(request))
@@ -278,7 +278,7 @@ def invoice_delete(request, id):
             return redirect(reverse('invoice_detail', kwargs={'id': invoice.id}))
 
     return render_to_response('delete.html',
-                              {'active': 'business',
+                              {'active': 'accounts',
                                'title': _('Delete an invoice'),
                                'object_label': "invoice #%d" % (invoice.id)},
                                context_instance=RequestContext(request))

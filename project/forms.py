@@ -33,9 +33,11 @@ class ProposalForm(ModelForm):
 
     class Meta:
         model = Proposal
-        exclude = ['owner', 'project', 'update_date']
+        exclude = ['owner', 'project', 'update_date', 'amount']
 
 class ProposalRowForm(ModelForm):
+    unit_price = forms.DecimalField(max_digits=12, decimal_places=2, label=_('Unit price'), localize=True)
+
     class Meta:
         model = ProposalRow
         exclude = ['owner']

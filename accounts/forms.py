@@ -11,11 +11,15 @@ class ExpenseForm(ModelForm):
         exclude = ['owner']
 
 class InvoiceForm(ModelForm):
+    penalty_rate = forms.DecimalField(max_digits=4, decimal_places=2, label=_('Penalty rate'), localize=True)
+
     class Meta:
         model = Invoice
         exclude = ['owner', 'proposal']
 
 class InvoiceRowForm(ModelForm):
+    unit_price = forms.DecimalField(max_digits=12, decimal_places=2, label=_('Unit price'), localize=True)
+
     class Meta:
         model = InvoiceRow
         exclude = ['owner']
