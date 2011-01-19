@@ -4,7 +4,7 @@ from project.models import Proposal, PROPOSAL_STATE_DRAFT, ROW_CATEGORY_SERVICE,
     ROW_CATEGORY_PRODUCT
 from accounts.models import INVOICE_STATE_EDITED, Invoice, InvoiceRow, \
     INVOICE_STATE_SENT, InvoiceRowAmountError, PAYMENT_TYPE_CHECK, \
-    PAYMENT_TYPE_CASH, Expense
+    PAYMENT_TYPE_CASH, Expense, INVOICE_STATE_PAID
 from django.contrib.auth.models import User
 from django.utils import simplejson
 from django.utils.formats import localize
@@ -23,6 +23,64 @@ class InvoiceTest(TestCase):
                                                 contract_content='Content of contract',
                                                 amount=2005,
                                                 owner_id=1)
+
+    def testList(self):
+        profile = User.objects.get(pk=1).get_profile()
+        profile.creation_date = datetime.date(2010, 1, 1)
+        profile.save()
+        i = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                   invoice_id=1,
+                                   state=INVOICE_STATE_PAID,
+                                   amount='100',
+                                   edition_date=datetime.date(2010, 8, 31),
+                                   payment_date=datetime.date(2010, 9, 30),
+                                   paid_date=None,
+                                   payment_type=PAYMENT_TYPE_CHECK,
+                                   execution_begin_date=datetime.date(2010, 8, 1),
+                                   execution_end_date=datetime.date(2010, 8, 7),
+                                   penalty_date=datetime.date(2010, 10, 8),
+                                   penalty_rate='1.5',
+                                   discount_conditions='Nothing',
+                                   owner_id=1)
+
+        i_row = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=10,
+                                          unit_price='10',
+                                          balance_payments=False,
+                                          owner_id=1)
+
+        i2 = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                    invoice_id=2,
+                                    state=INVOICE_STATE_EDITED,
+                                    amount='200',
+                                    edition_date=datetime.date(2010, 8, 31),
+                                    payment_date=datetime.date(2010, 9, 30),
+                                    paid_date=None,
+                                    payment_type=PAYMENT_TYPE_CHECK,
+                                    execution_begin_date=datetime.date(2010, 8, 1),
+                                    execution_end_date=datetime.date(2010, 8, 7),
+                                    penalty_date=datetime.date(2010, 10, 8),
+                                    penalty_rate='1.5',
+                                    discount_conditions='Nothing',
+                                    owner_id=1)
+
+        i2_row = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                          invoice_id=i2.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=10,
+                                          unit_price='20',
+                                          balance_payments=False,
+                                          owner_id=1)
+
+        invoices = [i, i2]
+
+        response = self.client.get(reverse('invoice_list'))
+        invoice_list = response.context['invoices'].all()
+        self.assertEquals(set(invoice_list), set(invoices))
 
     def testGetAdd(self):
         """
