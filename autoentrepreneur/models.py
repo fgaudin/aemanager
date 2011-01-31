@@ -4,7 +4,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from contact.models import Address
 from django.db.models.signals import post_save
-from project.models import Proposal, PROPOSAL_STATE_SENT, ProposalRow, PROPOSAL_STATE_DRAFT, PROPOSAL_STATE_ACCEPTED
+from project.models import Proposal, PROPOSAL_STATE_SENT, ProposalRow, PROPOSAL_STATE_DRAFT, PROPOSAL_STATE_ACCEPTED, \
+    PROJECT_STATE_CANCELED, PROJECT_STATE_FINISHED
 
 from django.db.models.aggregates import Sum, Min
 from accounts.models import Invoice, INVOICE_STATE_PAID, INVOICE_STATE_SENT, \
@@ -102,17 +103,17 @@ class UserProfile(models.Model):
 
     def get_potential_sales(self):
         amount_sum = Proposal.objects.filter(state__lte=PROPOSAL_STATE_SENT,
-                                             owner=self).aggregate(sales=Sum('amount'))
+                                             owner=self).exclude(project__state__gte=PROJECT_STATE_FINISHED).aggregate(sales=Sum('amount'))
         return amount_sum['sales'] or 0
 
     def get_proposals_to_send(self):
         proposals = Proposal.objects.filter(state=PROPOSAL_STATE_DRAFT,
-                                            owner=self)
+                                            owner=self).exclude(project__state__gte=PROJECT_STATE_FINISHED)
         return proposals
 
     def get_potential_duration(self):
         quantity_sum = ProposalRow.objects.filter(proposal__state__lte=PROPOSAL_STATE_SENT,
-                                                  owner=self).aggregate(quantity=Sum('quantity'))
+                                                  owner=self).exclude(proposal__project__state__gte=PROJECT_STATE_FINISHED).aggregate(quantity=Sum('quantity'))
         return quantity_sum['quantity'] or 0
 
     def get_quarter(self, date):

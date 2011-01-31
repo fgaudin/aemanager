@@ -114,3 +114,4 @@ INSTALLED_APPS = (
 
 AUTH_PROFILE_MODULE = 'autoentrepreneur.UserProfile'
 LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
