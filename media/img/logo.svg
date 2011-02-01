@@ -25,7 +25,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
-     inkscape:cx="184.48588"
+     inkscape:cx="380.59088"
      inkscape:cy="778.11657"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -51,25 +51,56 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <flowRoot
+    <text
        xml:space="preserve"
-       id="flowRoot2985"
-       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:-4.35999775px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans Bold"
-       transform="matrix(1.1621924,0,0,2.0702033,-19.138078,-194.62111)"
-       inkscape:export-filename="/home/fga/workspace/aemanager/media/img/logo.png"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="354.28571"
+       y="323.07648"
+       id="text3872"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3874"></tspan></text>
+    <g
+       id="g3909"
        inkscape:export-xdpi="72"
-       inkscape:export-ydpi="72"><flowRegion
-         id="flowRegion2987"><rect
-           id="rect2989"
-           width="455.71429"
-           height="55.714287"
-           x="117.14286"
-           y="172.36218"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;letter-spacing:-4.35999775px;word-spacing:0px;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans Bold" /></flowRegion><flowPara
-         id="flowPara2991"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;letter-spacing:-4.35999775px;word-spacing:0px;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans Bold"><flowSpan
-   style="font-style:oblique;font-weight:bold;letter-spacing:-4.35999774999999978px;word-spacing:0px;fill:#ffffff;-inkscape-font-specification:DejaVu Sans Bold Oblique;fill-opacity:1"
-   id="flowSpan3069">Ma</flowSpan>Petite<flowSpan
-   style="font-style:oblique;font-weight:bold;letter-spacing:-4.35999774999999978px;word-spacing:0px;fill:#e26363;-inkscape-font-specification:DejaVu Sans Bold Oblique;fill-opacity:1"
-   id="flowSpan3063">Auto</flowSpan>Entreprise</flowPara></flowRoot>  </g>
+       inkscape:export-ydpi="72"
+       inkscape:export-filename="/home/fga/workspace/aemanager/media/img/logo.png">
+      <flowRoot
+         inkscape:export-ydpi="72"
+         inkscape:export-xdpi="72"
+         inkscape:export-filename="/home/fga/workspace/aemanager/media/img/logo.png"
+         transform="matrix(1.1621924,0,0,2.0702033,-19.138078,-194.62111)"
+         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:-4.35999775px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans Bold"
+         id="flowRoot2985"
+         xml:space="preserve"><flowRegion
+           id="flowRegion2987"><rect
+             style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;letter-spacing:-4.35999775px;word-spacing:0px;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans Bold"
+             y="172.36218"
+             x="117.14286"
+             height="55.714287"
+             width="455.71429"
+             id="rect2989" /></flowRegion><flowPara
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;letter-spacing:-4.35999775px;word-spacing:0px;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans Bold"
+           id="flowPara2991"><flowSpan
+   id="flowSpan3069"
+   style="font-style:oblique;font-weight:bold;letter-spacing:-4.35999775px;word-spacing:0px;fill:#ffffff;fill-opacity:1;-inkscape-font-specification:DejaVu Sans Bold Oblique">Ma</flowSpan>Petite        Entreprise</flowPara></flowRoot>      <flowRoot
+         inkscape:export-ydpi="72"
+         inkscape:export-xdpi="72"
+         inkscape:export-filename="/home/fga/workspace/aemanager/media/img/logo.png"
+         transform="matrix(1.1621924,0,0,2.0702033,171.12212,-193.6116)"
+         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:-4.35999775px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans Bold"
+         id="flowRoot2985-0"
+         xml:space="preserve"><flowRegion
+           id="flowRegion2987-4"><rect
+             style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;letter-spacing:-4.35999775px;word-spacing:0px;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans Bold"
+             y="172.36218"
+             x="117.14286"
+             height="55.024223"
+             width="100.47437"
+             id="rect2989-6" /></flowRegion><flowPara
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;letter-spacing:-4.35999775px;word-spacing:0px;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans Bold"
+           id="flowPara2991-7"><flowSpan
+             id="flowSpan3063-0"
+             style="font-style:oblique;font-weight:bold;letter-spacing:-4.35999775px;word-spacing:0px;fill:#e26363;fill-opacity:1;-inkscape-font-specification:DejaVu Sans Bold Oblique">Auto</flowSpan></flowPara></flowRoot>    </g>
+  </g>
 </svg>
