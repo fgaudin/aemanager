@@ -19,9 +19,10 @@ from contact.models import Contact
 from django.http import HttpResponse
 from django.utils import simplejson
 from accounts.models import Invoice
+from core.decorators import settings_required
 import datetime
 
-@login_required
+@settings_required
 def contract_detail(request, id):
     contract = get_object_or_404(Contract, pk=id, owner=request.user)
 
@@ -31,7 +32,7 @@ def contract_detail(request, id):
                                'contract': contract},
                                context_instance=RequestContext(request))
 
-@login_required
+@settings_required
 @commit_on_success
 def contract_create_or_edit(request, id=None, contact_id=None):
     if id:
@@ -74,7 +75,7 @@ def contract_create_or_edit(request, id=None, contact_id=None):
                                'substitution_keys': keys},
                                context_instance=RequestContext(request))
 
-@login_required
+@settings_required
 @commit_on_success
 def contract_delete(request, id):
     contract = get_object_or_404(Contract, pk=id, owner=request.user)
@@ -93,7 +94,7 @@ def contract_delete(request, id):
                                'object_label': 'contract "%s"' % (contract)},
                                context_instance=RequestContext(request))
 
-@login_required
+@settings_required
 def contract_download(request, id):
     contract = get_object_or_404(Contract, pk=id, owner=request.user)
 
@@ -108,7 +109,7 @@ def contract_download(request, id):
     f.close()
     return response
 
-@login_required
+@settings_required
 def contract_get_content(request):
     contract_id = request.GET.get('id')
     contract = get_object_or_404(Contract, pk=contract_id, owner=request.user)
@@ -116,7 +117,7 @@ def contract_get_content(request):
             'content': contract.content}
     return HttpResponse(simplejson.dumps(data), mimetype='application/javascript')
 
-@login_required
+@settings_required
 def project_detail(request, id):
     project = get_object_or_404(Project, pk=id, owner=request.user)
     invoices = Invoice.objects.filter(invoice_rows__proposal__project=project).distinct()
@@ -128,7 +129,7 @@ def project_detail(request, id):
                                'invoices': invoices},
                                context_instance=RequestContext(request))
 
-@login_required
+@settings_required
 @commit_on_success
 def project_create_or_edit(request, id=None):
     if id:
@@ -160,6 +161,7 @@ def project_create_or_edit(request, id=None):
                                'projectForm': projectForm},
                                context_instance=RequestContext(request))
 
+@settings_required
 def project_running_list(request):
     user = request.user
 
@@ -222,6 +224,7 @@ def project_running_list(request):
                                'search_criteria': data},
                                context_instance=RequestContext(request))
 
+@settings_required
 def project_finished_list(request):
     user = request.user
 
@@ -285,7 +288,7 @@ def project_finished_list(request):
                                context_instance=RequestContext(request))
 
 
-@login_required
+@settings_required
 @commit_on_success
 def project_delete(request, id):
     project = get_object_or_404(Project, pk=id, owner=request.user)
@@ -305,7 +308,7 @@ def project_delete(request, id):
                                context_instance=RequestContext(request))
 
 
-@login_required
+@settings_required
 @commit_on_success
 def proposal_create_or_edit(request, id=None, project_id=None):
     if id:
@@ -367,7 +370,7 @@ def proposal_create_or_edit(request, id=None, project_id=None):
                                'substitution_keys': keys},
                                context_instance=RequestContext(request))
 
-@login_required
+@settings_required
 def proposal_detail(request, id):
     proposal = get_object_or_404(Proposal, pk=id, owner=request.user)
     invoices = Invoice.objects.filter(invoice_rows__proposal=proposal)
@@ -381,7 +384,7 @@ def proposal_detail(request, id):
                                'next_states': next_states},
                                context_instance=RequestContext(request))
 
-@login_required
+@settings_required
 @commit_on_success
 def proposal_delete(request, id):
     proposal = get_object_or_404(Proposal, pk=id, owner=request.user)
@@ -401,7 +404,7 @@ def proposal_delete(request, id):
                                'object_label': "proposal #%d" % (proposal.id)},
                                context_instance=RequestContext(request))
 
-@login_required
+@settings_required
 @commit_on_success
 def proposal_change_state(request, id):
     proposal = get_object_or_404(Proposal, pk=id, owner=request.user)
@@ -413,7 +416,7 @@ def proposal_change_state(request, id):
 
         return redirect(reverse('proposal_detail', kwargs={'id': proposal.id}))
 
-@login_required
+@settings_required
 def proposal_download(request, id):
     proposal = get_object_or_404(Proposal, pk=id, owner=request.user)
 
@@ -428,7 +431,7 @@ def proposal_download(request, id):
     f.close()
     return response
 
-@login_required
+@settings_required
 def proposal_get_contract(request):
     proposal_id = request.GET.get('id')
     proposal = get_object_or_404(Proposal, pk=proposal_id, owner=request.user)

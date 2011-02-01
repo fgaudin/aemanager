@@ -19,6 +19,7 @@ from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.db.models.aggregates import Max
 from custom_canvas import NumberedCanvas
+from core.decorators import settings_required
 import datetime
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.platypus import Paragraph, Frame, Spacer, BaseDocTemplate, PageTemplate
@@ -29,7 +30,7 @@ from reportlab.lib.enums import TA_CENTER
 from reportlab.platypus import Table, TableStyle
 from reportlab.lib import colors
 
-@login_required
+@settings_required
 def expense_list(request):
     user = request.user
     expenses = Expense.objects.filter(owner=user).order_by('-date', '-reference')
@@ -44,7 +45,7 @@ def expense_list(request):
                                'expenses': expenses},
                               context_instance=RequestContext(request))
 
-@login_required
+@settings_required
 @commit_on_success
 def expense_add(request):
     response = {'error': 'ko'}
@@ -70,7 +71,7 @@ def expense_add(request):
     return HttpResponse(simplejson.dumps(response),
                         mimetype='application/javascript')
 
-@login_required
+@settings_required
 @commit_on_success
 def expense_edit(request):
     id = request.GET.get('id')
@@ -97,7 +98,7 @@ def expense_edit(request):
     return HttpResponse(simplejson.dumps(response),
                         mimetype='application/javascript')
 
-@login_required
+@settings_required
 @commit_on_success
 def expense_delete(request):
     response = {'error': 'ko'}
@@ -111,7 +112,7 @@ def expense_delete(request):
     return HttpResponse(simplejson.dumps(response),
                         mimetype='application/javascript')
 
-@login_required
+@settings_required
 def invoice_list(request):
     user = request.user
     invoices = Invoice.objects.filter(owner=user).order_by('-invoice_id')
@@ -123,7 +124,7 @@ def invoice_list(request):
                                'years': years},
                               context_instance=RequestContext(request))
 
-@login_required
+@settings_required
 def invoice_list_export(request):
     user = request.user
 
@@ -180,7 +181,7 @@ def invoice_list_export(request):
     doc.build(story, canvasmaker=NumberedCanvas)
     return response
 
-@login_required
+@settings_required
 @commit_on_success
 def invoice_create_or_edit(request, id=None, customer_id=None):
     if id:
@@ -254,7 +255,7 @@ def invoice_create_or_edit(request, id=None, customer_id=None):
                                'invoicerowformset': invoicerowformset},
                                context_instance=RequestContext(request))
 
-@login_required
+@settings_required
 def invoice_detail(request, id):
     invoice = get_object_or_404(Invoice, pk=id, owner=request.user)
 
@@ -264,7 +265,7 @@ def invoice_detail(request, id):
                                'invoice': invoice},
                                context_instance=RequestContext(request))
 
-@login_required
+@settings_required
 @commit_on_success
 def invoice_delete(request, id):
     invoice = get_object_or_404(Invoice, pk=id, owner=request.user)
@@ -283,7 +284,7 @@ def invoice_delete(request, id):
                                'object_label': "invoice #%d" % (invoice.id)},
                                context_instance=RequestContext(request))
 
-@login_required
+@settings_required
 def invoice_download(request, id):
     invoice = get_object_or_404(Invoice, pk=id, owner=request.user)
     filename = "invoice_%s.pdf" % (invoice.invoice_id)

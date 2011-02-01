@@ -11,8 +11,9 @@ from django.contrib.auth.decorators import login_required
 from django.forms.models import inlineformset_factory
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.db.models.query_utils import Q
+from core.decorators import settings_required
 
-@login_required
+@settings_required
 def contact_detail(request, id):
     contact = get_object_or_404(Contact, pk=id, owner=request.user)
 
@@ -23,7 +24,7 @@ def contact_detail(request, id):
                                context_instance=RequestContext(request))
 
 
-@login_required
+@settings_required
 @commit_on_success
 def contact_create_or_edit(request, id=None):
     if id:
@@ -77,6 +78,7 @@ def contact_create_or_edit(request, id=None):
                                'phonenumberformset': phonenumberformset},
                                context_instance=RequestContext(request))
 
+@settings_required
 def contact_search(request):
     user = request.user
 
@@ -138,7 +140,7 @@ def contact_search(request):
                                'search_criteria': data},
                                context_instance=RequestContext(request))
 
-@login_required
+@settings_required
 @commit_on_success
 def contact_delete(request, id):
     contact = get_object_or_404(Contact, pk=id, owner=request.user)

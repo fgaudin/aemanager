@@ -10,50 +10,52 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils import simplejson
 from accounts.models import Expense
+from core.decorators import settings_required
 import time
 import datetime
 
-@login_required
+@settings_required
 def index(request):
     user = request.user
+    profile = user.get_profile()
     today = datetime.date.today()
     one_year_back = datetime.date(today.year - 1, today.month, today.day)
     first_year = True
-    if one_year_back.year >= user.get_profile().creation_date.year:
+    if one_year_back.year >= profile.creation_date.year:
         first_year = False
 
-    paid = user.get_profile().get_paid_sales()
+    paid = profile.get_paid_sales()
     if not first_year:
-        paid_previous_year = user.get_profile().get_paid_sales(year=one_year_back.year)
-    waiting = user.get_profile().get_waiting_payments()
-    to_be_invoiced = user.get_profile().get_to_be_invoiced()
-    limit = user.get_profile().get_sales_limit()
+        paid_previous_year = profile.get_paid_sales(year=one_year_back.year)
+    waiting = profile.get_waiting_payments()
+    to_be_invoiced = profile.get_to_be_invoiced()
+    limit = profile.get_sales_limit()
     if not first_year:
-        limit_previous_year = user.get_profile().get_sales_limit(year=one_year_back.year)
-    late_invoices = user.get_profile().get_late_invoices()
-    invoices_to_send = user.get_profile().get_invoices_to_send()
-    potential = user.get_profile().get_potential_sales()
-    duration = user.get_profile().get_potential_duration()
-    proposals_to_send = user.get_profile().get_proposals_to_send()
-    begin_date, end_date = user.get_profile().get_period_for_tax()
-    amount_paid_for_tax = user.get_profile().get_paid_sales_for_period(begin_date, end_date)
-    tax_rate = user.get_profile().get_tax_rate()
+        limit_previous_year = profile.get_sales_limit(year=one_year_back.year)
+    late_invoices = profile.get_late_invoices()
+    invoices_to_send = profile.get_invoices_to_send()
+    potential = profile.get_potential_sales()
+    duration = profile.get_potential_duration()
+    proposals_to_send = profile.get_proposals_to_send()
+    begin_date, end_date = profile.get_period_for_tax()
+    amount_paid_for_tax = profile.get_paid_sales_for_period(begin_date, end_date)
+    tax_rate = profile.get_tax_rate()
     amount_to_pay = float(amount_paid_for_tax) * float(tax_rate) / 100
 
-    pay_date = user.get_profile().get_pay_date(end_date)
+    pay_date = profile.get_pay_date(end_date)
 
-    next_begin_date, next_end_date = user.get_profile().get_period_for_tax(pay_date + datetime.timedelta(1))
-    next_pay_date = user.get_profile().get_pay_date(next_end_date)
-    next_amount_paid_for_tax = user.get_profile().get_paid_sales_for_period(next_begin_date, next_end_date)
-    next_tax_rate = user.get_profile().get_tax_rate(next_begin_date)
+    next_begin_date, next_end_date = profile.get_period_for_tax(pay_date + datetime.timedelta(1))
+    next_pay_date = profile.get_pay_date(next_end_date)
+    next_amount_paid_for_tax = profile.get_paid_sales_for_period(next_begin_date, next_end_date)
+    next_tax_rate = profile.get_tax_rate(next_begin_date)
     next_amount_to_pay = float(next_amount_paid_for_tax) * float(next_tax_rate) / 100
 
-    min_date = user.get_profile().get_first_invoice_paid_date()
+    min_date = profile.get_first_invoice_paid_date()
     if min_date < one_year_back:
         chart_begin_date = one_year_back
     else:
         chart_begin_date = min_date
-    invoices = user.get_profile().get_paid_invoices(begin_date=chart_begin_date)
+    invoices = profile.get_paid_invoices(begin_date=chart_begin_date)
     sales_progression = []
     last = 0.0
     for invoice in invoices:
@@ -65,7 +67,7 @@ def index(request):
 
     waiting_progression = []
     waiting_progression.append([int(time.mktime(today.timetuple())*1000), last])
-    waiting_invoices = user.get_profile().get_waiting_invoices()
+    waiting_invoices = profile.get_waiting_invoices()
     for invoice in waiting_invoices:
         amount = last + float(invoice.amount)
         waiting_progression.append([int(time.mktime(invoice.payment_date.timetuple())*1000), amount])

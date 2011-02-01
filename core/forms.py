@@ -5,6 +5,9 @@ from django.forms.widgets import PasswordInput
 from django.utils.translation import ugettext_lazy as _
 
 class UserForm(ModelForm):
+    first_name = forms.CharField(label=_('first name'), max_length=30)
+    last_name = forms.CharField(label=_('last name'), max_length=30)
+
     class Meta:
         model = User
         fields = ['first_name', 'last_name']

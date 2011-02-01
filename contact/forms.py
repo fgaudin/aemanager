@@ -3,8 +3,13 @@ from contact.models import Address, Contact, PhoneNumber, CONTACT_TYPE, \
     CONTACT_TYPE_PERSON
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+from django.forms.widgets import Textarea
 
 class AddressForm(ModelForm):
+    street = forms.CharField(label=_('Street'), widget=Textarea)
+    zipcode = forms.CharField(max_length=10, label=_('Zip code'))
+    city = forms.CharField(max_length=255, label=_('City'))
+
     class Meta:
         model = Address
         exclude = ['owner']

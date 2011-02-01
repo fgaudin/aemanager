@@ -93,6 +93,17 @@ class DashboardTest(TestCase):
         response = self.client.get(reverse('index'))
         self.assertEqual(response.status_code, 200)
 
+    def testGetDashBoardWithNewUser(self):
+        """
+        Tests getting dashboard with a new user
+        In order to test default values
+        """
+        self.client.logout()
+        user = User.objects.create_user('new_user', 'test@example.com', 'test')
+        self.client.login(username='new_user', password='test')
+        response = self.client.get(reverse('index'))
+        self.assertRedirects(response, '/home?next=/', 302, 301)
+
     # test on sales widget
     def testPaidSales(self):
         """

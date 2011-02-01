@@ -55,6 +55,22 @@ class UserProfile(models.Model):
     freeing_tax_payment = models.BooleanField(verbose_name=_('Freeing tax payment')) # versement liberatoire
     payment_option = models.IntegerField(choices=AUTOENTREPRENEUR_PAYMENT_OPTION, blank=True, null=True, verbose_name=_('Payment option'))
 
+    def settings_defined(self):
+        settings_defined = False
+        if self.user.first_name \
+            or self.user.last_name \
+            or self.company_id \
+            or self.address.street \
+            or self.address.zipcode \
+            or self.address.city \
+            or self.activity \
+            or self.creation_date \
+            or self.payment_option:
+
+            settings_defined = True
+
+        return settings_defined
+
     def get_sales_limit(self, year=None):
         today = datetime.date.today()
         if not year:
