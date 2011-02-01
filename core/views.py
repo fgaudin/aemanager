@@ -75,7 +75,8 @@ def index(request):
 
     expenses_progression = []
     last = 0.0
-    for expense in Expense.objects.filter(date__gte=chart_begin_date).order_by(('date')):
+    for expense in Expense.objects.filter(date__gte=chart_begin_date,
+                                          owner=user).order_by(('date')):
         amount = last + float(expense.amount)
         expenses_progression.append([int(time.mktime(expense.date.timetuple())*1000), amount])
         last = amount
