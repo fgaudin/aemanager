@@ -191,7 +191,7 @@ jQuery(document).ready(function(){
                 <td class="description-col">{{ form.description }}</td>
                 <td class="action-col"><input type="submit" id="add" value="{% trans "Add" %}" /></td>
             </tr>
-        {% for expense in expenses %}
+        {% for expense in expenses.object_list %}
            <tr id="{{ expense.id }}" class="{% cycle 'row2' 'row1' %} row">
                 <td class="date-col">{{ expense.date }}</td>
                 <td class="reference-col">{{ expense.reference }}</td>
@@ -203,5 +203,20 @@ jQuery(document).ready(function(){
         {% endfor %}
         </tbody>
     </table>
+</div>
+<div class="pagination">
+    <span class="step-links">
+        {% if expenses.has_previous %}
+            <a href="?page={{ expenses.previous_page_number }}">{% trans "previous" %}</a>
+        {% endif %}
+
+        <span class="current">
+            {% blocktrans with expenses.number as number and expenses.paginator.num_pages as num_pages %}Page {{ number }} of {{ num_pages }}.{% endblocktrans %}
+        </span>
+
+        {% if expenses.has_next %}
+            <a href="?page={{ expenses.next_page_number }}">{% trans "next" %}</a>
+        {% endif %}
+    </span>
 </div>
 {% endblock %}

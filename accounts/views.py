@@ -20,6 +20,7 @@ from django.db import transaction
 from django.db.models.aggregates import Max
 from custom_canvas import NumberedCanvas
 from core.decorators import settings_required
+from django.core.paginator import Paginator, EmptyPage, InvalidPage
 import datetime
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.platypus import Paragraph, Frame, Spacer, BaseDocTemplate, PageTemplate
@@ -33,7 +34,22 @@ from reportlab.lib import colors
 @settings_required
 def expense_list(request):
     user = request.user
-    expenses = Expense.objects.filter(owner=user).order_by('-date', '-reference')
+    expense_list = Expense.objects.filter(owner=user).order_by('-date', '-reference')
+
+    paginator = Paginator(expense_list, 25)
+
+    # Make sure page request is an int. If not, deliver first page.
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+
+    # If page request (9999) is out of range, deliver last page of results.
+    try:
+        expenses = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        expenses = paginator.page(paginator.num_pages)
+
     if request.method == 'POST':
         form = ExpenseForm(request.POST)
     else:
