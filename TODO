@@ -2,14 +2,17 @@
 - TU génération PDF
 - TU facture solde devis
 - passer méthodes pour dashboard dans classes métier
-- Bouton "payer" taxes
 - gérer pagination dans les dépenses
 - TU changement d'année
 - débugger contacts (contacts liés)
-- faire page création utilisateur
+- gestion abonnement paypal
 - TU prospects sur tableau de bord
 - secu sur toutes les vues pour n'accéder qu'aux objets qu'on possède
 - supprimer utilisation du rst
 - refaire génération facture (comme livre des recettes) avec multipage
+- supprimer son compte
+- CGU
+- design page accueil et enregistrement
 - switcher sur postgres
+
 - import fichier QIF pour dépenses

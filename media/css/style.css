@@ -348,3 +348,25 @@ div.big-textarea textarea {
 .overrun {
     color: red;
 }
+
+.login-left {
+    float: left;
+}
+
+.login-right {
+    float: right;
+}
+
+#login-footer {
+    clear: both;
+}
+
+#login-main ul {
+    list-style-image: url("/static/img/bullet.png");
+}
+
+#login-main li {
+    font-size: 2em;
+    font-family: cursive;
+    padding-top:10px;
+}

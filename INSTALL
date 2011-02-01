@@ -19,6 +19,13 @@ Django and other stuff
 ------
 easy_install django django-extensions werkzeug south reportlab rst2pdf
 
+For django-registration :
+
+download source on https://bitbucket.org/ubernostrum/django-registration/src
+
+$ source ~/venv/django1.2/bin/activate
+$ python setup.py install # in registration directory
+
 Aemanager
 ---------
 Clone the git repository :

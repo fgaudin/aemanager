@@ -7,7 +7,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
+    ('contact', 'contact@francoisgaudin.com'),
 )
 
 MANAGERS = ADMINS
@@ -104,6 +104,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django_extensions',
     'south',
+    'registration',
     # aemanager apps
     'accounts',
     'autoentrepreneur',
@@ -113,5 +114,13 @@ INSTALLED_APPS = (
 )
 
 AUTH_PROFILE_MODULE = 'autoentrepreneur.UserProfile'
-LOGIN_URL = '/login/'
+LOGIN_URL = '/user/login/'
+LOGOUT_URL = '/user/logout/'
 LOGIN_REDIRECT_URL = '/'
+ACCOUNT_ACTIVATION_DAYS = 7
+
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 1025
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = False

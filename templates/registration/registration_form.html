@@ -1,0 +1,17 @@
+{% extends "unregistered_base.html" %}
+{% load i18n %}
+
+{% block content %}
+    <form action="" method="post" autocomplete = "off">
+        {% csrf_token %}
+        <fieldset class="module aligned">
+        {% with form as form %}
+        {% include "form.html" %}
+        {% endwith %}
+        </fieldset>
+
+        <div class="submit-row">
+        <input class="default" type="submit" name="action" value="{% trans "Register" %}" />
+        </div>
+    </form>
+{% endblock %}

@@ -838,3 +838,74 @@ class TaxTest(TestCase):
         profile.save()
         self.assertEquals(profile.get_tax_rate(), 20.5)
 
+class RegisterTest(TestCase):
+    def testGetRegisterPage(self):
+        response = self.client.get(reverse('registration_register'))
+        self.assertEqual(response.status_code, 200)
+
+    def testUserCreation(self):
+        response = self.client.post(reverse('registration_register'),
+                                    {'username': 'usertest',
+                                     'email': 'test@test.com',
+                                     'password1': 'test',
+                                     'password2':'test'})
+        self.assertEqual(response.status_code, 302)
+        users = User.objects.filter(username='usertest')
+        self.assertEqual(len(users), 1)
+        self.assertEqual(users[0].email, 'test@test.com')
+
+    def testEmptyFields(self):
+        response = self.client.post(reverse('registration_register'),
+                                    {})
+        self.assertTrue('username' in response.context['form'].errors)
+        self.assertTrue('email' in response.context['form'].errors)
+        self.assertTrue('password1' in response.context['form'].errors)
+        self.assertTrue('password2' in response.context['form'].errors)
+
+    def testUsernameBadFormated(self):
+        response = self.client.post(reverse('registration_register'),
+                                    {'username': 'usertest!!',
+                                     'email': 'test@test.com',
+                                     'password1': 'test',
+                                     'password2':'test'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['form'].errors['username'], ["This value must contain only letters, numbers and underscores."])
+
+    def testUsernameAlreadyExists(self):
+        user = User.objects.create_user('test_user', 'test@example.com', 'test')
+        response = self.client.post(reverse('registration_register'),
+                                    {'username': 'test_user',
+                                     'email': 'test@test.com',
+                                     'password1': 'test',
+                                     'password2':'test'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['form'].errors['username'], ["A user with that username already exists."])
+
+    def testEmailBadFormated(self):
+        response = self.client.post(reverse('registration_register'),
+                                    {'username': 'usertest',
+                                     'email': 'testtest.com',
+                                     'password1': 'test',
+                                     'password2':'test'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['form'].errors['email'], ["Enter a valid e-mail address."])
+
+
+    def testEmailAlreadyExists(self):
+        user = User.objects.create_user('test_user', 'test@example.com', 'test')
+        response = self.client.post(reverse('registration_register'),
+                                    {'username': 'test_user2',
+                                     'email': 'test@example.com',
+                                     'password1': 'test',
+                                     'password2':'test'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['form'].errors['email'], ["This email address is already in use. Please supply a different email address."])
+
+    def testPasswordsDontMatch(self):
+        response = self.client.post(reverse('registration_register'),
+                                    {'username': 'usertest',
+                                     'email': 'test@test.com',
+                                     'password1': 'test',
+                                     'password2':'test2'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['form'].non_field_errors(), ["The two password fields didn't match."])

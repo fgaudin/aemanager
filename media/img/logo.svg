@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.0 r9654"
+   sodipodi:docname="logo.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4"
+     inkscape:cx="184.48588"
+     inkscape:cy="778.11657"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1280"
+     inkscape:window-height="746"
+     inkscape:window-x="-5"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot2985"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:-4.35999775px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans Bold"
+       transform="matrix(1.1621924,0,0,2.0702033,-19.138078,-194.62111)"
+       inkscape:export-filename="/home/fga/workspace/aemanager/media/img/logo.png"
+       inkscape:export-xdpi="72"
+       inkscape:export-ydpi="72"><flowRegion
+         id="flowRegion2987"><rect
+           id="rect2989"
+           width="455.71429"
+           height="55.714287"
+           x="117.14286"
+           y="172.36218"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;letter-spacing:-4.35999775px;word-spacing:0px;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans Bold" /></flowRegion><flowPara
+         id="flowPara2991"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;letter-spacing:-4.35999775px;word-spacing:0px;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans Bold"><flowSpan
+   style="font-style:oblique;font-weight:bold;letter-spacing:-4.35999774999999978px;word-spacing:0px;fill:#ffffff;-inkscape-font-specification:DejaVu Sans Bold Oblique;fill-opacity:1"
+   id="flowSpan3069">Ma</flowSpan>Petite<flowSpan
+   style="font-style:oblique;font-weight:bold;letter-spacing:-4.35999774999999978px;word-spacing:0px;fill:#e26363;-inkscape-font-specification:DejaVu Sans Bold Oblique;fill-opacity:1"
+   id="flowSpan3063">Auto</flowSpan>Entreprise</flowPara></flowRoot>  </g>
+</svg>
