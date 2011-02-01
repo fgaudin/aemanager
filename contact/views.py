@@ -7,7 +7,6 @@ from contact.models import Contact, PhoneNumber
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db.transaction import commit_on_success
-from django.contrib.auth.decorators import login_required
 from django.forms.models import inlineformset_factory
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.db.models.query_utils import Q

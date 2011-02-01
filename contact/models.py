@@ -38,7 +38,7 @@ class Contact(OwnedObject):
     representative = models.CharField(max_length=255, blank=True, default='', verbose_name=_('Representative'))
     representative_function = models.CharField(max_length=100, blank=True, default='', verbose_name=_('Representative function'))
     email = models.EmailField(blank=True, default='', verbose_name=_('Email'))
-    contacts = models.ManyToManyField("Contact", blank=True, null=True, verbose_name=_('Related contacts'))
+    contacts = models.ManyToManyField("self", blank=True, null=True, verbose_name=_('Related contacts'))
     address = models.ForeignKey(Address, verbose_name=_('Address'))
 
     def __unicode__(self):
