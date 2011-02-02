@@ -4,8 +4,8 @@
         "model": "auth.user",
         "fields": {
             "username": "test",
-            "first_name": "",
-            "last_name": "",
+            "first_name": "Pierre",
+            "last_name": "Dupont",
             "is_active": true,
             "is_superuser": true,
             "is_staff": true,
@@ -24,7 +24,7 @@
             "payment_option": 1,
             "creation_help": false,
             "address": 1,
-            "company_id": "",
+            "company_id": "1234567890123",
             "bank_information": "",
             "freeing_tax_payment": false,
             "user": 1,
@@ -37,9 +37,9 @@
         "pk": 1,
         "model": "contact.address",
         "fields": {
-            "city": "",
-            "street": "",
-            "zipcode": "",
+            "city": "Paris",
+            "street": "1 rue de la paix",
+            "zipcode": "75000",
             "country": null
         }
     },

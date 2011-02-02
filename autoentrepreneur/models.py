@@ -58,14 +58,14 @@ class UserProfile(models.Model):
     def settings_defined(self):
         settings_defined = False
         if self.user.first_name \
-            or self.user.last_name \
-            or self.company_id \
-            or self.address.street \
-            or self.address.zipcode \
-            or self.address.city \
-            or self.activity \
-            or self.creation_date \
-            or self.payment_option:
+            and self.user.last_name \
+            and self.company_id \
+            and self.address.street \
+            and self.address.zipcode \
+            and self.address.city \
+            and self.activity \
+            and self.creation_date \
+            and self.payment_option:
 
             settings_defined = True
 
