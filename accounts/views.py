@@ -91,7 +91,7 @@ def expense_add(request):
 @commit_on_success
 def expense_edit(request):
     id = request.GET.get('id')
-    expense = get_object_or_404(Expense, pk=id)
+    expense = get_object_or_404(Expense, pk=id, owner=request.user)
     response = {'error': 'ko'}
     if request.POST:
         form = ExpenseForm(request.POST, instance=expense)
@@ -120,10 +120,10 @@ def expense_delete(request):
     response = {'error': 'ko'}
     if request.POST:
         id = int(request.POST.get('id'))
-        if id:
-            Expense.objects.filter(pk=id).delete()
-            response['error'] = 'ok'
-            response['id'] = id
+        expense = get_object_or_404(Expense, pk=id, owner=request.user)
+        expense.delete()
+        response['error'] = 'ok'
+        response['id'] = id
 
     return HttpResponse(simplejson.dumps(response),
                         mimetype='application/javascript')

@@ -5,10 +5,113 @@ from project.models import Project, PROJECT_STATE_PROSPECT, \
     PROJECT_STATE_PROPOSAL_ACCEPTED, PROJECT_STATE_STARTED, \
     PROJECT_STATE_FINISHED, Proposal, PROPOSAL_STATE_DRAFT, ROW_CATEGORY_SERVICE, \
     PROPOSAL_STATE_SENT, ROW_CATEGORY_PRODUCT, ProposalRow, \
-    ProposalAmountError
+    ProposalAmountError, Contract
 from accounts.models import Invoice, InvoiceRow, INVOICE_STATE_EDITED, \
     PAYMENT_TYPE_CHECK
 import datetime
+
+class ContractPermissionTest(TestCase):
+    fixtures = ['test_users', 'test_contacts']
+
+    def setUp(self):
+        self.client.login(username='test', password='test')
+        self.contract1 = Contract.objects.create(customer_id=10,
+                                                 title="Contract 1",
+                                                 content="Contract content 1",
+                                                 update_date=datetime.date.today(),
+                                                 owner_id=1)
+
+        self.contract2 = Contract.objects.create(customer_id=11,
+                                                 title="Contract 2",
+                                                 content="Contract content 2",
+                                                 update_date=datetime.date.today(),
+                                                 owner_id=2)
+
+    def testContractAdd(self):
+        """
+        Nothing to test
+        """
+        pass
+
+    def testContractEdit(self):
+        response = self.client.get(reverse('contract_edit', kwargs={'id': self.contract2.id}))
+        self.assertEquals(response.status_code, 404)
+        response = self.client.post(reverse('contract_edit', kwargs={'id': self.contract2.id}),
+                                    {'title': 'Contract 3'})
+        self.assertEquals(response.status_code, 404)
+
+    def testContractDetail(self):
+        response = self.client.get(reverse('contract_detail', kwargs={'id': self.contract2.id}))
+        self.assertEquals(response.status_code, 404)
+
+    def testContractDelete(self):
+        response = self.client.get(reverse('contract_delete', kwargs={'id': self.contract2.id}))
+        self.assertEquals(response.status_code, 404)
+        response = self.client.post(reverse('contract_delete', kwargs={'id': self.contract2.id}))
+        self.assertEquals(response.status_code, 404)
+
+    def testContractDownload(self):
+        """
+        Unable to test
+        """
+        pass
+
+    def testContractGetContent(self):
+        response = self.client.get(reverse('contract_get_content') + '?id=%(id)s' % {'id': self.contract2.id})
+        self.assertEquals(response.status_code, 404)
+
+class ProjectPermissionTest(TestCase):
+    fixtures = ['test_users', 'test_contacts']
+
+    def setUp(self):
+        self.client.login(username='test', password='test')
+        self.project1 = Project.objects.create(name="Project 1",
+                                               customer_id=10,
+                                               state=PROJECT_STATE_STARTED,
+                                               owner_id=1)
+
+        self.project2 = Project.objects.create(name="Project 2",
+                                               customer_id=11,
+                                               state=PROJECT_STATE_STARTED,
+                                               owner_id=2)
+
+
+    def testProjectAdd(self):
+        """
+        Nothing to test
+        """
+        pass
+
+    def testProjectEdit(self):
+        response = self.client.get(reverse('project_edit', kwargs={'id': self.project2.id}))
+        self.assertEquals(response.status_code, 404)
+        response = self.client.post(reverse('project_edit', kwargs={'id': self.project2.id}),
+                                    {'name': 'Project 3'})
+        self.assertEquals(response.status_code, 404)
+
+    def testProjectDetail(self):
+        response = self.client.get(reverse('project_detail', kwargs={'id': self.project2.id}))
+        self.assertEquals(response.status_code, 404)
+
+    def testProjectRunningList(self):
+        response = self.client.get(reverse('project_running_list'))
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(set(response.context['projects'].object_list.all()), set([self.project1]))
+
+    def testProjectFinishedList(self):
+        self.project1.state = PROJECT_STATE_FINISHED
+        self.project1.save()
+        self.project2.state = PROJECT_STATE_FINISHED
+        self.project2.save()
+        response = self.client.get(reverse('project_finished_list'))
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(set(response.context['projects'].object_list.all()), set([self.project1]))
+
+    def testProjectDelete(self):
+        response = self.client.get(reverse('project_delete', kwargs={'id': self.project2.id}))
+        self.assertEquals(response.status_code, 404)
+        response = self.client.post(reverse('project_edit', kwargs={'id': self.project2.id}))
+        self.assertEquals(response.status_code, 404)
 
 class ProjectTest(TestCase):
     fixtures = ['test_users', 'test_contacts']
@@ -175,6 +278,90 @@ class ProjectTest(TestCase):
         response = self.client.get(reverse('project_finished_list'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(set(response.context['projects'].object_list), set([p5, p6]))
+
+class ProposalPermissionTest(TestCase):
+    fixtures = ['test_users', 'test_contacts']
+
+    def setUp(self):
+        self.client.login(username='test', password='test')
+        self.project1 = Project.objects.create(name="Project 1",
+                                               customer_id=10,
+                                               state=PROJECT_STATE_STARTED,
+                                               owner_id=1)
+
+        self.project2 = Project.objects.create(name="Project 2",
+                                               customer_id=11,
+                                               state=PROJECT_STATE_STARTED,
+                                               owner_id=2)
+        self.proposal1 = Proposal.objects.create(project=self.project1,
+                                                 update_date=datetime.date.today(),
+                                                 state=PROPOSAL_STATE_DRAFT,
+                                                 begin_date=datetime.date(2010, 8, 1),
+                                                 end_date=datetime.date(2010, 8, 15),
+                                                 contract_content='Content of contract',
+                                                 amount=2005,
+                                                 owner_id=1)
+
+        p_row1 = ProposalRow.objects.create(proposal=self.proposal1,
+                                            label='Day of work',
+                                            category=ROW_CATEGORY_SERVICE,
+                                            quantity=20,
+                                            unit_price='200.5',
+                                            owner_id=1)
+
+        self.proposal2 = Proposal.objects.create(project=self.project2,
+                                                 update_date=datetime.date.today(),
+                                                 state=PROPOSAL_STATE_DRAFT,
+                                                 begin_date=datetime.date(2010, 8, 1),
+                                                 end_date=datetime.date(2010, 8, 15),
+                                                 contract_content='Content of contract',
+                                                 amount=2005,
+                                                 owner_id=2)
+
+        p_row2 = ProposalRow.objects.create(proposal=self.proposal2,
+                                            label='Day of work',
+                                            category=ROW_CATEGORY_SERVICE,
+                                            quantity=20,
+                                            unit_price='200.5',
+                                            owner_id=2)
+
+    def testProposalAdd(self):
+        """
+        Nothing to test
+        """
+        pass
+
+    def testProposalEdit(self):
+        response = self.client.get(reverse('proposal_edit', kwargs={'id': self.proposal2.id}))
+        self.assertEquals(response.status_code, 404)
+        response = self.client.post(reverse('proposal_edit', kwargs={'id': self.proposal2.id}),
+                                    {'state': PROPOSAL_STATE_SENT})
+        self.assertEquals(response.status_code, 404)
+
+    def testProposalDetail(self):
+        response = self.client.get(reverse('proposal_detail', kwargs={'id': self.proposal2.id}))
+        self.assertEquals(response.status_code, 404)
+
+    def testProposalDelete(self):
+        response = self.client.get(reverse('proposal_delete', kwargs={'id': self.proposal2.id}))
+        self.assertEquals(response.status_code, 404)
+        response = self.client.post(reverse('proposal_delete', kwargs={'id': self.proposal2.id}))
+        self.assertEquals(response.status_code, 404)
+
+    def testProposalChangeState(self):
+        response = self.client.post(reverse('proposal_change_state', kwargs={'id': self.proposal2.id}),
+                                    {'next_state': PROPOSAL_STATE_SENT})
+        self.assertEquals(response.status_code, 404)
+
+    def testProposalDownload(self):
+        """
+        Unable to test
+        """
+        pass
+
+    def testProposalGetContract(self):
+        response = self.client.get(reverse('proposal_get_contract') + '?id=%(id)d' % {'id': self.proposal2.id})
+        self.assertEquals(response.status_code, 404)
 
 class ProposalTest(TestCase):
     fixtures = ['test_users', 'test_contacts', 'test_projects']

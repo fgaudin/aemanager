@@ -10,6 +10,179 @@ from django.utils import simplejson
 from django.utils.formats import localize
 import datetime
 
+class ExpensePermissionTest(TestCase):
+    fixtures = ['test_users']
+
+    def setUp(self):
+        self.client.login(username='test', password='test')
+        self.expense1 = Expense.objects.create(date=datetime.date(2010, 1, 1),
+                                               reference='ABCD',
+                                               amount='100.0',
+                                               payment_type=PAYMENT_TYPE_CHECK,
+                                               description='First expense',
+                                               owner_id=1)
+        self.expense2 = Expense.objects.create(date=datetime.date(2010, 2, 1),
+                                               reference='BCDE',
+                                               amount='200.0',
+                                               payment_type=PAYMENT_TYPE_CASH,
+                                               description='Second expense',
+                                               owner_id=2)
+
+    def testExpenseList(self):
+        response = self.client.get(reverse('expense_list'))
+        expense_list = response.context['expenses'].object_list.all()
+        self.assertEquals(set(expense_list), set([self.expense1]))
+
+    def testExpenseAdd(self):
+        """
+        Nothing to test for this
+        """
+        pass
+
+    def testExpenseEdit(self):
+        response = self.client.post(reverse('expense_edit') + '?id=%d' % (self.expense2.id),
+                                    {'date': datetime.date(2010, 4, 1),
+                                     'reference': 'DEFG',
+                                     'amount': '400',
+                                     'payment_type': PAYMENT_TYPE_CASH,
+                                     'description': 'Edit payment'})
+        self.assertEquals(response.status_code, 404)
+
+    def testExpenseDelete(self):
+        response = self.client.post(reverse('expense_delete'),
+                                    {'id': self.expense2.id})
+        self.assertEquals(response.status_code, 404)
+
+class InvoicePermissionTest(TestCase):
+    fixtures = ['test_users', 'test_contacts', 'test_projects']
+
+    def setUp(self):
+        self.client.login(username='test', password='test')
+        self.proposal1 = Proposal.objects.create(project_id=30,
+                                                update_date=datetime.date.today(),
+                                                state=PROPOSAL_STATE_DRAFT,
+                                                begin_date=datetime.date(2010, 8, 1),
+                                                end_date=datetime.date(2010, 8, 15),
+                                                contract_content='Content of contract',
+                                                amount=2005,
+                                                owner_id=1)
+        self.proposal2 = Proposal.objects.create(project_id=30,
+                                                update_date=datetime.date.today(),
+                                                state=PROPOSAL_STATE_DRAFT,
+                                                begin_date=datetime.date(2010, 8, 1),
+                                                end_date=datetime.date(2010, 8, 15),
+                                                contract_content='Content of contract',
+                                                amount=2005,
+                                                owner_id=2)
+        self.invoice1 = Invoice.objects.create(customer_id=self.proposal1.project.customer_id,
+                                               invoice_id=1,
+                                               state=INVOICE_STATE_PAID,
+                                               amount='100',
+                                               edition_date=datetime.date(2010, 8, 31),
+                                               payment_date=datetime.date(2010, 9, 30),
+                                               paid_date=None,
+                                               payment_type=PAYMENT_TYPE_CHECK,
+                                               execution_begin_date=datetime.date(2010, 8, 1),
+                                               execution_end_date=datetime.date(2010, 8, 7),
+                                               penalty_date=datetime.date(2010, 10, 8),
+                                               penalty_rate='1.5',
+                                               discount_conditions='Nothing',
+                                               owner_id=1)
+
+        self.invoice1_row = InvoiceRow.objects.create(proposal_id=self.proposal1.id,
+                                          invoice_id=self.invoice1.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=10,
+                                          unit_price='10',
+                                          balance_payments=False,
+                                          owner_id=1)
+
+        self.invoice2 = Invoice.objects.create(customer_id=self.proposal2.project.customer_id,
+                                               invoice_id=2,
+                                               state=INVOICE_STATE_EDITED,
+                                               amount='200',
+                                               edition_date=datetime.date(2010, 8, 31),
+                                               payment_date=datetime.date(2010, 9, 30),
+                                               paid_date=None,
+                                               payment_type=PAYMENT_TYPE_CHECK,
+                                               execution_begin_date=datetime.date(2010, 8, 1),
+                                               execution_end_date=datetime.date(2010, 8, 7),
+                                               penalty_date=datetime.date(2010, 10, 8),
+                                               penalty_rate='1.5',
+                                               discount_conditions='Nothing',
+                                               owner_id=2)
+
+        self.invoice2_row = InvoiceRow.objects.create(proposal_id=self.proposal2.id,
+                                          invoice_id=self.invoice2.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=10,
+                                          unit_price='20',
+                                          balance_payments=False,
+                                          owner_id=2)
+
+    def testInvoiceList(self):
+        response = self.client.get(reverse('invoice_list'))
+        invoice_list = response.context['invoices'].all()
+        self.assertEquals(set(invoice_list), set([self.invoice1]))
+
+    def testInvoiceListExport(self):
+        """
+        not testable
+        """
+        pass
+
+    def testInvoiceAdd(self):
+        """
+        nothing to test
+        """
+        pass
+
+    def testInvoiceEdit(self):
+        response = self.client.get(reverse('invoice_edit', kwargs={'id': self.invoice2.id}))
+        self.assertEqual(response.status_code, 404)
+
+        response = self.client.post(reverse('invoice_edit', kwargs={'id': self.invoice2.id}),
+                                    {'invoice-invoice_id': 1,
+                                     'invoice-state': INVOICE_STATE_SENT,
+                                     'invoice-amount': 1500,
+                                     'invoice-edition_date': '2010-8-30',
+                                     'invoice-payment_date': '2010-9-29',
+                                     'invoice-paid_date': '',
+                                     'invoice-payment_type': PAYMENT_TYPE_CASH,
+                                     'invoice-execution_begin_date': '2010-8-2',
+                                     'invoice-execution_end_date': '2010-8-8',
+                                     'invoice-penalty_date': '2010-10-9',
+                                     'invoice-penalty_rate': 2,
+                                     'invoice-discount_conditions':'-50%',
+                                     'invoice_rows-TOTAL_FORMS': 1,
+                                     'invoice_rows-INITIAL_FORMS': 1,
+                                     'invoice_rows-0-proposal': self.proposal2.id,
+                                     'invoice_rows-0-ownedobject_ptr': self.invoice2_row.id,
+                                     'invoice_rows-0-label': 'My product',
+                                     'invoice_rows-0-balance_payments': True,
+                                     'invoice_rows-0-category': ROW_CATEGORY_PRODUCT,
+                                     'invoice_rows-0-quantity': 5,
+                                     'invoice_rows-0-unit_price': 300 })
+
+        self.assertEqual(response.status_code, 404)
+
+
+    def testInvoiceDetail(self):
+        response = self.client.get(reverse('invoice_detail', kwargs={'id': self.invoice2.id}))
+        self.assertEqual(response.status_code, 404)
+
+    def testInvoiceDelete(self):
+        response = self.client.get(reverse('invoice_delete', kwargs={'id': self.invoice2.id}))
+        self.assertEqual(response.status_code, 404)
+        response = self.client.post(reverse('invoice_delete', kwargs={'id': self.invoice2.id}))
+        self.assertEqual(response.status_code, 404)
+
+    def testInvoiceDownload(self):
+        response = self.client.get(reverse('invoice_download', kwargs={'id': self.invoice2.id}))
+        self.assertEqual(response.status_code, 404)
+
 class InvoiceTest(TestCase):
     fixtures = ['test_users', 'test_contacts', 'test_projects']
 
