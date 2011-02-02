@@ -555,7 +555,7 @@ class ExpenseTest(TestCase):
         expenses = [expense1, expense2, expense3]
 
         response = self.client.get(reverse('expense_list'))
-        expense_list = response.context['expenses'].all()
+        expense_list = response.context['expenses'].object_list.all()
         self.assertEquals(set(expense_list), set(expenses))
 
     def testPostAdd(self):
