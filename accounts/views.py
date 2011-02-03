@@ -9,7 +9,6 @@ from accounts.models import Expense, Invoice, InvoiceRow, InvoiceRowAmountError,
 from django.http import HttpResponse
 from django.utils import simplejson
 from django.utils.formats import localize
-from django.contrib.auth.decorators import login_required
 from django.db.transaction import commit_on_success
 from contact.models import Contact
 from django.forms.models import inlineformset_factory
@@ -27,7 +26,7 @@ from reportlab.platypus import Paragraph, Frame, Spacer, BaseDocTemplate, PageTe
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.rl_config import defaultPageSize
 from reportlab.lib.units import inch
-from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.enums import TA_CENTER, TA_LEFT
 from reportlab.platypus import Table, TableStyle
 from reportlab.lib import colors
 
@@ -302,22 +301,41 @@ def invoice_delete(request, id):
 
 @settings_required
 def invoice_download(request, id):
-    invoice = get_object_or_404(Invoice, pk=id, owner=request.user)
-    filename = "invoice_%s.pdf" % (invoice.invoice_id)
+    user = request.user
+    invoice = get_object_or_404(Invoice, pk=id, owner=user)
+
+    def invoice_footer(canvas, doc):
+        canvas.saveState()
+        canvas.setFont('Times-Roman', 10)
+        PAGE_WIDTH = defaultPageSize[0]
+        canvas.drawCentredString(PAGE_WIDTH / 2.0, 0.5 * inch, "%s %s - SIRET : %s - %s, %s %s, %s" % (user.first_name,
+                                                                                     user.last_name,
+                                                                                     user.get_profile().company_id,
+                                                                                     user.get_profile().address.street,
+                                                                                     user.get_profile().address.zipcode,
+                                                                                     user.get_profile().address.city,
+                                                                                     user.get_profile().address.country.country_name))
+        canvas.restoreState()
+
+    filename = ugettext('invoice_%(id)d.pdf') % {'id': invoice.id}
     response = HttpResponse(mimetype='application/pdf')
     response['Content-Disposition'] = 'attachment; filename=%s' % (filename)
-    user = request.user
 
-    # drawing content
-    WIDTH = defaultPageSize[0]
-    HEIGHT = defaultPageSize[1]
-    c = Canvas(response)
+    doc = BaseDocTemplate(response, leftMargin=0.5 * inch, rightMargin=0.5 * inch)
+    frameT = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height + 0.5 * inch, id='normal')
+    doc.addPageTemplates([PageTemplate(id='all', frames=frameT, onPage=invoice_footer), ])
+
     styleH = ParagraphStyle({})
     styleH.fontSize = 14
     styleH.leading = 16
-    styleH.borderColor = colors.black
-    styleH.borderWidth = 0.5
     styleH.borderPadding = (5,) * 4
+
+    styleTotal = ParagraphStyle({})
+    styleTotal.fontSize = 14
+    styleTotal.leading = 16
+    styleTotal.borderColor = colors.black
+    styleTotal.borderWidth = 0.5
+    styleTotal.borderPadding = (5,) * 4
 
     styleH2 = ParagraphStyle({})
     styleH2.fontSize = 14
@@ -326,7 +344,6 @@ def invoice_download(request, id):
 
     styleTitle = ParagraphStyle({})
     styleTitle.fontSize = 14
-    styleTitle.leading = 16
     styleTitle.fontName = "Times-Bold"
 
     styleN = ParagraphStyle({})
@@ -337,12 +354,9 @@ def invoice_download(request, id):
     styleF.fontSize = 10
     styleF.alignment = TA_CENTER
 
-    showBoundary = 0
-
-    # draw header
-    # draw user header
-    user_header = Frame(0.5 * inch, HEIGHT - 2.5 * inch, 3.5 * inch, 2 * inch, showBoundary=showBoundary)
     story = []
+
+    data = []
     user_header_content = """
     %s %s<br/>
     SIRET : %s<br/>
@@ -350,19 +364,7 @@ def invoice_download(request, id):
     %s %s<br/>
     %s
     """
-    story.append(Paragraph(user_header_content % (user.first_name,
-                                                  user.last_name,
-                                                  user.get_profile().company_id,
-                                                  user.get_profile().address.street.replace("\n", "<br/>"),
-                                                  user.get_profile().address.zipcode,
-                                                  user.get_profile().address.city,
-                                                  user.get_profile().address.country.country_name),
-                           styleH))
-    user_header.addFromList(story, c)
 
-    # draw customer header
-    story = []
-    customer_header = Frame(WIDTH - 4 * inch, HEIGHT - 2.5 * inch, 3.5 * inch, 2 * inch, showBoundary=showBoundary)
     customer_header_content = """
     %s<br/>
     %s<br/>
@@ -370,34 +372,52 @@ def invoice_download(request, id):
     %s %s<br/>
     %s<br/>
     """
-    story.append(Paragraph(customer_header_content % (invoice.customer.name,
-                                                      invoice.customer.legal_form,
-                                                      invoice.customer.address.street.replace("\n", "<br/>"),
-                                                      invoice.customer.address.zipcode,
-                                                      invoice.customer.address.city,
-                                                      invoice.customer.address.country.country_name),
-                           styleH))
-    customer_header.addFromList(story, c)
 
-    # draw general header
-    story = []
-    general_header_left = Frame(0.5 * inch, HEIGHT - 3.6 * inch, 3.5 * inch, 1 * inch, showBoundary=showBoundary)
+    data.append([Paragraph(user_header_content % (user.first_name,
+                                                  user.last_name,
+                                                  user.get_profile().company_id,
+                                                  user.get_profile().address.street.replace("\n", "<br/>"),
+                                                  user.get_profile().address.zipcode,
+                                                  user.get_profile().address.city,
+                                                  user.get_profile().address.country.country_name), styleH),
+                '',
+                Paragraph(customer_header_content % (invoice.customer.name,
+                                                     invoice.customer.legal_form,
+                                                     invoice.customer.address.street.replace("\n", "<br/>"),
+                                                     invoice.customer.address.zipcode,
+                                                     invoice.customer.address.city,
+                                                     invoice.customer.address.country.country_name), styleH)])
+
+    t1 = Table(data, [3.5 * inch, 0.3 * inch, 3.5 * inch], [1.6 * inch])
+    t1.setStyle(TableStyle([('BOX', (0, 0), (0, 0), 0.25, colors.black),
+                            ('BOX', (2, 0), (2, 0), 0.25, colors.black),
+                            ('VALIGN', (0, 0), (-1, -1), 'TOP'), ]))
+
+    story.append(t1)
+
+    spacer1 = Spacer(doc.width, 0.4 * inch)
+    story.append(spacer1)
+
+    data = []
     msg = u"Dispense d'immatriculation au registre du commerce et des societes (RCS) et au repertoire des metiers (RM)"
-    story.append(Paragraph(msg, styleN))
-    general_header_left.addFromList(story, c)
+    data.append([Paragraph(msg, styleN),
+                '',
+                Paragraph(_("Date : %s") % (localize(invoice.edition_date)), styleH2)])
 
-    story = []
-    general_header_right = Frame(WIDTH - 4 * inch, HEIGHT - 3.6 * inch, 3.5 * inch, 1 * inch, showBoundary=showBoundary)
-    story.append(Paragraph(_("Date : %s") % (localize(invoice.edition_date)), styleH2))
-    general_header_right.addFromList(story, c)
+    t2 = Table(data, [3.5 * inch, 0.3 * inch, 3.5 * inch], [0.7 * inch])
+    t2.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP'), ]))
 
-    # main frame
-    story = []
-    main_frame = Frame(0.5 * inch, 2.25 * inch, WIDTH - 1 * inch, 5.75 * inch, showBoundary=showBoundary)
+    story.append(t2)
+
+    spacer2 = Spacer(doc.width, 0.4 * inch)
+    story.append(spacer2)
+
     story.append(Paragraph(_("INVOICE #%d") % (invoice.invoice_id), styleTitle))
-    main_frame.addFromList(story, c)
 
-    # draw invoice rows
+    spacer3 = Spacer(doc.width, 0.1 * inch)
+    story.append(spacer3)
+
+    # invoice row list
     data = [[ugettext('Label'), ugettext('Quantity'), ugettext('Unit price'), ugettext('Total')]]
     rows = invoice.invoice_rows.all()
     for row in rows:
@@ -406,59 +426,52 @@ def invoice_download(request, id):
             label = label + " - [%s]" % (row.proposal.reference)
         data.append([label, row.quantity, row.unit_price, row.quantity * row.unit_price])
 
-    max_row_count = 16
+    row_count = len(rows)
+    if row_count <= 16:
+        max_row_count = 16
+    else:
+        first_page_count = 21
+        normal_page_count = 33
+        last_page_count = 27
+        max_row_count = first_page_count + ((row_count - first_page_count) // normal_page_count * normal_page_count) + last_page_count
+        if row_count - first_page_count - ((row_count - first_page_count) // normal_page_count * normal_page_count) > last_page_count:
+            max_row_count = max_row_count + normal_page_count
 
-    for i in range(max_row_count - len(rows)):
+    for i in range(max_row_count - row_count):
         data.append(['', '', '', ''])
 
-    t = Table(data, [4.7 * inch, 0.8 * inch, 0.9 * inch, 0.8 * inch], (max_row_count + 1) * [0.3 * inch])
-    t.setStyle(TableStyle([('ALIGN', (0, 0), (-1, 0), 'CENTER'),
-                           ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
-                           ('FONT', (0, 0), (-1, 0), 'Times-Bold'),
-                           ('BOX', (0, 0), (-1, 0), 0.25, colors.black),
-                           ('INNERGRID', (0, 0), (-1, 0), 0.25, colors.black),
-                           ('BOX', (0, 1), (0, -1), 0.25, colors.black),
-                           ('BOX', (1, 1), (1, -1), 0.25, colors.black),
-                           ('BOX', (2, 1), (2, -1), 0.25, colors.black),
-                           ('BOX', (3, 1), (3, -1), 0.25, colors.black),
-                           ]))
+    row_table = Table(data, [4.7 * inch, 0.8 * inch, 0.9 * inch, 0.8 * inch], (max_row_count + 1) * [0.3 * inch])
+    row_table.setStyle(TableStyle([('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+                                   ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
+                                   ('FONT', (0, 0), (-1, 0), 'Times-Bold'),
+                                   ('BOX', (0, 0), (-1, 0), 0.25, colors.black),
+                                   ('INNERGRID', (0, 0), (-1, 0), 0.25, colors.black),
+                                   ('BOX', (0, 1), (0, -1), 0.25, colors.black),
+                                   ('BOX', (1, 1), (1, -1), 0.25, colors.black),
+                                   ('BOX', (2, 1), (2, -1), 0.25, colors.black),
+                                   ('BOX', (3, 1), (3, -1), 0.25, colors.black),
+                                   ]))
 
-    story = []
-    story.append(t)
-    main_frame.addFromList(story, c)
+    story.append(row_table)
 
-    # draw amount and information
-    bottom_left_frame = Frame(0.5 * inch, 0.75 * inch, 4.5 * inch, 1.25 * inch, showBoundary=showBoundary)
-    story = []
-    story.append(Paragraph(_("Payment date : %s") % (localize(invoice.payment_date)), styleN))
-    story.append(Paragraph(_("Execution dates : %(begin_date)s to %(end_date)s") % {'begin_date': localize(invoice.execution_begin_date), 'end_date' : localize(invoice.execution_end_date)}, styleN))
-    story.append(Paragraph(_("Penalty begins on : %s") % (localize(invoice.penalty_date)), styleN))
-    story.append(Paragraph(_("Penalty rate : %s") % (localize(invoice.penalty_rate)), styleN))
-    story.append(Paragraph(_("Discount conditions : %s") % (invoice.discount_conditions), styleN))
-    bottom_left_frame.addFromList(story, c)
+    spacer4 = Spacer(doc.width, 0.55 * inch)
+    story.append(spacer4)
 
-    bottom_right_frame = Frame(WIDTH - 3 * inch, 0.75 * inch, 2.5 * inch, 1.25 * inch, showBoundary=showBoundary)
-    story = []
-    story.append(Paragraph(_("TOTAL : %(amount)s %(currency)s") % {'amount': localize(invoice.amount), 'currency' : "€".decode('utf-8')}, styleH))
-    story.append(Spacer(1, 0.25 * inch))
-    story.append(Paragraph(u"TVA non applicable, art. 293 B du CGI", styleN))
-    bottom_right_frame.addFromList(story, c)
+    data = [[[Paragraph(_("Payment date : %s") % (localize(invoice.payment_date)), styleN),
+              Paragraph(_("Execution dates : %(begin_date)s to %(end_date)s") % {'begin_date': localize(invoice.execution_begin_date), 'end_date' : localize(invoice.execution_end_date)}, styleN),
+              Paragraph(_("Penalty begins on : %s") % (localize(invoice.penalty_date)), styleN),
+              Paragraph(_("Penalty rate : %s") % (localize(invoice.penalty_rate)), styleN),
+              Paragraph(_("Discount conditions : %s") % (invoice.discount_conditions), styleN)],
+            '',
+            [Paragraph(_("TOTAL : %(amount)s %(currency)s") % {'amount': localize(invoice.amount), 'currency' : "€".decode('utf-8')}, styleTotal),
+             Spacer(1, 0.25 * inch),
+             Paragraph(u"TVA non applicable, art. 293 B du CGI", styleN)]], ]
 
-    # draw footer
-    story = []
-    footer = Frame(0.5 * inch, 0.2 * inch, WIDTH - 1 * inch, 0.37 * inch, showBoundary=showBoundary)
-    story.append(Paragraph("%s %s - SIRET : %s - %s, %s %s, %s" % (user.first_name,
-                                                                   user.last_name,
-                                                                   user.get_profile().company_id,
-                                                                   user.get_profile().address.street,
-                                                                   user.get_profile().address.zipcode,
-                                                                   user.get_profile().address.city,
-                                                                   user.get_profile().address.country.country_name),
-                           styleF))
+    footer_table = Table(data, [4.5 * inch, 0.3 * inch, 2.5 * inch], [1 * inch])
+    footer_table.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP'), ]))
 
-    footer.addFromList(story, c)
+    story.append(footer_table)
 
-    c.save()
+    doc.build(story, canvasmaker=NumberedCanvas)
 
     return response
-
