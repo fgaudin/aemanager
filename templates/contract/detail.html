@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load modeltags %}
-{% load rsttags %}
+{% load htmltags %}
 
 {% block context_menu %}
 <div><a href="{% url contract_edit contract.id %}">{% trans "Edit" %}</a></div>

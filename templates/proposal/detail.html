@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load modeltags %}
 {% load arithmetictags %}
-{% load rsttags %}
+{% load htmltags %}
 
 {% block title %}{% url project_detail proposal.project.id as project_url %}{% blocktrans with proposal.project as project and project_url as project_url %}Proposal for <a href="{{ project_url }}">{{ project }}</a>{% endblocktrans %}{% endblock %}
 

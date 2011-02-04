@@ -1,19 +1,20 @@
 # -*- coding: utf-8 -*-
 from decimal import Decimal
 from django.db import models
-from django.utils.translation import ugettext_lazy as _, ugettext, gettext
+from django.utils.translation import ugettext_lazy as _, ugettext
 from contact.models import Contact
 from core.models import OwnedObject
 from django.db.models.signals import post_save, pre_save
 from django.utils.formats import localize
 from django.db.models.aggregates import Sum
-import sys
-from rst2pdf import createpdf
+from core.templatetags.htmltags import to_html
+from django.conf import settings
+import ho.pisa as pisa
 
 class Contract(OwnedObject):
     customer = models.ForeignKey(Contact, verbose_name=_('Customer'), related_name="contracts")
     title = models.CharField(max_length=255, verbose_name=_('Title'))
-    content = models.TextField(verbose_name=_('Content'), help_text=_('The content should be restructured text'))
+    content = models.TextField(verbose_name=_('Content'))
     update_date = models.DateField(verbose_name=_('Update date'))
 
     def __unicode__(self):
@@ -42,7 +43,10 @@ class Contract(OwnedObject):
 
         return substitution_map
 
-    def to_pdf(self, user):
+    def to_pdf(self, user, response):
+        css_file = open("%s%s" % (settings.MEDIA_ROOT, "/css/pisa.css"), 'r')
+        css = css_file.read()
+
         substitution_map = Contract.get_substitution_map()
 
         substitution_map[ugettext('customer')] = unicode(self.customer)
@@ -62,65 +66,15 @@ class Contract(OwnedObject):
         substitution_map[ugettext('country')] = unicode(user.get_profile().address.country)
         substitution_map[ugettext('national_id')] = user.get_profile().company_id
 
-        export_dir = "export/"
-        filename = "contract_%s_%s.pdf" % (self.id, self.customer.id)
-        fse = sys.getfilesystemencoding()
-        title = self.title.encode(fse)
-        title_markup = "".ljust(len(title), "=")
-        rst_string = "%s\n%s\n%s\n\n%s" % (title_markup, title, title_markup, self.content.encode(fse))
+        contract_content = "<h1>%s</h1>%s" % (self.title, self.content)
 
         for tag, value in substitution_map.items():
-            rst_string = rst_string.replace('{{ %s }}' % (tag.encode(fse)), value.encode(fse))
+            contract_content = contract_content.replace('{{ %s }}' % (tag), value)
 
-        # adding footer for signatures of user and customer
-        customer_footer = []
-        user_footer = []
-        customer_footer.append(gettext("The customer"))
-        user_footer.append(gettext("The provider"))
-        customer_footer.append(gettext("Name : %s") % (self.customer.representative.encode(fse)))
-        user_footer.append(gettext("Name : %(first_name)s %(last_name)s") % {'first_name': user.first_name.encode(fse), 'last_name': user.last_name.encode(fse)})
-        customer_footer.append(gettext("Quality : %s") % (self.customer.representative_function.encode(fse)))
-        user_footer.append(gettext("Quality : Auto-entrepreneur"))
-        customer_footer.append(gettext("Date :"))
-        user_footer.append(gettext("Date :"))
-        customer_footer.append(gettext("Signature :"))
-        user_footer.append(gettext("Signature :"))
-
-        max_customer_footer_length = 0
-        max_user_footer_length = 0
-        for customer_footer_str in customer_footer:
-            max_customer_footer_length = max(len(customer_footer_str.decode('utf-8')), max_customer_footer_length)
-
-        for user_footer_str in user_footer:
-            max_user_footer_length = max(len(user_footer_str.decode('utf-8')), max_user_footer_length)
-
-        footer_str = "\n\n.. class:: base\n\n"
-        footer_str = footer_str + "+---".ljust(max_customer_footer_length + 5, "-")
-        footer_str = footer_str + "+---".ljust(max_user_footer_length + 5, "-")
-        footer_str = footer_str + "+\n"
-
-        for i in range(len(customer_footer)):
-            footer_str = footer_str + "| | %s | | %s |\n" % (customer_footer[i].decode('utf-8').ljust(max_customer_footer_length),
-                                                             user_footer[i].decode('utf-8').ljust(max_user_footer_length))
-
-        for i in range(4):
-            footer_str = footer_str + "| | ".ljust(max_customer_footer_length + 5)
-            footer_str = footer_str + "| | ".ljust(max_user_footer_length + 5)
-            footer_str = footer_str + "|\n"
-
-        footer_str = footer_str + "|   ".ljust(max_customer_footer_length + 5)
-        footer_str = footer_str + "|   ".ljust(max_user_footer_length + 5)
-        footer_str = footer_str + "|\n"
-
-        footer_str = footer_str + "+---".ljust(max_customer_footer_length + 5, "-")
-        footer_str = footer_str + "+---".ljust(max_user_footer_length + 5, "-")
-        footer_str = footer_str + "+\n\n"
-
-        rst_string = rst_string + footer_str.encode(fse)
-
-        rst2pdf = createpdf.RstToPdf(breaklevel=0)
-        rst2pdf.createPdf(text=rst_string,
-                          output=export_dir + filename)
+        pdf = pisa.pisaDocument(to_html(contract_content),
+                                response,
+                                default_css=css)
+        return response
 
 PROJECT_STATE_PROSPECT = 1
 PROJECT_STATE_PROPOSAL_SENT = 2
@@ -169,7 +123,7 @@ class Proposal(OwnedObject):
     amount = models.DecimalField(blank=True, null=True, max_digits=12, decimal_places=2, verbose_name=_('Amount'))
     begin_date = models.DateField(blank=True, null=True, verbose_name=_('Begin date'))
     end_date = models.DateField(blank=True, null=True, verbose_name=_('End date'))
-    contract_content = models.TextField(blank=True, default="", verbose_name=_('Contract'), help_text=_('The contract should be restructured text'))
+    contract_content = models.TextField(blank=True, default="", verbose_name=_('Contract'))
     update_date = models.DateField(verbose_name=_('Update date'))
 
     def __unicode__(self):
@@ -218,7 +172,10 @@ class Proposal(OwnedObject):
     """
     Generate a PDF file for the proposal
     """
-    def to_pdf(self, user):
+    def to_pdf(self, user, response):
+        css_file = open("%s%s" % (settings.MEDIA_ROOT, "/css/pisa.css"), 'r')
+        css = css_file.read()
+
         substitution_map = Contract.get_substitution_map()
 
         substitution_map[ugettext('reference')] = unicode(self.reference)
@@ -239,61 +196,14 @@ class Proposal(OwnedObject):
         substitution_map[ugettext('country')] = unicode(user.get_profile().address.country)
         substitution_map[ugettext('national_id')] = user.get_profile().company_id
 
-        export_dir = "export/"
-        filename = "project_contract_%s_%s.pdf" % (self.id, self.project.customer.id)
-        fse = sys.getfilesystemencoding()
-        rst_string = self.contract_content.encode(fse)
-
+        contract_content = self.contract_content
         for tag, value in substitution_map.items():
-            rst_string = rst_string.replace('{{ %s }}' % (tag.encode(fse)), value.encode(fse))
+            contract_content = contract_content.replace('{{ %s }}' % (tag), value)
 
-        # adding footer for signatures of user and customer
-        customer_footer = []
-        user_footer = []
-        customer_footer.append("%s" % (self.project.customer.name.encode(fse)))
-        user_footer.append(gettext("The provider"))
-        customer_footer.append(gettext("%(customer_representative)s, %(representative_function)s") % {'customer_representative': self.project.customer.representative.encode(fse), 'representative_function' : self.project.customer.representative_function.encode(fse)})
-        user_footer.append(gettext("%(first_name)s %(last_name)s, Auto-entrepreneur") % {'first_name': user.first_name.encode(fse), 'last_name': user.last_name.encode(fse)})
-        customer_footer.append(gettext("Date :"))
-        user_footer.append(gettext("Date :"))
-        customer_footer.append(gettext("Signature :"))
-        user_footer.append(gettext("Signature :"))
-
-        max_customer_footer_length = 0
-        max_user_footer_length = 0
-        for customer_footer_str in customer_footer:
-            max_customer_footer_length = max(len(customer_footer_str.decode('utf-8')), max_customer_footer_length)
-
-        for user_footer_str in user_footer:
-            max_user_footer_length = max(len(user_footer_str.decode('utf-8')), max_user_footer_length)
-
-        footer_str = "\n\n.. class:: base\n\n"
-        footer_str = footer_str + "+---".ljust(max_customer_footer_length + 5, "-")
-        footer_str = footer_str + "+---".ljust(max_user_footer_length + 5, "-")
-        footer_str = footer_str + "+\n"
-
-        for i in range(len(customer_footer)):
-            footer_str = footer_str + "| | %s | | %s |\n" % (customer_footer[i].decode('utf-8').ljust(max_customer_footer_length),
-                                                             user_footer[i].decode('utf-8').ljust(max_user_footer_length))
-
-        for i in range(4):
-            footer_str = footer_str + "| | ".ljust(max_customer_footer_length + 5)
-            footer_str = footer_str + "| | ".ljust(max_user_footer_length + 5)
-            footer_str = footer_str + "|\n"
-
-        footer_str = footer_str + "|   ".ljust(max_customer_footer_length + 5)
-        footer_str = footer_str + "|   ".ljust(max_user_footer_length + 5)
-        footer_str = footer_str + "|\n"
-
-        footer_str = footer_str + "+---".ljust(max_customer_footer_length + 5, "-")
-        footer_str = footer_str + "+---".ljust(max_user_footer_length + 5, "-")
-        footer_str = footer_str + "+\n\n"
-
-        rst_string = rst_string + footer_str.encode(fse)
-
-        rst2pdf = createpdf.RstToPdf(breaklevel=0)
-        rst2pdf.createPdf(text=rst_string,
-                          output=export_dir + filename)
+        pdf = pisa.pisaDocument(to_html(contract_content),
+                                response,
+                                default_css=css)
+        return response
 
 def update_project_state(sender, instance, created, **kwargs):
     proposal = instance

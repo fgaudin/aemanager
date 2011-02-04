@@ -1,6 +1,5 @@
 # coding=utf-8
 
-from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.db.transaction import commit_on_success
 from django.shortcuts import get_object_or_404, redirect, render_to_response
@@ -54,7 +53,6 @@ def contract_create_or_edit(request, id=None, contact_id=None):
             contract.customjecter = customer
             contract.save(user=user)
             contractForm.save_m2m()
-            contract.to_pdf(user)
 
             messages.success(request, _('The contract has been saved successfully'))
             return redirect(reverse('contract_detail', kwargs={'id': contract.id}))
@@ -98,15 +96,11 @@ def contract_delete(request, id):
 def contract_download(request, id):
     contract = get_object_or_404(Contract, pk=id, owner=request.user)
 
-    export_dir = "export/"
-    filename = "contract_%s_%s.pdf" % (contract.id, contract.customer.id)
-
+    filename = ugettext('contract_%(id)d.pdf') % {'id': contract.id}
     response = HttpResponse(mimetype='application/pdf')
     response['Content-Disposition'] = 'attachment; filename=%s' % (filename)
 
-    f = open(export_dir + filename, 'r')
-    response.write(f.read())
-    f.close()
+    contract.to_pdf(request.user, response)
     return response
 
 @settings_required
@@ -344,7 +338,6 @@ def proposal_create_or_edit(request, id=None, project_id=None):
                         proposalrow.save(user=user)
 
                 proposal.update_amount()
-                proposal.to_pdf(user)
 
                 messages.success(request, _('The proposal has been saved successfully'))
                 return redirect(reverse('proposal_detail', kwargs={'id': proposal.id}))
@@ -418,6 +411,17 @@ def proposal_change_state(request, id):
 
 @settings_required
 def proposal_download(request, id):
+    proposal = get_object_or_404(Proposal, pk=id, owner=request.user)
+
+    filename = ugettext('proposal_%(id)d.pdf') % {'id': proposal.id}
+    response = HttpResponse(mimetype='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename=%s' % (filename)
+
+    proposal.to_pdf(request.user, response)
+    return response
+
+@settings_required
+def old_proposal_download(request, id):
     proposal = get_object_or_404(Proposal, pk=id, owner=request.user)
 
     export_dir = "export/"
