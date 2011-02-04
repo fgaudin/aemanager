@@ -424,7 +424,7 @@ def invoice_download(request, id):
         label = row.label
         if row.proposal.reference:
             label = label + " - [%s]" % (row.proposal.reference)
-        data.append([label, row.quantity, row.unit_price, row.quantity * row.unit_price])
+        data.append([label, localize(row.quantity), localize(row.unit_price), localize(row.quantity * row.unit_price)])
 
     row_count = len(rows)
     if row_count <= 16:
