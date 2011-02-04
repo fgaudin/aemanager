@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-04 23:00+0100\n"
+"POT-Creation-Date: 2011-02-04 23:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -168,7 +168,7 @@ msgstr "Factures"
 msgid "invoice_book_%(year)d.pdf"
 msgstr "livre_des_recettes_%(year)d.pdf"
 
-#: accounts/views.py:175
+#: accounts/views.py:166 accounts/views.py:175
 #, python-format
 msgid "Invoice book %(year)d"
 msgstr "Livre des recettes %(year)d"
@@ -219,6 +219,11 @@ msgstr "Supprimer une facture"
 #, python-format
 msgid "invoice_%(id)d.pdf"
 msgstr "facture_%(id)d.pdf"
+
+#: accounts/views.py:323
+#, python-format
+msgid "Invoice #%(invoice_id)d"
+msgstr "Facture #%(invoice_id)d"
 
 #: accounts/views.py:404 project/views.py:524
 #, python-format
@@ -734,6 +739,11 @@ msgstr "Supprimer un devis"
 #, python-format
 msgid "proposal_%(id)d.pdf"
 msgstr "devis_%(id)d.pdf"
+
+#: project/views.py:443
+#, python-format
+msgid "Proposal %(reference)s"
+msgstr "Devis %(reference)s"
 
 #: project/views.py:534
 #, python-format

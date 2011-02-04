@@ -163,7 +163,7 @@ def invoice_list_export(request):
     response = HttpResponse(mimetype='application/pdf')
     response['Content-Disposition'] = 'attachment; filename=%s' % (filename)
 
-    doc = BaseDocTemplate(response)
+    doc = BaseDocTemplate(response, title=ugettext('Invoice book %(year)d') % {'year': year})
     frameT = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='normal')
     doc.addPageTemplates([PageTemplate(id='all', frames=frameT, onPage=invoice_list_footer), ])
 
@@ -320,7 +320,7 @@ def invoice_download(request, id):
     response = HttpResponse(mimetype='application/pdf')
     response['Content-Disposition'] = 'attachment; filename=%s' % (filename)
 
-    doc = BaseDocTemplate(response, leftMargin=0.5 * inch, rightMargin=0.5 * inch)
+    doc = BaseDocTemplate(response, title=ugettext('Invoice #%(invoice_id)d') % {'invoice_id': invoice.invoice_id}, leftMargin=0.5 * inch, rightMargin=0.5 * inch)
     frameT = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height + 0.5 * inch, id='normal')
     doc.addPageTemplates([PageTemplate(id='all', frames=frameT, onPage=invoice_footer), ])
 

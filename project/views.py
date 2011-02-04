@@ -440,7 +440,7 @@ def proposal_download(request, id):
     response = HttpResponse(mimetype='application/pdf')
     response['Content-Disposition'] = 'attachment; filename=%s' % (filename)
 
-    doc = BaseDocTemplate(response, leftMargin=0.5 * inch, rightMargin=0.5 * inch)
+    doc = BaseDocTemplate(response, title=ugettext('Proposal %(reference)s') % {'reference': proposal.reference}, leftMargin=0.5 * inch, rightMargin=0.5 * inch)
     frameT = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height + 0.5 * inch, id='normal')
     doc.addPageTemplates([PageTemplate(id='all', frames=frameT, onPage=proposal_footer), ])
 

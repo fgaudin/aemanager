@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-04 23:00+0100\n"
+"POT-Creation-Date: 2011-02-04 23:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -167,7 +167,7 @@ msgstr ""
 msgid "invoice_book_%(year)d.pdf"
 msgstr ""
 
-#: accounts/views.py:175
+#: accounts/views.py:166 accounts/views.py:175
 #, python-format
 msgid "Invoice book %(year)d"
 msgstr ""
@@ -217,6 +217,11 @@ msgstr ""
 #: accounts/views.py:319
 #, python-format
 msgid "invoice_%(id)d.pdf"
+msgstr ""
+
+#: accounts/views.py:323
+#, python-format
+msgid "Invoice #%(invoice_id)d"
 msgstr ""
 
 #: accounts/views.py:404 project/views.py:524
@@ -732,6 +737,11 @@ msgstr ""
 #: project/views.py:439
 #, python-format
 msgid "proposal_%(id)d.pdf"
+msgstr ""
+
+#: project/views.py:443
+#, python-format
+msgid "Proposal %(reference)s"
 msgstr ""
 
 #: project/views.py:534
