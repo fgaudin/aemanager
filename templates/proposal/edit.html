@@ -44,6 +44,9 @@ jQuery(document).ready(function(){
     {% with proposalForm.end_date as field %}
     {% include "field.html" %}
     {% endwith %}
+    {% with proposalForm.expiration_date as field %}
+    {% include "field.html" %}
+    {% endwith %}
     <div class="form-row">
     <div><label>{% trans "Detail rows" %} :</label></div>
     {{ proposalrowformset.management_form }}

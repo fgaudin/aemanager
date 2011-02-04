@@ -574,7 +574,7 @@ def proposal_download(request, id):
     spacer4 = Spacer(doc.width, 0.55 * inch)
     story.append(spacer4)
 
-    data = [[[Paragraph(_("Proposal valid until : %s") % (""), styleN),
+    data = [[[Paragraph(_("Proposal valid through : %s") % (localize(proposal.expiration_date)), styleN),
               Paragraph(_("Execution dates : %(begin_date)s to %(end_date)s") % {'begin_date': localize(proposal.begin_date), 'end_date' : localize(proposal.end_date)}, styleN)],
             '',
             [Paragraph(_("TOTAL : %(amount)s %(currency)s") % {'amount': localize(proposal.amount), 'currency' : "€".decode('utf-8')}, styleTotal),

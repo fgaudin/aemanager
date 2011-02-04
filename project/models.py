@@ -125,6 +125,7 @@ class Proposal(OwnedObject):
     end_date = models.DateField(blank=True, null=True, verbose_name=_('End date'))
     contract_content = models.TextField(blank=True, default="", verbose_name=_('Contract'))
     update_date = models.DateField(verbose_name=_('Update date'))
+    expiration_date = models.DateField(blank=True, null=True, verbose_name=_('Expiration date'))
 
     def __unicode__(self):
         return _('Proposal from %(begin_date)s to %(end_date)s for %(project)s') % {'begin_date': localize(self.begin_date),
