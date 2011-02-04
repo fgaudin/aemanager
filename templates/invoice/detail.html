@@ -79,7 +79,7 @@
            <tr class="{% cycle 'row1' 'row2' %}">
                 <td>{{ invoicerow.label }}</td>
                 <td><a href="{% url proposal_detail invoicerow.proposal.id %}">{{ invoicerow.proposal }}</a></td>
-                <td>{{ invoicerow.balance_payments }}</td>
+                <td>{% if invoicerow.balance_payments %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}</td>
                 <td>{{ invoicerow.get_category_display }}</td>
                 <td>{{ invoicerow.quantity }}</td>
                 <td>{{ invoicerow.unit_price }}</td>
