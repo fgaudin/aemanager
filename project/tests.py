@@ -51,10 +51,8 @@ class ContractPermissionTest(TestCase):
         self.assertEquals(response.status_code, 404)
 
     def testContractDownload(self):
-        """
-        Unable to test
-        """
-        pass
+        response = self.client.get(reverse('contract_download', kwargs={'id': self.contract2.id}))
+        self.assertEquals(response.status_code, 404)
 
     def testContractGetContent(self):
         response = self.client.get(reverse('contract_get_content') + '?id=%(id)s' % {'id': self.contract2.id})
@@ -354,10 +352,12 @@ class ProposalPermissionTest(TestCase):
         self.assertEquals(response.status_code, 404)
 
     def testProposalDownload(self):
-        """
-        Unable to test
-        """
-        pass
+        response = self.client.get(reverse('proposal_download', kwargs={'id': self.proposal2.id}))
+        self.assertEquals(response.status_code, 404)
+
+    def testProposalContractDownload(self):
+        response = self.client.get(reverse('proposal_contract_download', kwargs={'id': self.proposal2.id}))
+        self.assertEquals(response.status_code, 404)
 
     def testProposalGetContract(self):
         response = self.client.get(reverse('proposal_get_contract') + '?id=%(id)d' % {'id': self.proposal2.id})
