@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-04 22:49+0100\n"
+"POT-Creation-Date: 2011-02-04 23:00+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -272,8 +272,8 @@ msgstr "Conditions d'escompte : %s"
 
 #: accounts/views.py:465 project/views.py:580
 #, python-format
-msgid "TOTAL : %(amount)s %(currency)s"
-msgstr "TOTAL : %(amount)s %(currency)s"
+msgid "TOTAL excl. VAT : %(amount)s %(currency)s"
+msgstr "TOTAL HT : %(amount)s %(currency)s"
 
 #: autoentrepreneur/forms.py:8 autoentrepreneur/models.py:48
 msgid "Company name"
@@ -1083,7 +1083,9 @@ msgstr "L'activation a échoué, veuillez vérifier votre clé d'activation."
 msgid ""
 "Your account has been activated successfully. You can now return to <a href="
 "\"/\">homepage</a> and log in."
-msgstr "Votre compte a été activé avec succès. Vous pouvez maintenant retourner sur la <a href=\"/\">page d'acceuil</a> et vous authentifier."
+msgstr ""
+"Votre compte a été activé avec succès. Vous pouvez maintenant retourner sur "
+"la <a href=\"/\">page d'acceuil</a> et vous authentifier."
 
 #: templates/registration/login.html:19
 msgid "Your username and password didn't match. Please try again."
@@ -1104,8 +1106,8 @@ msgid ""
 "An email containing your activation key has been sent. Please check your "
 "emails and follow the link provided to activate your account."
 msgstr ""
-"Un email contenant votre clé d'activation vous a été envoyé. Veuillez vérifier "
-"vos emails et suivre le lien fourni pour activer votre compte."
+"Un email contenant votre clé d'activation vous a été envoyé. Veuillez "
+"vérifier vos emails et suivre le lien fourni pour activer votre compte."
 
 #: templates/registration/registration_form.html:14
 msgid "Register"

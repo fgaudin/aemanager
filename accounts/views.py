@@ -462,7 +462,7 @@ def invoice_download(request, id):
               Paragraph(_("Penalty rate : %s") % (localize(invoice.penalty_rate)), styleN),
               Paragraph(_("Discount conditions : %s") % (invoice.discount_conditions), styleN)],
             '',
-            [Paragraph(_("TOTAL : %(amount)s %(currency)s") % {'amount': localize(invoice.amount), 'currency' : "€".decode('utf-8')}, styleTotal),
+            [Paragraph(_("TOTAL excl. VAT : %(amount)s %(currency)s") % {'amount': localize(invoice.amount), 'currency' : "€".decode('utf-8')}, styleTotal),
              Spacer(1, 0.25 * inch),
              Paragraph(u"TVA non applicable, art. 293 B du CGI", styleN)]], ]
 

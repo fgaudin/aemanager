@@ -577,7 +577,7 @@ def proposal_download(request, id):
     data = [[[Paragraph(_("Proposal valid through : %s") % (localize(proposal.expiration_date)), styleN),
               Paragraph(_("Execution dates : %(begin_date)s to %(end_date)s") % {'begin_date': localize(proposal.begin_date), 'end_date' : localize(proposal.end_date)}, styleN)],
             '',
-            [Paragraph(_("TOTAL : %(amount)s %(currency)s") % {'amount': localize(proposal.amount), 'currency' : "€".decode('utf-8')}, styleTotal),
+            [Paragraph(_("TOTAL excl. VAT : %(amount)s %(currency)s") % {'amount': localize(proposal.amount), 'currency' : "€".decode('utf-8')}, styleTotal),
              Spacer(1, 0.25 * inch),
              Paragraph(u"TVA non applicable, art. 293 B du CGI", styleN)]], ]
 
