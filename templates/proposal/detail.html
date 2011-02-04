@@ -41,6 +41,9 @@
     {% with proposal as object %}{% with "end_date" as name %}
     {% include "detail_field.html" %}
     {% endwith %}{% endwith %}
+    <div class="detail-row">
+      <div><label>{% trans "Exported file" %} :</label><a href="{% url proposal_download proposal.id %}">{% trans "download pdf file" %}</a></div>
+    </div>
 </fieldset>
 
 <h1>{% trans "Detail rows" %}</h1>
@@ -101,7 +104,7 @@
 
 <fieldset class="module aligned">
     <div class="detail-row">
-      <div><label>{% trans "Contract" %} :</label><a href="{% url proposal_download proposal.id %}">{% trans "download pdf file" %}</a></div>
+      <div><label>{% trans "Contract" %} :</label><a href="{% url proposal_contract_download proposal.id %}">{% trans "download pdf file" %}</a></div>
     </div>
     {% with proposal as object %}{% with "contract_content" as name %}
     <div class="detail-row">

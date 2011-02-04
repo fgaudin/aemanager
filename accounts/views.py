@@ -21,12 +21,11 @@ from custom_canvas import NumberedCanvas
 from core.decorators import settings_required
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 import datetime
-from reportlab.pdfgen.canvas import Canvas
 from reportlab.platypus import Paragraph, Frame, Spacer, BaseDocTemplate, PageTemplate
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.rl_config import defaultPageSize
 from reportlab.lib.units import inch
-from reportlab.lib.enums import TA_CENTER, TA_LEFT
+from reportlab.lib.enums import TA_CENTER
 from reportlab.platypus import Table, TableStyle
 from reportlab.lib import colors
 
