@@ -9,6 +9,7 @@ from project.models import Project, PROJECT_STATE_PROSPECT, \
 from accounts.models import Invoice, InvoiceRow, INVOICE_STATE_EDITED, \
     PAYMENT_TYPE_CHECK
 import datetime
+import hashlib
 
 class ContractPermissionTest(TestCase):
     fixtures = ['test_users', 'test_contacts']
@@ -57,6 +58,26 @@ class ContractPermissionTest(TestCase):
     def testContractGetContent(self):
         response = self.client.get(reverse('contract_get_content') + '?id=%(id)s' % {'id': self.contract2.id})
         self.assertEquals(response.status_code, 404)
+
+class ContractTest(TestCase):
+    fixtures = ['test_users', 'test_contacts']
+
+    def setUp(self):
+        self.client.login(username='test', password='test')
+        self.contract1 = Contract.objects.create(customer_id=10,
+                                                 title="Contract 1",
+                                                 content="<h1>Title of contract</h1><div><strong>Contract</strong> content 1</div>",
+                                                 update_date=datetime.date.today(),
+                                                 owner_id=1)
+
+
+    def testDownloadPdf(self):
+        response = self.client.get(reverse('contract_download', kwargs={'id': self.contract1.id}))
+        self.assertEqual(response.status_code, 200)
+        content = response.content.split("\n")
+        invariant_content = content[0:56] + content[57:118] + content[119:-1]
+        self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
+                          "79597f4f8120cf0e93219541c0493326")
 
 class ProjectPermissionTest(TestCase):
     fixtures = ['test_users', 'test_contacts']
@@ -692,3 +713,60 @@ class ProposalTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue('amount' in response.context['proposalForm'].errors)
 
+    def testDownloadPdf(self):
+        """
+        Tests non-regression on pdf
+        """
+        p = Proposal.objects.create(project_id=30,
+                                    update_date=datetime.date.today(),
+                                    state=PROPOSAL_STATE_DRAFT,
+                                    begin_date=datetime.date(2010, 8, 1),
+                                    end_date=datetime.date(2010, 8, 15),
+                                    contract_content='Content of contract',
+                                    amount=2005,
+                                    reference='XXX',
+                                    expiration_date=datetime.date(2010, 8, 2),
+                                    owner_id=1)
+
+        p_row = ProposalRow.objects.create(proposal_id=p.id,
+                                           label='Day of work',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           quantity=20,
+                                           unit_price='200.5',
+                                           owner_id=1)
+
+        response = self.client.get(reverse('proposal_download', kwargs={'id': p.id}))
+        self.assertEqual(response.status_code, 200)
+        content = response.content.split("\n")
+        invariant_content = content[0:66] + content[67:109] + content[110:-1]
+        self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
+                          "307367ca633274c016f8a889683eec7f")
+
+    def testContractDownloadPdf(self):
+        """
+        Tests non-regression on pdf
+        """
+        p = Proposal.objects.create(project_id=30,
+                                    update_date=datetime.date.today(),
+                                    state=PROPOSAL_STATE_DRAFT,
+                                    begin_date=datetime.date(2010, 8, 1),
+                                    end_date=datetime.date(2010, 8, 15),
+                                    contract_content='<h1>Title of contract</h1><div><strong>Content</strong> of contract</div>',
+                                    amount=2005,
+                                    reference='XXX',
+                                    expiration_date=datetime.date(2010, 8, 2),
+                                    owner_id=1)
+
+        p_row = ProposalRow.objects.create(proposal_id=p.id,
+                                           label='Day of work',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           quantity=20,
+                                           unit_price='200.5',
+                                           owner_id=1)
+
+        response = self.client.get(reverse('proposal_contract_download', kwargs={'id': p.id}))
+        self.assertEqual(response.status_code, 200)
+        content = response.content.split("\n")
+        invariant_content = content[0:56] + content[57:108] + content[109:-1]
+        self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
+                          "40ad0f0fe2051217c71c4fe35a158825")

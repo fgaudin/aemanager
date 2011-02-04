@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from django.utils import simplejson
 from django.utils.formats import localize
 import datetime
+import hashlib
 
 class ExpensePermissionTest(TestCase):
     fixtures = ['test_users']
@@ -698,6 +699,77 @@ class InvoiceTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTrue('invoice_id' in response.context['invoiceForm'].errors)
+
+    def testDownloadPdf(self):
+        """
+        Tests non-regression on pdf
+        """
+        i = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                   invoice_id=1,
+                                   state=INVOICE_STATE_EDITED,
+                                   amount='1000',
+                                   edition_date=datetime.date(2010, 8, 31),
+                                   payment_date=datetime.date(2010, 9, 30),
+                                   paid_date=None,
+                                   payment_type=PAYMENT_TYPE_CHECK,
+                                   execution_begin_date=datetime.date(2010, 8, 1),
+                                   execution_end_date=datetime.date(2010, 8, 7),
+                                   penalty_date=datetime.date(2010, 10, 8),
+                                   penalty_rate='1.5',
+                                   discount_conditions='Nothing',
+                                   owner_id=1)
+
+        i_row = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=10,
+                                          unit_price='100',
+                                          balance_payments=False,
+                                          owner_id=1)
+
+        response = self.client.get(reverse('invoice_download', kwargs={'id': i.id}))
+        self.assertEqual(response.status_code, 200)
+        content = response.content.split("\n")
+        invariant_content = content[0:66] + content[67:109] + content[110:-1]
+        self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
+                          "7f118967fcc66606bc287278f80a101f")
+
+    def testInvoiceBookDownloadPdf(self):
+        """
+        Tests non-regression on pdf
+        """
+        for i in range(1, 50):
+            invoice = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                   invoice_id=i,
+                                   state=INVOICE_STATE_PAID,
+                                   amount='1',
+                                   edition_date=datetime.date(2010, 8, 31),
+                                   payment_date=datetime.date(2010, 9, 30),
+                                   paid_date=datetime.date(2010, 9, 30),
+                                   payment_type=PAYMENT_TYPE_CHECK,
+                                   execution_begin_date=datetime.date(2010, 8, 1),
+                                   execution_end_date=datetime.date(2010, 8, 7),
+                                   penalty_date=datetime.date(2010, 10, 8),
+                                   penalty_rate='1.5',
+                                   discount_conditions='Nothing',
+                                   owner_id=1)
+
+            i_row = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                          invoice_id=invoice.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=10,
+                                          unit_price='1',
+                                          balance_payments=False,
+                                          owner_id=1)
+
+        response = self.client.get(reverse('invoice_list_export') + '?year=%(year)s' % {'year': '2010'})
+        self.assertEqual(response.status_code, 200)
+        content = response.content.split("\n")
+        invariant_content = content[0:85] + content[86:140] + content[141:-1]
+        self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
+                          "704f60f70dca3a7ad508847314fa8efc")
 
 class ExpenseTest(TestCase):
     fixtures = ['test_users', ]

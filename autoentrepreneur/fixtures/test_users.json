@@ -49,7 +49,7 @@
             "city": "Paris",
             "street": "1 rue de la paix",
             "zipcode": "75000",
-            "country": null
+            "country": 7
         }
     },
     {
@@ -66,7 +66,7 @@
             "city": "Paris",
             "street": "1 rue de la paix",
             "zipcode": "75000",
-            "country": null
+            "country": 7
         }
     },
     {
