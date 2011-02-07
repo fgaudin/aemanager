@@ -21,15 +21,17 @@ AUTOENTREPRENEUR_ACTIVITY = ((AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC, _('Pro
                              (AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC, _('Provision of a service (BNC)')),
                              (AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC, _('Liberal profession (BNC)')))
 
+class SalesLimit(models.Model):
+    year = models.IntegerField(verbose_name=_('Year'))
+    activity = models.IntegerField(choices=AUTOENTREPRENEUR_ACTIVITY,
+                                   verbose_name=_('Activity'))
+    limit = models.IntegerField(verbose_name=_('Limit'))
+    limit2 = models.IntegerField(verbose_name=_('Limit 2'))
+
 AUTOENTREPRENEUR_PAYMENT_OPTION_QUATERLY = 1
 AUTOENTREPRENEUR_PAYMENT_OPTION_MONTHLY = 2
 AUTOENTREPRENEUR_PAYMENT_OPTION = ((AUTOENTREPRENEUR_PAYMENT_OPTION_QUATERLY, _('Quaterly')),
                                    (AUTOENTREPRENEUR_PAYMENT_OPTION_MONTHLY, _('Monthly')))
-
-SALES_LIMIT = {AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC: 80300,
-               AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC: 32100,
-               AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC: 32100,
-               AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC: 32100}
 
 TAX_RATE_WITH_FREEING = {AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC: [4, 7, 10, 13],
                          AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC: [7.1, 12.4, 17.7, 23],
@@ -76,12 +78,13 @@ class UserProfile(models.Model):
         if not year:
             year = today.year
         if self.activity:
+            limit = SalesLimit.objects.get(year=year, activity=self.activity).limit
             if self.creation_date and self.creation_date.year == year:
                 worked_days = datetime.date(year + 1, 1, 1) - self.creation_date
                 days_in_year = datetime.date(year + 1, 1, 1) - datetime.date(year, 1, 1)
-                return int(round(float(SALES_LIMIT[self.activity]) * worked_days.days / days_in_year.days))
+                return int(round(float(limit) * worked_days.days / days_in_year.days))
             else:
-                return SALES_LIMIT[self.activity]
+                return limit
         return 0
 
     def get_paid_sales(self, year=None):
