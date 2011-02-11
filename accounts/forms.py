@@ -11,7 +11,7 @@ class ExpenseForm(ModelForm):
         exclude = ['owner']
 
 class InvoiceForm(ModelForm):
-    penalty_rate = forms.DecimalField(max_digits=4, decimal_places=2, label=_('Penalty rate'), localize=True)
+    penalty_rate = forms.DecimalField(max_digits=4, decimal_places=2, label=_('Penalty rate'), localize=True, required=False)
 
     class Meta:
         model = Invoice
