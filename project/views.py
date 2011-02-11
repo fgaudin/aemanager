@@ -379,7 +379,7 @@ def proposal_create_or_edit(request, id=None, project_id=None):
 @settings_required
 def proposal_detail(request, id):
     proposal = get_object_or_404(Proposal, pk=id, owner=request.user)
-    invoices = Invoice.objects.filter(invoice_rows__proposal=proposal)
+    invoices = Invoice.objects.filter(invoice_rows__proposal=proposal).distinct()
     next_states = proposal.get_next_states()
 
     return render_to_response('proposal/detail.html',

@@ -772,3 +772,13 @@ class ProposalTest(TestCase):
         invariant_content = content[0:56] + content[57:108] + content[109:-1]
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
                           "40ad0f0fe2051217c71c4fe35a158825")
+
+class Bug31Test(TestCase):
+    fixtures = ['test_dashboard_product_sales']
+
+    def setUp(self):
+        self.client.login(username='test', password='test')
+
+    def testDuplicateInvoicesOnProposal(self):
+        response = self.client.get(reverse('proposal_detail', kwargs={'id': 10}))
+        self.assertEquals(len(response.context['invoices']), 2)
