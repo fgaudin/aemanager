@@ -43,7 +43,7 @@ class Invoice(OwnedObject):
     state = models.IntegerField(choices=INVOICE_STATE, default=INVOICE_STATE_EDITED, verbose_name=_("State"))
     amount = models.DecimalField(blank=True, null=True, max_digits=12, decimal_places=2, verbose_name=_("Amount"))
     edition_date = models.DateField(verbose_name=_("Edition date"))
-    payment_date = models.DateField(blank=True, null=True, verbose_name=_("Payment date"))
+    payment_date = models.DateField(verbose_name=_("Payment date"))
     payment_type = models.IntegerField(choices=PAYMENT_TYPE, verbose_name=_('Payment type'))
     paid_date = models.DateField(blank=True, null=True, verbose_name=_("Paid date"))
     execution_begin_date = models.DateField(blank=True, null=True, verbose_name=_("Execution begin date"))
