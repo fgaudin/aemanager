@@ -132,14 +132,6 @@ class Proposal(OwnedObject):
                                                                                     'end_date': localize(self.end_date),
                                                                                     'project' : self.project}
 
-    def save(self, force_insert=False, force_update=False, using=None, user=None):
-        if self.id:
-            invoicerow_sum = float(self.invoice_rows.all().aggregate(sum=Sum('amount'))['sum'] or 0)
-            if float(self.amount) < invoicerow_sum :
-                raise ProposalAmountError(ugettext("Proposal amount can't be less sum of invoices"))
-        super(Proposal, self).save(force_insert, force_update, using, user)
-
-
     def is_accepted(self):
         return self.state == PROPOSAL_STATE_ACCEPTED or self.state == PROPOSAL_STATE_BALANCED
 
@@ -168,6 +160,9 @@ class Proposal(OwnedObject):
             amount = amount + row.quantity * row.unit_price
 
         self.amount = amount
+        invoicerow_sum = float(self.invoice_rows.all().aggregate(sum=Sum('amount'))['sum'] or 0)
+        if float(self.amount) < invoicerow_sum :
+            raise ProposalAmountError(ugettext("Proposal amount can't be less than sum of invoices"))
         self.save(user=self.owner)
 
     """

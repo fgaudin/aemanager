@@ -179,6 +179,50 @@ class DashboardTest(TestCase):
         response = self.client.get(reverse('index'))
         self.assertEqual(set(response.context['invoices']['to_send']), set([Invoice.objects.get(invoice_id=5)]))
 
+class DashboardProductActivityTest(TestCase):
+    fixtures = ['test_dashboard_product_sales']
+
+    def setUp(self):
+        self.client.login(username='test', password='test')
+        autoentrepreneur.models.datetime.date.mock_year = 2011
+        autoentrepreneur.models.datetime.date.mock_month = 2
+        autoentrepreneur.models.datetime.date.mock_day = 1
+
+    def tearDown(self):
+        autoentrepreneur.models.datetime.date.mock_year = 2010
+        autoentrepreneur.models.datetime.date.mock_month = 10
+        autoentrepreneur.models.datetime.date.mock_day = 25
+
+    def testServicePaid(self):
+        response = self.client.get(reverse('index'))
+        self.assertEqual(response.context['sales']['paid'], 60)
+        self.assertEqual(response.context['sales']['service_paid'], 50)
+
+    def testServiceWaiting(self):
+        response = self.client.get(reverse('index'))
+        self.assertEqual(response.context['sales']['waiting'], 130)
+        self.assertEqual(response.context['sales']['service_waiting'], 80)
+
+    def testServiceToBeInvoiced(self):
+        response = self.client.get(reverse('index'))
+        self.assertEqual(response.context['sales']['to_be_invoiced'], 60)
+        self.assertEqual(response.context['sales']['service_to_be_invoiced'], 30)
+
+    def testServiceTotal(self):
+        response = self.client.get(reverse('index'))
+        self.assertEqual(response.context['sales']['total'], 250)
+        self.assertEqual(response.context['sales']['service_total'], 160)
+
+    def testServiceRemaining(self):
+        response = self.client.get(reverse('index'))
+        self.assertEqual(response.context['sales']['remaining'], 81250)
+        self.assertEqual(response.context['sales']['service_remaining'], 32440)
+
+    def testServiceLimit(self):
+        response = self.client.get(reverse('index'))
+        self.assertEqual(response.context['sales']['limit'], 81500)
+        self.assertEqual(response.context['sales']['service_limit'], 32600)
+
 class TaxTest(TestCase):
 
     def setUp(self):

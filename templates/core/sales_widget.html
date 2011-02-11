@@ -32,25 +32,25 @@ jQuery(document).ready(function(){
 <span id="show_previous_year">{{ years.1 }}</span>
 {% endif %}
 <div id="current_year">
-    <div>{% trans "Paid sales" %} : {{ sales.paid }}</div>
-    <div>{% trans "Waiting payments" %} : {{ sales.waiting }}</div>
-    <div>{% trans "To be invoiced" %} : {{ sales.to_be_invoiced }}</div>
-    <div>{% trans "Total" %} : {{ sales.total }}</div>
+    <div>{% trans "Paid sales" %} : {{ sales.paid }}{% if sales.service_paid %} {% blocktrans with sales.service_paid as service_paid %}(including {{ service_paid }} of service){% endblocktrans %}{% endif %}</div>
+    <div>{% trans "Waiting payments" %} : {{ sales.waiting }}{% if sales.service_waiting %} {% blocktrans with sales.service_waiting as service_waiting %}(including {{ service_waiting }} of service){% endblocktrans %}{% endif %}</div>
+    <div>{% trans "To be invoiced" %} : {{ sales.to_be_invoiced }}{% if sales.service_to_be_invoiced %} {% blocktrans with sales.service_to_be_invoiced as service_to_be_invoiced %}(including {{ service_to_be_invoiced }} of service){% endblocktrans %}{% endif %}</div>
+    <div>{% trans "Total" %} : {{ sales.total }}{% if sales.service_total %} {% blocktrans with sales.service_total as service_total %}(including {{ service_total }} of service){% endblocktrans %}{% endif %}</div>
     {% if sales.remaining >= 0 %}
-    <div>{% trans "Remaining" %} : {{ sales.remaining }}</div>
+    <div>{% trans "Remaining" %} : {{ sales.remaining }}{% if sales.service_remaining %} {% blocktrans with sales.service_remaining as service_remaining %}(including {{ service_remaining }} of service){% endblocktrans %}{% endif %}</div>
     {% else %}
     <div class="overrun">{% trans "Overrun" %} : {{ sales.remaining|absolute }}</div>
     {% endif %}
-    <div>{% trans "Limit" %} : {{ sales.limit }}</div>
+    <div>{% trans "Limit" %} : {{ sales.limit }}{% if sales.service_limit %} {% blocktrans with sales.service_limit as service_limit %}(including {{ service_limit }} of service){% endblocktrans %}{% endif %}</div>
 </div>
 {% if sales_previous_year %}
 <div id="previous_year">
-    <div>{% trans "Paid sales" %} : {{ sales_previous_year.paid }}</div>
+    <div>{% trans "Paid sales" %} : {{ sales_previous_year.paid }}{% if sales_previous_year.service_paid %} {% blocktrans with sales_previous_year.service_paid as service_paid %}(including {{ service_paid }} of service){% endblocktrans %}{% endif %}</div>
     {% if sales_previous_year.remaining >= 0 %}
-    <div>{% trans "Remaining" %} : {{ sales_previous_year.remaining }}</div>
+    <div>{% trans "Remaining" %} : {{ sales_previous_year.remaining }}{% if sales_previous_year.service_remaining %} {% blocktrans with sales_previous_year.service_remaining as service_remaining %}(including {{ service_remaining }} of service){% endblocktrans %}{% endif %}</div>
     {% else %}
     <div class="overrun">{% trans "Overrun" %} : {{ sales_previous_year.remaining|absolute }}</div>
     {% endif %}
-    <div>{% trans "Limit" %} : {{ sales_previous_year.limit }}</div>
+    <div>{% trans "Limit" %} : {{ sales_previous_year.limit }}{% if sales_previous_year.service_limit %} {% blocktrans with sales_previous_year.service_limit as service_limit %}(including {{ service_limit }} of service){% endblocktrans %}{% endif %}</div>
 </div>
 {% endif %}

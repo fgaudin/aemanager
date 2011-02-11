@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from contact.models import Address
 from django.db.models.signals import post_save
 from project.models import Proposal, PROPOSAL_STATE_SENT, ProposalRow, PROPOSAL_STATE_DRAFT, PROPOSAL_STATE_ACCEPTED, \
-    PROJECT_STATE_CANCELED, PROJECT_STATE_FINISHED
+    PROJECT_STATE_CANCELED, PROJECT_STATE_FINISHED, ROW_CATEGORY_SERVICE
 
 from django.db.models.aggregates import Sum, Min
 from accounts.models import Invoice, INVOICE_STATE_PAID, INVOICE_STATE_SENT, \
@@ -75,6 +75,7 @@ class UserProfile(models.Model):
 
     def get_sales_limit(self, year=None):
         today = datetime.date.today()
+        limit = 0
         if not year:
             year = today.year
         if self.activity:
@@ -82,10 +83,21 @@ class UserProfile(models.Model):
             if self.creation_date and self.creation_date.year == year:
                 worked_days = datetime.date(year + 1, 1, 1) - self.creation_date
                 days_in_year = datetime.date(year + 1, 1, 1) - datetime.date(year, 1, 1)
-                return int(round(float(limit) * worked_days.days / days_in_year.days))
-            else:
-                return limit
-        return 0
+                limit = int(round(float(limit) * worked_days.days / days_in_year.days))
+        return limit
+
+    def get_service_sales_limit(self, year=None):
+        today = datetime.date.today()
+        service_limit = 0
+        if not year:
+            year = today.year
+        if self.activity == AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC:
+            service_limit = SalesLimit.objects.get(year=year, activity=AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC).limit
+            if self.creation_date and self.creation_date.year == year:
+                worked_days = datetime.date(year + 1, 1, 1) - self.creation_date
+                days_in_year = datetime.date(year + 1, 1, 1) - datetime.date(year, 1, 1)
+                service_limit = int(round(float(service_limit) * worked_days.days / days_in_year.days))
+        return service_limit
 
     def get_paid_sales(self, year=None):
         if not year:
@@ -95,9 +107,24 @@ class UserProfile(models.Model):
                                             paid_date__year=year).aggregate(sales=Sum('amount'))
         return amount_sum['sales'] or 0
 
+    def get_paid_service_sales(self, year=None):
+        if not year:
+            year = datetime.date.today().year
+        amount_sum = InvoiceRow.objects.filter(invoice__state=INVOICE_STATE_PAID,
+                                               owner=self,
+                                               category=ROW_CATEGORY_SERVICE,
+                                               invoice__paid_date__year=year).aggregate(sales=Sum('amount'))
+        return amount_sum['sales'] or 0
+
     def get_waiting_payments(self):
         amount_sum = Invoice.objects.filter(state=INVOICE_STATE_SENT,
                                             owner=self).aggregate(sales=Sum('amount'))
+        return amount_sum['sales'] or 0
+
+    def get_waiting_service_payments(self):
+        amount_sum = InvoiceRow.objects.filter(invoice__state=INVOICE_STATE_SENT,
+                                               owner=self,
+                                               category=ROW_CATEGORY_SERVICE).aggregate(sales=Sum('amount'))
         return amount_sum['sales'] or 0
 
     def get_to_be_invoiced(self):
@@ -107,6 +134,18 @@ class UserProfile(models.Model):
         invoicerows_to_exclude = InvoiceRow.objects.extra(where=['accounts_invoicerow.proposal_id NOT IN (SELECT proposal_id FROM accounts_invoicerow irow JOIN accounts_invoice i ON irow.invoice_id = i.ownedobject_ptr_id WHERE i.state IN (%s,%s) AND irow.balance_payments = %s)'],
                                                           params=[INVOICE_STATE_SENT, INVOICE_STATE_PAID, True]).exclude(invoice__state=INVOICE_STATE_EDITED).filter(owner=self).aggregate(amount=Sum('amount'))
         return (accepted_proposal_amount_sum['amount'] or 0) - (invoicerows_to_exclude['amount'] or 0)
+
+    def get_service_to_be_invoiced(self):
+        accepted_proposal_amount_sum = ProposalRow.objects.filter(proposal__state=PROPOSAL_STATE_ACCEPTED,
+                                                                  category=ROW_CATEGORY_SERVICE,
+                                                                  owner=self).extra(where=['project_proposal.ownedobject_ptr_id NOT IN (SELECT proposal_id FROM accounts_invoicerow irow JOIN accounts_invoice i ON irow.invoice_id = i.ownedobject_ptr_id WHERE i.state IN (%s,%s) AND irow.balance_payments = %s)'],
+                                                                                 params=[INVOICE_STATE_SENT, INVOICE_STATE_PAID, True]).aggregate(amount=Sum('amount'))
+        invoicerows_to_exclude = InvoiceRow.objects.filter(proposal__state=PROPOSAL_STATE_ACCEPTED,
+                                                           category=ROW_CATEGORY_SERVICE,
+                                                           owner=self).extra(where=['accounts_invoicerow.proposal_id NOT IN (SELECT proposal_id FROM accounts_invoicerow irow JOIN accounts_invoice i ON irow.invoice_id = i.ownedobject_ptr_id WHERE i.state IN (%s,%s) AND irow.balance_payments = %s)'],
+                                                                             params=[INVOICE_STATE_SENT, INVOICE_STATE_PAID, True]).exclude(invoice__state=INVOICE_STATE_EDITED).filter(owner=self).aggregate(amount=Sum('amount'))
+        return (accepted_proposal_amount_sum['amount'] or 0) - (invoicerows_to_exclude['amount'] or 0)
+
 
     def get_late_invoices(self):
         late_invoices = Invoice.objects.filter(state=INVOICE_STATE_SENT,

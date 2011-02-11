@@ -1,7 +1,7 @@
 # coding=utf-8
 
 from django.utils.translation import ugettext_lazy as _, ugettext
-from django.db.transaction import commit_on_success
+from django.db.transaction import commit_on_success, rollback
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from project.models import Project, PROJECT_STATE_STARTED, Proposal, ProposalRow, \
     Contract, PROJECT_STATE_FINISHED, \
@@ -346,12 +346,16 @@ def proposal_create_or_edit(request, id=None, project_id=None):
                         proposalrow.proposal = proposal
                         proposalrow.save(user=user)
 
+                for deleted_proposalrowform in proposalrowformset.deleted_forms:
+                    deleted_proposalrowform.cleaned_data['ownedobject_ptr'].delete()
+
                 proposal.update_amount()
 
                 messages.success(request, _('The proposal has been saved successfully'))
                 return redirect(reverse('proposal_detail', kwargs={'id': proposal.id}))
             except ProposalAmountError:
-                proposalForm._errors["amount"] = proposalForm.error_class([_("Proposal amount can't be less sum of invoices")])
+                rollback()
+                messages.error(request, _("Proposal amount can't be less than sum of invoices"))
         else:
             messages.error(request, _('Data provided are invalid'))
     else:

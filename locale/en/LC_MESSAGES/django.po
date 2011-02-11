@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-04 23:28+0100\n"
+"POT-Creation-Date: 2011-02-11 13:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,7 +38,7 @@ msgid "Penalty rate"
 msgstr ""
 
 #: accounts/forms.py:21 accounts/views.py:420 project/forms.py:39
-#: project/views.py:540 templates/invoice/detail.html:73
+#: project/views.py:544 templates/invoice/detail.html:73
 #: templates/proposal/detail.html:61
 msgid "Unit price"
 msgstr ""
@@ -196,8 +196,8 @@ msgstr ""
 msgid "Amount invoiced for proposal can't be greater than proposal amount"
 msgstr ""
 
-#: accounts/views.py:250 contact/views.py:66 core/views.py:188
-#: project/views.py:69 project/views.py:157 project/views.py:356
+#: accounts/views.py:250 contact/views.py:66 core/views.py:217
+#: project/views.py:69 project/views.py:157 project/views.py:360
 msgid "Data provided are invalid"
 msgstr ""
 
@@ -224,7 +224,7 @@ msgstr ""
 msgid "Invoice #%(invoice_id)d"
 msgstr ""
 
-#: accounts/views.py:404 project/views.py:524
+#: accounts/views.py:404 project/views.py:528
 #, python-format
 msgid "Date : %s"
 msgstr ""
@@ -234,17 +234,17 @@ msgstr ""
 msgid "INVOICE #%d"
 msgstr ""
 
-#: accounts/views.py:420 project/views.py:540 templates/invoice/detail.html:68
+#: accounts/views.py:420 project/views.py:544 templates/invoice/detail.html:68
 #: templates/proposal/detail.html:58
 msgid "Label"
 msgstr ""
 
-#: accounts/views.py:420 project/views.py:540 templates/invoice/detail.html:72
+#: accounts/views.py:420 project/views.py:544 templates/invoice/detail.html:72
 #: templates/proposal/detail.html:60
 msgid "Quantity"
 msgstr ""
 
-#: accounts/views.py:420 project/views.py:540
+#: accounts/views.py:420 project/views.py:544
 #: templates/core/sales_widget.html:38
 msgid "Total"
 msgstr ""
@@ -254,7 +254,7 @@ msgstr ""
 msgid "Payment date : %s"
 msgstr ""
 
-#: accounts/views.py:460 project/views.py:578
+#: accounts/views.py:460 project/views.py:582
 #, python-format
 msgid "Execution dates : %(begin_date)s to %(end_date)s"
 msgstr ""
@@ -274,41 +274,42 @@ msgstr ""
 msgid "Discount conditions : %s"
 msgstr ""
 
-#: accounts/views.py:465 project/views.py:580
+#: accounts/views.py:465 project/views.py:584
 #, python-format
 msgid "TOTAL excl. VAT : %(amount)s %(currency)s"
 msgstr ""
 
-#: autoentrepreneur/forms.py:8 autoentrepreneur/models.py:48
+#: autoentrepreneur/forms.py:8 autoentrepreneur/models.py:50
 msgid "Company name"
 msgstr ""
 
-#: autoentrepreneur/forms.py:9 autoentrepreneur/models.py:49
+#: autoentrepreneur/forms.py:9 autoentrepreneur/models.py:51
 #: contact/models.py:36
 msgid "Company id"
 msgstr ""
 
-#: autoentrepreneur/forms.py:10 autoentrepreneur/models.py:50
+#: autoentrepreneur/forms.py:10 autoentrepreneur/models.py:52
 msgid "Bank information"
 msgstr ""
 
-#: autoentrepreneur/forms.py:11 autoentrepreneur/models.py:52
+#: autoentrepreneur/forms.py:11 autoentrepreneur/models.py:27
+#: autoentrepreneur/models.py:54
 msgid "Activity"
 msgstr ""
 
-#: autoentrepreneur/forms.py:12 autoentrepreneur/models.py:53
+#: autoentrepreneur/forms.py:12 autoentrepreneur/models.py:55
 msgid "Creation date"
 msgstr ""
 
-#: autoentrepreneur/forms.py:13 autoentrepreneur/models.py:54
+#: autoentrepreneur/forms.py:13 autoentrepreneur/models.py:56
 msgid "Creation help"
 msgstr ""
 
-#: autoentrepreneur/forms.py:14 autoentrepreneur/models.py:55
+#: autoentrepreneur/forms.py:14 autoentrepreneur/models.py:57
 msgid "Freeing tax payment"
 msgstr ""
 
-#: autoentrepreneur/forms.py:15 autoentrepreneur/models.py:56
+#: autoentrepreneur/forms.py:15 autoentrepreneur/models.py:58
 msgid "Payment option"
 msgstr ""
 
@@ -328,15 +329,28 @@ msgstr ""
 msgid "Liberal profession (BNC)"
 msgstr ""
 
-#: autoentrepreneur/models.py:26
+#: autoentrepreneur/models.py:25
+msgid "Year"
+msgstr ""
+
+#: autoentrepreneur/models.py:28 templates/core/sales_widget.html:44
+#: templates/core/sales_widget.html:54
+msgid "Limit"
+msgstr ""
+
+#: autoentrepreneur/models.py:29
+msgid "Limit 2"
+msgstr ""
+
+#: autoentrepreneur/models.py:33
 msgid "Quaterly"
 msgstr ""
 
-#: autoentrepreneur/models.py:27
+#: autoentrepreneur/models.py:34
 msgid "Monthly"
 msgstr ""
 
-#: autoentrepreneur/models.py:51 contact/models.py:42
+#: autoentrepreneur/models.py:53 contact/models.py:42
 msgid "Address"
 msgstr ""
 
@@ -470,31 +484,31 @@ msgstr ""
 msgid "Password doesn't match"
 msgstr ""
 
-#: core/tests.py:63 core/views.py:214
+#: core/tests.py:63 core/views.py:243
 msgid "Wrong password"
 msgstr ""
 
-#: core/tests.py:78 core/views.py:212
+#: core/tests.py:78 core/views.py:241
 msgid "Your password has been modified successfully"
 msgstr ""
 
-#: core/views.py:157 templates/menu.html:9 templates/core/index.html:3
+#: core/views.py:186 templates/menu.html:9 templates/core/index.html:3
 msgid "Dashboard"
 msgstr ""
 
-#: core/views.py:185
+#: core/views.py:214
 msgid "Your settings have been updated successfully"
 msgstr ""
 
-#: core/views.py:196 templates/menu.html:79
+#: core/views.py:225 templates/menu.html:79
 msgid "Settings"
 msgstr ""
 
-#: core/views.py:216
+#: core/views.py:245
 msgid "Your password has not been modified"
 msgstr ""
 
-#: core/views.py:222 templates/menu.html:82
+#: core/views.py:251 templates/menu.html:82
 msgid "Change password"
 msgstr ""
 
@@ -514,71 +528,71 @@ msgstr ""
 msgid "Update date"
 msgstr ""
 
-#: project/models.py:25 project/models.py:182
+#: project/models.py:25 project/models.py:177
 msgid "reference"
 msgstr ""
 
-#: project/models.py:26 project/models.py:52 project/models.py:183
+#: project/models.py:26 project/models.py:52 project/models.py:178
 msgid "customer"
 msgstr ""
 
-#: project/models.py:27 project/models.py:53 project/models.py:184
+#: project/models.py:27 project/models.py:53 project/models.py:179
 msgid "customer_legal_form"
 msgstr ""
 
-#: project/models.py:28 project/models.py:54 project/models.py:185
+#: project/models.py:28 project/models.py:54 project/models.py:180
 msgid "customer_street"
 msgstr ""
 
-#: project/models.py:29 project/models.py:55 project/models.py:186
+#: project/models.py:29 project/models.py:55 project/models.py:181
 msgid "customer_zipcode"
 msgstr ""
 
-#: project/models.py:30 project/models.py:56 project/models.py:187
+#: project/models.py:30 project/models.py:56 project/models.py:182
 msgid "customer_city"
 msgstr ""
 
-#: project/models.py:31 project/models.py:57 project/models.py:188
+#: project/models.py:31 project/models.py:57 project/models.py:183
 msgid "customer_country"
 msgstr ""
 
-#: project/models.py:32 project/models.py:58 project/models.py:189
+#: project/models.py:32 project/models.py:58 project/models.py:184
 msgid "customer_national_id"
 msgstr ""
 
-#: project/models.py:33 project/models.py:59 project/models.py:190
+#: project/models.py:33 project/models.py:59 project/models.py:185
 msgid "customer_representative"
 msgstr ""
 
-#: project/models.py:34 project/models.py:60 project/models.py:191
+#: project/models.py:34 project/models.py:60 project/models.py:186
 msgid "customer_representative_function"
 msgstr ""
 
-#: project/models.py:35 project/models.py:61 project/models.py:192
+#: project/models.py:35 project/models.py:61 project/models.py:187
 msgid "firstname"
 msgstr ""
 
-#: project/models.py:36 project/models.py:62 project/models.py:193
+#: project/models.py:36 project/models.py:62 project/models.py:188
 msgid "lastname"
 msgstr ""
 
-#: project/models.py:37 project/models.py:63 project/models.py:194
+#: project/models.py:37 project/models.py:63 project/models.py:189
 msgid "street"
 msgstr ""
 
-#: project/models.py:38 project/models.py:64 project/models.py:195
+#: project/models.py:38 project/models.py:64 project/models.py:190
 msgid "zipcode"
 msgstr ""
 
-#: project/models.py:39 project/models.py:65 project/models.py:196
+#: project/models.py:39 project/models.py:65 project/models.py:191
 msgid "city"
 msgstr ""
 
-#: project/models.py:40 project/models.py:66 project/models.py:197
+#: project/models.py:40 project/models.py:66 project/models.py:192
 msgid "country"
 msgstr ""
 
-#: project/models.py:41 project/models.py:67 project/models.py:198
+#: project/models.py:41 project/models.py:67 project/models.py:193
 msgid "national_id"
 msgstr ""
 
@@ -644,15 +658,15 @@ msgstr ""
 msgid "Proposal from %(begin_date)s to %(end_date)s for %(project)s"
 msgstr ""
 
-#: project/models.py:139 project/views.py:354
-msgid "Proposal amount can't be less sum of invoices"
+#: project/models.py:165 project/views.py:358
+msgid "Proposal amount can't be less than sum of invoices"
 msgstr ""
 
-#: project/models.py:227
+#: project/models.py:222
 msgid "Service"
 msgstr ""
 
-#: project/models.py:228
+#: project/models.py:223
 msgid "Product"
 msgstr ""
 
@@ -717,44 +731,44 @@ msgstr ""
 msgid "Add a proposal"
 msgstr ""
 
-#: project/views.py:351
+#: project/views.py:354
 msgid "The proposal has been saved successfully"
 msgstr ""
 
-#: project/views.py:383
+#: project/views.py:387
 #, python-format
 msgid "Proposal for %s"
 msgstr ""
 
-#: project/views.py:398
+#: project/views.py:402
 msgid "The proposal has been deleted successfully"
 msgstr ""
 
-#: project/views.py:405
+#: project/views.py:409
 msgid "Delete a proposal"
-msgstr ""
-
-#: project/views.py:439
-#, python-format
-msgid "proposal_%(id)d.pdf"
 msgstr ""
 
 #: project/views.py:443
 #, python-format
+msgid "proposal_%(id)d.pdf"
+msgstr ""
+
+#: project/views.py:447
+#, python-format
 msgid "Proposal %(reference)s"
 msgstr ""
 
-#: project/views.py:534
+#: project/views.py:538
 #, python-format
 msgid "PROPOSAL %s"
 msgstr ""
 
-#: project/views.py:577
+#: project/views.py:581
 #, python-format
 msgid "Proposal valid through : %s"
 msgstr ""
 
-#: project/views.py:597
+#: project/views.py:601
 #, python-format
 msgid "proposal_contract_%(id)d.pdf"
 msgstr ""
@@ -936,12 +950,38 @@ msgstr ""
 msgid "Proposals to send"
 msgstr ""
 
+#: templates/core/sales_widget.html:35 templates/core/sales_widget.html:48
+#, python-format
+msgid "(including %(service_paid)s of service)"
+msgstr ""
+
+#: templates/core/sales_widget.html:36
+#, python-format
+msgid "(including %(service_waiting)s of service)"
+msgstr ""
+
+#: templates/core/sales_widget.html:37
+#, python-format
+msgid "(including %(service_to_be_invoiced)s of service)"
+msgstr ""
+
+#: templates/core/sales_widget.html:38
+#, python-format
+msgid "(including %(service_total)s of service)"
+msgstr ""
+
+#: templates/core/sales_widget.html:40 templates/core/sales_widget.html:50
+#, python-format
+msgid "(including %(service_remaining)s of service)"
+msgstr ""
+
 #: templates/core/sales_widget.html:42 templates/core/sales_widget.html:52
 msgid "Overrun"
 msgstr ""
 
 #: templates/core/sales_widget.html:44 templates/core/sales_widget.html:54
-msgid "Limit"
+#, python-format
+msgid "(including %(service_limit)s of service)"
 msgstr ""
 
 #: templates/core/taxes_widget.html:27

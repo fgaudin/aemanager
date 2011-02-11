@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils import simplejson
 from accounts.models import Expense
 from core.decorators import settings_required
+from autoentrepreneur.models import AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC
 import time
 import datetime
 
@@ -24,14 +25,31 @@ def index(request):
     if one_year_back.year >= profile.creation_date.year:
         first_year = False
 
+    service_paid = 0
+    service_waiting = 0
+    service_to_be_invoiced = 0
+    service_limit = 0
+    service_paid_previous_year = 0
+    service_limit_previous_year = 0
+
     paid = profile.get_paid_sales()
+
     if not first_year:
         paid_previous_year = profile.get_paid_sales(year=one_year_back.year)
     waiting = profile.get_waiting_payments()
     to_be_invoiced = profile.get_to_be_invoiced()
     limit = profile.get_sales_limit()
+
+    if user.get_profile().activity == AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC:
+        service_waiting = profile.get_waiting_service_payments()
+        service_to_be_invoiced = profile.get_service_to_be_invoiced()
+        service_limit = profile.get_service_sales_limit()
+        service_paid = profile.get_paid_service_sales()
     if not first_year:
         limit_previous_year = profile.get_sales_limit(year=one_year_back.year)
+        if user.get_profile().activity == AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC:
+            service_limit_previous_year = profile.get_service_sales_limit(year=one_year_back.year)
+            service_paid_previous_year = profile.get_paid_service_sales(year=one_year_back.year)
     late_invoices = profile.get_late_invoices()
     invoices_to_send = profile.get_invoices_to_send()
     potential = profile.get_potential_sales()
@@ -51,7 +69,9 @@ def index(request):
     next_amount_to_pay = float(next_amount_paid_for_tax) * float(next_tax_rate) / 100
 
     min_date = profile.get_first_invoice_paid_date()
-    if min_date < one_year_back:
+    if not min_date:
+        chart_begin_date = today
+    elif min_date < one_year_back:
         chart_begin_date = one_year_back
     else:
         chart_begin_date = min_date
@@ -104,17 +124,26 @@ def index(request):
                 expense_counter = expense_counter + 1
 
     sales = {'paid': paid,
+             'service_paid': service_paid,
              'waiting': waiting,
+             'service_waiting': service_waiting,
              'to_be_invoiced': to_be_invoiced,
+             'service_to_be_invoiced': service_to_be_invoiced,
              'total': paid + waiting + to_be_invoiced,
+             'service_total': service_paid + service_waiting + service_to_be_invoiced,
              'limit': limit,
-             'remaining': limit - paid - waiting - to_be_invoiced}
+             'service_limit': service_limit,
+             'remaining': limit - paid - waiting - to_be_invoiced,
+             'service_remaining': service_limit - service_paid - service_waiting - service_to_be_invoiced}
 
     sales_previous_year = None
     if not first_year:
         sales_previous_year = {'paid': paid_previous_year,
+                               'service_paid': service_paid_previous_year,
                                'limit': limit_previous_year,
-                               'remaining': limit_previous_year - paid_previous_year}
+                               'service_limit': service_limit_previous_year,
+                               'remaining': limit_previous_year - paid_previous_year,
+                               'service_remaining': service_limit_previous_year - service_paid_previous_year}
 
     invoices = {'late': late_invoices,
                 'to_send': invoices_to_send}

@@ -694,8 +694,10 @@ class ProposalTest(TestCase):
                                            balance_payments=False,
                                            owner_id=1)
 
-        p.amount = 2999
-        self.assertRaises(ProposalAmountError, p.save)
+        p_row.quantity = 10
+        p_row.unit_price = '299.9'
+        p_row.save()
+        self.assertRaises(ProposalAmountError, p.update_amount)
 
         response = self.client.post(reverse('proposal_edit', kwargs={'id': p.id}),
                                     {'proposal-state': PROPOSAL_STATE_SENT,
@@ -711,14 +713,14 @@ class ProposalTest(TestCase):
                                      'proposal_rows-0-quantity': 10,
                                      'proposal_rows-0-unit_price': 299.9 })
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('amount' in response.context['proposalForm'].errors)
+        self.assertEquals(unicode(list(response.context['messages'])[0]), "Proposal amount can't be less than sum of invoices")
 
     def testDownloadPdf(self):
         """
         Tests non-regression on pdf
         """
         p = Proposal.objects.create(project_id=30,
-                                    update_date=datetime.date.today(),
+                                    update_date=datetime.date(2011, 2, 5),
                                     state=PROPOSAL_STATE_DRAFT,
                                     begin_date=datetime.date(2010, 8, 1),
                                     end_date=datetime.date(2010, 8, 15),
