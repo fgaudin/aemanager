@@ -59,7 +59,7 @@ def contract_create_or_edit(request, id=None, contact_id=None):
             user = request.user
             contract = contractForm.save(commit=False)
             contract.update_date = datetime.datetime.now()
-            contract.customjecter = customer
+            contract.customer = customer
             contract.save(user=user)
             contractForm.save_m2m()
 

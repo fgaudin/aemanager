@@ -79,6 +79,13 @@ class ContractTest(TestCase):
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
                           "79597f4f8120cf0e93219541c0493326")
 
+    def testPostAdd(self):
+        response = self.client.post(reverse('contract_add', kwargs={'contact_id': 10}),
+                                    {'contract-title': 'Contract title',
+                                     'contract-content': 'Contract content'})
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals(len(Contract.objects.filter(title='Contract title', owner__id=1)), 1)
+
 class ProjectPermissionTest(TestCase):
     fixtures = ['test_users', 'test_contacts']
 
