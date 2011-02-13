@@ -179,6 +179,18 @@ class DashboardTest(TestCase):
         response = self.client.get(reverse('index'))
         self.assertEqual(set(response.context['invoices']['to_send']), set([Invoice.objects.get(invoice_id=5)]))
 
+    def testYearChange(self):
+        autoentrepreneur.models.datetime.date.mock_year = 2011
+        autoentrepreneur.models.datetime.date.mock_month = 1
+        autoentrepreneur.models.datetime.date.mock_day = 1
+        response = self.client.get(reverse('index'))
+        self.assertEquals(response.context['sales']['paid'], 0)
+        self.assertEquals(response.context['sales']['waiting'], 1500)
+        self.assertEquals(response.context['sales']['to_be_invoiced'], 750)
+        self.assertEquals(response.context['sales']['limit'], 32600)
+        self.assertEquals(response.context['sales_previous_year']['paid'], 5000)
+        self.assertEquals(response.context['sales_previous_year']['remaining'], 16182 - 5000)
+
 class DashboardProductActivityTest(TestCase):
     fixtures = ['test_dashboard_product_sales']
 
