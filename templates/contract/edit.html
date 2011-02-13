@@ -16,6 +16,7 @@ jQuery(document).ready(function(){
         jQuery.getJSON('{% url contract_get_content %}', {'id': contract_id}, function(data){
             jQuery('#id_contract-title').val(data['title']);
             jQuery('#id_contract-content').html(data['content']);
+            jQuery('#id_contract-content').elrte('val', data['content']);
         });
     });
 
