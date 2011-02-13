@@ -238,6 +238,9 @@ def invoice_create_or_edit(request, id=None, customer_id=None):
                             invoicerow.proposal.state = PROPOSAL_STATE_BALANCED
                             invoicerow.proposal.save()
 
+                for deleted_invoicerowform in invoicerowformset.deleted_forms:
+                    deleted_invoicerowform.cleaned_data['ownedobject_ptr'].delete()
+
                 messages.success(request, _('The invoice has been saved successfully'))
                 return redirect(reverse('invoice_detail', kwargs={'id': invoice.id}))
             except InvoiceRowAmountError:

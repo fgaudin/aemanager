@@ -1,6 +1,56 @@
 {% extends "base.html" %}
 {% load i18n %}
 
+{% block extrahead %}
+<script src="{{ MEDIA_URL }}js/elrte-1.2/js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
+
+<script type="text/javascript">
+jQuery(document).ready(function(){
+    var activate_delete = function(){
+        jQuery('.delete-button').click(function(e){
+            e.preventDefault();
+            if (jQuery(e.currentTarget).parent('.inline-formset').children().first('input').val()) {
+                jQuery(e.currentTarget).parent('.inline-formset').hide();
+                jQuery(e.currentTarget).next('.delete-checkbox').children('input').attr('checked', true);
+            } else {
+                jQuery('#id_invoice_rows-TOTAL_FORMS').val(parseInt(jQuery('#id_invoice_rows-TOTAL_FORMS').val(), 10) - 1);
+                jQuery(e.currentTarget).parent('.inline-formset').remove();
+                var i = 0;
+                jQuery('.invoice-row').each(function(){
+                    jQuery('input, select',this).each(function(){
+                        jQuery(this).attr('name',jQuery(this).attr('name').replace(/(invoice_rows-)[0-9]+/,'$1' + i));
+                        jQuery(this).attr('id',jQuery(this).attr('id').replace(/(invoice_rows-)[0-9]+/,'$1' + i));
+                    });
+                    i = i + 1;
+                });
+            }
+        });
+    };
+
+    jQuery('#add-button').click(function(e){
+        e.preventDefault();
+        new_row = jQuery(e.currentTarget).parent('.inline-formset').prev('.invoice-row').clone();
+        jQuery(e.currentTarget).parent('.inline-formset').before(new_row);
+        jQuery('input',new_row).val('');
+        jQuery('input',new_row).attr('checked', false);
+        jQuery('option',new_row).attr('selected', false);
+        jQuery("option[value='']",new_row).attr('selected', true);
+        var row_count = jQuery('#id_invoice_rows-TOTAL_FORMS').val();
+        jQuery('input, select',new_row).each(function(){
+            jQuery(this).attr('name',jQuery(this).attr('name').replace(/(invoice_rows-)[0-9]+/,'$1' + row_count));
+            jQuery(this).attr('id',jQuery(this).attr('id').replace(/(invoice_rows-)[0-9]+/,'$1' + row_count));
+        });
+        jQuery(new_row).show();
+        jQuery('#id_invoice_rows-TOTAL_FORMS').val(parseInt(row_count, 10) + 1);
+        activate_delete();
+    });
+
+    jQuery('.delete-checkbox').hide()
+    activate_delete();
+});
+</script>
+{% endblock %}
+
 {% block content %}
 <form action="" method="post" id="invoice-edit-form">
     {% csrf_token %}
@@ -45,10 +95,13 @@
     <div><label>{% trans "Detail rows" %} :</label></div>
     {{ invoicerowformset.management_form }}
     {% for form in invoicerowformset.forms %}
-        <div class="inline-formset">
-            {{ form.ownedobject_ptr }}{{ form.label }} {{ form.proposal }} {{ form.balance_payments.label }} : {{ form.balance_payments }} {{ form.category }} {{ form.quantity.label }} : {{ form.quantity }} {{ form.unit_price.label }} {{ form.unit_price }} : {{ form.default }} {{ form.DELETE.label }} : {{ form.DELETE }}
+        <div class="inline-formset invoice-row">
+            {{ form.ownedobject_ptr }}{{ form.label }} {{ form.proposal }} {{ form.balance_payments.label }} : {{ form.balance_payments }} {{ form.category }} {{ form.quantity.label }} : {{ form.quantity }} {{ form.unit_price.label }} {{ form.unit_price }} <a href="#" class="delete-button"><img src="{{ MEDIA_URL }}img/icon_deletelink.gif" /></a><span class="delete-checkbox">{{ form.DELETE }}</span>
         </div>
     {% endfor %}
+        <div class="inline-formset">
+            <a href="#" id="add-button"><img src="{{ MEDIA_URL }}img/icon_addlink.gif" /> Add</a>
+        </div>
     </div>
     </fieldset>
 
