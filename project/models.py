@@ -66,7 +66,7 @@ class Contract(OwnedObject):
         substitution_map[ugettext('country')] = unicode(user.get_profile().address.country)
         substitution_map[ugettext('national_id')] = user.get_profile().company_id
 
-        contract_content = "<h1>%s</h1>%s" % (self.title, self.content)
+        contract_content = "<h1>%s</h1>%s" % (self.title, self.content.replace('&nbsp;', ' '))
 
         for tag, value in substitution_map.items():
             contract_content = contract_content.replace('{{ %s }}' % (tag), value)
@@ -210,7 +210,8 @@ class Proposal(OwnedObject):
         substitution_map[ugettext('country')] = unicode(user.get_profile().address.country)
         substitution_map[ugettext('national_id')] = user.get_profile().company_id
 
-        contract_content = self.contract_content
+        contract_content = self.contract_content.replace('&nbsp;', ' ')
+
         for tag, value in substitution_map.items():
             contract_content = contract_content.replace('{{ %s }}' % (tag), value)
 
