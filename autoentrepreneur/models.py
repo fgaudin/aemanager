@@ -4,12 +4,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from contact.models import Address
 from django.db.models.signals import post_save
-from project.models import Proposal, PROPOSAL_STATE_SENT, ProposalRow, PROPOSAL_STATE_DRAFT, PROPOSAL_STATE_ACCEPTED, \
-    PROJECT_STATE_CANCELED, PROJECT_STATE_FINISHED, ROW_CATEGORY_SERVICE
-
-from django.db.models.aggregates import Sum, Min
-from accounts.models import Invoice, INVOICE_STATE_PAID, INVOICE_STATE_SENT, \
-    InvoiceRow, INVOICE_STATE_EDITED
 import datetime
 
 AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC = 1
@@ -99,81 +93,6 @@ class UserProfile(models.Model):
                 service_limit = int(round(float(service_limit) * worked_days.days / days_in_year.days))
         return service_limit
 
-    def get_paid_sales(self, year=None):
-        if not year:
-            year = datetime.date.today().year
-        amount_sum = Invoice.objects.filter(state=INVOICE_STATE_PAID,
-                                            owner=self,
-                                            paid_date__year=year).aggregate(sales=Sum('amount'))
-        return amount_sum['sales'] or 0
-
-    def get_paid_service_sales(self, year=None):
-        if not year:
-            year = datetime.date.today().year
-        amount_sum = InvoiceRow.objects.filter(invoice__state=INVOICE_STATE_PAID,
-                                               owner=self,
-                                               category=ROW_CATEGORY_SERVICE,
-                                               invoice__paid_date__year=year).aggregate(sales=Sum('amount'))
-        return amount_sum['sales'] or 0
-
-    def get_waiting_payments(self):
-        amount_sum = Invoice.objects.filter(state=INVOICE_STATE_SENT,
-                                            owner=self).aggregate(sales=Sum('amount'))
-        return amount_sum['sales'] or 0
-
-    def get_waiting_service_payments(self):
-        amount_sum = InvoiceRow.objects.filter(invoice__state=INVOICE_STATE_SENT,
-                                               owner=self,
-                                               category=ROW_CATEGORY_SERVICE).aggregate(sales=Sum('amount'))
-        return amount_sum['sales'] or 0
-
-    def get_to_be_invoiced(self):
-        accepted_proposal_amount_sum = Proposal.objects.filter(state=PROPOSAL_STATE_ACCEPTED,
-                                                               owner=self).extra(where=['project_proposal.ownedobject_ptr_id NOT IN (SELECT proposal_id FROM accounts_invoicerow irow JOIN accounts_invoice i ON irow.invoice_id = i.ownedobject_ptr_id WHERE i.state IN (%s,%s) AND irow.balance_payments = %s)'],
-                                                                                 params=[INVOICE_STATE_SENT, INVOICE_STATE_PAID, True]).aggregate(amount=Sum('amount'))
-        invoicerows_to_exclude = InvoiceRow.objects.extra(where=['accounts_invoicerow.proposal_id NOT IN (SELECT proposal_id FROM accounts_invoicerow irow JOIN accounts_invoice i ON irow.invoice_id = i.ownedobject_ptr_id WHERE i.state IN (%s,%s) AND irow.balance_payments = %s)'],
-                                                          params=[INVOICE_STATE_SENT, INVOICE_STATE_PAID, True]).exclude(invoice__state=INVOICE_STATE_EDITED).filter(owner=self).aggregate(amount=Sum('amount'))
-        return (accepted_proposal_amount_sum['amount'] or 0) - (invoicerows_to_exclude['amount'] or 0)
-
-    def get_service_to_be_invoiced(self):
-        accepted_proposal_amount_sum = ProposalRow.objects.filter(proposal__state=PROPOSAL_STATE_ACCEPTED,
-                                                                  category=ROW_CATEGORY_SERVICE,
-                                                                  owner=self).extra(where=['project_proposal.ownedobject_ptr_id NOT IN (SELECT proposal_id FROM accounts_invoicerow irow JOIN accounts_invoice i ON irow.invoice_id = i.ownedobject_ptr_id WHERE i.state IN (%s,%s) AND irow.balance_payments = %s)'],
-                                                                                 params=[INVOICE_STATE_SENT, INVOICE_STATE_PAID, True]).aggregate(amount=Sum('amount'))
-        invoicerows_to_exclude = InvoiceRow.objects.filter(proposal__state=PROPOSAL_STATE_ACCEPTED,
-                                                           category=ROW_CATEGORY_SERVICE,
-                                                           owner=self).extra(where=['accounts_invoicerow.proposal_id NOT IN (SELECT proposal_id FROM accounts_invoicerow irow JOIN accounts_invoice i ON irow.invoice_id = i.ownedobject_ptr_id WHERE i.state IN (%s,%s) AND irow.balance_payments = %s)'],
-                                                                             params=[INVOICE_STATE_SENT, INVOICE_STATE_PAID, True]).exclude(invoice__state=INVOICE_STATE_EDITED).filter(owner=self).aggregate(amount=Sum('amount'))
-        return (accepted_proposal_amount_sum['amount'] or 0) - (invoicerows_to_exclude['amount'] or 0)
-
-
-    def get_late_invoices(self):
-        late_invoices = Invoice.objects.filter(state=INVOICE_STATE_SENT,
-                                               payment_date__lt=datetime.date.today(), owner=self)
-        return late_invoices
-
-    def get_invoices_to_send(self):
-        invoices_to_send = Invoice.objects.filter(state=INVOICE_STATE_EDITED,
-                                                  edition_date__lte=datetime.date.today(),
-                                                  owner=self)
-        return invoices_to_send
-
-
-    def get_potential_sales(self):
-        amount_sum = Proposal.objects.filter(state__lte=PROPOSAL_STATE_SENT,
-                                             owner=self).exclude(project__state__gte=PROJECT_STATE_FINISHED).aggregate(sales=Sum('amount'))
-        return amount_sum['sales'] or 0
-
-    def get_proposals_to_send(self):
-        proposals = Proposal.objects.filter(state=PROPOSAL_STATE_DRAFT,
-                                            owner=self).exclude(project__state__gte=PROJECT_STATE_FINISHED)
-        return proposals
-
-    def get_potential_duration(self):
-        quantity_sum = ProposalRow.objects.filter(proposal__state__lte=PROPOSAL_STATE_SENT,
-                                                  owner=self).exclude(proposal__project__state__gte=PROJECT_STATE_FINISHED).aggregate(quantity=Sum('quantity'))
-        return quantity_sum['quantity'] or 0
-
     def get_quarter(self, date):
         return ((date.month + 2) // 3, date.year)
 
@@ -234,15 +153,6 @@ class UserProfile(models.Model):
 
         return begin_date, end_date
 
-    def get_paid_sales_for_period(self, begin_date, end_date):
-        if not begin_date or not end_date:
-            return 0
-        amount_sum = Invoice.objects.filter(state=INVOICE_STATE_PAID,
-                                            owner=self,
-                                            paid_date__gte=begin_date,
-                                            paid_date__lte=end_date).aggregate(sales=Sum('amount'))
-        return amount_sum['sales'] or 0
-
     def get_tax_rate(self, reference_date=None):
         tax_rate = 0
         if not self.activity:
@@ -298,26 +208,6 @@ class UserProfile(models.Model):
                                      (end_date.month + 2) % 12 or 12,
                                      1) - datetime.timedelta(1)
         return pay_date
-
-
-    def get_first_invoice_paid_date(self):
-        return Invoice.objects.aggregate(min_date=Min('paid_date'))['min_date']
-
-    def get_paid_invoices(self, begin_date=None):
-        if not begin_date:
-            return Invoice.objects.filter(state=INVOICE_STATE_PAID,
-                                          owner=self,
-                                          paid_date__year=datetime.date.today().year).order_by('paid_date')
-        else:
-            return Invoice.objects.filter(state=INVOICE_STATE_PAID,
-                                          owner=self,
-                                          paid_date__lte=datetime.date.today(),
-                                          paid_date__gte=begin_date).order_by('paid_date')
-
-    def get_waiting_invoices(self):
-            return Invoice.objects.filter(state__lte=INVOICE_STATE_SENT,
-                                          owner=self).order_by('payment_date')
-
 
 def user_post_save(sender, instance, created, **kwargs):
     if created:

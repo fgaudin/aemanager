@@ -9,9 +9,10 @@ from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils import simplejson
-from accounts.models import Expense
+from accounts.models import Expense, Invoice
 from core.decorators import settings_required
 from autoentrepreneur.models import AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC
+from project.models import Proposal
 import time
 import datetime
 
@@ -32,31 +33,31 @@ def index(request):
     service_paid_previous_year = 0
     service_limit_previous_year = 0
 
-    paid = profile.get_paid_sales()
+    paid = Invoice.objects.get_paid_sales(owner=user)
 
     if not first_year:
-        paid_previous_year = profile.get_paid_sales(year=one_year_back.year)
-    waiting = profile.get_waiting_payments()
-    to_be_invoiced = profile.get_to_be_invoiced()
+        paid_previous_year = Invoice.objects.get_paid_sales(owner=user, year=one_year_back.year)
+    waiting = Invoice.objects.get_waiting_payments(owner=user)
+    to_be_invoiced = Invoice.objects.get_to_be_invoiced(owner=user)
     limit = profile.get_sales_limit()
 
     if user.get_profile().activity == AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC:
-        service_waiting = profile.get_waiting_service_payments()
-        service_to_be_invoiced = profile.get_service_to_be_invoiced()
+        service_waiting = Invoice.objects.get_waiting_service_payments(owner=user)
+        service_to_be_invoiced = Invoice.objects.get_service_to_be_invoiced(owner=user)
         service_limit = profile.get_service_sales_limit()
-        service_paid = profile.get_paid_service_sales()
+        service_paid = Invoice.objects.get_paid_service_sales(owner=user)
     if not first_year:
         limit_previous_year = profile.get_sales_limit(year=one_year_back.year)
         if user.get_profile().activity == AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC:
             service_limit_previous_year = profile.get_service_sales_limit(year=one_year_back.year)
-            service_paid_previous_year = profile.get_paid_service_sales(year=one_year_back.year)
-    late_invoices = profile.get_late_invoices()
-    invoices_to_send = profile.get_invoices_to_send()
-    potential = profile.get_potential_sales()
-    duration = profile.get_potential_duration()
-    proposals_to_send = profile.get_proposals_to_send()
+            service_paid_previous_year = Invoice.objects.get_paid_service_sales(owner=user, year=one_year_back.year)
+    late_invoices = Invoice.objects.get_late_invoices(owner=user)
+    invoices_to_send = Invoice.objects.get_invoices_to_send(owner=user)
+    potential = Proposal.objects.get_potential_sales(owner=user)
+    duration = Proposal.objects.get_potential_duration(owner=user)
+    proposals_to_send = Proposal.objects.get_proposals_to_send(owner=user)
     begin_date, end_date = profile.get_period_for_tax()
-    amount_paid_for_tax = profile.get_paid_sales_for_period(begin_date, end_date)
+    amount_paid_for_tax = Invoice.objects.get_paid_sales_for_period(user, begin_date, end_date)
     tax_rate = profile.get_tax_rate()
     amount_to_pay = float(amount_paid_for_tax) * float(tax_rate) / 100
 
@@ -64,18 +65,18 @@ def index(request):
 
     next_begin_date, next_end_date = profile.get_period_for_tax(pay_date + datetime.timedelta(1))
     next_pay_date = profile.get_pay_date(next_end_date)
-    next_amount_paid_for_tax = profile.get_paid_sales_for_period(next_begin_date, next_end_date)
+    next_amount_paid_for_tax = Invoice.objects.get_paid_sales_for_period(user, next_begin_date, next_end_date)
     next_tax_rate = profile.get_tax_rate(next_begin_date)
     next_amount_to_pay = float(next_amount_paid_for_tax) * float(next_tax_rate) / 100
 
-    min_date = profile.get_first_invoice_paid_date()
+    min_date = Invoice.objects.get_first_invoice_paid_date(owner=user)
     if not min_date:
         chart_begin_date = today
     elif min_date < one_year_back:
         chart_begin_date = one_year_back
     else:
         chart_begin_date = min_date
-    invoices = profile.get_paid_invoices(begin_date=chart_begin_date)
+    invoices = Invoice.objects.get_paid_invoices(user, begin_date=chart_begin_date)
     sales_progression = []
     last = 0.0
     for invoice in invoices:
@@ -87,7 +88,7 @@ def index(request):
 
     waiting_progression = []
     waiting_progression.append([int(time.mktime(today.timetuple())*1000), last])
-    waiting_invoices = profile.get_waiting_invoices()
+    waiting_invoices = Invoice.objects.get_waiting_invoices(owner=user)
     for invoice in waiting_invoices:
         amount = last + float(invoice.amount)
         waiting_progression.append([int(time.mktime(invoice.payment_date.timetuple())*1000), amount])

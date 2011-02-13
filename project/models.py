@@ -116,6 +116,22 @@ PROPOSAL_STATE = ((PROPOSAL_STATE_DRAFT, _('Draft')),
                   (PROPOSAL_STATE_BALANCED, _('Balanced')),
                   (PROPOSAL_STATE_REFUSED, _('Refused')))
 
+class ProposalManager(models.Manager):
+    def get_potential_sales(self, owner):
+        amount_sum = self.filter(state__lte=PROPOSAL_STATE_SENT,
+                                 owner=owner).exclude(project__state__gte=PROJECT_STATE_FINISHED).aggregate(sales=Sum('amount'))
+        return amount_sum['sales'] or 0
+
+    def get_proposals_to_send(self, owner):
+        proposals = self.filter(state=PROPOSAL_STATE_DRAFT,
+                                owner=owner).exclude(project__state__gte=PROJECT_STATE_FINISHED)
+        return proposals
+
+    def get_potential_duration(self, owner):
+        quantity_sum = ProposalRow.objects.filter(proposal__state__lte=PROPOSAL_STATE_SENT,
+                                                  owner=owner).exclude(proposal__project__state__gte=PROJECT_STATE_FINISHED).aggregate(quantity=Sum('quantity'))
+        return quantity_sum['quantity'] or 0
+
 class Proposal(OwnedObject):
     project = models.ForeignKey(Project)
     reference = models.CharField(max_length=20, blank=True, null=True, verbose_name=_('Reference'))
@@ -126,6 +142,8 @@ class Proposal(OwnedObject):
     contract_content = models.TextField(blank=True, default="", verbose_name=_('Contract'))
     update_date = models.DateField(verbose_name=_('Update date'))
     expiration_date = models.DateField(blank=True, null=True, verbose_name=_('Expiration date'))
+
+    objects = ProposalManager()
 
     def __unicode__(self):
         return _('Proposal from %(begin_date)s to %(end_date)s for %(project)s') % {'begin_date': localize(self.begin_date),

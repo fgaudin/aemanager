@@ -4,11 +4,12 @@ from autoentrepreneur.models import AUTOENTREPRENEUR_PAYMENT_OPTION_QUATERLY, \
     AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC, AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC, \
     AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC
 from django.utils.translation import ugettext
-from project.models import PROJECT_STATE_PROSPECT, Project, Proposal, \
-    PROPOSAL_STATE_DRAFT
+from project.models import  Proposal
 import datetimestub
 import autoentrepreneur
 autoentrepreneur.models.datetime = datetimestub.DatetimeStub()
+import accounts
+accounts.models.datetime = datetimestub.DatetimeStub()
 from django.test import TestCase
 from core.models import OwnedObject
 from django.contrib.auth.models import User
@@ -194,23 +195,6 @@ class DashboardTest(TestCase):
         self.assertEquals(response.context['sales_previous_year']['remaining'], 16182 - 5000)
 
     def testProspect(self):
-        """
-        project = Project.objects.create(name='Project prospect',
-                                         customer_id=3,
-                                         state=PROJECT_STATE_PROSPECT,
-                                         owner_id=1)
-
-        proposal = Proposal.objects.create(project=project,
-                                           reference='XXX',
-                                           state=PROPOSAL_STATE_DRAFT,
-                                           amount=2000,
-                                           begin_date=datetimestub.DatetimeStub.date(2010, 12, 1),
-                                           end_date=datetimestub.DatetimeStub.date(2010, 12, 5),
-                                           contract_content='',
-                                           update_date=datetimestub.DatetimeStub.date(2010, 12, 1),
-                                           expiration_date=datetimestub.DatetimeStub.date(2010, 12, 31),
-                                           owner_id=1)
-"""
         response = self.client.get(reverse('index'))
         self.assertEquals(float(response.context['prospects']['duration']), 30.0)
         self.assertEquals(set(response.context['prospects']['proposals_to_send']), set(Proposal.objects.filter(pk__in=(24, 26))))
