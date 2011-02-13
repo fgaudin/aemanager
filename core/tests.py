@@ -4,6 +4,8 @@ from autoentrepreneur.models import AUTOENTREPRENEUR_PAYMENT_OPTION_QUATERLY, \
     AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC, AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC, \
     AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC
 from django.utils.translation import ugettext
+from project.models import PROJECT_STATE_PROSPECT, Project, Proposal, \
+    PROPOSAL_STATE_DRAFT
 import datetimestub
 import autoentrepreneur
 autoentrepreneur.models.datetime = datetimestub.DatetimeStub()
@@ -190,6 +192,31 @@ class DashboardTest(TestCase):
         self.assertEquals(response.context['sales']['limit'], 32600)
         self.assertEquals(response.context['sales_previous_year']['paid'], 5000)
         self.assertEquals(response.context['sales_previous_year']['remaining'], 16182 - 5000)
+
+    def testProspect(self):
+        """
+        project = Project.objects.create(name='Project prospect',
+                                         customer_id=3,
+                                         state=PROJECT_STATE_PROSPECT,
+                                         owner_id=1)
+
+        proposal = Proposal.objects.create(project=project,
+                                           reference='XXX',
+                                           state=PROPOSAL_STATE_DRAFT,
+                                           amount=2000,
+                                           begin_date=datetimestub.DatetimeStub.date(2010, 12, 1),
+                                           end_date=datetimestub.DatetimeStub.date(2010, 12, 5),
+                                           contract_content='',
+                                           update_date=datetimestub.DatetimeStub.date(2010, 12, 1),
+                                           expiration_date=datetimestub.DatetimeStub.date(2010, 12, 31),
+                                           owner_id=1)
+"""
+        response = self.client.get(reverse('index'))
+        self.assertEquals(float(response.context['prospects']['duration']), 30.0)
+        self.assertEquals(set(response.context['prospects']['proposals_to_send']), set(Proposal.objects.filter(pk__in=(24, 26))))
+        self.assertEquals(float(response.context['prospects']['potential_sales']), 9500.00)
+        self.assertEquals(float(response.context['prospects']['average_unit_price']), 9500.0 / 30.0)
+        self.assertEquals(float(response.context['prospects']['percentage_of_remaining']), 9500.0 / 8932.0 * 100.0)
 
 class DashboardProductActivityTest(TestCase):
     fixtures = ['test_dashboard_product_sales']
