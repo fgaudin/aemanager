@@ -1,7 +1,7 @@
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from project.models import Proposal, PROPOSAL_STATE_DRAFT, ROW_CATEGORY_SERVICE, \
-    ROW_CATEGORY_PRODUCT
+    ROW_CATEGORY_PRODUCT, PROPOSAL_STATE_BALANCED
 from accounts.models import INVOICE_STATE_EDITED, Invoice, InvoiceRow, \
     INVOICE_STATE_SENT, InvoiceRowAmountError, PAYMENT_TYPE_CHECK, \
     PAYMENT_TYPE_CASH, Expense, INVOICE_STATE_PAID
@@ -770,6 +770,38 @@ class InvoiceTest(TestCase):
         invariant_content = content[0:85] + content[86:140] + content[141:-1]
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
                           "704f60f70dca3a7ad508847314fa8efc")
+
+    def testBalancePayment(self):
+        """
+        Tests changing state of proposal to balanced
+        """
+        response = self.client.post(reverse('invoice_add', kwargs={'customer_id': self.proposal.project.customer.id}),
+                                    {'invoice-invoice_id': 1,
+                                     'invoice-state': INVOICE_STATE_PAID,
+                                     'invoice-amount': 1000,
+                                     'invoice-edition_date': '2010-8-31',
+                                     'invoice-payment_date': '2010-9-30',
+                                     'invoice-paid_date': '2010-10-30',
+                                     'invoice-payment_type': PAYMENT_TYPE_CHECK,
+                                     'invoice-execution_begin_date': '2010-8-1',
+                                     'invoice-execution_end_date': '2010-8-7',
+                                     'invoice-penalty_date': '2010-10-8',
+                                     'invoice-penalty_rate': 1.5,
+                                     'invoice-discount_conditions':'Nothing',
+                                     'invoice_rows-TOTAL_FORMS': 1,
+                                     'invoice_rows-INITIAL_FORMS': 0,
+                                     'invoice_rows-0-ownedobject_ptr': '',
+                                     'invoice_rows-0-label': 'Day of work',
+                                     'invoice_rows-0-proposal': self.proposal.id,
+                                     'invoice_rows-0-category': ROW_CATEGORY_SERVICE,
+                                     'invoice_rows-0-quantity': 10,
+                                     'invoice_rows-0-unit_price': 100,
+                                     'invoice_rows-0-balance_payments': True })
+
+        self.assertEquals(response.status_code, 302)
+        proposal = Proposal.objects.get(pk=self.proposal.id)
+        self.assertEquals(proposal.state, PROPOSAL_STATE_BALANCED)
+        self.assertEquals(proposal.get_remaining_to_invoice(), 0)
 
 class ExpenseTest(TestCase):
     fixtures = ['test_users', ]
