@@ -99,7 +99,7 @@ jQuery(document).ready(function(){
         </div>
     {% endfor %}
         <div class="inline-formset">
-            <a href="#" id="add-button"><img src="{{ MEDIA_URL }}img/icon_addlink.gif" /> Add</a>
+            <a href="#" id="add-button"><img src="{{ MEDIA_URL }}img/icon_addlink.gif" /> {% trans "Add" %}</a>
         </div>
     </div>
     {% with proposalForm.contract_model as field %}
