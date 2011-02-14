@@ -3,45 +3,54 @@
     font: 14px "Futura Medium", "Myriad Pro", "Gill Sans", Helvetica, Verdana, Arial, sans-serif;
     margin: 0;
     padding: 4px 0 0;
-    }
-    .wrapper1 a{
-        color: #E5F2FB;
-        text-decoration: none;
-    }
-    .wrapper1 a:hover {
-        color: #09548B;
-    }
-    .wrapper1 p {
-        margin: 0 0 17px;
-        padding: 0;
-        line-height: 18px;
-    }
+}
+
+.wrapper1 a{
+    color: #E5F2FB;
+    text-decoration: none;
+}
+
+.wrapper1 a:hover {
+    color: #09548B;
+}
+
+.wrapper1 p {
+    margin: 0 0 17px;
+    padding: 0;
+    line-height: 18px;
+}
+
 .wrapper {
     /*width: 710px;*/
     margin: 20px auto;
 }
+
 .nav {
     background: #fff url(../img/menu/nav_bg.png) repeat-x;
     float: left;
     width: 938px;
 }
+
 .nav-wrapper {
     clear: both;
     float: left;
     width: 960px;
 }
+
 .nav-left {
     background: url(../img/menu/nav_left.png) no-repeat top left;
     float: left;
     width: 11px;
     height: 41px;
 }
+
 .nav-right {
     background: url(../img/menu/nav_right.png) no-repeat top right;
     float: left;
     width: 11px;
     height: 41px;
 }
+
 .nav ul {
     /*width: 648px;*/
     height: 38px;
@@ -251,7 +260,7 @@ form .aligned p, form .aligned ul {
     color: green;
 }
 
-.messages li.error {
+.messages li.error, .expired {
     color: red;
 }
 
@@ -402,4 +411,14 @@ div.html {
     padding:5px;
     padding-left:15px;
     margin-left:10px;
+}
+
+#subscription-message {
+    margin: 50px 0px;
+    text-align:center;
+    font-size:1.2em;
+}
+
+#paypal-button {
+    text-align:center;
 }

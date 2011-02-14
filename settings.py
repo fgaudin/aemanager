@@ -124,3 +124,14 @@ EMAIL_PORT = 1025
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TLS = False
+
+if DEBUG:
+    PAYPAL_URL = 'https://www.sandbox.paypal.com/cgi-bin/webscr'
+    PAYPAL_RECEIVER_ID = ''
+    PAYPAL_APP_SUBSCRIPTION_AMOUNT = '0.50'
+    PAYPAL_APP_SUBSCRIPTION_CURRENCY = 'EUR'
+else:
+    PAYPAL_URL = 'https://www.paypal.com/cgi-bin/webscr'
+    PAYPAL_RECEIVER_ID = ''
+    PAYPAL_APP_SUBSCRIPTION_AMOUNT = '0'
+    PAYPAL_APP_SUBSCRIPTION_CURRENCY = 'EUR'

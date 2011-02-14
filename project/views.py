@@ -21,6 +21,7 @@ from accounts.models import Invoice
 from core.decorators import settings_required
 from django.utils.formats import localize
 from custom_canvas import NumberedCanvas
+from autoentrepreneur.decorators import subscription_required
 import datetime
 from reportlab.platypus import Paragraph, Frame, Spacer, BaseDocTemplate, PageTemplate
 from reportlab.lib.styles import ParagraphStyle
@@ -31,6 +32,7 @@ from reportlab.platypus import Table, TableStyle
 from reportlab.lib import colors
 
 @settings_required
+@subscription_required
 def contract_detail(request, id):
     contract = get_object_or_404(Contract, pk=id, owner=request.user)
 
@@ -41,6 +43,7 @@ def contract_detail(request, id):
                                context_instance=RequestContext(request))
 
 @settings_required
+@subscription_required
 @commit_on_success
 def contract_create_or_edit(request, id=None, contact_id=None):
     if id:
@@ -83,6 +86,7 @@ def contract_create_or_edit(request, id=None, contact_id=None):
                                context_instance=RequestContext(request))
 
 @settings_required
+@subscription_required
 @commit_on_success
 def contract_delete(request, id):
     contract = get_object_or_404(Contract, pk=id, owner=request.user)
@@ -102,6 +106,7 @@ def contract_delete(request, id):
                                context_instance=RequestContext(request))
 
 @settings_required
+@subscription_required
 def contract_download(request, id):
     contract = get_object_or_404(Contract, pk=id, owner=request.user)
 
@@ -113,6 +118,7 @@ def contract_download(request, id):
     return response
 
 @settings_required
+@subscription_required
 def contract_get_content(request):
     contract_id = request.GET.get('id')
     contract = get_object_or_404(Contract, pk=contract_id, owner=request.user)
@@ -121,6 +127,7 @@ def contract_get_content(request):
     return HttpResponse(simplejson.dumps(data), mimetype='application/javascript')
 
 @settings_required
+@subscription_required
 def project_detail(request, id):
     project = get_object_or_404(Project, pk=id, owner=request.user)
     invoices = Invoice.objects.filter(invoice_rows__proposal__project=project).distinct()
@@ -133,6 +140,7 @@ def project_detail(request, id):
                                context_instance=RequestContext(request))
 
 @settings_required
+@subscription_required
 @commit_on_success
 def project_create_or_edit(request, id=None):
     if id:
@@ -165,6 +173,7 @@ def project_create_or_edit(request, id=None):
                                context_instance=RequestContext(request))
 
 @settings_required
+@subscription_required
 def project_running_list(request):
     user = request.user
 
@@ -228,6 +237,7 @@ def project_running_list(request):
                                context_instance=RequestContext(request))
 
 @settings_required
+@subscription_required
 def project_finished_list(request):
     user = request.user
 
@@ -292,6 +302,7 @@ def project_finished_list(request):
 
 
 @settings_required
+@subscription_required
 @commit_on_success
 def project_delete(request, id):
     project = get_object_or_404(Project, pk=id, owner=request.user)
@@ -312,6 +323,7 @@ def project_delete(request, id):
 
 
 @settings_required
+@subscription_required
 @commit_on_success
 def proposal_create_or_edit(request, id=None, project_id=None):
     if id:
@@ -377,6 +389,7 @@ def proposal_create_or_edit(request, id=None, project_id=None):
                                context_instance=RequestContext(request))
 
 @settings_required
+@subscription_required
 def proposal_detail(request, id):
     proposal = get_object_or_404(Proposal, pk=id, owner=request.user)
     invoices = Invoice.objects.filter(invoice_rows__proposal=proposal).distinct()
@@ -391,6 +404,7 @@ def proposal_detail(request, id):
                                context_instance=RequestContext(request))
 
 @settings_required
+@subscription_required
 @commit_on_success
 def proposal_delete(request, id):
     proposal = get_object_or_404(Proposal, pk=id, owner=request.user)
@@ -411,6 +425,7 @@ def proposal_delete(request, id):
                                context_instance=RequestContext(request))
 
 @settings_required
+@subscription_required
 @commit_on_success
 def proposal_change_state(request, id):
     proposal = get_object_or_404(Proposal, pk=id, owner=request.user)
@@ -423,6 +438,7 @@ def proposal_change_state(request, id):
         return redirect(reverse('proposal_detail', kwargs={'id': proposal.id}))
 
 @settings_required
+@subscription_required
 def proposal_download(request, id):
     user = request.user
     proposal = get_object_or_404(Proposal, pk=id, owner=user)
@@ -595,6 +611,7 @@ def proposal_download(request, id):
     return response
 
 @settings_required
+@subscription_required
 def proposal_contract_download(request, id):
     proposal = get_object_or_404(Proposal, pk=id, owner=request.user)
 
@@ -606,6 +623,7 @@ def proposal_contract_download(request, id):
     return response
 
 @settings_required
+@subscription_required
 def proposal_get_contract(request):
     proposal_id = request.GET.get('id')
     proposal = get_object_or_404(Proposal, pk=proposal_id, owner=request.user)

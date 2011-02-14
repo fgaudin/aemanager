@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from contact.models import Address
 from django.db.models.signals import post_save
+from django.db.models.aggregates import Max
 import datetime
 
 AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC = 1
@@ -21,6 +22,22 @@ class SalesLimit(models.Model):
                                    verbose_name=_('Activity'))
     limit = models.IntegerField(verbose_name=_('Limit'))
     limit2 = models.IntegerField(verbose_name=_('Limit 2'))
+
+SUBSCRIPTION_STATE_NOT_PAID = 1
+SUBSCRIPTION_STATE_PAID = 2
+SUBSCRIPTION_STATE_TRIAL = 3
+SUBSCRIPTION_STATE_FREE = 4
+SUBSCRIPTION_STATE = ((SUBSCRIPTION_STATE_NOT_PAID, _('Not paid')),
+                      (SUBSCRIPTION_STATE_PAID, _('Paid')),
+                      (SUBSCRIPTION_STATE_TRIAL, _('Trial')),
+                      (SUBSCRIPTION_STATE_FREE, _('Free')))
+
+class Subscription(models.Model):
+    user = models.ForeignKey(User, verbose_name=_('User'))
+    state = models.IntegerField(choices=SUBSCRIPTION_STATE, verbose_name=_('State'))
+    expiration_date = models.DateField(verbose_name=_('Expiration date'))
+    transaction_id = models.CharField(verbose_name=_('Transaction id'), unique=True, max_length=50)
+    error_message = models.CharField(verbose_name=_('Error message'), max_length=150, null=True, blank=True)
 
 AUTOENTREPRENEUR_PAYMENT_OPTION_QUATERLY = 1
 AUTOENTREPRENEUR_PAYMENT_OPTION_MONTHLY = 2
@@ -66,6 +83,45 @@ class UserProfile(models.Model):
             settings_defined = True
 
         return settings_defined
+
+    def is_allowed(self):
+        try:
+            Subscription.objects.get(user=self.user,
+                                     state__in=[SUBSCRIPTION_STATE_FREE])
+            return True
+        except:
+            pass
+        try:
+            Subscription.objects.get(user=self.user,
+                                     state__in=[SUBSCRIPTION_STATE_PAID, SUBSCRIPTION_STATE_TRIAL],
+                                     expiration_date__gte=datetime.date.today())
+            return True
+        except:
+            pass
+
+        return False
+
+    def get_next_expiration_date(self):
+        last_valid_expiration_date = Subscription.objects.filter(user=self.user,
+                                                                 state__in=[SUBSCRIPTION_STATE_PAID,
+                                                                            SUBSCRIPTION_STATE_TRIAL]).aggregate(last_date=Max('expiration_date'))
+        today = datetime.date.today()
+        ref_date = last_valid_expiration_date['last_date']
+        if not ref_date or ref_date < today:
+            ref_date = today
+
+        next_date = None
+        try:
+            next_date = datetime.date(ref_date.year + 1, ref_date.month, ref_date.day)
+        except:
+            # case of February 29th
+            next_date = datetime.date(ref_date.year + 1, 3, 1)
+
+        return next_date
+
+    def get_last_subscription(self):
+        subscription = Subscription.objects.filter(user=self.user).exclude(state=SUBSCRIPTION_STATE_NOT_PAID).order_by('-expiration_date')[0]
+        return subscription
 
     def get_sales_limit(self, year=None):
         today = datetime.date.today()
@@ -220,5 +276,11 @@ def user_post_save(sender, instance, created, **kwargs):
             profile.user = instance
             profile.address = address
             profile.save()
+
+            today = datetime.date.today()
+            subscription = Subscription.objects.create(user=instance,
+                                                       state=SUBSCRIPTION_STATE_TRIAL,
+                                                       expiration_date=today + datetime.timedelta(30),
+                                                       transaction_id='TRIAL-%i%i%i-%i' % (today.year, today.month, today.day, instance.id))
 
 post_save.connect(user_post_save, sender=User)

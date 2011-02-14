@@ -7,7 +7,6 @@ from django.utils.translation import ugettext
 from project.models import  Proposal
 import datetimestub
 import autoentrepreneur
-autoentrepreneur.models.datetime = datetimestub.DatetimeStub()
 import accounts
 accounts.models.datetime = datetimestub.DatetimeStub()
 from django.test import TestCase
@@ -87,6 +86,7 @@ class DashboardTest(TestCase):
     fixtures = ['test_dashboard']
 
     def setUp(self):
+        autoentrepreneur.models.datetime = datetimestub.DatetimeStub()
         self.client.login(username='test', password='test')
 
     def testGetDashBoard(self):
@@ -206,6 +206,7 @@ class DashboardProductActivityTest(TestCase):
     fixtures = ['test_dashboard_product_sales']
 
     def setUp(self):
+        autoentrepreneur.models.datetime = datetimestub.DatetimeStub()
         self.client.login(username='test', password='test')
         autoentrepreneur.models.datetime.date.mock_year = 2011
         autoentrepreneur.models.datetime.date.mock_month = 2

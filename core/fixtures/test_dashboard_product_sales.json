@@ -18,6 +18,17 @@
         }
     },
     {
+        "pk": 1,
+        "model": "autoentrepreneur.subscription",
+        "fields": {
+            "expiration_date": "2010-02-14",
+            "state": 4,
+            "error_message": "Pay\u00e9e",
+            "user": 1,
+            "transaction_id": "ABCD"
+        }
+    },
+    {
         "pk": 2,
         "model": "auth.user",
         "fields": {
@@ -33,6 +44,17 @@
             "password": "sha1$ee73f$45a54b1db01ca44926f65678f3018a5d93dd1026",
             "email": "test2@example.com",
             "date_joined": "2010-09-15 11:27:02"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "autoentrepreneur.subscription",
+        "fields": {
+            "expiration_date": "2010-02-14",
+            "state": 4,
+            "error_message": "Pay\u00e9e",
+            "user": 2,
+            "transaction_id": "ABCDE"
         }
     },
     {

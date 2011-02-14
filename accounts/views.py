@@ -20,6 +20,7 @@ from django.db.models.aggregates import Max
 from custom_canvas import NumberedCanvas
 from core.decorators import settings_required
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
+from autoentrepreneur.decorators import subscription_required
 import datetime
 from reportlab.platypus import Paragraph, Frame, Spacer, BaseDocTemplate, PageTemplate
 from reportlab.lib.styles import ParagraphStyle
@@ -30,6 +31,7 @@ from reportlab.platypus import Table, TableStyle
 from reportlab.lib import colors
 
 @settings_required
+@subscription_required
 def expense_list(request):
     user = request.user
     expense_list = Expense.objects.filter(owner=user).order_by('-date', '-reference')
@@ -60,6 +62,7 @@ def expense_list(request):
                               context_instance=RequestContext(request))
 
 @settings_required
+@subscription_required
 @commit_on_success
 def expense_add(request):
     response = {'error': 'ko'}
@@ -86,6 +89,7 @@ def expense_add(request):
                         mimetype='application/javascript')
 
 @settings_required
+@subscription_required
 @commit_on_success
 def expense_edit(request):
     id = request.GET.get('id')
@@ -113,6 +117,7 @@ def expense_edit(request):
                         mimetype='application/javascript')
 
 @settings_required
+@subscription_required
 @commit_on_success
 def expense_delete(request):
     response = {'error': 'ko'}
@@ -127,6 +132,7 @@ def expense_delete(request):
                         mimetype='application/javascript')
 
 @settings_required
+@subscription_required
 def invoice_list(request):
     user = request.user
     invoices = Invoice.objects.filter(owner=user).order_by('-invoice_id')
@@ -139,6 +145,7 @@ def invoice_list(request):
                               context_instance=RequestContext(request))
 
 @settings_required
+@subscription_required
 def invoice_list_export(request):
     user = request.user
 
@@ -196,6 +203,7 @@ def invoice_list_export(request):
     return response
 
 @settings_required
+@subscription_required
 @commit_on_success
 def invoice_create_or_edit(request, id=None, customer_id=None):
     if id:
@@ -273,6 +281,7 @@ def invoice_create_or_edit(request, id=None, customer_id=None):
                                context_instance=RequestContext(request))
 
 @settings_required
+@subscription_required
 def invoice_detail(request, id):
     invoice = get_object_or_404(Invoice, pk=id, owner=request.user)
 
@@ -283,6 +292,7 @@ def invoice_detail(request, id):
                                context_instance=RequestContext(request))
 
 @settings_required
+@subscription_required
 @commit_on_success
 def invoice_delete(request, id):
     invoice = get_object_or_404(Invoice, pk=id, owner=request.user)
@@ -302,6 +312,7 @@ def invoice_delete(request, id):
                                context_instance=RequestContext(request))
 
 @settings_required
+@subscription_required
 def invoice_download(request, id):
     user = request.user
     invoice = get_object_or_404(Invoice, pk=id, owner=user)

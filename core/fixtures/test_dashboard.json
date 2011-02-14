@@ -19,6 +19,17 @@
     },
     {
         "pk": 1,
+        "model": "autoentrepreneur.subscription",
+        "fields": {
+            "expiration_date": "2010-02-14",
+            "state": 4,
+            "error_message": "Pay\u00e9e",
+            "user": 1,
+            "transaction_id": "ABCD"
+        }
+    },
+    {
+        "pk": 1,
         "model": "autoentrepreneur.userprofile",
         "fields": {
             "payment_option": 1,

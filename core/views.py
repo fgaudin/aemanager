@@ -1,6 +1,6 @@
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template.context import RequestContext
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 from core.forms import UserForm, PasswordForm
 from autoentrepreneur.forms import UserProfileForm
 from contact.forms import AddressForm
@@ -11,12 +11,19 @@ from django.contrib.auth.decorators import login_required
 from django.utils import simplejson
 from accounts.models import Expense, Invoice
 from core.decorators import settings_required
-from autoentrepreneur.models import AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC
+from autoentrepreneur.models import AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC, \
+    Subscription, SUBSCRIPTION_STATE_NOT_PAID, SUBSCRIPTION_STATE_PAID
 from project.models import Proposal
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import User
+from autoentrepreneur.decorators import subscription_required
 import time
 import datetime
+import urllib, urllib2
+from django.conf import settings
 
 @settings_required
+@subscription_required
 def index(request):
     user = request.user
     profile = user.get_profile()
@@ -251,4 +258,70 @@ def change_password(request):
                               {'active': 'account',
                                'title': _('Change password'),
                                'passwordform': passwordform},
+                              context_instance=RequestContext(request))
+
+@login_required
+def subscribe(request):
+    profile = request.user.get_profile()
+    current_subscription = profile.get_last_subscription()
+    expired = False
+    if current_subscription.expiration_date < datetime.date.today():
+        expired = True
+    next_expiration_date = profile.get_next_expiration_date()
+    price = round(float(settings.PAYPAL_APP_SUBSCRIPTION_AMOUNT) / 12.0, 2)
+    return render_to_response('core/subscribe.html',
+                              {'active': 'account',
+                               'title': _('My subscription'),
+                               'subscription': current_subscription,
+                               'expired': expired,
+                               'next_expiration_date': next_expiration_date,
+                               'price': price},
+                              context_instance=RequestContext(request))
+
+@csrf_exempt
+@commit_on_success
+def paypal_ipn(request):
+    # send back the response to paypal
+    data = dict(request.POST.items())
+    args = {'cmd': '_notify-validate'}
+    args.update(data)
+    params = urllib.urlencode(args)
+    paypal_response = urllib2.urlopen(settings.PAYPAL_URL, params).read()
+
+    # process the payment
+
+    if paypal_response == 'VERIFIED':
+        receiver_id = data['receiver_id']
+        transaction_id = data['txn_id']
+        payment_status = data['payment_status']
+        payment_amount = data['mc_gross']
+        payment_currency = data['mc_currency']
+        user_id = data['custom']
+        user = get_object_or_404(User, pk=user_id)
+        profile = user.get_profile()
+
+        subscription, created = Subscription.objects.get_or_create(transaction_id=transaction_id,
+                                                                   defaults={'user': user,
+                                                                             'state': SUBSCRIPTION_STATE_NOT_PAID,
+                                                                             'expiration_date': profile.get_next_expiration_date(),
+                                                                             'transaction_id': transaction_id,
+                                                                             'error_message': ugettext('Not verified')})
+
+        if receiver_id <> settings.PAYPAL_RECEIVER_ID:
+            subscription.error_message = ugettext('Receiver is not as defined in settings. Spoofing ?')
+        elif payment_status <> 'Completed':
+            subscription.error_message = ugettext('Payment not completed')
+        elif payment_amount <> settings.PAYPAL_APP_SUBSCRIPTION_AMOUNT:
+            subscription.error_message = ugettext('Amount altered. Bad guy ?')
+        elif payment_currency <> settings.PAYPAL_APP_SUBSCRIPTION_CURRENCY:
+            subscription.error_message = ugettext('Amount altered. Bad guy ?')
+        else:
+            subscription.error_message = ugettext('Paid')
+            subscription.state = SUBSCRIPTION_STATE_PAID
+
+        subscription.save()
+
+    return render_to_response('core/paypal_ipn.html',
+                              {'active': 'account',
+                               'title': _('Subscribe')},
                               context_instance=RequestContext(request))
