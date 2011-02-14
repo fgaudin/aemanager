@@ -1,4 +1,5 @@
 # encoding: utf-8
+from autoentrepreneur.models import SUBSCRIPTION_STATE_TRIAL
 import datetime
 from south.db import db
 from south.v2 import SchemaMigration
@@ -7,16 +8,22 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
+
         # Changing field 'Subscription.transaction_id'
         db.alter_column('autoentrepreneur_subscription', 'transaction_id', self.gf('django.db.models.fields.CharField')(unique=True, max_length=50))
 
         # Adding unique constraint on 'Subscription', fields ['transaction_id']
         db.create_unique('autoentrepreneur_subscription', ['transaction_id'])
 
+        today = datetime.date.today()
+        for user in orm['auth.User'].objects.all():
+            subscription = orm.Subscription.objects.create(user=user,
+                                                           state=SUBSCRIPTION_STATE_TRIAL,
+                                                           expiration_date=today + datetime.timedelta(30),
+                                                           transaction_id='TRIAL-%i%i%i-%i' % (today.year, today.month, today.day, user.id))
 
     def backwards(self, orm):
-        
+
         # Removing unique constraint on 'Subscription', fields ['transaction_id']
         db.delete_unique('autoentrepreneur_subscription', ['transaction_id'])
 
