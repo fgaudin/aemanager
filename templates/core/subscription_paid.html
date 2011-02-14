@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div id="confirmation-message">
+{% url subscribe as url_subscribe %}
+{% blocktrans with url_subscribe as url_subscribe %}
+Your payment is being processed. It may take a few minutes to complete. Go back to <a href="{{ url_subscribe }}">My subscription</a> to watch the state.
+{% endblocktrans %}
+</div>
+{% endblock %}

@@ -278,6 +278,12 @@ def subscribe(request):
                                'price': price},
                               context_instance=RequestContext(request))
 
+def subscription_paid(request):
+    return render_to_response('core/subscription_paid.html',
+                              {'active': 'account',
+                               'title': _('Subscription paid')},
+                              context_instance=RequestContext(request))
+
 @csrf_exempt
 @commit_on_success
 def paypal_ipn(request):

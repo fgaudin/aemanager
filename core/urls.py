@@ -14,6 +14,10 @@ urlpatterns = patterns('core.views',
         view='subscribe',
         name='subscribe'),
     url(
+        regex=r'^subscription_paid/$',
+        view='subscription_paid',
+        name='subscription_paid'),
+    url(
         regex=r'^paypal_ipn/$',
         view='paypal_ipn',
         name='paypal_ipn'),

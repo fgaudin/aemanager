@@ -422,3 +422,8 @@ div.html {
 #paypal-button {
     text-align:center;
 }
+
+#confirmation-message {
+    margin: 50px 0px;
+    text-align:center;
+}

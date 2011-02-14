@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-14 03:33+0100\n"
+"POT-Creation-Date: 2011-02-14 12:21+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -85,7 +85,7 @@ msgstr ""
 msgid "Sent"
 msgstr ""
 
-#: accounts/models.py:39 autoentrepreneur/models.py:31 core/views.py:319
+#: accounts/models.py:39 autoentrepreneur/models.py:31 core/views.py:325
 msgid "Paid"
 msgstr ""
 
@@ -514,11 +514,11 @@ msgstr ""
 msgid "Password doesn't match"
 msgstr ""
 
-#: core/tests.py:66 core/views.py:251
+#: core/tests.py:65 core/views.py:251
 msgid "Wrong password"
 msgstr ""
 
-#: core/tests.py:81 core/views.py:249
+#: core/tests.py:80 core/views.py:249
 msgid "Your password has been modified successfully"
 msgstr ""
 
@@ -546,23 +546,27 @@ msgstr ""
 msgid "My subscription"
 msgstr ""
 
-#: core/views.py:308
+#: core/views.py:284
+msgid "Subscription paid"
+msgstr ""
+
+#: core/views.py:314
 msgid "Not verified"
 msgstr ""
 
-#: core/views.py:311
+#: core/views.py:317
 msgid "Receiver is not as defined in settings. Spoofing ?"
 msgstr ""
 
-#: core/views.py:313
+#: core/views.py:319
 msgid "Payment not completed"
 msgstr ""
 
-#: core/views.py:315 core/views.py:317
+#: core/views.py:321 core/views.py:323
 msgid "Amount altered. Bad guy ?"
 msgstr ""
 
-#: core/views.py:326
+#: core/views.py:332
 msgid "Subscribe"
 msgstr ""
 
@@ -1041,6 +1045,15 @@ msgid ""
 "\n"
 "Keep using this service until <strong>%(next_expiration_date)s</strong> for "
 "<strong>only €%(price)s/month</strong> by clicking the button below :\n"
+msgstr ""
+
+#: templates/core/subscription_paid.html:7
+#, python-format
+msgid ""
+"\n"
+"Your payment is being processed. It may take a few minutes to complete. Go "
+"back to <a href=\"%(url_subscribe)s\">My subscription</a> to watch the "
+"state.\n"
 msgstr ""
 
 #: templates/core/taxes_widget.html:27

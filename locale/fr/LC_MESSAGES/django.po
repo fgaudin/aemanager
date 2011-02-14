@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-14 03:33+0100\n"
+"POT-Creation-Date: 2011-02-14 12:21+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -86,7 +86,7 @@ msgstr "Éditée"
 msgid "Sent"
 msgstr "Envoyé"
 
-#: accounts/models.py:39 autoentrepreneur/models.py:31 core/views.py:319
+#: accounts/models.py:39 autoentrepreneur/models.py:31 core/views.py:325
 msgid "Paid"
 msgstr "Payée"
 
@@ -515,11 +515,11 @@ msgstr "Resaisir le mot de passe"
 msgid "Password doesn't match"
 msgstr "Le mot de passe ne correspond pas"
 
-#: core/tests.py:66 core/views.py:251
+#: core/tests.py:65 core/views.py:251
 msgid "Wrong password"
 msgstr "Mot de passe erroné"
 
-#: core/tests.py:81 core/views.py:249
+#: core/tests.py:80 core/views.py:249
 msgid "Your password has been modified successfully"
 msgstr "Votre mot de passe a été sauvegardé avec succès"
 
@@ -547,23 +547,27 @@ msgstr "Changer de mot de passe"
 msgid "My subscription"
 msgstr "Mon abonnement"
 
-#: core/views.py:308
+#: core/views.py:284
+msgid "Subscription paid"
+msgstr "Abonnement payé"
+
+#: core/views.py:314
 msgid "Not verified"
 msgstr "Non vérifié"
 
-#: core/views.py:311
+#: core/views.py:317
 msgid "Receiver is not as defined in settings. Spoofing ?"
 msgstr "Le destinataire n'est pas celui défini dans settings. Spoofing ?"
 
-#: core/views.py:313
+#: core/views.py:319
 msgid "Payment not completed"
 msgstr "Paiement non complet"
 
-#: core/views.py:315 core/views.py:317
+#: core/views.py:321 core/views.py:323
 msgid "Amount altered. Bad guy ?"
 msgstr "Montant modifié. Gros vilain ?"
 
-#: core/views.py:326
+#: core/views.py:332
 msgid "Subscribe"
 msgstr "S'abonner"
 
@@ -1045,8 +1049,22 @@ msgid ""
 "<strong>only €%(price)s/month</strong> by clicking the button below :\n"
 msgstr ""
 "\n"
-"Continuez à utiliser ce service jusqu'au <strong>%(next_expiration_date)s</strong> pour "
-"<strong>seulement %(price)s€/mois</strong> en cliquant sur le bouton ci-dessous :\n"
+"Continuez à utiliser ce service jusqu'au <strong>%(next_expiration_date)s</"
+"strong> pour <strong>seulement %(price)s€/mois</strong> en cliquant sur le "
+"bouton ci-dessous :\n"
+
+#: templates/core/subscription_paid.html:7
+#, python-format
+msgid ""
+"\n"
+"Your payment is being processed. It may take a few minutes to complete. Go "
+"back to <a href=\"%(url_subscribe)s\">My subscription</a> to watch the "
+"state.\n"
+msgstr ""
+"\n"
+"Votre paiement est en cours de traitement. Cela peut mettre quelques minutes. "
+"Retournez sur <a href=\"%(url_subscribe)s\">Mon abonnement</a> pour surveiller "
+"l'état.\n"
 
 #: templates/core/taxes_widget.html:27
 msgid "Taxes"
