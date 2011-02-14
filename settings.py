@@ -108,6 +108,7 @@ INSTALLED_APPS = (
     # aemanager apps
     'accounts',
     'autoentrepreneur',
+    'bugtracker',
     'contact',
     'core',
     'project',
@@ -135,3 +136,5 @@ else:
     PAYPAL_RECEIVER_ID = ''
     PAYPAL_APP_SUBSCRIPTION_AMOUNT = '0'
     PAYPAL_APP_SUBSCRIPTION_CURRENCY = 'EUR'
+
+BUGTRACKER_VOTES = 10

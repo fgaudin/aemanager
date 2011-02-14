@@ -1,3 +1,4 @@
+{% load i18n %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -38,7 +39,11 @@
         {% block content %}
         {% endblock %}
         </div>
-      <div class="content-bottom"></div>
+        <div class="content-bottom"></div>
+      </div>
+    </div>
+    <div id="footer">
+        <a href="{% url issue_list %}">{% trans "Contact/Bug report" %}</a>
     </div>
   </body>
 </html>

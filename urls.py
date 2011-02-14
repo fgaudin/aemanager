@@ -19,6 +19,7 @@ urlpatterns = patterns('',
     url(r'^contact/', include('contact.urls')),
     url(r'^project/', include('project.urls')),
     url(r'^accounts/', include('accounts.urls')),
+    url(r'^issues/', include('bugtracker.urls')),
     url(r'^user/', include('registration_urls')),
 
 )

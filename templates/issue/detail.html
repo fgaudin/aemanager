@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load modeltags %}
+
+{% block context_menu %}
+{% if issue.is_open %}<div><a href="{% url issue_list %}">{% trans "Back to list" %}</a></div>{% endif %}
+{% if issue.is_closed %}<div><a href="{% url closed_issue_list %}">{% trans "Back to list" %}</a></div>{% endif %}
+{% if issue.owner == user %}
+<div><a href="{% url issue_edit issue.id %}">{% trans "Edit" %}</a></div>
+{% if issue.is_open %}<div><a href="{% url issue_close issue.id %}">{% trans "Close" %}</a></div>{% endif %}
+{% if issue.is_closed %}<div><a href="{% url issue_reopen issue.id %}">{% trans "Reopen" %}</a></div>{% endif %}
+<div><a href="{% url issue_delete issue.id %}">{% trans "Delete" %}</a></div>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<fieldset class="module aligned">
+    {% with issue as object %}
+    <div class="detail-row">
+      <div>
+      <label>{{ issue|verbose_name:"state" }} :</label> {{ issue.get_state_display }}
+      </div>
+    </div>
+    <div class="detail-row">
+      <div>
+      <label>{% trans "Author" %} :</label> {{ issue.owner.first_name }} {{ issue.owner.last_name }}
+      </div>
+    </div>
+    <div class="detail-row">
+      <div>
+      <label>{{ issue|verbose_name:"category" }} :</label> {{ issue.get_category_display }}
+      </div>
+    </div>
+    {% with "update_date" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}
+    {% if issue.is_open %}
+    <div class="detail-row">
+      <div>
+      <label>{% trans "Votes" %} :</label> {{ issue.vote_count }} ({{ user_votes }}) {% if votes_remaining %}<a href="{% url vote issue_id=issue.id %}"><img src="{{ MEDIA_URL }}img/icon_addlink.gif" /></a>{% endif %} {% if user_votes %}<a href="{% url unvote issue_id=issue.id %}"><img src="{{ MEDIA_URL }}img/icon_removelink.gif" /></a>{% endif %}&nbsp;&nbsp;({% blocktrans with votes_remaining as votes_remaining %}{{ votes_remaining }} votes remaining{% endblocktrans %})
+      </div>
+    </div>
+    {% endif %}
+    {% with "subject" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}
+    {% with "message" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}
+    {% endwith %}
+</fieldset>
+
+<h1>{% trans "Comments" %}</h1>
+{% if issue.comment_set.all %}
+<div class="search-list">
+    <table>
+        <thead>
+            <tr>
+                <th class="author-col">{% trans "Author" %}</th>
+                <th class="date-col">{% trans "Update date" %}</th>
+                <th>{% trans "Message" %}</th>
+                <th>{% trans "Action" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for comment in issue.comment_set.all %}
+           <tr class="{% cycle 'row1' 'row2' %}">
+                <td>{{ comment.owner.first_name }} {{ comment.owner.last_name }}</td>
+                <td>{{ comment.update_date }}</td>
+                <td>{{ comment.message }}</td>
+                <td>{% if comment.owner == user %}<a href="{% url comment_edit id=comment.id %}">{% trans "edit" %}</a> <a href="{% url comment_delete id=comment.id %}">{% trans "delete" %}</a>{% endif %}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div>{% trans "No comments" %}</div>
+{% endif %}
+
+<h1>{% trans "Comment" %}</h1>
+<form action="{% url comment_add issue_id=issue.id %}" method="post" id="comment-add-form">
+    {% csrf_token %}
+    <fieldset class="module aligned">
+    {% with commentForm as form %}
+    {% include "form.html" %}
+    {% endwith %}
+    </fieldset>
+    <div class="submit-row">
+    <input class="default" type="submit" name="action" value="{% trans "Send" %}" />
+    </div>
+</form>
+{% endblock %}

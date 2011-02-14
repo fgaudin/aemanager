@@ -427,3 +427,15 @@ div.html {
     margin: 50px 0px;
     text-align:center;
 }
+
+#footer {
+    text-align:center;
+}
+
+.author-col {
+    width: 100px;
+}
+
+.date-col {
+    width: 90px;
+}

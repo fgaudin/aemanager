@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block context_menu %}
+<div><a href="{% url issue_add %}">{% trans "Send an issue" %}</a></div>
+{% if state == "closed" %}<div><a href="{% url issue_list %}">{% trans "View open issues" %}</a></div>{% endif %}
+{% if state == "open" %}<div><a href="{% url closed_issue_list %}">{% trans "View closed issues" %}</a></div>{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="search-list">
+    <table>
+        <thead>
+            <tr>
+                <th>{% trans "Subject" %}</th>
+                <th>{% trans "Author" %}</th>
+                <th>{% trans "Update date" %}</th>
+                <th>{% trans "Category" %}</th>
+                <th>{% trans "Comments" %}</th>
+                {% if state == "open" %}<th>{% trans "Votes" %}</th>{% endif %}
+            </tr>
+        </thead>
+        <tbody>
+        {% for issue in issues %}
+           <tr class="{% cycle 'row2' 'row1' %} row">
+                <td><a href="{% url issue_detail id=issue.id %}">{{ issue.subject }}</a></td>
+                <td><a href="{% url issue_detail id=issue.id %}">{{ issue.owner.first_name }} {{ issue.owner.last_name }}</a></td>
+                <td><a href="{% url issue_detail id=issue.id %}">{{ issue.update_date }}</a></td>
+                <td><a href="{% url issue_detail id=issue.id %}">{{ issue.get_category_display }}</a></td>
+                <td><a href="{% url issue_detail id=issue.id %}">{{ issue.comment_set.count }}</a></td>
+                {% if state == "open" %}<td><a href="{% url issue_detail id=issue.id %}">{{ issue.vote_count }}</a></td>{% endif %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
