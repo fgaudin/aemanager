@@ -125,6 +125,7 @@ EMAIL_PORT = 1025
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TLS = False
+EMAIL_FROM = ADMINS[0][1]
 
 if DEBUG:
     PAYPAL_URL = 'https://www.sandbox.paypal.com/cgi-bin/webscr'

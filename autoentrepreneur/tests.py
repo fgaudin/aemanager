@@ -12,6 +12,9 @@ from accounts.models import Invoice, INVOICE_STATE_PAID, PAYMENT_TYPE_CHECK, \
 from bugtracker.models import ISSUE_CATEGORY_BUG, ISSUE_STATE_OPEN, Issue, \
     Comment, Vote
 from django.core.urlresolvers import reverse
+from django.core import mail
+from django.contrib.sites.models import Site
+from django.utils.translation import ugettext
 import datetime
 
 class SubcriptionTest(TestCase):
@@ -279,3 +282,6 @@ class UnregisterTest(TestCase):
         self.assertEquals(Subscription.objects.filter(owner__id=1).count(), 0)
         self.assertEquals(User.objects.filter(pk=1).count(), 0)
         self.assertEquals(UserProfile.objects.filter(pk=1).count(), 0)
+        self.assertEquals(len(mail.outbox), 1)
+        self.assertEquals(mail.outbox[0].subject, ugettext("You've just unregistered from %(site)s") % {'site': Site.objects.get_current()})
+        self.assertEquals(mail.outbox[0].to, ['test@example.com'])

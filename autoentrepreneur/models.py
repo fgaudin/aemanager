@@ -7,7 +7,10 @@ from django.db.models.signals import post_save
 from django.db.models.aggregates import Max
 from core.models import OwnedObject
 from bugtracker.models import Issue, Comment, Vote
+from django.core.mail import send_mail
+from django.contrib.sites.models import Site
 import datetime
+from django.conf import settings
 
 AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC = 1
 AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC = 2
@@ -70,10 +73,18 @@ class UserProfile(models.Model):
     payment_option = models.IntegerField(choices=AUTOENTREPRENEUR_PAYMENT_OPTION, blank=True, null=True, verbose_name=_('Payment option'))
 
     def unregister(self):
+        user_email = self.user.email
         Issue.objects.filter(owner=self.user).update(owner=None)
         Comment.objects.filter(owner=self.user).update(owner=None)
         Vote.objects.filter(owner=self.user).delete()
         self.user.delete()
+        subject = _("You've just unregistered from %(site)s") % {'site': Site.objects.get_current()}
+        message = _("You have left the site and your data has been deleted.\n\n"
+                    "Our service is continually evolving and if it does not meet your "
+                    "needs today, please come back to test later.")
+        from_email = settings.EMAIL_FROM
+        recipient_list = [user_email]
+        send_mail(subject, message, from_email, recipient_list, fail_silently=False)
 
     def settings_defined(self):
         settings_defined = False
