@@ -927,7 +927,8 @@ class RegisterTest(TestCase):
                                     {'username': 'usertest',
                                      'email': 'test@test.com',
                                      'password1': 'test',
-                                     'password2':'test'})
+                                     'password2':'test',
+                                     'tos': 'checked'})
         self.assertEqual(response.status_code, 302)
         users = User.objects.filter(username='usertest')
         self.assertEqual(len(users), 1)
