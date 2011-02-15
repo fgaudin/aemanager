@@ -449,13 +449,16 @@ def proposal_download(request, id):
         canvas.saveState()
         canvas.setFont('Times-Roman', 10)
         PAGE_WIDTH = defaultPageSize[0]
-        canvas.drawCentredString(PAGE_WIDTH / 2.0, 0.5 * inch, "%s %s - SIRET : %s - %s, %s %s, %s" % (user.first_name,
-                                                                                     user.last_name,
-                                                                                     user.get_profile().company_id,
-                                                                                     user.get_profile().address.street,
-                                                                                     user.get_profile().address.zipcode,
-                                                                                     user.get_profile().address.city,
-                                                                                     user.get_profile().address.country.country_name))
+        footer_text = "%s %s - SIRET : %s - %s, %s %s" % (user.first_name,
+                                                              user.last_name,
+                                                              user.get_profile().company_id,
+                                                              user.get_profile().address.street,
+                                                              user.get_profile().address.zipcode,
+                                                              user.get_profile().address.city)
+        if user.get_profile().address.country:
+            footer_text = footer_text + ", %s" % (user.get_profile().address.country)
+
+        canvas.drawCentredString(PAGE_WIDTH / 2.0, 0.5 * inch, footer_text)
         canvas.restoreState()
 
     filename = ugettext('proposal_%(id)d.pdf') % {'id': proposal.id}
@@ -520,14 +523,14 @@ def proposal_download(request, id):
                                                   user.get_profile().address.street.replace("\n", "<br/>"),
                                                   user.get_profile().address.zipcode,
                                                   user.get_profile().address.city,
-                                                  user.get_profile().address.country.country_name), styleH),
+                                                  user.get_profile().address.country or ''), styleH),
                 '',
                 Paragraph(customer_header_content % (proposal.project.customer.name,
                                                      proposal.project.customer.legal_form,
                                                      proposal.project.customer.address.street.replace("\n", "<br/>"),
                                                      proposal.project.customer.address.zipcode,
                                                      proposal.project.customer.address.city,
-                                                     proposal.project.customer.address.country.country_name), styleH)])
+                                                     proposal.project.customer.address.country or ''), styleH)])
 
     t1 = Table(data, [3.5 * inch, 0.3 * inch, 3.5 * inch], [1.6 * inch])
     t1.setStyle(TableStyle([('BOX', (0, 0), (0, 0), 0.25, colors.black),

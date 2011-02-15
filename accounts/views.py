@@ -153,13 +153,15 @@ def invoice_list_export(request):
         canvas.saveState()
         canvas.setFont('Times-Roman', 10)
         PAGE_WIDTH = defaultPageSize[0]
-        canvas.drawCentredString(PAGE_WIDTH / 2.0, 0.5 * inch, "%s %s - SIRET : %s - %s, %s %s, %s" % (user.first_name,
-                                                                                     user.last_name,
-                                                                                     user.get_profile().company_id,
-                                                                                     user.get_profile().address.street,
-                                                                                     user.get_profile().address.zipcode,
-                                                                                     user.get_profile().address.city,
-                                                                                     user.get_profile().address.country.country_name))
+        footer_text = "%s %s - SIRET : %s - %s, %s %s" % (user.first_name,
+                                                          user.last_name,
+                                                          user.get_profile().company_id,
+                                                          user.get_profile().address.street,
+                                                          user.get_profile().address.zipcode,
+                                                          user.get_profile().address.city)
+        if user.get_profile().address.country:
+            footer_text = footer_text + ", %s" % (user.get_profile().address.country)
+        canvas.drawCentredString(PAGE_WIDTH / 2.0, 0.5 * inch, footer_text)
         canvas.restoreState()
 
     year = int(request.GET.get('year'))
@@ -321,13 +323,16 @@ def invoice_download(request, id):
         canvas.saveState()
         canvas.setFont('Times-Roman', 10)
         PAGE_WIDTH = defaultPageSize[0]
-        canvas.drawCentredString(PAGE_WIDTH / 2.0, 0.5 * inch, "%s %s - SIRET : %s - %s, %s %s, %s" % (user.first_name,
-                                                                                     user.last_name,
-                                                                                     user.get_profile().company_id,
-                                                                                     user.get_profile().address.street,
-                                                                                     user.get_profile().address.zipcode,
-                                                                                     user.get_profile().address.city,
-                                                                                     user.get_profile().address.country.country_name))
+        footer_text = "%s %s - SIRET : %s - %s, %s %s" % (user.first_name,
+                                                              user.last_name,
+                                                              user.get_profile().company_id,
+                                                              user.get_profile().address.street,
+                                                              user.get_profile().address.zipcode,
+                                                              user.get_profile().address.city)
+        if user.get_profile().address.country:
+            footer_text = footer_text + ", %s" % (user.get_profile().address.country)
+
+        canvas.drawCentredString(PAGE_WIDTH / 2.0, 0.5 * inch, footer_text)
         canvas.restoreState()
 
     filename = ugettext('invoice_%(id)d.pdf') % {'id': invoice.id}
@@ -392,14 +397,14 @@ def invoice_download(request, id):
                                                   user.get_profile().address.street.replace("\n", "<br/>"),
                                                   user.get_profile().address.zipcode,
                                                   user.get_profile().address.city,
-                                                  user.get_profile().address.country.country_name), styleH),
+                                                  user.get_profile().address.country or ''), styleH),
                 '',
                 Paragraph(customer_header_content % (invoice.customer.name,
                                                      invoice.customer.legal_form,
                                                      invoice.customer.address.street.replace("\n", "<br/>"),
                                                      invoice.customer.address.zipcode,
                                                      invoice.customer.address.city,
-                                                     invoice.customer.address.country.country_name), styleH)])
+                                                     invoice.customer.address.country or ''), styleH)])
 
     t1 = Table(data, [3.5 * inch, 0.3 * inch, 3.5 * inch], [1.6 * inch])
     t1.setStyle(TableStyle([('BOX', (0, 0), (0, 0), 0.25, colors.black),

@@ -13,7 +13,7 @@
             "city": "",
             "street": "",
             "zipcode": "",
-            "country": 7
+            "country": null
         }
     },
     {
@@ -47,7 +47,7 @@
             "city": "",
             "street": "",
             "zipcode": "",
-            "country": 7
+            "country": null
         }
     },
     {

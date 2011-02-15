@@ -733,7 +733,7 @@ class InvoiceTest(TestCase):
         content = response.content.split("\n")
         invariant_content = content[0:66] + content[67:109] + content[110:-1]
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
-                          "7f118967fcc66606bc287278f80a101f")
+                          "a402cae8dc3aad00c167e21cc7b06df5")
 
     def testInvoiceBookDownloadPdf(self):
         """
@@ -769,7 +769,7 @@ class InvoiceTest(TestCase):
         content = response.content.split("\n")
         invariant_content = content[0:85] + content[86:140] + content[141:-1]
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
-                          "704f60f70dca3a7ad508847314fa8efc")
+                          "b3880646871a87e07910d27d93632222")
 
     def testBalancePayment(self):
         """
