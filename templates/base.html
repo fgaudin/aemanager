@@ -43,7 +43,9 @@
       </div>
     </div>
     <div id="footer">
-        <a href="{% url issue_list %}">{% trans "Contact/Bug report" %}</a>
+        <a href="{% url issue_list %}">{% trans "Contact/Bug report" %}</a> |
+        <a href="{% url tos %}">{% trans "TOSS" %}</a> |
+        {% blocktrans with "https://github.com/fgaudin/aemanager" as aemanager_url %}powered by <a href="{{ aemanager_url }}">aemanager</a>{% endblocktrans %}
     </div>
   </body>
 </html>
