@@ -146,9 +146,14 @@ class Proposal(OwnedObject):
     objects = ProposalManager()
 
     def __unicode__(self):
-        return _('Proposal from %(begin_date)s to %(end_date)s for %(project)s') % {'begin_date': localize(self.begin_date),
-                                                                                    'end_date': localize(self.end_date),
-                                                                                    'project' : self.project}
+        if self.begin_date and self.end_date:
+            return _('Proposal %(reference)s from %(begin_date)s to %(end_date)s for %(project)s') % {'reference': self.reference,
+                                                                                                      'begin_date': localize(self.begin_date),
+                                                                                                      'end_date': localize(self.end_date),
+                                                                                                      'project' : self.project}
+        else:
+            return _('Proposal %(reference)s for %(project)s') % {'reference': self.reference,
+                                                                                                      'project' : self.project}
 
     def is_accepted(self):
         return self.state == PROPOSAL_STATE_ACCEPTED or self.state == PROPOSAL_STATE_BALANCED

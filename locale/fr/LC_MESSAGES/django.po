@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-15 20:27+0100\n"
+"POT-Creation-Date: 2011-02-15 20:37+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -742,71 +742,71 @@ msgstr "Titre"
 msgid "Content"
 msgstr "Contenu"
 
-#: project/models.py:25 project/models.py:195
+#: project/models.py:25 project/models.py:200
 msgid "reference"
 msgstr "référence"
 
-#: project/models.py:26 project/models.py:52 project/models.py:196
+#: project/models.py:26 project/models.py:52 project/models.py:201
 msgid "customer"
 msgstr "client"
 
-#: project/models.py:27 project/models.py:53 project/models.py:197
+#: project/models.py:27 project/models.py:53 project/models.py:202
 msgid "customer_legal_form"
 msgstr "forme_juridique_client"
 
-#: project/models.py:28 project/models.py:54 project/models.py:198
+#: project/models.py:28 project/models.py:54 project/models.py:203
 msgid "customer_street"
 msgstr "rue_client"
 
-#: project/models.py:29 project/models.py:55 project/models.py:199
+#: project/models.py:29 project/models.py:55 project/models.py:204
 msgid "customer_zipcode"
 msgstr "cp_client"
 
-#: project/models.py:30 project/models.py:56 project/models.py:200
+#: project/models.py:30 project/models.py:56 project/models.py:205
 msgid "customer_city"
 msgstr "ville_client"
 
-#: project/models.py:31 project/models.py:57 project/models.py:201
+#: project/models.py:31 project/models.py:57 project/models.py:206
 msgid "customer_country"
 msgstr "pays_client"
 
-#: project/models.py:32 project/models.py:58 project/models.py:202
+#: project/models.py:32 project/models.py:58 project/models.py:207
 msgid "customer_national_id"
 msgstr "siret_client"
 
-#: project/models.py:33 project/models.py:59 project/models.py:203
+#: project/models.py:33 project/models.py:59 project/models.py:208
 msgid "customer_representative"
 msgstr "représentant_client"
 
-#: project/models.py:34 project/models.py:60 project/models.py:204
+#: project/models.py:34 project/models.py:60 project/models.py:209
 msgid "customer_representative_function"
 msgstr "fonction_représentant_client"
 
-#: project/models.py:35 project/models.py:61 project/models.py:205
+#: project/models.py:35 project/models.py:61 project/models.py:210
 msgid "firstname"
 msgstr "prénom"
 
-#: project/models.py:36 project/models.py:62 project/models.py:206
+#: project/models.py:36 project/models.py:62 project/models.py:211
 msgid "lastname"
 msgstr "nom"
 
-#: project/models.py:37 project/models.py:63 project/models.py:207
+#: project/models.py:37 project/models.py:63 project/models.py:212
 msgid "street"
 msgstr "rue"
 
-#: project/models.py:38 project/models.py:64 project/models.py:208
+#: project/models.py:38 project/models.py:64 project/models.py:213
 msgid "zipcode"
 msgstr "cp"
 
-#: project/models.py:39 project/models.py:65 project/models.py:209
+#: project/models.py:39 project/models.py:65 project/models.py:214
 msgid "city"
 msgstr "ville"
 
-#: project/models.py:40 project/models.py:66 project/models.py:210
+#: project/models.py:40 project/models.py:66 project/models.py:215
 msgid "country"
 msgstr "pays"
 
-#: project/models.py:41 project/models.py:67 project/models.py:211
+#: project/models.py:41 project/models.py:67 project/models.py:216
 msgid "national_id"
 msgstr "siret"
 
@@ -863,20 +863,26 @@ msgstr "Date de fin"
 msgid "Contract"
 msgstr "Contrat"
 
-#: project/models.py:149
+#: project/models.py:150
 #, python-format
-msgid "Proposal from %(begin_date)s to %(end_date)s for %(project)s"
-msgstr "Devis du %(begin_date)s au %(end_date)s pour %(project)s"
+msgid ""
+"Proposal %(reference)s from %(begin_date)s to %(end_date)s for %(project)s"
+msgstr "Devis %(reference)s du %(begin_date)s au %(end_date)s pour %(project)s"
 
-#: project/models.py:183 project/views.py:372
+#: project/models.py:155
+#, python-format
+msgid "Proposal %(reference)s for %(project)s"
+msgstr "Devis %(reference)s pour %(project)s"
+
+#: project/models.py:188 project/views.py:372
 msgid "Proposal amount can't be less than sum of invoices"
 msgstr "Le montant du devis ne peut être inférieur à la somme des factures"
 
-#: project/models.py:241
+#: project/models.py:246
 msgid "Service"
 msgstr "Service"
 
-#: project/models.py:242
+#: project/models.py:247
 msgid "Product"
 msgstr "Produit"
 

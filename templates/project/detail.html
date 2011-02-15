@@ -36,7 +36,7 @@
         {% for proposal in project.proposal_set.all %}
            <tr class="{% cycle 'row1' 'row2' %}">
                 <td><a href="{% url proposal_detail proposal.id %}">{{ proposal.reference }}</a></td>
-                <td><a href="{% url proposal_detail proposal.id %}">{% blocktrans with proposal.begin_date as begin_date and proposal.end_date as end_date %}{{ begin_date }} to {{ end_date }}{% endblocktrans %}</a></td>
+                <td>{% if proposal.begin_date and proposal.end_date %}<a href="{% url proposal_detail proposal.id %}">{% blocktrans with proposal.begin_date as begin_date and proposal.end_date as end_date %}{{ begin_date }} to {{ end_date }}{% endblocktrans %}</a>{% endif %}</td>
                 <td><a href="{% url proposal_detail proposal.id %}">{{ proposal.get_state_display }}</a></td>
                 <td><a href="{% url proposal_detail proposal.id %}">{{ proposal.amount|default:"" }}</a></td>
             </tr>
