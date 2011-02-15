@@ -1,8 +1,9 @@
-.wrapper1{
+.wrapper1 {
     color: #44433f;
     font: 14px "Futura Medium", "Myriad Pro", "Gill Sans", Helvetica, Verdana, Arial, sans-serif;
-    margin: 0;
+    margin: 0 auto;
     padding: 4px 0 0;
+    width: 960px;
 }
 
 .wrapper1 a{
