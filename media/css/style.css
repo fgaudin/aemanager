@@ -453,3 +453,9 @@ div.html {
 .user-deleted {
     font-style: italic;
 }
+
+#tos-iframe {
+    margin-left:10px;
+    width:90%;
+    height:200px;
+}

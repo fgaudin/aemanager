@@ -4,3 +4,4 @@
 .settings
 *.pdf
 *.sql
+templates/tos.html

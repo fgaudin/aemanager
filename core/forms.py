@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django import forms
 from django.forms.widgets import PasswordInput
 from django.utils.translation import ugettext_lazy as _
+from registration.forms import RegistrationFormUniqueEmail
 
 class UserForm(ModelForm):
     first_name = forms.CharField(label=_('first name'), max_length=30)
@@ -27,3 +28,8 @@ class PasswordForm(forms.Form):
             del cleaned_data['retyped_new_password']
 
         return cleaned_data
+
+class RegistrationFormUniqueEmailAndTos(RegistrationFormUniqueEmail):
+    tos = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class': 'required'}),
+                             label=_(u'I have read and agree to the Terms of Sale and Service'),
+                             error_messages={'required': _("You must agree to the terms to register")})

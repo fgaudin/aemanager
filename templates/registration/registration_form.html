@@ -2,11 +2,27 @@
 {% load i18n %}
 
 {% block content %}
-    <form action="" method="post" autocomplete = "off">
+    <form action="" method="post" autocomplete="off">
         {% csrf_token %}
         <fieldset class="module aligned">
-        {% with form as form %}
-        {% include "form.html" %}
+        {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+        {% endfor %}
+        {% with form.username as field %}
+        {% include "field.html" %}
+        {% endwith %}
+        {% with form.email as field %}
+        {% include "field.html" %}
+        {% endwith %}
+        {% with form.password1 as field %}
+        {% include "field.html" %}
+        {% endwith %}
+        {% with form.password2 as field %}
+        {% include "field.html" %}
+        {% endwith %}
+        <iframe src="{% url tos %}" id="tos-iframe" name="tos" scrolling="auto"></iframe>
+        {% with form.tos as field %}
+        {% include "field.html" %}
         {% endwith %}
         </fieldset>
 
