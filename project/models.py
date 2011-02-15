@@ -91,7 +91,7 @@ PROJECT_STATE = ((PROJECT_STATE_PROSPECT, _('Prospect')),
 
 class Project(OwnedObject):
     name = models.CharField(max_length=255, verbose_name=_('Name'))
-    customer = models.ForeignKey(Contact, blank=True, null=True, verbose_name=_('Customer'))
+    customer = models.ForeignKey(Contact, verbose_name=_('Customer'))
     state = models.IntegerField(choices=PROJECT_STATE, default=PROJECT_STATE_PROSPECT, verbose_name=_('State'))
 
     def __unicode__(self):
