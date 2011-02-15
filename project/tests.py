@@ -8,6 +8,7 @@ from project.models import Project, PROJECT_STATE_PROSPECT, \
     ProposalAmountError, Contract
 from accounts.models import Invoice, InvoiceRow, INVOICE_STATE_EDITED, \
     PAYMENT_TYPE_CHECK
+from contact.models import Contact, Address
 import datetime
 import hashlib
 
@@ -304,6 +305,31 @@ class ProjectTest(TestCase):
         response = self.client.get(reverse('project_finished_list'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(set(response.context['projects'].object_list), set([p5, p6]))
+
+    def Bug45(self):
+        """
+        All contacts are displayed on project creation and not only
+        those owned by the user
+        """
+        address = Address.objects.create(city="",
+                                         street="",
+                                         zipcode="",
+                                         country_id=7,
+                                         owner_id=2)
+        contact = Contact.objects.create(function="",
+                                         name="Contact of user 2",
+                                         firstname="",
+                                         contact_type=2,
+                                         company_id="12345",
+                                         legal_form="Soci\u00e9t\u00e9 \u00c0 Responsabilit\u00e9s Limit\u00e9es",
+                                         representative_function="CTO",
+                                         representative="John Doe",
+                                         address=address,
+                                         email="",
+                                         owner_id=2)
+        response = self.client.get(reverse('project_add'))
+        self.assertEquals(set(response.context['projectForm']['customer'].field.choices.queryset),
+                          set(Contact.objects.filter(owner__id=1)))
 
 class ProposalPermissionTest(TestCase):
     fixtures = ['test_users', 'test_contacts']

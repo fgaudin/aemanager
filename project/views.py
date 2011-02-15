@@ -152,6 +152,7 @@ def project_create_or_edit(request, id=None):
 
     if request.method == 'POST':
         projectForm = ProjectForm(request.POST, instance=project, prefix="project")
+        projectForm.fields['customer'].queryset = Contact.objects.filter(owner=request.user)
 
         if projectForm.is_valid():
             user = request.user
@@ -165,6 +166,7 @@ def project_create_or_edit(request, id=None):
             messages.error(request, _('Data provided are invalid'))
     else:
         projectForm = ProjectForm(instance=project, prefix="project")
+        projectForm.fields['customer'].queryset = Contact.objects.filter(owner=request.user)
 
     return render_to_response('project/edit.html',
                               {'active': 'business',
