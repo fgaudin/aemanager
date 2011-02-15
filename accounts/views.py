@@ -225,7 +225,8 @@ def invoice_create_or_edit(request, id=None, customer_id=None):
                                               extra=1)
 
     proposals = Proposal.objects.filter(project__customer=customer,
-                                        state=PROPOSAL_STATE_ACCEPTED)
+                                        state=PROPOSAL_STATE_ACCEPTED,
+                                        owner=request.user)
 
     if request.method == 'POST':
         invoiceForm = InvoiceForm(request.POST, instance=invoice, prefix="invoice")

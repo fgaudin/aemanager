@@ -55,8 +55,10 @@ def contract_create_or_edit(request, id=None, contact_id=None):
         contract = None
         customer = get_object_or_404(Contact, pk=contact_id, owner=request.user)
 
+    contracts = Contract.objects.filter(owner=request.user).exclude(content='')
     if request.method == 'POST':
         contractForm = ContractForm(request.POST, instance=contract, prefix="contract")
+        contractForm.fields['contract_model'].queryset = contracts
 
         if contractForm.is_valid():
             user = request.user
@@ -72,6 +74,7 @@ def contract_create_or_edit(request, id=None, contact_id=None):
             messages.error(request, _('Data provided are invalid'))
     else:
         contractForm = ContractForm(instance=contract, prefix="contract")
+        contractForm.fields['contract_model'].queryset = contracts
 
     substitution_map = Contract.get_substitution_map()
     substitution_keys = substitution_map.keys()
@@ -150,9 +153,11 @@ def project_create_or_edit(request, id=None):
         title = _('Add a project')
         project = None
 
+    contacts = Contact.objects.filter(owner=request.user)
+
     if request.method == 'POST':
         projectForm = ProjectForm(request.POST, instance=project, prefix="project")
-        projectForm.fields['customer'].queryset = Contact.objects.filter(owner=request.user)
+        projectForm.fields['customer'].queryset = contacts
 
         if projectForm.is_valid():
             user = request.user
@@ -166,7 +171,7 @@ def project_create_or_edit(request, id=None):
             messages.error(request, _('Data provided are invalid'))
     else:
         projectForm = ProjectForm(instance=project, prefix="project")
-        projectForm.fields['customer'].queryset = Contact.objects.filter(owner=request.user)
+        projectForm.fields['customer'].queryset = contacts
 
     return render_to_response('project/edit.html',
                               {'active': 'business',
@@ -343,8 +348,11 @@ def proposal_create_or_edit(request, id=None, project_id=None):
                                                fk_name="proposal",
                                                extra=1)
 
+    proposals = Proposal.objects.filter(owner=request.user).exclude(contract_content='')
+
     if request.method == 'POST':
         proposalForm = ProposalForm(request.POST, instance=proposal, prefix="proposal")
+        proposalForm.fields['contract_model'].queryset = proposals
         proposalrowformset = ProposalRowFormSet(request.POST, instance=proposal)
         if proposalForm.is_valid() and proposalrowformset.is_valid():
             try:
@@ -374,6 +382,7 @@ def proposal_create_or_edit(request, id=None, project_id=None):
             messages.error(request, _('Data provided are invalid'))
     else:
         proposalForm = ProposalForm(instance=proposal, prefix="proposal")
+        proposalForm.fields['contract_model'].queryset = proposals
         proposalrowformset = ProposalRowFormSet(instance=proposal)
 
     substitution_map = Contract.get_substitution_map()

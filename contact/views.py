@@ -44,8 +44,13 @@ def contact_create_or_edit(request, id=None):
                                                fk_name="contact",
                                                extra=1)
 
+    contacts = Contact.objects.filter(owner=request.user)
+    if contact:
+        contacts = contacts.exclude(pk=contact.id)
+
     if request.method == 'POST':
         contactForm = ContactForm(request.POST, instance=contact, prefix="contact")
+        contactForm.fields['contacts'].queryset = contacts
         addressForm = AddressForm(request.POST, instance=address, prefix="address")
         phonenumberformset = PhoneNumberFormSet(request.POST, instance=contact)
 
@@ -69,6 +74,7 @@ def contact_create_or_edit(request, id=None):
             messages.error(request, _('Data provided are invalid'))
     else:
         contactForm = ContactForm(instance=contact, prefix="contact")
+        contactForm.fields['contacts'].queryset = contacts
         addressForm = AddressForm(instance=address, prefix="address")
         phonenumberformset = PhoneNumberFormSet(instance=contact)
 
