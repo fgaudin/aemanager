@@ -2,6 +2,7 @@
 {% load i18n %}
 
 {% block content %}
+{% if invoices %}
 <div>
     <form action="{% url invoice_list_export %}" method="get">
         {% trans "Export invoice book" %} &nbsp;<select name="year">
@@ -42,4 +43,7 @@
         </tbody>
     </table>
 </div>
+{% else %}
+<div>{% trans "No invoices" %}</div>
+{% endif %}
 {% endblock %}
