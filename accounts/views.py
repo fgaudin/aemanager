@@ -12,7 +12,8 @@ from django.utils.formats import localize
 from django.db.transaction import commit_on_success
 from contact.models import Contact
 from django.forms.models import inlineformset_factory
-from project.models import Proposal, PROPOSAL_STATE_BALANCED
+from project.models import Proposal, PROPOSAL_STATE_BALANCED, \
+    PROPOSAL_STATE_ACCEPTED
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db import transaction
@@ -223,7 +224,8 @@ def invoice_create_or_edit(request, id=None, customer_id=None):
                                               fk_name="invoice",
                                               extra=1)
 
-    proposals = Proposal.objects.filter(project__customer=customer)
+    proposals = Proposal.objects.filter(project__customer=customer,
+                                        state=PROPOSAL_STATE_ACCEPTED)
 
     if request.method == 'POST':
         invoiceForm = InvoiceForm(request.POST, instance=invoice, prefix="invoice")
