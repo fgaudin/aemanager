@@ -10,21 +10,23 @@ class Migration(SchemaMigration):
         
         # Adding model 'Issue'
         db.create_table('bugtracker_issue', (
-            ('ownedobject_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.OwnedObject'], unique=True, primary_key=True)),
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('owner', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True)),
             ('category', self.gf('django.db.models.fields.IntegerField')()),
             ('subject', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('message', self.gf('django.db.models.fields.TextField')()),
-            ('update_date', self.gf('django.db.models.fields.DateField')()),
-            ('state', self.gf('django.db.models.fields.IntegerField')()),
+            ('update_date', self.gf('django.db.models.fields.DateTimeField')()),
+            ('state', self.gf('django.db.models.fields.IntegerField')(default=1)),
         ))
         db.send_create_signal('bugtracker', ['Issue'])
 
         # Adding model 'Comment'
         db.create_table('bugtracker_comment', (
-            ('ownedobject_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.OwnedObject'], unique=True, primary_key=True)),
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('owner', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True)),
             ('message', self.gf('django.db.models.fields.TextField')()),
             ('issue', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bugtracker.Issue'])),
-            ('update_date', self.gf('django.db.models.fields.DateField')()),
+            ('update_date', self.gf('django.db.models.fields.DateTimeField')()),
         ))
         db.send_create_signal('bugtracker', ['Comment'])
 
@@ -32,7 +34,7 @@ class Migration(SchemaMigration):
         db.create_table('bugtracker_vote', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('issue', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bugtracker.Issue'])),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
+            ('owner', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
         ))
         db.send_create_signal('bugtracker', ['Vote'])
 
@@ -80,26 +82,28 @@ class Migration(SchemaMigration):
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
         },
         'bugtracker.comment': {
-            'Meta': {'object_name': 'Comment', '_ormbases': ['core.OwnedObject']},
+            'Meta': {'ordering': "['update_date']", 'object_name': 'Comment'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'issue': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bugtracker.Issue']"}),
             'message': ('django.db.models.fields.TextField', [], {}),
-            'ownedobject_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.OwnedObject']", 'unique': 'True', 'primary_key': 'True'}),
-            'update_date': ('django.db.models.fields.DateField', [], {})
+            'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True'}),
+            'update_date': ('django.db.models.fields.DateTimeField', [], {})
         },
         'bugtracker.issue': {
-            'Meta': {'object_name': 'Issue', '_ormbases': ['core.OwnedObject']},
+            'Meta': {'object_name': 'Issue'},
             'category': ('django.db.models.fields.IntegerField', [], {}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'message': ('django.db.models.fields.TextField', [], {}),
-            'ownedobject_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.OwnedObject']", 'unique': 'True', 'primary_key': 'True'}),
-            'state': ('django.db.models.fields.IntegerField', [], {}),
+            'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True'}),
+            'state': ('django.db.models.fields.IntegerField', [], {'default': '1'}),
             'subject': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'update_date': ('django.db.models.fields.DateField', [], {})
+            'update_date': ('django.db.models.fields.DateTimeField', [], {})
         },
         'bugtracker.vote': {
             'Meta': {'object_name': 'Vote'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'issue': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bugtracker.Issue']"}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
+            'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
         },
         'contenttypes.contenttype': {
             'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
@@ -107,11 +111,6 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        'core.ownedobject': {
-            'Meta': {'object_name': 'OwnedObject'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'owner': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
         }
     }
 
