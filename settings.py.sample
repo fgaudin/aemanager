@@ -7,7 +7,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    ('contact', 'contact@francoisgaudin.com'),
+    ('', ''),
 )
 
 MANAGERS = ADMINS
@@ -134,7 +134,7 @@ if DEBUG:
 else:
     PAYPAL_URL = 'https://www.paypal.com/cgi-bin/webscr'
     PAYPAL_RECEIVER_ID = ''
-    PAYPAL_APP_SUBSCRIPTION_AMOUNT = '0'
+    PAYPAL_APP_SUBSCRIPTION_AMOUNT = '0.50'
     PAYPAL_APP_SUBSCRIPTION_CURRENCY = 'EUR'
 
 BUGTRACKER_VOTES = 10
