@@ -214,6 +214,7 @@ a .menu-right {
     font-weight: 400;
     font-size: 18px;
     border-bottom: 1px dashed #C1D9F0;
+    margin-bottom: 15px;
 }
 .content h2 {
     font-weight: 400;
@@ -243,6 +244,14 @@ form .aligned p, form .aligned ul {
 
 .inline-formset {
     margin-left: 17.25em;
+}
+
+.module {
+    margin-bottom: 20px;
+}
+
+.submit-row {
+    margin-top: 20px;
 }
 
 .messages {
@@ -421,6 +430,7 @@ div.html {
 
 #paypal-button {
     text-align:center;
+    margin-bottom: 50px;
 }
 
 #confirmation-message {
@@ -438,4 +448,8 @@ div.html {
 
 .date-col {
     width: 90px;
+}
+
+.user-deleted {
+    font-style: italic;
 }

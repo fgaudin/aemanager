@@ -23,7 +23,7 @@
     </div>
     <div class="detail-row">
       <div>
-      <label>{% trans "Author" %} :</label> {{ issue.owner.first_name }} {{ issue.owner.last_name }}
+      <label>{% trans "Author" %} :</label> {% if issue.owner %}{{ issue.owner.first_name }} {{ issue.owner.last_name }}{% else %}<span class="user-deleted">{% trans "User deleted" %}</span>{% endif %}
       </div>
     </div>
     <div class="detail-row">
@@ -59,13 +59,13 @@
                 <th class="author-col">{% trans "Author" %}</th>
                 <th class="date-col">{% trans "Update date" %}</th>
                 <th>{% trans "Message" %}</th>
-                <th>{% trans "Action" %}</th>
+                <th class="action-col">{% trans "Action" %}</th>
             </tr>
         </thead>
         <tbody>
         {% for comment in issue.comment_set.all %}
            <tr class="{% cycle 'row1' 'row2' %}">
-                <td>{{ comment.owner.first_name }} {{ comment.owner.last_name }}</td>
+                <td>{% if comment.owner %}{{ comment.owner.first_name }} {{ comment.owner.last_name }}{% else %}<span class="user-deleted">{% trans "User deleted" %}</span>{% endif %}</td>
                 <td>{{ comment.update_date }}</td>
                 <td>{{ comment.message }}</td>
                 <td>{% if comment.owner == user %}<a href="{% url comment_edit id=comment.id %}">{% trans "edit" %}</a> <a href="{% url comment_delete id=comment.id %}">{% trans "delete" %}</a>{% endif %}</td>

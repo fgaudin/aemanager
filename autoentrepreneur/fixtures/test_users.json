@@ -36,24 +36,37 @@
         }
     },
     {
-        "pk": 1,
+        "pk": 200,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
+        }
+    },
+    {
+        "pk": 200,
         "model": "autoentrepreneur.subscription",
         "fields": {
             "expiration_date": "2010-02-14",
             "state": 4,
             "error_message": "Pay\u00e9e",
-            "user": 1,
             "transaction_id": "ABCD"
         }
     },
     {
-        "pk": 2,
+        "pk": 201,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 2
+        }
+    },
+
+    {
+        "pk": 201,
         "model": "autoentrepreneur.subscription",
         "fields": {
             "expiration_date": "2010-02-14",
             "state": 4,
             "error_message": "Pay\u00e9e",
-            "user": 2,
             "transaction_id": "ABCDE"
         }
     },

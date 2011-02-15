@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div>
+{% blocktrans %}
+All your data will be deleted and your subscription will be lost. You can't undo this action. Are you sure to want to unregister ?
+{% endblocktrans %}
+</div>
+
+<form action="" method="post" id="contract-edit-form">
+    {% csrf_token %}
+    <div class="submit-row">
+    <input class="default" type="submit" name="cancel" value="{% trans "Cancel" %}" />
+    <input type="submit" name="unregister" value="{% trans "Unregister" %}" />
+    </div>
+</form>
+{% endblock %}

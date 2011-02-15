@@ -24,7 +24,7 @@
         {% for issue in issues %}
            <tr class="{% cycle 'row2' 'row1' %} row">
                 <td><a href="{% url issue_detail id=issue.id %}">{{ issue.subject }}</a></td>
-                <td><a href="{% url issue_detail id=issue.id %}">{{ issue.owner.first_name }} {{ issue.owner.last_name }}</a></td>
+                <td>{% if issue.owner %}<a href="{% url issue_detail id=issue.id %}">{{ issue.owner.first_name }} {{ issue.owner.last_name }}</a>{% else %}<span class="user-deleted">{% trans "User deleted" %}</span>{% endif %}</td>
                 <td><a href="{% url issue_detail id=issue.id %}">{{ issue.update_date }}</a></td>
                 <td><a href="{% url issue_detail id=issue.id %}">{{ issue.get_category_display }}</a></td>
                 <td><a href="{% url issue_detail id=issue.id %}">{{ issue.comment_set.count }}</a></td>

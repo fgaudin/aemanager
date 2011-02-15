@@ -17,6 +17,7 @@ from project.models import Proposal
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from autoentrepreneur.decorators import subscription_required
+from django.contrib.auth import logout
 import time
 import datetime
 import urllib, urllib2
@@ -330,4 +331,22 @@ def paypal_ipn(request):
     return render_to_response('core/paypal_ipn.html',
                               {'active': 'account',
                                'title': _('Subscribe')},
+                              context_instance=RequestContext(request))
+
+@login_required
+@commit_on_success
+def unregister(request):
+    profile = request.user.get_profile()
+
+    if request.method == 'POST':
+        if request.POST.get('unregister'):
+            logout(request)
+            profile.unregister()
+            return redirect(reverse('index'))
+        else:
+            return redirect(reverse('subscribe'))
+
+    return render_to_response('core/unregister.html',
+                              {'active': 'account',
+                               'title': _('Unregister')},
                               context_instance=RequestContext(request))

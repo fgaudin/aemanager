@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from contact.models import Address
 from django.db.models.signals import post_save
 from django.db.models.aggregates import Max
+from core.models import OwnedObject
+from bugtracker.models import Issue, Comment, Vote
 import datetime
 
 AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC = 1
@@ -32,8 +34,7 @@ SUBSCRIPTION_STATE = ((SUBSCRIPTION_STATE_NOT_PAID, _('Not paid')),
                       (SUBSCRIPTION_STATE_TRIAL, _('Trial')),
                       (SUBSCRIPTION_STATE_FREE, _('Free')))
 
-class Subscription(models.Model):
-    user = models.ForeignKey(User, verbose_name=_('User'))
+class Subscription(OwnedObject):
     state = models.IntegerField(choices=SUBSCRIPTION_STATE, verbose_name=_('State'))
     expiration_date = models.DateField(verbose_name=_('Expiration date'))
     transaction_id = models.CharField(verbose_name=_('Transaction id'), unique=True, max_length=50)
@@ -68,6 +69,12 @@ class UserProfile(models.Model):
     freeing_tax_payment = models.BooleanField(verbose_name=_('Freeing tax payment')) # versement liberatoire
     payment_option = models.IntegerField(choices=AUTOENTREPRENEUR_PAYMENT_OPTION, blank=True, null=True, verbose_name=_('Payment option'))
 
+    def unregister(self):
+        Issue.objects.filter(owner=self.user).update(owner=None)
+        Comment.objects.filter(owner=self.user).update(owner=None)
+        Vote.objects.filter(owner=self.user).delete()
+        self.user.delete()
+
     def settings_defined(self):
         settings_defined = False
         if self.user.first_name \
@@ -86,13 +93,13 @@ class UserProfile(models.Model):
 
     def is_allowed(self):
         try:
-            Subscription.objects.get(user=self.user,
+            Subscription.objects.get(owner=self.user,
                                      state__in=[SUBSCRIPTION_STATE_FREE])
             return True
         except:
             pass
         try:
-            Subscription.objects.get(user=self.user,
+            Subscription.objects.get(owner=self.user,
                                      state__in=[SUBSCRIPTION_STATE_PAID, SUBSCRIPTION_STATE_TRIAL],
                                      expiration_date__gte=datetime.date.today())
             return True
@@ -102,7 +109,7 @@ class UserProfile(models.Model):
         return False
 
     def get_next_expiration_date(self):
-        last_valid_expiration_date = Subscription.objects.filter(user=self.user,
+        last_valid_expiration_date = Subscription.objects.filter(owner=self.user,
                                                                  state__in=[SUBSCRIPTION_STATE_PAID,
                                                                             SUBSCRIPTION_STATE_TRIAL]).aggregate(last_date=Max('expiration_date'))
         today = datetime.date.today()
@@ -120,7 +127,7 @@ class UserProfile(models.Model):
         return next_date
 
     def get_last_subscription(self):
-        subscription = Subscription.objects.filter(user=self.user).exclude(state=SUBSCRIPTION_STATE_NOT_PAID).order_by('-expiration_date')[0]
+        subscription = Subscription.objects.filter(owner=self.user).exclude(state=SUBSCRIPTION_STATE_NOT_PAID).order_by('-expiration_date')[0]
         return subscription
 
     def get_sales_limit(self, year=None):
@@ -277,8 +284,11 @@ def user_post_save(sender, instance, created, **kwargs):
             profile.address = address
             profile.save()
 
+        try:
+            Subscription.objects.get(owner=instance)
+        except:
             today = datetime.date.today()
-            subscription = Subscription.objects.create(user=instance,
+            subscription = Subscription.objects.create(owner=instance,
                                                        state=SUBSCRIPTION_STATE_TRIAL,
                                                        expiration_date=today + datetime.timedelta(30),
                                                        transaction_id='TRIAL-%i%i%i-%i' % (today.year, today.month, today.day, instance.id))

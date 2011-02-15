@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from core.models import OwnedObject
 from django.contrib.auth.models import User
 from django.utils.text import truncate_html_words
 from django.conf import settings
@@ -19,7 +18,8 @@ ISSUE_STATE_CLOSED = 2
 ISSUE_STATE = ((ISSUE_STATE_OPEN, _('Open')),
                (ISSUE_STATE_CLOSED, _('Closed')))
 
-class Issue(OwnedObject):
+class Issue(models.Model):
+    owner = models.ForeignKey(User, verbose_name=_('User'), null=True)
     category = models.IntegerField(verbose_name=_('Category'), choices=ISSUE_CATEGORY, help_text=_('Only bugs and features are public'))
     subject = models.CharField(verbose_name=_('Subject'), max_length=255)
     message = models.TextField(verbose_name=_('Message'))
@@ -38,7 +38,8 @@ class Issue(OwnedObject):
     def is_closed(self):
         return self.state == ISSUE_STATE_CLOSED
 
-class Comment(OwnedObject):
+class Comment(models.Model):
+    owner = models.ForeignKey(User, verbose_name=_('User'), null=True)
     message = models.TextField(verbose_name=_('Message'))
     issue = models.ForeignKey(Issue, verbose_name=_('Issue'))
     update_date = models.DateTimeField(verbose_name=_('Update date'))
@@ -51,10 +52,10 @@ class Comment(OwnedObject):
 
 class VoteManager(models.Manager):
     def votes_remaining(self, user):
-        return settings.BUGTRACKER_VOTES - self.filter(user=user).count()
+        return settings.BUGTRACKER_VOTES - self.filter(owner=user).count()
 
 class Vote(models.Model):
     issue = models.ForeignKey(Issue, verbose_name=_('Issue'))
-    user = models.ForeignKey(User, verbose_name=_('User'))
+    owner = models.ForeignKey(User, verbose_name=_('User'))
 
     objects = VoteManager()

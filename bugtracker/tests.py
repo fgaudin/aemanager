@@ -175,7 +175,7 @@ class BugTrackerTest(TestCase):
                                   message='test message',
                                   update_date=datetime.datetime.now(),
                                   state=ISSUE_STATE_OPEN)
-        Vote.objects.create(user_id=1,
+        Vote.objects.create(owner_id=1,
                             issue_id=i1.id)
         response = self.client.post(reverse('issue_close', kwargs={'id': i1.id}),
                                     {'message': 'Closed'})
@@ -306,7 +306,7 @@ class BugTrackerTest(TestCase):
                                   update_date=datetime.datetime.now(),
                                   state=ISSUE_STATE_OPEN)
 
-        Vote.objects.create(user_id=1,
+        Vote.objects.create(owner_id=1,
                             issue_id=i1.id)
 
         self.assertEquals(i1.vote_count(), 1)
@@ -324,7 +324,7 @@ class BugTrackerTest(TestCase):
                                   state=ISSUE_STATE_OPEN)
 
         for i in range(settings.BUGTRACKER_VOTES):
-            Vote.objects.create(user_id=1,
+            Vote.objects.create(owner_id=1,
                                 issue_id=i1.id)
 
         self.assertEquals(i1.vote_count(), settings.BUGTRACKER_VOTES)

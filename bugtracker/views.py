@@ -49,7 +49,8 @@ def issue_create_or_edit(request, id=None):
         if form.is_valid():
             issue = form.save(commit=False)
             issue.update_date = datetime.datetime.now()
-            issue.save(user=request.user)
+            issue.owner = request.user
+            issue.save()
             messages.success(request, _('The issue has been saved successfully'))
             return redirect(reverse('issue_list'))
     else:
@@ -72,9 +73,11 @@ def issue_close(request, id):
             comment = commentForm.save(commit=False)
             comment.update_date = datetime.datetime.now()
             comment.issue = issue
-            comment.save(user=request.user)
+            comment.owner = request.user
+            comment.save()
             issue.state = ISSUE_STATE_CLOSED
-            issue.save(user=request.user)
+            issue.owner = request.user
+            issue.save()
             Vote.objects.filter(issue=issue).delete()
             messages.success(request, _('The issue has been closed successfully'))
             return redirect(reverse('issue_list'))
@@ -98,9 +101,11 @@ def issue_reopen(request, id):
             comment = commentForm.save(commit=False)
             comment.update_date = datetime.datetime.now()
             comment.issue = issue
-            comment.save(user=request.user)
+            comment.owner = request.user
+            comment.save()
             issue.state = ISSUE_STATE_OPEN
-            issue.save(user=request.user)
+            issue.owner = request.user
+            issue.save()
             messages.success(request, _('The issue has been reopened successfully'))
             return redirect(reverse('issue_list'))
     else:
@@ -118,7 +123,7 @@ def issue_detail(request, id):
     commentForm = CommentForm()
     votes_remaining = Vote.objects.votes_remaining(request.user)
     user_votes = Vote.objects.filter(issue=issue,
-                                   user=request.user).count()
+                                     owner=request.user).count()
 
     return render_to_response('issue/detail.html',
                               {'active': 'settings',
@@ -166,7 +171,8 @@ def comment_create_or_edit(request, id=None, issue_id=None):
             comment = form.save(commit=False)
             comment.issue = issue
             comment.update_date = datetime.datetime.now()
-            comment.save(user=request.user)
+            comment.owner = request.user
+            comment.save()
             messages.success(request, _('Your comment has been saved successfully'))
             return redirect(reverse('issue_detail', kwargs={'id': issue.id}))
     else:
@@ -204,7 +210,7 @@ def vote(request, issue_id):
     votes_remaining = Vote.objects.votes_remaining(request.user)
     if issue.state == ISSUE_STATE_OPEN:
         if votes_remaining:
-            Vote.objects.create(user=request.user,
+            Vote.objects.create(owner=request.user,
                                 issue=issue)
             messages.success(request, _('Your vote has been saved successfully'))
         else:
@@ -217,7 +223,7 @@ def vote(request, issue_id):
 @commit_on_success
 def unvote(request, issue_id):
     issue = get_object_or_404(Issue, pk=issue_id)
-    votes = Vote.objects.filter(user=request.user,
+    votes = Vote.objects.filter(owner=request.user,
                                 issue=issue)
     if len(votes):
         votes[0].delete()

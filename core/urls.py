@@ -21,4 +21,8 @@ urlpatterns = patterns('core.views',
         regex=r'^paypal_ipn/$',
         view='paypal_ipn',
         name='paypal_ipn'),
+    url(
+        regex=r'^unregister/$',
+        view='unregister',
+        name='unregister'),
 )

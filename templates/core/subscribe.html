@@ -37,6 +37,12 @@ Keep using this service until <strong>{{ next_expiration_date }}</strong> for <s
 <input type="image" src="https://www.paypal.com/fr_FR/FR/i/btn/btn_paynowCC_LG.gif" border="0" name="submit" alt="PayPal - la solution de paiement en ligne la plus simple et la plus sécurisée !">
 <img alt="" border="0" src="https://www.paypal.com/fr_FR/i/scr/pixel.gif" width="1" height="1">
 </form>
+</div>
 
+<div>
+{% url unregister as unregister_link %}
+{% blocktrans %}
+If you want to leave us, follow this link : <a href="{{ unregister_link }}">Unregister</a>
+{% endblocktrans %}
 </div>
 {% endblock %}
