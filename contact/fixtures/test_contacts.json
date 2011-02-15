@@ -1,6 +1,6 @@
 [
     {
-        "pk": 10,
+        "pk": 1,
         "model": "core.ownedobject",
         "fields": {
             "owner": 1
@@ -14,6 +14,13 @@
             "street": "",
             "zipcode": "",
             "country": null
+        }
+    },
+    {
+        "pk": 10,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
         }
     },
     {
@@ -34,7 +41,7 @@
         }
     },
     {
-        "pk": 11,
+        "pk": 12,
         "model": "core.ownedobject",
         "fields": {
             "owner": 1
@@ -48,6 +55,13 @@
             "street": "",
             "zipcode": "",
             "country": null
+        }
+    },
+    {
+        "pk": 11,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 1
         }
     },
     {

@@ -1,7 +1,7 @@
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from project.models import Proposal, PROPOSAL_STATE_DRAFT, ROW_CATEGORY_SERVICE, \
-    ROW_CATEGORY_PRODUCT, PROPOSAL_STATE_BALANCED
+    ROW_CATEGORY_PRODUCT, PROPOSAL_STATE_BALANCED, PROPOSAL_STATE_ACCEPTED
 from accounts.models import INVOICE_STATE_EDITED, Invoice, InvoiceRow, \
     INVOICE_STATE_SENT, InvoiceRowAmountError, PAYMENT_TYPE_CHECK, \
     PAYMENT_TYPE_CASH, Expense, INVOICE_STATE_PAID
@@ -191,7 +191,7 @@ class InvoiceTest(TestCase):
         self.client.login(username='test', password='test')
         self.proposal = Proposal.objects.create(project_id=30,
                                                 update_date=datetime.date.today(),
-                                                state=PROPOSAL_STATE_DRAFT,
+                                                state=PROPOSAL_STATE_ACCEPTED,
                                                 begin_date=datetime.date(2010, 8, 1),
                                                 end_date=datetime.date(2010, 8, 15),
                                                 contract_content='Content of contract',
@@ -730,6 +730,9 @@ class InvoiceTest(TestCase):
 
         response = self.client.get(reverse('invoice_download', kwargs={'id': i.id}))
         self.assertEqual(response.status_code, 200)
+        f = open('/tmp/invoice.pdf', 'w')
+        f.write(response.content)
+        f.close()
         content = response.content.split("\n")
         invariant_content = content[0:66] + content[67:109] + content[110:-1]
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
@@ -766,6 +769,9 @@ class InvoiceTest(TestCase):
 
         response = self.client.get(reverse('invoice_list_export') + '?year=%(year)s' % {'year': '2010'})
         self.assertEqual(response.status_code, 200)
+        f = open('/tmp/invoice_book.pdf', 'w')
+        f.write(response.content)
+        f.close()
         content = response.content.split("\n")
         invariant_content = content[0:85] + content[86:140] + content[141:-1]
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),

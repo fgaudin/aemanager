@@ -268,7 +268,7 @@ class UnregisterTest(TestCase):
         response = self.client.post(reverse('unregister'),
                                     {'unregister': 'ok'})
         self.assertEquals(response.status_code, 302)
-        self.assertEquals(Address.objects.count(), 2)
+        self.assertEquals(Address.objects.count(), 1)
         self.assertEquals(Contact.objects.count(), 0)
         self.assertEquals(Project.objects.count(), 0)
         self.assertEquals(Proposal.objects.count(), 0)

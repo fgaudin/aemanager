@@ -772,6 +772,9 @@ class ProposalTest(TestCase):
 
         response = self.client.get(reverse('proposal_download', kwargs={'id': p.id}))
         self.assertEqual(response.status_code, 200)
+        f = open('/tmp/proposal.pdf', 'w')
+        f.write(response.content)
+        f.close()
         content = response.content.split("\n")
         invariant_content = content[0:66] + content[67:109] + content[110:-1]
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),

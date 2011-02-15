@@ -284,24 +284,18 @@ class UserProfile(models.Model):
         return pay_date
 
 def user_post_save(sender, instance, created, **kwargs):
-    if created:
-        try:
-            profile = UserProfile.objects.get(user=instance)
-        except:
-            address = Address()
-            address.save(user=instance)
-            profile = UserProfile()
-            profile.user = instance
-            profile.address = address
-            profile.save()
+    if created and not kwargs.get('raw', False):
+        address = Address()
+        address.save(user=instance)
+        profile = UserProfile()
+        profile.user = instance
+        profile.address = address
+        profile.save()
 
-        try:
-            Subscription.objects.get(owner=instance)
-        except:
-            today = datetime.date.today()
-            subscription = Subscription.objects.create(owner=instance,
-                                                       state=SUBSCRIPTION_STATE_TRIAL,
-                                                       expiration_date=today + datetime.timedelta(30),
-                                                       transaction_id='TRIAL-%i%i%i-%i' % (today.year, today.month, today.day, instance.id))
+        today = datetime.date.today()
+        subscription = Subscription.objects.create(owner=instance,
+                                                   state=SUBSCRIPTION_STATE_TRIAL,
+                                                   expiration_date=today + datetime.timedelta(30),
+                                                   transaction_id='TRIAL-%i%i%i-%i' % (today.year, today.month, today.day, instance.id))
 
 post_save.connect(user_post_save, sender=User)

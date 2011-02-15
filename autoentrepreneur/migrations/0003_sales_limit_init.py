@@ -7,54 +7,8 @@ from django.db import models
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        orm.SalesLimit.objects.create(year=2009,
-                                      activity=1,
-                                      limit=80000,
-                                      limit2=88000)
-        orm.SalesLimit.objects.create(year=2009,
-                                      activity=2,
-                                      limit=32000,
-                                      limit2=34000)
-        orm.SalesLimit.objects.create(year=2009,
-                                      activity=3,
-                                      limit=32000,
-                                      limit2=34000)
-        orm.SalesLimit.objects.create(year=2009,
-                                      activity=4,
-                                      limit=32000,
-                                      limit2=34000)
-        orm.SalesLimit.objects.create(year=2010,
-                                      activity=1,
-                                      limit=80300,
-                                      limit2=88300)
-        orm.SalesLimit.objects.create(year=2010,
-                                      activity=2,
-                                      limit=32100,
-                                      limit2=34100)
-        orm.SalesLimit.objects.create(year=2010,
-                                      activity=3,
-                                      limit=32100,
-                                      limit2=34100)
-        orm.SalesLimit.objects.create(year=2010,
-                                      activity=4,
-                                      limit=32100,
-                                      limit2=34100)
-        orm.SalesLimit.objects.create(year=2011,
-                                      activity=1,
-                                      limit=81500,
-                                      limit2=89500)
-        orm.SalesLimit.objects.create(year=2011,
-                                      activity=2,
-                                      limit=32600,
-                                      limit2=34600)
-        orm.SalesLimit.objects.create(year=2011,
-                                      activity=3,
-                                      limit=32600,
-                                      limit2=34600)
-        orm.SalesLimit.objects.create(year=2011,
-                                      activity=4,
-                                      limit=32600,
-                                      limit2=34600)
+        # moved to initial data
+        pass
 
     def backwards(self, orm):
         pass
