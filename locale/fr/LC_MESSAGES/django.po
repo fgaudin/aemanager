@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-16 21:23+0100\n"
+"POT-Creation-Date: 2011-02-17 00:15+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,7 +27,7 @@ msgid "French"
 msgstr "Français"
 
 #: accounts/forms.py:7 accounts/models.py:24 accounts/models.py:132
-#: accounts/views.py:188 project/models.py:139 templates/expense/list.html:179
+#: accounts/views.py:192 project/models.py:139 templates/expense/list.html:179
 #: templates/invoice/detail.html:25 templates/invoice/list.html:27
 #: templates/project/detail.html:32 templates/project/detail.html.py:60
 #: templates/proposal/detail.html:90
@@ -38,7 +38,13 @@ msgstr "Montant"
 msgid "Penalty rate"
 msgstr "Taux de pénalité"
 
-#: accounts/forms.py:21 accounts/views.py:442 project/forms.py:39
+#: accounts/forms.py:21 accounts/views.py:446 project/forms.py:39
+#: project/views.py:574 templates/invoice/detail.html:72
+#: templates/proposal/detail.html:60
+msgid "Quantity"
+msgstr "Quantité"
+
+#: accounts/forms.py:22 accounts/views.py:446 project/forms.py:40
 #: project/views.py:574 templates/invoice/detail.html:73
 #: templates/proposal/detail.html:61
 msgid "Unit price"
@@ -60,7 +66,7 @@ msgstr "Virement"
 msgid "Check"
 msgstr "Chèque"
 
-#: accounts/models.py:22 accounts/views.py:188 templates/expense/list.html:177
+#: accounts/models.py:22 accounts/views.py:192 templates/expense/list.html:177
 msgid "Date"
 msgstr "Date"
 
@@ -77,7 +83,7 @@ msgstr "format : jj/mm/aaaa"
 msgid "Reference"
 msgstr "Référence"
 
-#: accounts/models.py:25 accounts/models.py:135 accounts/views.py:188
+#: accounts/models.py:25 accounts/models.py:135 accounts/views.py:192
 #: templates/expense/list.html:180 templates/invoice/list.html:26
 msgid "Payment type"
 msgstr "Type de paiement"
@@ -98,7 +104,7 @@ msgstr "Envoyé"
 msgid "Paid"
 msgstr "Payée"
 
-#: accounts/models.py:129 accounts/views.py:188 project/forms.py:26
+#: accounts/models.py:129 accounts/views.py:192 project/forms.py:26
 #: project/models.py:15 project/models.py:94 templates/invoice/list.html:23
 #: templates/project/list.html:19
 msgid "Customer"
@@ -150,7 +156,7 @@ msgstr "Conditions d'escompte"
 msgid "invoice #%d"
 msgstr "facture n°%d"
 
-#: accounts/models.py:171 accounts/views.py:264
+#: accounts/models.py:171 accounts/views.py:268
 msgid "Invoice id must be unique"
 msgstr "Le numéro de facture doit être unique"
 
@@ -162,130 +168,125 @@ msgstr "Solde le devis"
 msgid "Sum of invoice row amount can't exceed proposal amount"
 msgstr "La somme des factures ne peut dépasser le montant du devis"
 
-#: accounts/views.py:60 templates/menu.html:46
+#: accounts/views.py:61 templates/menu.html:46
 #: templates/core/charts_widget.html:37
 msgid "Expenses"
 msgstr "Dépenses"
 
-#: accounts/views.py:143 templates/menu.html:43
+#: accounts/views.py:147 templates/menu.html:43
 #: templates/core/invoices_widget.html:3 templates/project/detail.html:52
 #: templates/proposal/detail.html:82
 msgid "Invoices"
 msgstr "Factures"
 
-#: accounts/views.py:172
+#: accounts/views.py:176
 #, python-format
 msgid "invoice_book_%(year)d.pdf"
 msgstr "livre_des_recettes_%(year)d.pdf"
 
-#: accounts/views.py:176 accounts/views.py:185
+#: accounts/views.py:180 accounts/views.py:189
 #, python-format
 msgid "Invoice book %(year)d"
 msgstr "Livre des recettes %(year)d"
 
-#: accounts/views.py:188
+#: accounts/views.py:192
 msgid "Ref."
 msgstr "Ref."
 
-#: accounts/views.py:188 templates/invoice/list.html:24
+#: accounts/views.py:192 templates/invoice/list.html:24
 msgid "Nature"
 msgstr "Nature"
 
-#: accounts/views.py:213
+#: accounts/views.py:217
 msgid "Edit an invoice"
 msgstr "Éditer une facture"
 
-#: accounts/views.py:217 templates/project/detail.html:51
+#: accounts/views.py:221 templates/project/detail.html:51
 msgid "Draw up an invoice"
 msgstr "Etablir une facture"
 
-#: accounts/views.py:257
+#: accounts/views.py:261
 msgid "The invoice has been saved successfully"
 msgstr "La facture a été sauvegardée avec succès"
 
-#: accounts/views.py:261
+#: accounts/views.py:265
 msgid "Amount invoiced for proposal can't be greater than proposal amount"
 msgstr "Le montant facturé ne peut pas dépasser le montant du devis"
 
-#: accounts/views.py:266 contact/views.py:74 core/views.py:226
+#: accounts/views.py:270 contact/views.py:74 core/views.py:226
 #: project/views.py:74 project/views.py:171 project/views.py:382
 msgid "Data provided are invalid"
 msgstr "Les données saisies sont invalides"
 
-#: accounts/views.py:295
+#: accounts/views.py:299
 #, python-format
 msgid "Invoice for %s"
 msgstr "Facture pour %s"
 
-#: accounts/views.py:308
+#: accounts/views.py:312
 msgid "The invoice has been deleted successfully"
 msgstr "La facture a été supprimée avec succès"
 
-#: accounts/views.py:315
+#: accounts/views.py:319
 msgid "Delete an invoice"
 msgstr "Supprimer une facture"
 
-#: accounts/views.py:341
+#: accounts/views.py:345
 #, python-format
 msgid "invoice_%(id)d.pdf"
 msgstr "facture_%(id)d.pdf"
 
-#: accounts/views.py:345
+#: accounts/views.py:349
 #, python-format
 msgid "Invoice #%(invoice_id)d"
 msgstr "Facture #%(invoice_id)d"
 
-#: accounts/views.py:426 project/views.py:558
+#: accounts/views.py:430 project/views.py:558
 #, python-format
 msgid "Date : %s"
 msgstr "Date : %s"
 
-#: accounts/views.py:436
+#: accounts/views.py:440
 #, python-format
 msgid "INVOICE #%d"
 msgstr "FACTURE N°%d"
 
-#: accounts/views.py:442 project/views.py:574 templates/invoice/detail.html:68
+#: accounts/views.py:446 project/views.py:574 templates/invoice/detail.html:68
 #: templates/proposal/detail.html:58
 msgid "Label"
 msgstr "Libellé"
 
-#: accounts/views.py:442 project/views.py:574 templates/invoice/detail.html:72
-#: templates/proposal/detail.html:60
-msgid "Quantity"
-msgstr "Quantité"
-
-#: accounts/views.py:442 project/views.py:574
+#: accounts/views.py:446 project/views.py:574
 #: templates/core/sales_widget.html:38
 msgid "Total"
 msgstr "Total"
 
-#: accounts/views.py:481
+#: accounts/views.py:485
 #, python-format
 msgid "Payment date : %s"
 msgstr "Date de paiement : %s"
 
-#: accounts/views.py:482 project/views.py:612
+#: accounts/views.py:486 project/views.py:612
 #, python-format
 msgid "Execution dates : %(begin_date)s to %(end_date)s"
 msgstr "Date d'exécution : %(begin_date)s au %(end_date)s"
 
-#: accounts/views.py:483
+#: accounts/views.py:487
 #, python-format
 msgid "Penalty begins on : %s"
 msgstr "Pénalité à compter du : %s"
 
-#: accounts/views.py:484
+#: accounts/views.py:488
 #, python-format
 msgid "Penalty rate : %s"
 msgstr "Taux de pénalité : %s"
 
-#: accounts/views.py:485
+#: accounts/views.py:489
 #, python-format
 msgid "Discount conditions : %s"
 msgstr "Conditions d'escompte : %s"
 
-#: accounts/views.py:487 project/views.py:614
+#: accounts/views.py:491 project/views.py:614
 #, python-format
 msgid "TOTAL excl. VAT : %(amount)s %(currency)s"
 msgstr "TOTAL HT : %(amount)s %(currency)s"
@@ -678,11 +679,11 @@ msgstr ""
 msgid "You must agree to the terms to register"
 msgstr "Vous devez accepter les conditions pour vous inscrire"
 
-#: core/tests.py:65 core/views.py:252
+#: core/tests.py:66 core/views.py:252
 msgid "Wrong password"
 msgstr "Mot de passe erroné"
 
-#: core/tests.py:80 core/views.py:250
+#: core/tests.py:81 core/views.py:250
 msgid "Your password has been modified successfully"
 msgstr "Votre mot de passe a été sauvegardé avec succès"
 
@@ -1186,8 +1187,8 @@ msgstr "Chiffre d'affaire potentiel"
 
 #: templates/core/prospects_widget.html:4
 #, python-format
-msgid "%(potential_sales)s (%(percentage_of_remaining)s%% of remaining)"
-msgstr "%(potential_sales)s (%(percentage_of_remaining)s%% du reste à faire)"
+msgid "%(potential_sales)s (%(percentage_of_remaining)s% of remaining)"
+msgstr "%(potential_sales)s (%(percentage_of_remaining)s% du reste à faire)"
 
 #: templates/core/prospects_widget.html:5
 msgid "Potential duration"
@@ -1524,21 +1525,3 @@ msgstr ""
 #: templates/registration/registration_form.html:30
 msgid "Register"
 msgstr "S'enregistrer"
-
-#~ msgid "Edit a contract"
-#~ msgstr "Éditer un contrat"
-
-#~ msgid "Add a contract"
-#~ msgstr "Ajouter un contrat"
-
-#~ msgid "The contract has been deleted successfully"
-#~ msgstr "Le contrat a été supprimé avec succès"
-
-#~ msgid "Delete a contract"
-#~ msgstr "Supprimer un contrat"
-
-#~ msgid "Contracts"
-#~ msgstr "Contrats"
-
-#~ msgid "No contracts"
-#~ msgstr "Aucun contrat"
