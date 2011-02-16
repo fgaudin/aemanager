@@ -276,7 +276,9 @@ def subscribe(request):
                                'subscription': current_subscription,
                                'expired': expired,
                                'next_expiration_date': next_expiration_date,
-                               'price': price},
+                               'price': price,
+                               'paypal_url': settings.PAYPAL_URL,
+                               'button_id': settings.PAYPAL_BUTTON_ID},
                               context_instance=RequestContext(request))
 
 def subscription_paid(request):
@@ -293,27 +295,26 @@ def paypal_ipn(request):
     args = {'cmd': '_notify-validate'}
     args.update(data)
     params = urllib.urlencode(args)
-    paypal_response = urllib2.urlopen(settings.PAYPAL_URL, params).read()
+    paypal_response = urllib2.urlopen(settings.PAYPAL_URL + '/cgi-bin/webscr', params).read()
 
     # process the payment
+    receiver_id = data['receiver_id']
+    transaction_id = data['txn_id']
+    payment_status = data['payment_status']
+    payment_amount = data['mc_gross']
+    payment_currency = data['mc_currency']
+    user_id = data['custom']
+    user = get_object_or_404(User, pk=user_id)
+    profile = user.get_profile()
+
+    subscription, created = Subscription.objects.get_or_create(transaction_id=transaction_id,
+                                                               defaults={'owner': user,
+                                                                         'state': SUBSCRIPTION_STATE_NOT_PAID,
+                                                                         'expiration_date': profile.get_next_expiration_date(),
+                                                                         'transaction_id': transaction_id,
+                                                                         'error_message': ugettext('Not verified')})
 
     if paypal_response == 'VERIFIED':
-        receiver_id = data['receiver_id']
-        transaction_id = data['txn_id']
-        payment_status = data['payment_status']
-        payment_amount = data['mc_gross']
-        payment_currency = data['mc_currency']
-        user_id = data['custom']
-        user = get_object_or_404(User, pk=user_id)
-        profile = user.get_profile()
-
-        subscription, created = Subscription.objects.get_or_create(transaction_id=transaction_id,
-                                                                   defaults={'user': user,
-                                                                             'state': SUBSCRIPTION_STATE_NOT_PAID,
-                                                                             'expiration_date': profile.get_next_expiration_date(),
-                                                                             'transaction_id': transaction_id,
-                                                                             'error_message': ugettext('Not verified')})
-
         if receiver_id <> settings.PAYPAL_RECEIVER_ID:
             subscription.error_message = ugettext('Receiver is not as defined in settings. Spoofing ?')
         elif payment_status <> 'Completed':
