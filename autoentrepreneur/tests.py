@@ -17,7 +17,7 @@ from django.contrib.sites.models import Site
 from django.utils.translation import ugettext
 import datetime
 
-class SubcriptionTest(TestCase):
+class SubscriptionTest(TestCase):
     fixtures = ['test_users']
 
     def setUp(self):
@@ -178,6 +178,24 @@ class SubcriptionTest(TestCase):
                          transaction_id='XXX')
 
         self.assertRaises(IntegrityError, s.save)
+
+    def testBug62(self):
+        """
+        When several subscriptions are valid, is_allowed returns false
+        """
+        user = User.objects.get(pk=1)
+        profile = user.get_profile()
+        Subscription.objects.create(owner=user,
+                                    state=SUBSCRIPTION_STATE_TRIAL,
+                                    expiration_date=datetime.date.today() + datetime.timedelta(10),
+                                    transaction_id='XXX')
+
+        Subscription.objects.create(owner=user,
+                                    state=SUBSCRIPTION_STATE_PAID,
+                                    expiration_date=datetime.date.today() + datetime.timedelta(375),
+                                    transaction_id='XXY')
+
+        self.assertTrue(profile.is_allowed())
 
 class UnregisterTest(TestCase):
     fixtures = ['test_users']

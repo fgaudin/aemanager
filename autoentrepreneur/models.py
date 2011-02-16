@@ -109,13 +109,10 @@ class UserProfile(models.Model):
             return True
         except:
             pass
-        try:
-            Subscription.objects.get(owner=self.user,
-                                     state__in=[SUBSCRIPTION_STATE_PAID, SUBSCRIPTION_STATE_TRIAL],
-                                     expiration_date__gte=datetime.date.today())
+        if Subscription.objects.filter(owner=self.user,
+                                       state__in=[SUBSCRIPTION_STATE_PAID, SUBSCRIPTION_STATE_TRIAL],
+                                       expiration_date__gte=datetime.date.today()).count():
             return True
-        except:
-            pass
 
         return False
 
