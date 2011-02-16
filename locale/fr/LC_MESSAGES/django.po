@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-16 12:59+0100\n"
+"POT-Creation-Date: 2011-02-16 21:04+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -63,6 +63,14 @@ msgstr "Chèque"
 #: accounts/models.py:22 accounts/views.py:188 templates/expense/list.html:177
 msgid "Date"
 msgstr "Date"
+
+#: accounts/models.py:22 accounts/models.py:133 accounts/models.py:134
+#: accounts/models.py:136 accounts/models.py:137 accounts/models.py:138
+#: accounts/models.py:139 autoentrepreneur/models.py:42
+#: autoentrepreneur/models.py:70 project/models.py:18 project/models.py:140
+#: project/models.py:141 project/models.py:143 project/models.py:144
+msgid "format: mm/dd/yyyy"
+msgstr "format : jj/mm/aaaa"
 
 #: accounts/models.py:23 project/models.py:137 templates/expense/list.html:178
 #: templates/project/detail.html:29
@@ -1477,8 +1485,8 @@ msgid ""
 "activate your account by following this link : http://%(site)s"
 "%(activation_url)s"
 msgstr ""
-"Vous venez de vous inscrire sur %(site)s. Vous avez %(expiration_days)s jours pour "
-"activer votre compte en suivant ce lien : http://%(site)s"
+"Vous venez de vous inscrire sur %(site)s. Vous avez %(expiration_days)s "
+"jours pour activer votre compte en suivant ce lien : http://%(site)s"
 "%(activation_url)s"
 
 #: templates/registration/activation_email_subject.txt:1

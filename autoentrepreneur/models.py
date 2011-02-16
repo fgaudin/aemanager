@@ -39,7 +39,7 @@ SUBSCRIPTION_STATE = ((SUBSCRIPTION_STATE_NOT_PAID, _('Not paid')),
 
 class Subscription(OwnedObject):
     state = models.IntegerField(choices=SUBSCRIPTION_STATE, verbose_name=_('State'))
-    expiration_date = models.DateField(verbose_name=_('Expiration date'))
+    expiration_date = models.DateField(verbose_name=_('Expiration date'), help_text=_('format: mm/dd/yyyy'))
     transaction_id = models.CharField(verbose_name=_('Transaction id'), unique=True, max_length=50)
     error_message = models.CharField(verbose_name=_('Error message'), max_length=150, null=True, blank=True)
 
@@ -67,7 +67,7 @@ class UserProfile(models.Model):
     bank_information = models.CharField(max_length=255, blank=True, default='', verbose_name=_('Bank information'))
     address = models.ForeignKey(Address, verbose_name=_('Address'))
     activity = models.IntegerField(choices=AUTOENTREPRENEUR_ACTIVITY, blank=True, null=True, verbose_name=_('Activity'))
-    creation_date = models.DateField(blank=True, null=True, verbose_name=_('Creation date'))
+    creation_date = models.DateField(blank=True, null=True, verbose_name=_('Creation date'), help_text=_('format: mm/dd/yyyy'))
     creation_help = models.BooleanField(verbose_name=_('Creation help')) # accre
     freeing_tax_payment = models.BooleanField(verbose_name=_('Freeing tax payment')) # versement liberatoire
     payment_option = models.IntegerField(choices=AUTOENTREPRENEUR_PAYMENT_OPTION, blank=True, null=True, verbose_name=_('Payment option'))

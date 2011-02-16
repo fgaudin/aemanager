@@ -15,7 +15,7 @@ class Contract(OwnedObject):
     customer = models.ForeignKey(Contact, verbose_name=_('Customer'), related_name="contracts")
     title = models.CharField(max_length=255, verbose_name=_('Title'))
     content = models.TextField(verbose_name=_('Content'))
-    update_date = models.DateField(verbose_name=_('Update date'))
+    update_date = models.DateField(verbose_name=_('Update date'), help_text=_('format: mm/dd/yyyy'))
 
     def __unicode__(self):
         return self.title
@@ -137,11 +137,11 @@ class Proposal(OwnedObject):
     reference = models.CharField(max_length=20, blank=True, null=True, verbose_name=_('Reference'))
     state = models.IntegerField(choices=PROPOSAL_STATE, default=PROPOSAL_STATE_DRAFT, verbose_name=_('State'))
     amount = models.DecimalField(blank=True, null=True, max_digits=12, decimal_places=2, verbose_name=_('Amount'))
-    begin_date = models.DateField(blank=True, null=True, verbose_name=_('Begin date'))
-    end_date = models.DateField(blank=True, null=True, verbose_name=_('End date'))
+    begin_date = models.DateField(blank=True, null=True, verbose_name=_('Begin date'), help_text=_('format: mm/dd/yyyy'))
+    end_date = models.DateField(blank=True, null=True, verbose_name=_('End date'), help_text=_('format: mm/dd/yyyy'))
     contract_content = models.TextField(blank=True, default="", verbose_name=_('Contract'))
-    update_date = models.DateField(verbose_name=_('Update date'))
-    expiration_date = models.DateField(blank=True, null=True, verbose_name=_('Expiration date'))
+    update_date = models.DateField(verbose_name=_('Update date'), help_text=_('format: mm/dd/yyyy'))
+    expiration_date = models.DateField(blank=True, null=True, verbose_name=_('Expiration date'), help_text=_('format: mm/dd/yyyy'))
 
     objects = ProposalManager()
 

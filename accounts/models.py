@@ -19,7 +19,7 @@ PAYMENT_TYPE = ((PAYMENT_TYPE_CASH, _('Cash')),
                 (PAYMENT_TYPE_CHECK, _('Check')))
 
 class Expense(OwnedObject):
-    date = models.DateField(verbose_name=_('Date'))
+    date = models.DateField(verbose_name=_('Date'), help_text=_('format: mm/dd/yyyy'))
     reference = models.CharField(max_length=50, blank=True, null=True, verbose_name=_('Reference'))
     amount = models.DecimalField(max_digits=12, decimal_places=2, verbose_name=_('Amount'))
     payment_type = models.IntegerField(choices=PAYMENT_TYPE, verbose_name=_('Payment type'))
@@ -130,13 +130,13 @@ class Invoice(OwnedObject):
     invoice_id = models.IntegerField(verbose_name=_("Invoice id"))
     state = models.IntegerField(choices=INVOICE_STATE, default=INVOICE_STATE_EDITED, verbose_name=_("State"))
     amount = models.DecimalField(blank=True, null=True, max_digits=12, decimal_places=2, verbose_name=_("Amount"))
-    edition_date = models.DateField(verbose_name=_("Edition date"))
-    payment_date = models.DateField(verbose_name=_("Payment date"))
+    edition_date = models.DateField(verbose_name=_("Edition date"), help_text=_('format: mm/dd/yyyy'))
+    payment_date = models.DateField(verbose_name=_("Payment date"), help_text=_('format: mm/dd/yyyy'))
     payment_type = models.IntegerField(choices=PAYMENT_TYPE, verbose_name=_('Payment type'))
-    paid_date = models.DateField(blank=True, null=True, verbose_name=_("Paid date"))
-    execution_begin_date = models.DateField(blank=True, null=True, verbose_name=_("Execution begin date"))
-    execution_end_date = models.DateField(blank=True, null=True, verbose_name=_("Execution end date"))
-    penalty_date = models.DateField(blank=True, null=True, verbose_name=_("Penalty date"))
+    paid_date = models.DateField(blank=True, null=True, verbose_name=_("Paid date"), help_text=_('format: mm/dd/yyyy'))
+    execution_begin_date = models.DateField(blank=True, null=True, verbose_name=_("Execution begin date"), help_text=_('format: mm/dd/yyyy'))
+    execution_end_date = models.DateField(blank=True, null=True, verbose_name=_("Execution end date"), help_text=_('format: mm/dd/yyyy'))
+    penalty_date = models.DateField(blank=True, null=True, verbose_name=_("Penalty date"), help_text=_('format: mm/dd/yyyy'))
     penalty_rate = models.DecimalField(blank=True, null=True, max_digits=4, decimal_places=2, verbose_name=_("Penalty rate"))
     discount_conditions = models.CharField(max_length=100, blank=True, null=True, verbose_name=_("Discount conditions"))
 
