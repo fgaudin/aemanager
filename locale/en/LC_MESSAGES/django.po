@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-16 21:04+0100\n"
+"POT-Creation-Date: 2011-02-16 21:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -889,28 +889,33 @@ msgid "Product"
 msgstr ""
 
 #: project/views.py:50
-msgid "Edit a contract"
+msgid "Edit a master aggreement"
 msgstr ""
 
 #: project/views.py:54 templates/contact/detail.html:54
-msgid "Add a contract"
+msgid "Add a master aggreement"
 msgstr ""
 
 #: project/views.py:71
-msgid "The contract has been saved successfully"
+msgid "The master aggreement has been saved successfully"
 msgstr ""
 
 #: project/views.py:100
-msgid "The contract has been deleted successfully"
+msgid "The master aggreement has been deleted successfully"
 msgstr ""
 
 #: project/views.py:107
-msgid "Delete a contract"
+msgid "Delete a master aggreement"
+msgstr ""
+
+#: project/views.py:108
+#, python-format
+msgid "the master aggreement \"%(title)s\""
 msgstr ""
 
 #: project/views.py:116
 #, python-format
-msgid "contract_%(id)d.pdf"
+msgid "master aggreement_%(id)d.pdf"
 msgstr ""
 
 #: project/views.py:150
@@ -1075,7 +1080,7 @@ msgid "Phone numbers"
 msgstr ""
 
 #: templates/contact/detail.html:55
-msgid "Contracts"
+msgid "Master aggreements"
 msgstr ""
 
 #: templates/contact/detail.html:62
@@ -1083,7 +1088,7 @@ msgid "Last update"
 msgstr ""
 
 #: templates/contact/detail.html:76
-msgid "No contracts"
+msgid "No master aggreements"
 msgstr ""
 
 #: templates/contact/edit.html:119 templates/contract/edit.html:59

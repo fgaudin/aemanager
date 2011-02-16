@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-16 21:04+0100\n"
+"POT-Creation-Date: 2011-02-16 21:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -895,29 +895,34 @@ msgid "Product"
 msgstr "Produit"
 
 #: project/views.py:50
-msgid "Edit a contract"
-msgstr "Éditer un contrat"
+msgid "Edit a master aggreement"
+msgstr "Éditer un contrat-cadre"
 
 #: project/views.py:54 templates/contact/detail.html:54
-msgid "Add a contract"
-msgstr "Ajouter un contrat"
+msgid "Add a master aggreement"
+msgstr "Ajouter un contrat-cadre"
 
 #: project/views.py:71
-msgid "The contract has been saved successfully"
-msgstr "Le contrat a été sauvegardé avec succès"
+msgid "The master aggreement has been saved successfully"
+msgstr "Le contrat-cadre a été sauvegardé avec succès"
 
 #: project/views.py:100
-msgid "The contract has been deleted successfully"
-msgstr "Le contrat a été supprimé avec succès"
+msgid "The master aggreement has been deleted successfully"
+msgstr "Le contrat-cadre a été supprimé avec succès"
 
 #: project/views.py:107
-msgid "Delete a contract"
-msgstr "Supprimer un contrat"
+msgid "Delete a master aggreement"
+msgstr "Supprimer un contrat-cadre"
+
+#: project/views.py:108
+#, python-format
+msgid "the master aggreement \"%(title)s\""
+msgstr "le contrat-cadre \"%(title)s\""
 
 #: project/views.py:116
 #, python-format
-msgid "contract_%(id)d.pdf"
-msgstr "contrat_%(id)d.pdf"
+msgid "master aggreement_%(id)d.pdf"
+msgstr "contrat_cadre_%(id)d.pdf"
 
 #: project/views.py:150
 msgid "Edit a project"
@@ -1081,16 +1086,16 @@ msgid "Phone numbers"
 msgstr "Numéros de téléphone"
 
 #: templates/contact/detail.html:55
-msgid "Contracts"
-msgstr "Contrats"
+msgid "Master aggreements"
+msgstr "Contrats-cadres"
 
 #: templates/contact/detail.html:62
 msgid "Last update"
 msgstr "Dernière modification"
 
 #: templates/contact/detail.html:76
-msgid "No contracts"
-msgstr "Aucun contrat"
+msgid "No master aggreements"
+msgstr "Aucun contrat-cadre"
 
 #: templates/contact/edit.html:119 templates/contract/edit.html:59
 #: templates/core/settings_edit.html:20 templates/invoice/edit.html:109
@@ -1519,3 +1524,21 @@ msgstr ""
 #: templates/registration/registration_form.html:30
 msgid "Register"
 msgstr "S'enregistrer"
+
+#~ msgid "Edit a contract"
+#~ msgstr "Éditer un contrat"
+
+#~ msgid "Add a contract"
+#~ msgstr "Ajouter un contrat"
+
+#~ msgid "The contract has been deleted successfully"
+#~ msgstr "Le contrat a été supprimé avec succès"
+
+#~ msgid "Delete a contract"
+#~ msgstr "Supprimer un contrat"
+
+#~ msgid "Contracts"
+#~ msgstr "Contrats"
+
+#~ msgid "No contracts"
+#~ msgstr "Aucun contrat"

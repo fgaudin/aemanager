@@ -51,8 +51,8 @@
     {% endwith %}{% endwith %}
 </fieldset>
 
-<div class="context-menu"><a href="{% url contract_add contact_id=contact.id %}">{% trans "Add a contract" %}</a></div>
-<h1>{% trans "Contracts" %}</h1>
+<div class="context-menu"><a href="{% url contract_add contact_id=contact.id %}">{% trans "Add a master aggreement" %}</a></div>
+<h1>{% trans "Master aggreements" %}</h1>
 {% if contact.contracts.all %}
 <div class="search-list">
     <table>
@@ -73,6 +73,6 @@
     </table>
 </div>
 {% else %}
-<div>{% trans "No contracts" %}</div>
+<div>{% trans "No master aggreements" %}</div>
 {% endif %}
 {% endblock %}

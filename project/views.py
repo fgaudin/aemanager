@@ -47,11 +47,11 @@ def contract_detail(request, id):
 @commit_on_success
 def contract_create_or_edit(request, id=None, contact_id=None):
     if id:
-        title = _('Edit a contract')
+        title = _('Edit a master aggreement')
         contract = get_object_or_404(Contract, pk=id, owner=request.user)
         customer = contract.customer
     else:
-        title = _('Add a contract')
+        title = _('Add a master aggreement')
         contract = None
         customer = get_object_or_404(Contact, pk=contact_id, owner=request.user)
 
@@ -68,7 +68,7 @@ def contract_create_or_edit(request, id=None, contact_id=None):
             contract.save(user=user)
             contractForm.save_m2m()
 
-            messages.success(request, _('The contract has been saved successfully'))
+            messages.success(request, _('The master aggreement has been saved successfully'))
             return redirect(reverse('contract_detail', kwargs={'id': contract.id}))
         else:
             messages.error(request, _('Data provided are invalid'))
@@ -97,15 +97,15 @@ def contract_delete(request, id):
     if request.method == 'POST':
         if request.POST.get('delete'):
             contract.delete()
-            messages.success(request, _('The contract has been deleted successfully'))
+            messages.success(request, _('The master aggreement has been deleted successfully'))
             return redirect(reverse('project_running_list'))
         else:
             return redirect(reverse('contract_detail', kwargs={'id': contract.id}))
 
     return render_to_response('delete.html',
                               {'active': 'contact',
-                               'title': _('Delete a contract'),
-                               'object_label': 'contract "%s"' % (contract)},
+                               'title': _('Delete a master aggreement'),
+                               'object_label': _('the master aggreement "%(title)s"') % {'title': contract}},
                                context_instance=RequestContext(request))
 
 @settings_required
@@ -113,7 +113,7 @@ def contract_delete(request, id):
 def contract_download(request, id):
     contract = get_object_or_404(Contract, pk=id, owner=request.user)
 
-    filename = ugettext('contract_%(id)d.pdf') % {'id': contract.id}
+    filename = ugettext('master aggreement_%(id)d.pdf') % {'id': contract.id}
     response = HttpResponse(mimetype='application/pdf')
     response['Content-Disposition'] = 'attachment; filename=%s' % (filename)
 
