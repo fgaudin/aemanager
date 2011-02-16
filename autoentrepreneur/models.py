@@ -64,7 +64,6 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User)
     company_name = models.CharField(max_length=255, blank=True, default='', verbose_name=_('Company name'))
     company_id = models.CharField(max_length=50, blank=True, default='', verbose_name=_('Company id')) # SIRET for France
-    bank_information = models.CharField(max_length=255, blank=True, default='', verbose_name=_('Bank information'))
     address = models.ForeignKey(Address, verbose_name=_('Address'))
     activity = models.IntegerField(choices=AUTOENTREPRENEUR_ACTIVITY, blank=True, null=True, verbose_name=_('Activity'))
     creation_date = models.DateField(blank=True, null=True, verbose_name=_('Creation date'), help_text=_('format: mm/dd/yyyy'))
