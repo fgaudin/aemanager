@@ -22,6 +22,7 @@ from custom_canvas import NumberedCanvas
 from core.decorators import settings_required
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from autoentrepreneur.decorators import subscription_required
+from django.views.decorators.csrf import csrf_exempt
 import datetime
 from reportlab.platypus import Paragraph, Frame, Spacer, BaseDocTemplate, PageTemplate
 from reportlab.lib.styles import ParagraphStyle
@@ -64,6 +65,7 @@ def expense_list(request):
 
 @settings_required
 @subscription_required
+@csrf_exempt
 @commit_on_success
 def expense_add(request):
     response = {'error': 'ko'}
@@ -91,6 +93,7 @@ def expense_add(request):
 
 @settings_required
 @subscription_required
+@csrf_exempt
 @commit_on_success
 def expense_edit(request):
     id = request.GET.get('id')
@@ -119,6 +122,7 @@ def expense_edit(request):
 
 @settings_required
 @subscription_required
+@csrf_exempt
 @commit_on_success
 def expense_delete(request):
     response = {'error': 'ko'}
