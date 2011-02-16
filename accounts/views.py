@@ -188,7 +188,7 @@ def invoice_list_export(request):
     data = [[ugettext('Date'), ugettext('Ref.'), ugettext('Customer'), ugettext('Nature'), ugettext('Amount'), ugettext('Payment type')]]
 
     for invoice in invoices:
-        data.append([localize(invoice.paid_date), invoice.invoice_id, invoice.customer, invoice.getNature(), invoice.amount, invoice.get_payment_type_display()])
+        data.append([localize(invoice.paid_date), invoice.invoice_id, invoice.customer, invoice.getNature(), localize(invoice.amount), invoice.get_payment_type_display()])
     t = Table(data, [0.8 * inch, 0.4 * inch, 2.5 * inch, 1.2 * inch, 0.8 * inch, 1.2 * inch], (len(invoices) + 1) * [0.3 * inch])
     t.setStyle(TableStyle([('ALIGN', (0, 0), (-1, 0), 'CENTER'),
                            ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
