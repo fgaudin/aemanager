@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-15 21:10+0100\n"
+"POT-Creation-Date: 2011-02-16 12:59+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -85,7 +85,7 @@ msgstr ""
 msgid "Sent"
 msgstr ""
 
-#: accounts/models.py:39 autoentrepreneur/models.py:36 core/views.py:326
+#: accounts/models.py:39 autoentrepreneur/models.py:36 core/views.py:327
 msgid "Paid"
 msgstr ""
 
@@ -381,7 +381,7 @@ msgstr ""
 msgid "Address"
 msgstr ""
 
-#: autoentrepreneur/models.py:81 autoentrepreneur/tests.py:286
+#: autoentrepreneur/models.py:81 autoentrepreneur/tests.py:304
 #, python-format
 msgid "You've just unregistered from %(site)s"
 msgstr ""
@@ -696,7 +696,7 @@ msgstr ""
 msgid "My subscription"
 msgstr ""
 
-#: core/views.py:285
+#: core/views.py:287
 msgid "Subscription paid"
 msgstr ""
 
@@ -704,23 +704,23 @@ msgstr ""
 msgid "Not verified"
 msgstr ""
 
-#: core/views.py:318
+#: core/views.py:319
 msgid "Receiver is not as defined in settings. Spoofing ?"
 msgstr ""
 
-#: core/views.py:320
+#: core/views.py:321
 msgid "Payment not completed"
 msgstr ""
 
-#: core/views.py:322 core/views.py:324
+#: core/views.py:323 core/views.py:325
 msgid "Amount altered. Bad guy ?"
 msgstr ""
 
-#: core/views.py:333
+#: core/views.py:334
 msgid "Subscribe"
 msgstr ""
 
-#: core/views.py:351 templates/core/unregister.html:15
+#: core/views.py:352 templates/core/unregister.html:15
 msgid "Unregister"
 msgstr ""
 
@@ -1165,7 +1165,8 @@ msgid "Potential sales"
 msgstr ""
 
 #: templates/core/prospects_widget.html:4
-msgid "%(potential_sales)s (%(percentage_of_remaining)s% of remaining)"
+#, python-format
+msgid "%(potential_sales)s (%(percentage_of_remaining)s%% of remaining)"
 msgstr ""
 
 #: templates/core/prospects_widget.html:5
@@ -1442,6 +1443,19 @@ msgstr ""
 msgid ""
 "Your account has been activated successfully. You can now return to <a href="
 "\"/\">homepage</a> and log in."
+msgstr ""
+
+#: templates/registration/activation_email.txt:1
+#, python-format
+msgid ""
+"You've just registered on %(site)s. You have %(expiration_days)s days to "
+"activate your account by following this link : http://%(site)s"
+"%(activation_url)s"
+msgstr ""
+
+#: templates/registration/activation_email_subject.txt:1
+#, python-format
+msgid "Activate your account on %(site)s"
 msgstr ""
 
 #: templates/registration/login.html:19

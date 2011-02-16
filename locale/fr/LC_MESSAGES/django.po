@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-15 21:10+0100\n"
+"POT-Creation-Date: 2011-02-16 12:59+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -86,7 +86,7 @@ msgstr "Éditée"
 msgid "Sent"
 msgstr "Envoyé"
 
-#: accounts/models.py:39 autoentrepreneur/models.py:36 core/views.py:326
+#: accounts/models.py:39 autoentrepreneur/models.py:36 core/views.py:327
 msgid "Paid"
 msgstr "Payée"
 
@@ -382,7 +382,7 @@ msgstr "Mensuel"
 msgid "Address"
 msgstr "Adresse"
 
-#: autoentrepreneur/models.py:81 autoentrepreneur/tests.py:286
+#: autoentrepreneur/models.py:81 autoentrepreneur/tests.py:304
 #, python-format
 msgid "You've just unregistered from %(site)s"
 msgstr "Vous venez de vous désinscrire de %(site)s"
@@ -702,7 +702,7 @@ msgstr "Changer de mot de passe"
 msgid "My subscription"
 msgstr "Mon abonnement"
 
-#: core/views.py:285
+#: core/views.py:287
 msgid "Subscription paid"
 msgstr "Abonnement payé"
 
@@ -710,23 +710,23 @@ msgstr "Abonnement payé"
 msgid "Not verified"
 msgstr "Non vérifié"
 
-#: core/views.py:318
+#: core/views.py:319
 msgid "Receiver is not as defined in settings. Spoofing ?"
 msgstr "Le destinataire n'est pas celui défini dans settings. Spoofing ?"
 
-#: core/views.py:320
+#: core/views.py:321
 msgid "Payment not completed"
 msgstr "Paiement non complet"
 
-#: core/views.py:322 core/views.py:324
+#: core/views.py:323 core/views.py:325
 msgid "Amount altered. Bad guy ?"
 msgstr "Montant modifié. Gros vilain ?"
 
-#: core/views.py:333
+#: core/views.py:334
 msgid "Subscribe"
 msgstr "S'abonner"
 
-#: core/views.py:351 templates/core/unregister.html:15
+#: core/views.py:352 templates/core/unregister.html:15
 msgid "Unregister"
 msgstr "Se désinscrire"
 
@@ -1172,8 +1172,9 @@ msgid "Potential sales"
 msgstr "Chiffre d'affaire potentiel"
 
 #: templates/core/prospects_widget.html:4
-msgid "%(potential_sales)s (%(percentage_of_remaining)s% of remaining)"
-msgstr "%(potential_sales)s (%(percentage_of_remaining)s% du reste à faire)"
+#, python-format
+msgid "%(potential_sales)s (%(percentage_of_remaining)s%% of remaining)"
+msgstr "%(potential_sales)s (%(percentage_of_remaining)s%% du reste à faire)"
 
 #: templates/core/prospects_widget.html:5
 msgid "Potential duration"
@@ -1468,6 +1469,22 @@ msgid ""
 msgstr ""
 "Votre compte a été activé avec succès. Vous pouvez maintenant retourner sur "
 "la <a href=\"/\">page d'acceuil</a> et vous authentifier."
+
+#: templates/registration/activation_email.txt:1
+#, python-format
+msgid ""
+"You've just registered on %(site)s. You have %(expiration_days)s days to "
+"activate your account by following this link : http://%(site)s"
+"%(activation_url)s"
+msgstr ""
+"Vous venez de vous inscrire sur %(site)s. Vous avez %(expiration_days)s jours pour "
+"activer votre compte en suivant ce lien : http://%(site)s"
+"%(activation_url)s"
+
+#: templates/registration/activation_email_subject.txt:1
+#, python-format
+msgid "Activate your account on %(site)s"
+msgstr "Activez votre compte sur %(site)s"
 
 #: templates/registration/login.html:19
 msgid "Your username and password didn't match. Please try again."
