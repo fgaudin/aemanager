@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from project.models import Row, Proposal, update_row_amount, \
     ROW_CATEGORY_SERVICE, ROW_CATEGORY, PROPOSAL_STATE_ACCEPTED, ProposalRow
 from django.db.models.aggregates import Sum, Min
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save, pre_save, post_delete
 import datetime
 
 PAYMENT_TYPE_CASH = 1
@@ -201,7 +201,7 @@ class InvoiceRow(Row):
             raise InvoiceRowAmountError(ugettext("Sum of invoice row amount can't exceed proposal amount"))
         super(InvoiceRow, self).save(force_insert, force_update, using, user)
 
-def update_invoice_amount(sender, instance, created, **kwargs):
+def update_invoice_amount(sender, instance, created=None, **kwargs):
     row = instance
     invoice = row.invoice
     invoice.amount = invoice.invoice_rows.all().aggregate(sum=Sum('amount'))['sum'] or 0
@@ -209,3 +209,4 @@ def update_invoice_amount(sender, instance, created, **kwargs):
 
 pre_save.connect(update_row_amount, sender=InvoiceRow)
 post_save.connect(update_invoice_amount, sender=InvoiceRow)
+post_delete.connect(update_invoice_amount, sender=InvoiceRow)
