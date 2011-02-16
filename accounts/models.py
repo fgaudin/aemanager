@@ -129,7 +129,7 @@ class Invoice(OwnedObject):
     customer = models.ForeignKey(Contact, blank=True, null=True, verbose_name=_('Customer'))
     invoice_id = models.IntegerField(verbose_name=_("Invoice id"))
     state = models.IntegerField(choices=INVOICE_STATE, default=INVOICE_STATE_EDITED, verbose_name=_("State"))
-    amount = models.DecimalField(blank=True, null=True, max_digits=12, decimal_places=2, verbose_name=_("Amount"))
+    amount = models.DecimalField(blank=True, max_digits=12, decimal_places=2, default=0, verbose_name=_("Amount"))
     edition_date = models.DateField(verbose_name=_("Edition date"), help_text=_('format: mm/dd/yyyy'))
     payment_date = models.DateField(verbose_name=_("Payment date"), help_text=_('format: mm/dd/yyyy'))
     payment_type = models.IntegerField(choices=PAYMENT_TYPE, verbose_name=_('Payment type'))

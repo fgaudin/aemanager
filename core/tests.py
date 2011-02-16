@@ -14,7 +14,8 @@ from core.models import OwnedObject
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.core.urlresolvers import reverse
-from accounts.models import Invoice
+from accounts.models import Invoice, InvoiceRow, INVOICE_STATE_EDITED, \
+    PAYMENT_TYPE_CHECK
 
 class PermissionTest(TestCase):
     def test_save_owned_object(self):
@@ -201,6 +202,31 @@ class DashboardTest(TestCase):
         self.assertEquals(float(response.context['prospects']['potential_sales']), 9500.00)
         self.assertEquals(float(response.context['prospects']['average_unit_price']), 9500.0 / 30.0)
         self.assertEquals(float(response.context['prospects']['percentage_of_remaining']), 9500.0 / 8932.0 * 100.0)
+
+    def testBug70(self):
+        """
+        Invoices without rows makes dashboard crash
+        Only on invoice which never had rows
+        """
+        response = self.client.post(reverse('invoice_add', kwargs={'customer_id': 3}),
+                                    {'invoice-invoice_id': 10,
+                                     'invoice-state': INVOICE_STATE_EDITED,
+                                     'invoice-edition_date': '2010-8-31',
+                                     'invoice-payment_date': '2010-9-30',
+                                     'invoice-paid_date': '',
+                                     'invoice-payment_type': PAYMENT_TYPE_CHECK,
+                                     'invoice-execution_begin_date': '2010-8-1',
+                                     'invoice-execution_end_date': '2010-8-7',
+                                     'invoice-penalty_date': '2010-10-8',
+                                     'invoice-penalty_rate': 1.5,
+                                     'invoice-discount_conditions':'Nothing',
+                                     'invoice_rows-TOTAL_FORMS': 1,
+                                     'invoice_rows-INITIAL_FORMS': 0})
+
+        self.assertEquals(response.status_code, 302)
+
+        response = self.client.get(reverse('index'))
+        self.assertEquals(response.status_code, 200)
 
 class DashboardProductActivityTest(TestCase):
     fixtures = ['test_dashboard_product_sales']

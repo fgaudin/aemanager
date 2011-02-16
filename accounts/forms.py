@@ -15,7 +15,7 @@ class InvoiceForm(ModelForm):
 
     class Meta:
         model = Invoice
-        exclude = ['owner', 'proposal']
+        exclude = ['owner', 'proposal', 'amount']
 
 class InvoiceRowForm(ModelForm):
     quantity = forms.DecimalField(max_digits=5, decimal_places=1, label=_('Quantity'), localize=True)
