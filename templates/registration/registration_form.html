@@ -3,6 +3,7 @@
 
 {% block content %}
     <form action="" method="post" autocomplete="off">
+        {{ form.non_field_errors }}
         {% csrf_token %}
         <fieldset class="module aligned">
         {% for hidden in form.hidden_fields %}
