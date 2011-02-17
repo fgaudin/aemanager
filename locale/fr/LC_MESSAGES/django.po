@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-17 00:15+0100\n"
+"POT-Creation-Date: 2011-02-17 13:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -73,7 +73,7 @@ msgstr "Date"
 #: accounts/models.py:22 accounts/models.py:133 accounts/models.py:134
 #: accounts/models.py:136 accounts/models.py:137 accounts/models.py:138
 #: accounts/models.py:139 autoentrepreneur/models.py:42
-#: autoentrepreneur/models.py:70 project/models.py:18 project/models.py:140
+#: autoentrepreneur/models.py:69 project/models.py:18 project/models.py:140
 #: project/models.py:141 project/models.py:143 project/models.py:144
 msgid "format: mm/dd/yyyy"
 msgstr "format : jj/mm/aaaa"
@@ -266,30 +266,30 @@ msgstr "Total"
 msgid "Payment date : %s"
 msgstr "Date de paiement : %s"
 
-#: accounts/views.py:486 project/views.py:612
-#, python-format
-msgid "Execution dates : %(begin_date)s to %(end_date)s"
-msgstr "Date d'exécution : %(begin_date)s au %(end_date)s"
-
-#: accounts/views.py:487
+#: accounts/views.py:486
 #, python-format
 msgid "Penalty begins on : %s"
 msgstr "Pénalité à compter du : %s"
 
-#: accounts/views.py:488
+#: accounts/views.py:487
 #, python-format
 msgid "Penalty rate : %s"
 msgstr "Taux de pénalité : %s"
 
-#: accounts/views.py:489
+#: accounts/views.py:488
 #, python-format
 msgid "Discount conditions : %s"
 msgstr "Conditions d'escompte : %s"
 
-#: accounts/views.py:491 project/views.py:614
+#: accounts/views.py:490 project/views.py:613
 #, python-format
 msgid "TOTAL excl. VAT : %(amount)s %(currency)s"
 msgstr "TOTAL HT : %(amount)s %(currency)s"
+
+#: accounts/views.py:495 project/views.py:618
+#, python-format
+msgid "Execution dates : %(begin_date)s to %(end_date)s"
+msgstr "Date d'exécution : %(begin_date)s au %(end_date)s"
 
 #: autoentrepreneur/forms.py:8 autoentrepreneur/models.py:65
 msgid "Company name"
@@ -300,28 +300,28 @@ msgstr "Nom de la société"
 msgid "Company id"
 msgstr "SIRET"
 
-#: autoentrepreneur/forms.py:10 autoentrepreneur/models.py:67
+#: autoentrepreneur/forms.py:10
 msgid "Bank information"
 msgstr "Informations banquaire"
 
 #: autoentrepreneur/forms.py:11 autoentrepreneur/models.py:27
-#: autoentrepreneur/models.py:69
+#: autoentrepreneur/models.py:68
 msgid "Activity"
 msgstr "Activité"
 
-#: autoentrepreneur/forms.py:12 autoentrepreneur/models.py:70
+#: autoentrepreneur/forms.py:12 autoentrepreneur/models.py:69
 msgid "Creation date"
 msgstr "Date de création"
 
-#: autoentrepreneur/forms.py:13 autoentrepreneur/models.py:71
+#: autoentrepreneur/forms.py:13 autoentrepreneur/models.py:70
 msgid "Creation help"
 msgstr "ACCRE"
 
-#: autoentrepreneur/forms.py:14 autoentrepreneur/models.py:72
+#: autoentrepreneur/forms.py:14 autoentrepreneur/models.py:71
 msgid "Freeing tax payment"
 msgstr "Prélèvement libératoire sur l'impôt"
 
-#: autoentrepreneur/forms.py:15 autoentrepreneur/models.py:73
+#: autoentrepreneur/forms.py:15 autoentrepreneur/models.py:72
 msgid "Payment option"
 msgstr "Option de paiement"
 
@@ -387,16 +387,16 @@ msgstr "Trimestriel"
 msgid "Monthly"
 msgstr "Mensuel"
 
-#: autoentrepreneur/models.py:68 contact/models.py:42
+#: autoentrepreneur/models.py:67 contact/models.py:42
 msgid "Address"
 msgstr "Adresse"
 
-#: autoentrepreneur/models.py:81 autoentrepreneur/tests.py:304
+#: autoentrepreneur/models.py:80 autoentrepreneur/tests.py:304
 #, python-format
 msgid "You've just unregistered from %(site)s"
 msgstr "Vous venez de vous désinscrire de %(site)s"
 
-#: autoentrepreneur/models.py:82
+#: autoentrepreneur/models.py:81
 msgid ""
 "You have left the site and your data has been deleted.\n"
 "\n"
@@ -998,7 +998,7 @@ msgstr "DEVIS %s"
 msgid "Proposal valid through : %s"
 msgstr "Devis valable jusqu'au : %s"
 
-#: project/views.py:632
+#: project/views.py:634
 #, python-format
 msgid "proposal_contract_%(id)d.pdf"
 msgstr "devis_contrat_%(id)d.pdf"
@@ -1500,19 +1500,31 @@ msgstr ""
 msgid "Activate your account on %(site)s"
 msgstr "Activez votre compte sur %(site)s"
 
-#: templates/registration/login.html:19
+#: templates/registration/login.html:20
+msgid "Authentification"
+msgstr "Authentification"
+
+#: templates/registration/login.html:25
 msgid "Your username and password didn't match. Please try again."
 msgstr ""
 "Votre nom d'utilisateur et mot de passe ne correspondent pas. Veuillez "
 "réessayer."
 
-#: templates/registration/login.html:27
+#: templates/registration/login.html:33
 msgid "Password"
 msgstr "Mot de passe"
 
-#: templates/registration/login.html:31
+#: templates/registration/login.html:37
 msgid "Log in"
 msgstr "Connexion"
+
+#: templates/registration/login.html:46
+msgid "Not yet registered ?"
+msgstr "Pas encore inscrit ?"
+
+#: templates/registration/login.html:46
+msgid "Create an account"
+msgstr "Créer un compte"
 
 #: templates/registration/registration_complete.html:5
 msgid ""

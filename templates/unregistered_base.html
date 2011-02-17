@@ -14,10 +14,12 @@
   </head>
 
   <body>
-    <div id="header"><a href="/"><img src="{{ MEDIA_URL }}img/logo.png" /></a><br />
+    <div id="header"><a href="{{ parent_site_url }}"><img src="{{ logo_url }}" /></a><br />
       Logiciel de gestion pour auto-entrepreneur</div>
+    <div id="unregistered-content">
     {% block content %}
 
     {% endblock %}
+    </div>
   </body>
 </html>

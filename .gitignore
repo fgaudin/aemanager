@@ -6,3 +6,4 @@
 *.sql
 templates/tos.html
 settings.py
+media/img/logo.png

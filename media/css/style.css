@@ -286,6 +286,11 @@ form .aligned p, form .aligned ul {
     color: gray;
 }
 
+.errorlist li {
+    border-color: #FF4444;
+    background-color: #FF4444;
+}
+
 .content a:link, .content a:visited {
     color:#5B80B2;
     text-decoration:none;
@@ -353,27 +358,6 @@ div.big-textarea textarea {
     color: red;
 }
 
-.login-left {
-    float: left;
-}
-
-.login-right {
-    float: right;
-}
-
-#login-footer {
-    clear: both;
-}
-
-#login-main ul {
-    list-style-image: url("/static/img/bullet.png");
-}
-
-#login-main li {
-    font-size: 2em;
-    font-family: cursive;
-    padding-top:10px;
-}
 .el-rte ul label {
     display: block;
 }
@@ -434,9 +418,14 @@ div.html {
     margin-bottom: 50px;
 }
 
-#confirmation-message {
+#confirmation-message, #unregistered-content {
     margin: 50px 0px;
     text-align:center;
+}
+
+#unregistered-content form {
+    margin: 0;
+    text-align:left;
 }
 
 #footer {
