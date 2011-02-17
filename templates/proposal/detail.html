@@ -18,14 +18,14 @@
     {% endwith %}{% endwith %}
     <div class="detail-row">
       <div>
+      <form action="{% url proposal_change_state proposal.id %}" method="POST">
       <label>{{ proposal|verbose_name:"state" }} :</label> {{ proposal.get_state_display }}
       {% for next_state in next_states %}
-      <form action="{% url proposal_change_state proposal.id %}" method="POST">
       {% csrf_token %}
       <input type="hidden" name="next_state" value="{{ next_state.0 }}" />
       <input class="" type="submit" name="state_action" value="{{ next_state.1 }}" />
-      </form>
       {% endfor %}
+      </form>
       </div>
     </div>
     {% with proposal as object %}{% with "amount" as name %}
