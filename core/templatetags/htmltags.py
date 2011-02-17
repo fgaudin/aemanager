@@ -1,5 +1,4 @@
 from django import template
-from docutils.core import publish_string
 from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
 from django.utils.html import escape

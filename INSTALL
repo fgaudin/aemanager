@@ -17,7 +17,7 @@ $ source ~/venv/django1.2/bin/activate
 
 Django and other stuff
 ------
-easy_install django django-extensions werkzeug south reportlab rst2pdf pypdf html5lib pisa
+easy_install django psycopg2 django-extensions werkzeug south reportlab pypdf html5lib pisa
 
 For django-registration :
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-17 13:14+0100\n"
+"POT-Creation-Date: 2011-02-17 17:51+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1488,11 +1488,11 @@ msgstr ""
 #, python-format
 msgid ""
 "You've just registered on %(site)s. You have %(expiration_days)s days to "
-"activate your account by following this link : http://%(site)s"
+"activate your account by following this link : https://%(site)s"
 "%(activation_url)s"
 msgstr ""
 "Vous venez de vous inscrire sur %(site)s. Vous avez %(expiration_days)s "
-"jours pour activer votre compte en suivant ce lien : http://%(site)s"
+"jours pour activer votre compte en suivant ce lien : https://%(site)s"
 "%(activation_url)s"
 
 #: templates/registration/activation_email_subject.txt:1
@@ -1500,29 +1500,29 @@ msgstr ""
 msgid "Activate your account on %(site)s"
 msgstr "Activez votre compte sur %(site)s"
 
-#: templates/registration/login.html:20
+#: templates/registration/login.html:22
 msgid "Authentification"
 msgstr "Authentification"
 
-#: templates/registration/login.html:25
+#: templates/registration/login.html:27
 msgid "Your username and password didn't match. Please try again."
 msgstr ""
 "Votre nom d'utilisateur et mot de passe ne correspondent pas. Veuillez "
 "réessayer."
 
-#: templates/registration/login.html:33
+#: templates/registration/login.html:35
 msgid "Password"
 msgstr "Mot de passe"
 
-#: templates/registration/login.html:37
+#: templates/registration/login.html:39
 msgid "Log in"
 msgstr "Connexion"
 
-#: templates/registration/login.html:46
+#: templates/registration/login.html:48
 msgid "Not yet registered ?"
 msgstr "Pas encore inscrit ?"
 
-#: templates/registration/login.html:46
+#: templates/registration/login.html:48
 msgid "Create an account"
 msgstr "Créer un compte"
 
@@ -1534,6 +1534,6 @@ msgstr ""
 "Un email contenant votre clé d'activation vous a été envoyé. Veuillez "
 "vérifier vos emails et suivre le lien fourni pour activer votre compte."
 
-#: templates/registration/registration_form.html:30
+#: templates/registration/registration_form.html:31
 msgid "Register"
 msgstr "S'enregistrer"
