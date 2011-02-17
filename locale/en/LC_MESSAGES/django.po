@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-17 17:51+0100\n"
+"POT-Creation-Date: 2011-02-17 18:38+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1462,14 +1462,14 @@ msgstr ""
 #: templates/registration/activation_email.txt:1
 #, python-format
 msgid ""
-"You've just registered on %(site)s. You have %(expiration_days)s days to "
-"activate your account by following this link : https://%(site)s"
+"You've just registered on https://%(site)s. You have %(expiration_days)s "
+"days to activate your account by following this link : https://%(site)s"
 "%(activation_url)s"
 msgstr ""
 
 #: templates/registration/activation_email_subject.txt:1
 #, python-format
-msgid "Activate your account on %(site)s"
+msgid "Activate your account on %(site_name)s"
 msgstr ""
 
 #: templates/registration/login.html:22

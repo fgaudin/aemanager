@@ -77,7 +77,7 @@ class UserProfile(models.Model):
         Comment.objects.filter(owner=self.user).update(owner=None)
         Vote.objects.filter(owner=self.user).delete()
         self.user.delete()
-        subject = _("You've just unregistered from %(site)s") % {'site': Site.objects.get_current()}
+        subject = _("You've just unregistered from %(site)s") % {'site': Site.objects.get_current().name}
         message = _("You have left the site and your data has been deleted.\n\n"
                     "Our service is continually evolving and if it does not meet your "
                     "needs today, please come back to test later.")
