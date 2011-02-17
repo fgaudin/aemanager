@@ -483,14 +483,16 @@ def invoice_download(request, id):
     story.append(spacer4)
 
     data = [[[Paragraph(_("Payment date : %s") % (localize(invoice.payment_date)), styleN),
-              Paragraph(_("Execution dates : %(begin_date)s to %(end_date)s") % {'begin_date': localize(invoice.execution_begin_date), 'end_date' : localize(invoice.execution_end_date)}, styleN),
-              Paragraph(_("Penalty begins on : %s") % (localize(invoice.penalty_date)), styleN),
-              Paragraph(_("Penalty rate : %s") % (localize(invoice.penalty_rate)), styleN),
-              Paragraph(_("Discount conditions : %s") % (invoice.discount_conditions), styleN)],
+              Paragraph(_("Penalty begins on : %s") % (localize(invoice.penalty_date) or ''), styleN),
+              Paragraph(_("Penalty rate : %s") % (localize(invoice.penalty_rate) or ''), styleN),
+              Paragraph(_("Discount conditions : %s") % (invoice.discount_conditions or ''), styleN)],
             '',
             [Paragraph(_("TOTAL excl. VAT : %(amount)s %(currency)s") % {'amount': localize(invoice.amount), 'currency' : "€".decode('utf-8')}, styleTotal),
              Spacer(1, 0.25 * inch),
              Paragraph(u"TVA non applicable, art. 293 B du CGI", styleN)]], ]
+
+    if invoice.execution_begin_date and invoice.execution_end_date:
+        data[0][0].insert(1, Paragraph(_("Execution dates : %(begin_date)s to %(end_date)s") % {'begin_date': localize(invoice.execution_begin_date), 'end_date' : localize(invoice.execution_end_date)}, styleN))
 
     footer_table = Table(data, [4.5 * inch, 0.3 * inch, 2.5 * inch], [1 * inch])
     footer_table.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP'), ]))

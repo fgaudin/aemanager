@@ -608,12 +608,14 @@ def proposal_download(request, id):
     spacer4 = Spacer(doc.width, 0.55 * inch)
     story.append(spacer4)
 
-    data = [[[Paragraph(_("Proposal valid through : %s") % (localize(proposal.expiration_date)), styleN),
-              Paragraph(_("Execution dates : %(begin_date)s to %(end_date)s") % {'begin_date': localize(proposal.begin_date), 'end_date' : localize(proposal.end_date)}, styleN)],
+    data = [[[Paragraph(_("Proposal valid through : %s") % (localize(proposal.expiration_date) or ''), styleN)],
             '',
             [Paragraph(_("TOTAL excl. VAT : %(amount)s %(currency)s") % {'amount': localize(proposal.amount), 'currency' : "€".decode('utf-8')}, styleTotal),
              Spacer(1, 0.25 * inch),
              Paragraph(u"TVA non applicable, art. 293 B du CGI", styleN)]], ]
+
+    if proposal.begin_date and proposal.end_date:
+        data[0][0].append(Paragraph(_("Execution dates : %(begin_date)s to %(end_date)s") % {'begin_date': localize(proposal.begin_date), 'end_date' : localize(proposal.end_date)}, styleN))
 
     footer_table = Table(data, [4.5 * inch, 0.3 * inch, 2.5 * inch], [1 * inch])
     footer_table.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP'), ]))
