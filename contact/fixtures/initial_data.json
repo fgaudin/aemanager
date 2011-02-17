@@ -347,7 +347,7 @@
         "fields": {
             "country_code3": "",
             "country_code2": "ME",
-            "country_name": ""
+            "country_name": "MONTENEGRO"
         }
     },
     {
@@ -815,7 +815,7 @@
         "fields": {
             "country_code3": "",
             "country_code2": "RS",
-            "country_name": ""
+            "country_name": "SERBIA"
         }
     },
     {
@@ -1058,7 +1058,7 @@
         "fields": {
             "country_code3": "",
             "country_code2": "JE",
-            "country_name": ""
+            "country_name": "JERSEY"
         }
     },
     {
@@ -1094,7 +1094,7 @@
         "fields": {
             "country_code3": "",
             "country_code2": "IM",
-            "country_name": ""
+            "country_name": "ISLE OF MAN"
         }
     },
     {
@@ -1112,7 +1112,7 @@
         "fields": {
             "country_code3": "",
             "country_code2": "GG",
-            "country_name": ""
+            "country_name": "GUERNSEY"
         }
     },
     {
@@ -1238,7 +1238,7 @@
         "fields": {
             "country_code3": "",
             "country_code2": "AX",
-            "country_name": ""
+            "country_name": "ÅLAND ISLANDS"
         }
     },
     {
