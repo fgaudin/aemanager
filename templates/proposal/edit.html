@@ -14,10 +14,12 @@
 jQuery(document).ready(function(){
     jQuery('#id_proposal-contract_model').change(function(){
         var proposal_id = jQuery('#id_proposal-contract_model option:selected').val();
-        jQuery.getJSON('{% url proposal_get_contract %}', {'id': proposal_id}, function(data){
-            jQuery('#id_proposal-contract_content').html(data);
-            jQuery('#id_proposal-contract_content').elrte('val', data);
-        });
+        if (proposal_id) {
+            jQuery.getJSON('{% url proposal_get_contract %}', {'id': proposal_id}, function(data){
+                jQuery('#id_proposal-contract_content').html(data);
+                jQuery('#id_proposal-contract_content').elrte('val', data);
+            });
+        }
     });
 
     // create editor

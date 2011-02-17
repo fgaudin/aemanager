@@ -13,11 +13,13 @@
 jQuery(document).ready(function(){
     jQuery('#id_contract-contract_model').change(function(){
         var contract_id = jQuery('#id_contract-contract_model option:selected').val();
-        jQuery.getJSON('{% url contract_get_content %}', {'id': contract_id}, function(data){
-            jQuery('#id_contract-title').val(data['title']);
-            jQuery('#id_contract-content').html(data['content']);
-            jQuery('#id_contract-content').elrte('val', data['content']);
-        });
+        if (contract_id) {
+            jQuery.getJSON('{% url contract_get_content %}', {'id': contract_id}, function(data){
+                jQuery('#id_contract-title').val(data['title']);
+                jQuery('#id_contract-content').html(data['content']);
+                jQuery('#id_contract-content').elrte('val', data['content']);
+            });
+        }
     });
 
     // create editor
