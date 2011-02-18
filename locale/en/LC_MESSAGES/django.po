@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-18 20:31+0100\n"
+"POT-Creation-Date: 2011-02-18 20:47+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -99,7 +99,7 @@ msgstr ""
 msgid "Sent"
 msgstr ""
 
-#: accounts/models.py:39 autoentrepreneur/models.py:36 core/views.py:328
+#: accounts/models.py:39 autoentrepreneur/models.py:36 core/views.py:332
 msgid "Paid"
 msgstr ""
 
@@ -224,7 +224,7 @@ msgstr ""
 msgid "Amount invoiced for proposal can't be greater than proposal amount"
 msgstr ""
 
-#: accounts/views.py:270 contact/views.py:74 core/views.py:227
+#: accounts/views.py:270 contact/views.py:74 core/views.py:231
 #: project/views.py:74 project/views.py:171 project/views.py:382
 msgid "Data provided are invalid"
 msgstr ""
@@ -690,76 +690,80 @@ msgstr ""
 msgid "You must agree to the terms to register"
 msgstr ""
 
-#: core/tests.py:66 core/views.py:253
+#: core/tests.py:66 core/views.py:257
 msgid "Wrong password"
 msgstr ""
 
-#: core/tests.py:81 core/views.py:251
+#: core/tests.py:81 core/views.py:255
 msgid "Your password has been modified successfully"
 msgstr ""
 
-#: core/views.py:196 templates/menu.html:9 templates/core/index.html:3
+#: core/views.py:34
+msgid "How-to : create a contact, a project, a proposal and finally an invoice"
+msgstr ""
+
+#: core/views.py:200 templates/menu.html:9 templates/core/index.html:3
 msgid "Dashboard"
 msgstr ""
 
-#: core/views.py:224
+#: core/views.py:228
 msgid "Your settings have been updated successfully"
 msgstr ""
 
-#: core/views.py:235 templates/menu.html:79
+#: core/views.py:239 templates/menu.html:79
 msgid "Settings"
 msgstr ""
 
-#: core/views.py:255
+#: core/views.py:259
 msgid "Your password has not been modified"
 msgstr ""
 
-#: core/views.py:261 templates/menu.html:82
+#: core/views.py:265 templates/menu.html:82
 msgid "Change password"
 msgstr ""
 
-#: core/views.py:276 templates/menu.html:85
+#: core/views.py:280 templates/menu.html:85
 msgid "My subscription"
 msgstr ""
 
-#: core/views.py:288
+#: core/views.py:292
 msgid "Subscription paid"
 msgstr ""
 
-#: core/views.py:316
+#: core/views.py:320
 msgid "Not verified"
 msgstr ""
 
-#: core/views.py:320
+#: core/views.py:324
 msgid "Receiver is not as defined in settings. Spoofing ?"
 msgstr ""
 
-#: core/views.py:322
+#: core/views.py:326
 msgid "Payment not completed"
 msgstr ""
 
-#: core/views.py:324 core/views.py:326
+#: core/views.py:328 core/views.py:330
 msgid "Amount altered. Bad guy ?"
 msgstr ""
 
-#: core/views.py:335
+#: core/views.py:339
 msgid "Subscribe"
 msgstr ""
 
-#: core/views.py:353 templates/core/unregister.html:15
+#: core/views.py:357 templates/core/unregister.html:15
 msgid "Unregister"
 msgstr ""
 
-#: core/views.py:357
+#: core/views.py:361
 msgid "CSRF error"
 msgstr ""
 
-#: core/views.py:358
+#: core/views.py:362
 #, python-format
 msgid "An error occured on %(path)s, reason : %(reason)s"
 msgstr ""
 
-#: core/views.py:362
+#: core/views.py:366
 msgid "Error"
 msgstr ""
 
