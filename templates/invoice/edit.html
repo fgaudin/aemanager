@@ -4,6 +4,10 @@
 {% block extrahead %}
 <script src="{{ MEDIA_URL }}js/elrte-1.2/js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="{{ MEDIA_URL }}js/empty_label.js" type="text/javascript" charset="utf-8"></script>
+<style media="all" type="text/css">@import "{{ MEDIA_URL }}js/jquery-tooltip/jquery.tooltip.css";</style>
+<script src="{{ MEDIA_URL }}js/jquery-tooltip/lib/jquery.bgiframe.js" type="text/javascript"></script>
+<script src="{{ MEDIA_URL }}js/jquery-tooltip/lib/jquery.dimensions.js" type="text/javascript"></script>
+<script src="{{ MEDIA_URL }}js/jquery-tooltip/jquery.tooltip.pack.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 jQuery(document).ready(function(){
@@ -58,6 +62,14 @@ jQuery(document).ready(function(){
 
     jQuery('.delete-checkbox').hide()
     activate_delete();
+
+    jQuery('.balance_payments_label').tooltip({
+        bodyHandler: function() {
+            return jQuery(this).nextAll('.help_text').html();
+        },
+        delay: 0,
+        showURL: false
+    });
 });
 </script>
 {% endblock %}
@@ -107,7 +119,7 @@ jQuery(document).ready(function(){
     {{ invoicerowformset.management_form }}
     {% for form in invoicerowformset.forms %}
         <div class="inline-formset invoice-row">
-            {{ form.ownedobject_ptr }}<span class="inline-label">{{ form.label.label }} : </span>{{ form.label }} {{ form.proposal }} {{ form.balance_payments.label }} : {{ form.balance_payments }} {{ form.category }} <span class="inline-label">{{ form.quantity.label }} : </span>{{ form.quantity }} <span class="inline-label">{{ form.unit_price.label }} : </span>{{ form.unit_price }} <a href="#" class="delete-button"><img src="{{ MEDIA_URL }}img/icon_deletelink.gif" /></a><span class="delete-checkbox">{{ form.DELETE }}</span>
+            {{ form.ownedobject_ptr }}<span class="inline-label">{{ form.label.label }} : </span>{{ form.label }} {{ form.proposal }} <span class="balance_payments_label">{{ form.balance_payments.label }} : </span>{{ form.balance_payments }} <span class="help_text" style="display: none">{{ form.balance_payments.help_text }}</span>{{ form.category }} <span class="inline-label">{{ form.quantity.label }} : </span>{{ form.quantity }} <span class="inline-label">{{ form.unit_price.label }} : </span>{{ form.unit_price }} <a href="#" class="delete-button"><img src="{{ MEDIA_URL }}img/icon_deletelink.gif" /></a><span class="delete-checkbox">{{ form.DELETE }}</span>
         </div>
     {% endfor %}
         <div class="inline-formset">

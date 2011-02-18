@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-18 11:28+0100\n"
+"POT-Creation-Date: 2011-02-18 16:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -163,6 +163,14 @@ msgstr ""
 msgid "Balance payments for the proposal"
 msgstr ""
 
+#: accounts/models.py:186
+msgid ""
+"\"Balancing payments for the proposal\" means there will be no future "
+"invoices for the selected proposal. Thus the amount remaining to invoice for "
+"this proposal will fall to zero and its state will be set to \"balanced\" "
+"when all invoices are paid."
+msgstr ""
+
 #: accounts/models.py:201
 msgid "Sum of invoice row amount can't exceed proposal amount"
 msgstr ""
@@ -250,8 +258,8 @@ msgstr ""
 msgid "INVOICE #%d"
 msgstr ""
 
-#: accounts/views.py:446 project/views.py:574 templates/invoice/detail.html:68
-#: templates/proposal/detail.html:58
+#: accounts/views.py:446 project/models.py:250 project/views.py:574
+#: templates/invoice/detail.html:68 templates/proposal/detail.html:58
 msgid "Label"
 msgstr ""
 
@@ -1069,8 +1077,8 @@ msgid "Business"
 msgstr ""
 
 #: templates/menu.html:28 templates/menu.html.py:64
-#: templates/expense/list.html:192 templates/invoice/edit.html:103
-#: templates/proposal/edit.html:104
+#: templates/expense/list.html:192 templates/invoice/edit.html:126
+#: templates/proposal/edit.html:115
 msgid "Add"
 msgstr ""
 
@@ -1123,8 +1131,8 @@ msgid "No master aggreements"
 msgstr ""
 
 #: templates/contact/edit.html:119 templates/contract/edit.html:61
-#: templates/core/settings_edit.html:20 templates/invoice/edit.html:109
-#: templates/project/edit.html:23 templates/proposal/edit.html:127
+#: templates/core/settings_edit.html:20 templates/invoice/edit.html:132
+#: templates/project/edit.html:23 templates/proposal/edit.html:138
 msgid "Save"
 msgstr ""
 
@@ -1149,7 +1157,7 @@ msgstr ""
 msgid "download pdf file"
 msgstr ""
 
-#: templates/contract/edit.html:53 templates/proposal/edit.html:119
+#: templates/contract/edit.html:53 templates/proposal/edit.html:130
 msgid "Keywords you can use"
 msgstr ""
 
@@ -1356,8 +1364,8 @@ msgstr ""
 msgid "Exported file"
 msgstr ""
 
-#: templates/invoice/detail.html:62 templates/invoice/edit.html:95
-#: templates/proposal/detail.html:52 templates/proposal/edit.html:96
+#: templates/invoice/detail.html:62 templates/invoice/edit.html:118
+#: templates/proposal/detail.html:52 templates/proposal/edit.html:107
 msgid "Detail rows"
 msgstr ""
 

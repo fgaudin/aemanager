@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-18 11:28+0100\n"
+"POT-Creation-Date: 2011-02-18 16:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -164,6 +164,16 @@ msgstr "Le numéro de facture doit être unique"
 msgid "Balance payments for the proposal"
 msgstr "Solde le devis"
 
+#: accounts/models.py:186
+msgid ""
+"\"Balancing payments for the proposal\" means there will be no future "
+"invoices for the selected proposal. Thus the amount remaining to invoice for "
+"this proposal will fall to zero and its state will be set to \"balanced\" "
+"when all invoices are paid."
+msgstr "\"Solder le devis\" signifie qu'il n'y aura pas d'autre facture pour le devis "
+"sélectionné. Le montant restant à facturer pour ce devis tombera ainsi à zero "
+"et son état passera à \"soldé\" quand toutes les factures auront été payées."
+
 #: accounts/models.py:201
 msgid "Sum of invoice row amount can't exceed proposal amount"
 msgstr "La somme des factures ne peut dépasser le montant du devis"
@@ -251,8 +261,8 @@ msgstr "Date : %s"
 msgid "INVOICE #%d"
 msgstr "FACTURE N°%d"
 
-#: accounts/views.py:446 project/views.py:574 templates/invoice/detail.html:68
-#: templates/proposal/detail.html:58
+#: accounts/views.py:446 project/models.py:250 project/views.py:574
+#: templates/invoice/detail.html:68 templates/proposal/detail.html:58
 msgid "Label"
 msgstr "Libellé"
 
@@ -1055,17 +1065,18 @@ msgid ""
 msgstr ""
 "<h1>La vérification CSRF a échoué. La requête a été annulée.</h1>\n"
 "\n"
-"<p>Vous voyez ce message car ce site en HTTPS nécessite l'envoi d'un en-tête 'Referer' "
-"par votre navigateur, mais aucun n'a été envoyé. Cet en-tête "
-"est nécessaire pour des raisons de sécurité, pour s'assurer que votre navigateur "
+"<p>Vous voyez ce message car ce site en HTTPS nécessite l'envoi d'un en-tête "
+"'Referer' par votre navigateur, mais aucun n'a été envoyé. Cet en-tête est "
+"nécessaire pour des raisons de sécurité, pour s'assurer que votre navigateur "
 "n'a pas été piraté par un tiers.</p>\n"
 "\n"
-"<p>Si vous avez configuré votre navigateur pour désactiver les en-têtes 'Referer', veuillez "
-"les réactiver, au moins pour ce site, ou pour les connexions HTTPS, ou pour "
-"les requêtes 'same-origin'.</p>\n"
+"<p>Si vous avez configuré votre navigateur pour désactiver les en-têtes "
+"'Referer', veuillez les réactiver, au moins pour ce site, ou pour les "
+"connexions HTTPS, ou pour les requêtes 'same-origin'.</p>\n"
 "\n"
-"<p><strong>Sur Firefox, tapez \"about:config\" dans la barre d'adresse et cherchez \"referer\", "
-"puis modifiez network.http.sendRefererHeader à 1 ou 2.</strong></p>"
+"<p><strong>Sur Firefox, tapez \"about:config\" dans la barre d'adresse et "
+"cherchez \"referer\", puis modifiez network.http.sendRefererHeader à 1 ou 2."
+"</strong></p>"
 
 #: templates/delete.html:7
 #, python-format
@@ -1088,8 +1099,8 @@ msgid "Business"
 msgstr "Affaires"
 
 #: templates/menu.html:28 templates/menu.html.py:64
-#: templates/expense/list.html:192 templates/invoice/edit.html:103
-#: templates/proposal/edit.html:104
+#: templates/expense/list.html:192 templates/invoice/edit.html:126
+#: templates/proposal/edit.html:115
 msgid "Add"
 msgstr "Ajouter"
 
@@ -1142,8 +1153,8 @@ msgid "No master aggreements"
 msgstr "Aucun contrat-cadre"
 
 #: templates/contact/edit.html:119 templates/contract/edit.html:61
-#: templates/core/settings_edit.html:20 templates/invoice/edit.html:109
-#: templates/project/edit.html:23 templates/proposal/edit.html:127
+#: templates/core/settings_edit.html:20 templates/invoice/edit.html:132
+#: templates/project/edit.html:23 templates/proposal/edit.html:138
 msgid "Save"
 msgstr "Sauvegarder"
 
@@ -1168,7 +1179,7 @@ msgstr "suivant"
 msgid "download pdf file"
 msgstr "télécharger le fichier pdf"
 
-#: templates/contract/edit.html:53 templates/proposal/edit.html:119
+#: templates/contract/edit.html:53 templates/proposal/edit.html:130
 msgid "Keywords you can use"
 msgstr "Mots-clés utilisables"
 
@@ -1391,8 +1402,8 @@ msgstr "Facture pour <a href=\"%(customer_url)s\">%(customer)s</a>"
 msgid "Exported file"
 msgstr "Fichier exporté"
 
-#: templates/invoice/detail.html:62 templates/invoice/edit.html:95
-#: templates/proposal/detail.html:52 templates/proposal/edit.html:96
+#: templates/invoice/detail.html:62 templates/invoice/edit.html:118
+#: templates/proposal/detail.html:52 templates/proposal/edit.html:107
 msgid "Detail rows"
 msgstr "Lignes de détail"
 

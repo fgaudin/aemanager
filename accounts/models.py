@@ -183,7 +183,7 @@ class InvoiceRowAmountError(Exception):
 class InvoiceRow(Row):
     invoice = models.ForeignKey(Invoice, related_name="invoice_rows")
     proposal = models.ForeignKey(Proposal, related_name="invoice_rows")
-    balance_payments = models.BooleanField(verbose_name=_('Balance payments for the proposal'))
+    balance_payments = models.BooleanField(verbose_name=_('Balance payments for the proposal'), help_text=_('"Balancing payments for the proposal" means there will be no future invoices for the selected proposal. Thus the amount remaining to invoice for this proposal will fall to zero and its state will be set to "balanced" when all invoices are paid.'))
 
     def isAmountValid(self):
         invoicerows = InvoiceRow.objects.filter(proposal=self.proposal)
