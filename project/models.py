@@ -248,10 +248,10 @@ ROW_CATEGORY = ((ROW_CATEGORY_SERVICE, _('Service')),
 
 class Row(OwnedObject):
     label = models.CharField(max_length=255, verbose_name=_('Label'))
-    category = models.IntegerField(choices=ROW_CATEGORY)
-    quantity = models.DecimalField(max_digits=5, decimal_places=1)
-    unit_price = models.DecimalField(max_digits=12, decimal_places=2)
-    amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    category = models.IntegerField(choices=ROW_CATEGORY, verbose_name=_('Category'))
+    quantity = models.DecimalField(max_digits=5, decimal_places=1, verbose_name=_('Quantity'))
+    unit_price = models.DecimalField(max_digits=12, decimal_places=2, verbose_name=_('Unit price'))
+    amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True, verbose_name=_('Amount'))
 
     class Meta:
         abstract = True
