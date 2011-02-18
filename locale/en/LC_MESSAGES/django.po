@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-18 16:19+0100\n"
+"POT-Creation-Date: 2011-02-18 20:31+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,10 +26,10 @@ msgid "French"
 msgstr ""
 
 #: accounts/forms.py:7 accounts/models.py:24 accounts/models.py:132
-#: accounts/views.py:192 project/models.py:139 templates/expense/list.html:179
-#: templates/invoice/detail.html:25 templates/invoice/list.html:27
-#: templates/project/detail.html:32 templates/project/detail.html.py:60
-#: templates/proposal/detail.html:90
+#: accounts/views.py:192 project/models.py:139 project/models.py:254
+#: templates/expense/list.html:179 templates/invoice/detail.html:25
+#: templates/invoice/list.html:27 templates/project/detail.html:32
+#: templates/project/detail.html.py:60 templates/proposal/detail.html:90
 msgid "Amount"
 msgstr ""
 
@@ -38,13 +38,13 @@ msgid "Penalty rate"
 msgstr ""
 
 #: accounts/forms.py:21 accounts/views.py:446 project/forms.py:39
-#: project/views.py:574 templates/invoice/detail.html:72
+#: project/models.py:252 project/views.py:574 templates/invoice/detail.html:72
 #: templates/proposal/detail.html:60
 msgid "Quantity"
 msgstr ""
 
 #: accounts/forms.py:22 accounts/views.py:446 project/forms.py:40
-#: project/views.py:574 templates/invoice/detail.html:73
+#: project/models.py:253 project/views.py:574 templates/invoice/detail.html:73
 #: templates/proposal/detail.html:61
 msgid "Unit price"
 msgstr ""
@@ -157,6 +157,10 @@ msgstr ""
 
 #: accounts/models.py:171 accounts/views.py:268
 msgid "Invoice id must be unique"
+msgstr ""
+
+#: accounts/models.py:185 templates/invoice/detail.html:69
+msgid "Proposal"
 msgstr ""
 
 #: accounts/models.py:186
@@ -439,8 +443,9 @@ msgstr ""
 msgid "User"
 msgstr ""
 
-#: bugtracker/models.py:23 templates/invoice/detail.html:71
-#: templates/issue/list.html:18 templates/proposal/detail.html:59
+#: bugtracker/models.py:23 project/models.py:251
+#: templates/invoice/detail.html:71 templates/issue/list.html:18
+#: templates/proposal/detail.html:59
 msgid "Category"
 msgstr ""
 
@@ -647,6 +652,10 @@ msgstr ""
 
 #: contact/views.py:168
 msgid "Delete a contact"
+msgstr ""
+
+#: core/decorators.py:16
+msgid "You need to fill these informations to continue"
 msgstr ""
 
 #: core/forms.py:9
@@ -1077,8 +1086,8 @@ msgid "Business"
 msgstr ""
 
 #: templates/menu.html:28 templates/menu.html.py:64
-#: templates/expense/list.html:192 templates/invoice/edit.html:126
-#: templates/proposal/edit.html:115
+#: templates/expense/list.html:192 templates/invoice/edit.html:133
+#: templates/proposal/edit.html:121
 msgid "Add"
 msgstr ""
 
@@ -1131,8 +1140,8 @@ msgid "No master aggreements"
 msgstr ""
 
 #: templates/contact/edit.html:119 templates/contract/edit.html:61
-#: templates/core/settings_edit.html:20 templates/invoice/edit.html:132
-#: templates/project/edit.html:23 templates/proposal/edit.html:138
+#: templates/core/settings_edit.html:20 templates/invoice/edit.html:139
+#: templates/project/edit.html:23 templates/proposal/edit.html:144
 msgid "Save"
 msgstr ""
 
@@ -1157,7 +1166,7 @@ msgstr ""
 msgid "download pdf file"
 msgstr ""
 
-#: templates/contract/edit.html:53 templates/proposal/edit.html:130
+#: templates/contract/edit.html:53 templates/proposal/edit.html:136
 msgid "Keywords you can use"
 msgstr ""
 
@@ -1364,13 +1373,9 @@ msgstr ""
 msgid "Exported file"
 msgstr ""
 
-#: templates/invoice/detail.html:62 templates/invoice/edit.html:118
-#: templates/proposal/detail.html:52 templates/proposal/edit.html:107
+#: templates/invoice/detail.html:62 templates/invoice/edit.html:119
+#: templates/proposal/detail.html:52 templates/proposal/edit.html:108
 msgid "Detail rows"
-msgstr ""
-
-#: templates/invoice/detail.html:69
-msgid "Proposal"
 msgstr ""
 
 #: templates/invoice/detail.html:70

@@ -106,7 +106,7 @@ class DashboardTest(TestCase):
         user = User.objects.create_user('new_user', 'test@example.com', 'test')
         self.client.login(username='new_user', password='test')
         response = self.client.get(reverse('index'))
-        self.assertRedirects(response, '/home?next=/', 302, 301)
+        self.assertRedirects(response, reverse('settings_edit'), 302, 200)
 
     # test on sales widget
     def testPaidSales(self):

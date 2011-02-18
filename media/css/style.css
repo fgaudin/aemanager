@@ -257,33 +257,40 @@ form .aligned p, form .aligned ul {
 
 .messages {
     padding: 10px 10px;
-    border: 2px solid #CCCCCC;
+    border: 1px solid #CCCCCC;
 }
 
 .messages li {
     list-style-type: none;
     font-style: italic;
     font-size: 14px;
+    padding-left: 20px;
+    background-repeat: no-repeat;
 }
 
 .messages li.success {
     color: green;
+    background-image : url('/static/img/icon_success.gif');
 }
 
 .messages li.error, .expired {
     color: red;
+    background-image : url('/static/img/icon_error.gif');
 }
 
 .messages li.warning {
     color: #FF9400;
+    background-image : url('/static/img/icon_alert.gif');
 }
 
 .messages li.info {
-    color: black;
+    color: blue;
+    background-image : url('/static/img/icon_info.png');
 }
 
 .messages li.debug {
     color: gray;
+    background-image : url('/static/img/icon_unknown.gif');
 }
 
 .errorlist li {
