@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-18 20:47+0100\n"
+"POT-Creation-Date: 2011-02-18 21:02+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -300,6 +300,13 @@ msgstr ""
 #: accounts/views.py:495 project/views.py:618
 #, python-format
 msgid "Execution dates : %(begin_date)s to %(end_date)s"
+msgstr ""
+
+#: autoentrepreneur/decorators.py:17
+#, python-format
+msgid ""
+"Your subscription has expired. You need to subscribe again to keep using "
+"%(site_name)s"
 msgstr ""
 
 #: autoentrepreneur/forms.py:8 autoentrepreneur/models.py:65

@@ -273,7 +273,7 @@ form .aligned p, form .aligned ul {
     background-image : url('/static/img/icon_success.gif');
 }
 
-.messages li.error, .expired {
+.messages li.error {
     color: red;
     background-image : url('/static/img/icon_error.gif');
 }
@@ -296,6 +296,10 @@ form .aligned p, form .aligned ul {
 .errorlist li {
     border-color: #FF4444;
     background-color: #FF4444;
+}
+
+.expired {
+    color: red;
 }
 
 .content a:link, .content a:visited {
