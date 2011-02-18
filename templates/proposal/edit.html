@@ -9,6 +9,7 @@
 <script src="{{ MEDIA_URL }}js/elrte-1.2/js/elrte.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="{{ MEDIA_URL }}js/elrte-1.2/js/i18n/elrte.fr.js" type="text/javascript" charset="utf-8"></script>
 <script src="{{ MEDIA_URL }}js/wysiwyg_editor.js" type="text/javascript" charset="utf-8"></script>
+<script src="{{ MEDIA_URL }}js/empty_label.js" type="text/javascript" charset="utf-8"></script>
 
 <script type="text/javascript">
 jQuery(document).ready(function(){
@@ -20,6 +21,13 @@ jQuery(document).ready(function(){
                 jQuery('#id_proposal-contract_content').elrte('val', data);
             });
         }
+    });
+
+    jQuery('.proposal-row input:text').bindRowEvents();
+
+    jQuery('#proposal-edit-form').submit(function() {
+        jQuery('.proposal-row input.empty-field:text').val('');
+        return true;
     });
 
     // create editor
@@ -59,6 +67,9 @@ jQuery(document).ready(function(){
             jQuery(this).attr('name',jQuery(this).attr('name').replace(/(proposal_rows-)[0-9]+/,'$1' + row_count));
             jQuery(this).attr('id',jQuery(this).attr('id').replace(/(proposal_rows-)[0-9]+/,'$1' + row_count));
         });
+
+        jQuery('input:text', new_row).bindRowEvents();
+
         jQuery(new_row).show();
         jQuery('#id_proposal_rows-TOTAL_FORMS').val(parseInt(jQuery('#id_proposal_rows-TOTAL_FORMS').val(), 10) + 1);
         activate_delete();
@@ -97,7 +108,7 @@ jQuery(document).ready(function(){
     {{ proposalrowformset.management_form }}
     {% for form in proposalrowformset.forms %}
         <div class="inline-formset proposal-row">
-            {{ form.ownedobject_ptr }}{{ form.label }} {{ form.category }} {{ form.quantity.label }} : {{ form.quantity }} {{ form.unit_price.label }} {{ form.unit_price }} <a href="#" class="delete-button"><img src="{{ MEDIA_URL }}img/icon_deletelink.gif" /></a><span class="delete-checkbox">{{ form.DELETE }}</span>
+            {{ form.ownedobject_ptr }}<span class="inline-label">{{ form.label.label }} : </span>{{ form.label }} {{ form.category }} <span class="inline-label">{{ form.quantity.label }} : </span>{{ form.quantity }} <span class="inline-label">{{ form.unit_price.label }} : </span>{{ form.unit_price }} <a href="#" class="delete-button"><img src="{{ MEDIA_URL }}img/icon_deletelink.gif" /></a><span class="delete-checkbox">{{ form.DELETE }}</span>
         </div>
     {% endfor %}
         <div class="inline-formset">

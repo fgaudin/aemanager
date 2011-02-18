@@ -42,3 +42,8 @@ class ProposalRowForm(ModelForm):
     class Meta:
         model = ProposalRow
         exclude = ['owner']
+
+    def __init__(self, *args, **kwargs):
+        super(ProposalRowForm, self).__init__(*args, **kwargs)
+        self.fields['quantity'].widget.attrs['class'] = 'quantity-field'
+        self.fields['unit_price'].widget.attrs['class'] = 'unit-price-field'

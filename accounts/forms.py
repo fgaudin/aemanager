@@ -24,3 +24,8 @@ class InvoiceRowForm(ModelForm):
     class Meta:
         model = InvoiceRow
         exclude = ['owner']
+
+    def __init__(self, *args, **kwargs):
+        super(InvoiceRowForm, self).__init__(*args, **kwargs)
+        self.fields['quantity'].widget.attrs['class'] = 'quantity-field'
+        self.fields['unit_price'].widget.attrs['class'] = 'unit-price-field'

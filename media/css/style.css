@@ -449,3 +449,18 @@ div.html {
     width:90%;
     height:200px;
 }
+
+.quantity-field {
+    width:50px;
+    text-align:right;
+}
+
+.unit-price-field {
+    width:70px;
+    text-align:right;
+}
+
+.empty-field {
+    color: gray;
+    text-align:left;
+}

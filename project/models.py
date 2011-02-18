@@ -247,7 +247,7 @@ ROW_CATEGORY = ((ROW_CATEGORY_SERVICE, _('Service')),
                 (ROW_CATEGORY_PRODUCT, _('Product')))
 
 class Row(OwnedObject):
-    label = models.CharField(max_length=255)
+    label = models.CharField(max_length=255, verbose_name=_('Label'))
     category = models.IntegerField(choices=ROW_CATEGORY)
     quantity = models.DecimalField(max_digits=5, decimal_places=1)
     unit_price = models.DecimalField(max_digits=12, decimal_places=2)
