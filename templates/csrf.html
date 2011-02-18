@@ -1,0 +1,12 @@
+{% extends "unregistered_base.html" %}
+{% load i18n %}
+
+{% block content %}
+{% blocktrans %}<h1>CSRF verification failed. Request aborted.</h1>
+
+<p>You are seeing this message because this HTTPS site requires a 'Referer header' to be sent by your Web browser, but none was sent. This header is required for security reasons, to ensure that your browser is not being hijacked by third parties.</p>
+
+<p>If you have configured your browser to disable 'Referer' headers, please re-enable them, at least for this site, or for HTTPS connections, or for 'same-origin' requests.</p>
+
+<p><strong>On Firefox, type "about:config" in url and search "referer", then modify network.http.sendRefererHeader to 1 or 2.</strong></p>{% endblocktrans %}
+{% endblock %}

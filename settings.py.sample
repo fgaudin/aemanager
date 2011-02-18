@@ -128,6 +128,7 @@ LOGIN_URL = '/user/login/'
 LOGOUT_URL = '/user/logout/'
 LOGIN_REDIRECT_URL = '/'
 ACCOUNT_ACTIVATION_DAYS = 7
+CSRF_FAILURE_VIEW = 'core.views.csrf_failure'
 
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 1025
@@ -135,6 +136,8 @@ EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TLS = False
 DEFAULT_FROM_EMAIL = ADMINS[0][1]
+EMAIL_SUBJECT_PREFIX = '[aemanager] '
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 if DEBUG:
     PAYPAL_URL = 'https://www.sandbox.paypal.com'

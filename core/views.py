@@ -18,6 +18,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from autoentrepreneur.decorators import subscription_required
 from django.contrib.auth import logout
+from django.core.mail import mail_admins
 import time
 import datetime
 import urllib, urllib2
@@ -351,3 +352,13 @@ def unregister(request):
                               {'active': 'account',
                                'title': _('Unregister')},
                               context_instance=RequestContext(request))
+
+def csrf_failure(request, reason=""):
+    subject = _('CSRF error')
+    message = _("An error occured on %(path)s, reason : %(reason)s") % {'path': request.path,
+                                                                        'reason': reason}
+    mail_admins(subject, message)
+    return render_to_response('csrf.html',
+                              {'title': _('Error')},
+                              context_instance=RequestContext(request))
+

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-17 18:38+0100\n"
+"POT-Creation-Date: 2011-02-18 11:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -100,7 +100,7 @@ msgstr "Éditée"
 msgid "Sent"
 msgstr "Envoyé"
 
-#: accounts/models.py:39 autoentrepreneur/models.py:36 core/views.py:327
+#: accounts/models.py:39 autoentrepreneur/models.py:36 core/views.py:328
 msgid "Paid"
 msgstr "Payée"
 
@@ -213,7 +213,7 @@ msgstr "La facture a été sauvegardée avec succès"
 msgid "Amount invoiced for proposal can't be greater than proposal amount"
 msgstr "Le montant facturé ne peut pas dépasser le montant du devis"
 
-#: accounts/views.py:270 contact/views.py:74 core/views.py:226
+#: accounts/views.py:270 contact/views.py:74 core/views.py:227
 #: project/views.py:74 project/views.py:171 project/views.py:382
 msgid "Data provided are invalid"
 msgstr "Les données saisies sont invalides"
@@ -679,65 +679,78 @@ msgstr ""
 msgid "You must agree to the terms to register"
 msgstr "Vous devez accepter les conditions pour vous inscrire"
 
-#: core/tests.py:66 core/views.py:252
+#: core/tests.py:66 core/views.py:253
 msgid "Wrong password"
 msgstr "Mot de passe erroné"
 
-#: core/tests.py:81 core/views.py:250
+#: core/tests.py:81 core/views.py:251
 msgid "Your password has been modified successfully"
 msgstr "Votre mot de passe a été sauvegardé avec succès"
 
-#: core/views.py:195 templates/menu.html:9 templates/core/index.html:3
+#: core/views.py:196 templates/menu.html:9 templates/core/index.html:3
 msgid "Dashboard"
 msgstr "Tableau de bord"
 
-#: core/views.py:223
+#: core/views.py:224
 msgid "Your settings have been updated successfully"
 msgstr "Vos paramètres ont été sauvegardés avec succès"
 
-#: core/views.py:234 templates/menu.html:79
+#: core/views.py:235 templates/menu.html:79
 msgid "Settings"
 msgstr "Paramètres"
 
-#: core/views.py:254
+#: core/views.py:255
 msgid "Your password has not been modified"
 msgstr "Votre mot de passe n'a pas été modifié"
 
-#: core/views.py:260 templates/menu.html:82
+#: core/views.py:261 templates/menu.html:82
 msgid "Change password"
 msgstr "Changer de mot de passe"
 
-#: core/views.py:275 templates/menu.html:85
+#: core/views.py:276 templates/menu.html:85
 msgid "My subscription"
 msgstr "Mon abonnement"
 
-#: core/views.py:287
+#: core/views.py:288
 msgid "Subscription paid"
 msgstr "Abonnement payé"
 
-#: core/views.py:315
+#: core/views.py:316
 msgid "Not verified"
 msgstr "Non vérifié"
 
-#: core/views.py:319
+#: core/views.py:320
 msgid "Receiver is not as defined in settings. Spoofing ?"
 msgstr "Le destinataire n'est pas celui défini dans settings. Spoofing ?"
 
-#: core/views.py:321
+#: core/views.py:322
 msgid "Payment not completed"
 msgstr "Paiement non complet"
 
-#: core/views.py:323 core/views.py:325
+#: core/views.py:324 core/views.py:326
 msgid "Amount altered. Bad guy ?"
 msgstr "Montant modifié. Gros vilain ?"
 
-#: core/views.py:334
+#: core/views.py:335
 msgid "Subscribe"
 msgstr "S'abonner"
 
-#: core/views.py:352 templates/core/unregister.html:15
+#: core/views.py:353 templates/core/unregister.html:15
 msgid "Unregister"
 msgstr "Se désinscrire"
+
+#: core/views.py:357
+msgid "CSRF error"
+msgstr "Erreur CSRF"
+
+#: core/views.py:358
+#, python-format
+msgid "An error occured on %(path)s, reason : %(reason)s"
+msgstr "Une erreur est survenue à %(path)s, raison : %(reason)s"
+
+#: core/views.py:362
+msgid "Error"
+msgstr "Erreur"
 
 #: project/forms.py:8 project/forms.py:30
 msgid "Model"
@@ -1024,6 +1037,36 @@ msgstr "CGVU"
 msgid "powered by <a href=\"%(aemanager_url)s\">aemanager</a>"
 msgstr "propulsé par <a href=\"%(aemanager_url)s\">aemanager</a>"
 
+#: templates/csrf.html:5
+msgid ""
+"<h1>CSRF verification failed. Request aborted.</h1>\n"
+"\n"
+"<p>You are seeing this message because this HTTPS site requires a 'Referer "
+"header' to be sent by your Web browser, but none was sent. This header is "
+"required for security reasons, to ensure that your browser is not being "
+"hijacked by third parties.</p>\n"
+"\n"
+"<p>If you have configured your browser to disable 'Referer' headers, please "
+"re-enable them, at least for this site, or for HTTPS connections, or for "
+"'same-origin' requests.</p>\n"
+"\n"
+"<p><strong>On Firefox, type \"about:config\" in url and search \"referer\", "
+"then modify network.http.sendRefererHeader to 1 or 2.</strong></p>"
+msgstr ""
+"<h1>La vérification CSRF a échoué. La requête a été annulée.</h1>\n"
+"\n"
+"<p>Vous voyez ce message car ce site en HTTPS nécessite l'envoi d'un en-tête 'Referer' "
+"par votre navigateur, mais aucun n'a été envoyé. Cet en-tête "
+"est nécessaire pour des raisons de sécurité, pour s'assurer que votre navigateur "
+"n'a pas été piraté par un tiers.</p>\n"
+"\n"
+"<p>Si vous avez configuré votre navigateur pour désactiver les en-têtes 'Referer', veuillez "
+"les réactiver, au moins pour ce site, ou pour les connexions HTTPS, ou pour "
+"les requêtes 'same-origin'.</p>\n"
+"\n"
+"<p><strong>Sur Firefox, tapez \"about:config\" dans la barre d'adresse et cherchez \"referer\", "
+"puis modifiez network.http.sendRefererHeader à 1 ou 2.</strong></p>"
+
 #: templates/delete.html:7
 #, python-format
 msgid "Are you sure to delete %(object_label)s"
@@ -1046,7 +1089,7 @@ msgstr "Affaires"
 
 #: templates/menu.html:28 templates/menu.html.py:64
 #: templates/expense/list.html:192 templates/invoice/edit.html:103
-#: templates/proposal/edit.html:102
+#: templates/proposal/edit.html:104
 msgid "Add"
 msgstr "Ajouter"
 
@@ -1098,9 +1141,9 @@ msgstr "Dernière modification"
 msgid "No master aggreements"
 msgstr "Aucun contrat-cadre"
 
-#: templates/contact/edit.html:119 templates/contract/edit.html:59
+#: templates/contact/edit.html:119 templates/contract/edit.html:61
 #: templates/core/settings_edit.html:20 templates/invoice/edit.html:109
-#: templates/project/edit.html:23 templates/proposal/edit.html:125
+#: templates/project/edit.html:23 templates/proposal/edit.html:127
 msgid "Save"
 msgstr "Sauvegarder"
 
@@ -1125,7 +1168,7 @@ msgstr "suivant"
 msgid "download pdf file"
 msgstr "télécharger le fichier pdf"
 
-#: templates/contract/edit.html:51 templates/proposal/edit.html:117
+#: templates/contract/edit.html:53 templates/proposal/edit.html:119
 msgid "Keywords you can use"
 msgstr "Mots-clés utilisables"
 
@@ -1349,7 +1392,7 @@ msgid "Exported file"
 msgstr "Fichier exporté"
 
 #: templates/invoice/detail.html:62 templates/invoice/edit.html:95
-#: templates/proposal/detail.html:52 templates/proposal/edit.html:94
+#: templates/proposal/detail.html:52 templates/proposal/edit.html:96
 msgid "Detail rows"
 msgstr "Lignes de détail"
 
