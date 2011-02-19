@@ -243,6 +243,8 @@ def invoice_create_or_edit(request, id=None, customer_id=None):
                 user = request.user
                 invoice = invoiceForm.save(commit=False)
                 invoice.customer = customer
+                if invoice.paid_date:
+                    invoice.state = INVOICE_STATE_PAID
                 invoice.save(user=user)
                 invoiceForm.save_m2m()
                 for invoicerowform in invoicerowformset.forms:

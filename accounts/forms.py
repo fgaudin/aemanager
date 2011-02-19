@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from accounts.models import Expense, Invoice, InvoiceRow
+from accounts.models import Expense, Invoice, InvoiceRow, INVOICE_STATE_PAID
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
@@ -16,6 +16,20 @@ class InvoiceForm(ModelForm):
     class Meta:
         model = Invoice
         exclude = ['owner', 'proposal', 'amount']
+
+    def clean(self):
+        super(InvoiceForm, self).clean()
+        cleaned_data = self.cleaned_data
+        state = cleaned_data.get("state")
+        paid_date = cleaned_data.get("paid_date")
+
+        if state == INVOICE_STATE_PAID and not paid_date:
+            msg = _('This field is required since invoice state is set to "paid".')
+            self._errors["paid_date"] = self.error_class([msg])
+
+            del cleaned_data["paid_date"]
+
+        return cleaned_data
 
 class InvoiceRowForm(ModelForm):
     quantity = forms.DecimalField(max_digits=5, decimal_places=1, label=_('Quantity'), localize=True)

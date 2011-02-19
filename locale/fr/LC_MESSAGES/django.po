@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-19 17:01+0100\n"
+"POT-Creation-Date: 2011-02-19 17:56+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,13 +38,17 @@ msgstr "Montant"
 msgid "Penalty rate"
 msgstr "Taux de pénalité"
 
-#: accounts/forms.py:21 accounts/views.py:448 project/forms.py:39
+#: accounts/forms.py:27
+msgid "This field is required since invoice state is set to \"paid\"."
+msgstr "Ce champ est obligatoire car la facture est à l'état \"payée\"."
+
+#: accounts/forms.py:35 accounts/views.py:450 project/forms.py:39
 #: project/models.py:252 project/views.py:576 templates/invoice/detail.html:72
 #: templates/proposal/detail.html:60
 msgid "Quantity"
 msgstr "Quantité"
 
-#: accounts/forms.py:22 accounts/views.py:448 project/forms.py:40
+#: accounts/forms.py:36 accounts/views.py:450 project/forms.py:40
 #: project/models.py:253 project/views.py:576 templates/invoice/detail.html:73
 #: templates/proposal/detail.html:61
 msgid "Unit price"
@@ -156,7 +160,7 @@ msgstr "Conditions d'escompte"
 msgid "invoice #%d"
 msgstr "facture n°%d"
 
-#: accounts/models.py:171 accounts/views.py:268
+#: accounts/models.py:171 accounts/views.py:270
 msgid "Invoice id must be unique"
 msgstr "Le numéro de facture doit être unique"
 
@@ -221,88 +225,88 @@ msgstr "Éditer une facture"
 msgid "Draw up an invoice"
 msgstr "Etablir une facture"
 
-#: accounts/views.py:261
+#: accounts/views.py:263
 msgid "The invoice has been saved successfully"
 msgstr "La facture a été sauvegardée avec succès"
 
-#: accounts/views.py:265
+#: accounts/views.py:267
 msgid "Amount invoiced for proposal can't be greater than proposal amount"
 msgstr "Le montant facturé ne peut pas dépasser le montant du devis"
 
-#: accounts/views.py:270 contact/views.py:76 core/views.py:231
+#: accounts/views.py:272 contact/views.py:76 core/views.py:231
 #: project/views.py:74 project/views.py:171 project/views.py:382
 msgid "Data provided are invalid"
 msgstr "Les données saisies sont invalides"
 
-#: accounts/views.py:299
+#: accounts/views.py:301
 #, python-format
 msgid "Invoice for %s"
 msgstr "Facture pour %s"
 
-#: accounts/views.py:312
+#: accounts/views.py:314
 msgid "The invoice has been deleted successfully"
 msgstr "La facture a été supprimée avec succès"
 
-#: accounts/views.py:319
+#: accounts/views.py:321
 msgid "Delete an invoice"
 msgstr "Supprimer une facture"
 
-#: accounts/views.py:345
+#: accounts/views.py:347
 #, python-format
 msgid "invoice_%(id)d.pdf"
 msgstr "facture_%(id)d.pdf"
 
-#: accounts/views.py:349
+#: accounts/views.py:351
 #, python-format
 msgid "Invoice #%(invoice_id)d"
 msgstr "Facture #%(invoice_id)d"
 
-#: accounts/views.py:432 project/views.py:560
+#: accounts/views.py:434 project/views.py:560
 #, python-format
 msgid "Date : %s"
 msgstr "Date : %s"
 
-#: accounts/views.py:442
+#: accounts/views.py:444
 #, python-format
 msgid "INVOICE #%d"
 msgstr "FACTURE N°%d"
 
-#: accounts/views.py:448 project/models.py:250 project/views.py:576
+#: accounts/views.py:450 project/models.py:250 project/views.py:576
 #: templates/invoice/detail.html:68 templates/proposal/detail.html:58
 msgid "Label"
 msgstr "Libellé"
 
-#: accounts/views.py:448 project/views.py:576
+#: accounts/views.py:450 project/views.py:576
 #: templates/core/sales_widget.html:38
 msgid "Total"
 msgstr "Total"
 
-#: accounts/views.py:487
+#: accounts/views.py:489
 #, python-format
 msgid "Payment date : %s"
 msgstr "Date de paiement : %s"
 
-#: accounts/views.py:488
+#: accounts/views.py:490
 #, python-format
 msgid "Penalty begins on : %s"
 msgstr "Pénalité à compter du : %s"
 
-#: accounts/views.py:489
+#: accounts/views.py:491
 #, python-format
 msgid "Penalty rate : %s"
 msgstr "Taux de pénalité : %s"
 
-#: accounts/views.py:490
+#: accounts/views.py:492
 #, python-format
 msgid "Discount conditions : %s"
 msgstr "Conditions d'escompte : %s"
 
-#: accounts/views.py:492 project/views.py:615
+#: accounts/views.py:494 project/views.py:615
 #, python-format
 msgid "TOTAL excl. VAT : %(amount)s %(currency)s"
 msgstr "TOTAL HT : %(amount)s %(currency)s"
 
-#: accounts/views.py:497 project/views.py:620
+#: accounts/views.py:499 project/views.py:620
 #, python-format
 msgid "Execution dates : %(begin_date)s to %(end_date)s"
 msgstr "Date d'exécution : %(begin_date)s au %(end_date)s"
