@@ -129,6 +129,7 @@ LOGOUT_URL = '/user/logout/'
 LOGIN_REDIRECT_URL = '/'
 ACCOUNT_ACTIVATION_DAYS = 7
 CSRF_FAILURE_VIEW = 'core.views.csrf_failure'
+SESSION_COOKIE_SECURE = True
 
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 1025
