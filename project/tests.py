@@ -778,7 +778,7 @@ class ProposalTest(TestCase):
         content = response.content.split("\n")
         invariant_content = content[0:66] + content[67:109] + content[110:-1]
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
-                          "8ce16f70ddc814e4958dd6a6fe7d3d74")
+                          "2d84fde5a31d5c5f89c4079a29410d24")
 
     def testContractDownloadPdf(self):
         """

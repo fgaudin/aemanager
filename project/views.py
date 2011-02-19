@@ -521,6 +521,7 @@ def proposal_download(request, id):
     customer_header_content = """
     %s<br/>
     %s<br/>
+    SIRET : %s<br/>
     %s<br/>
     %s %s<br/>
     %s<br/>
@@ -536,6 +537,7 @@ def proposal_download(request, id):
                 '',
                 Paragraph(customer_header_content % (proposal.project.customer.name,
                                                      proposal.project.customer.legal_form,
+                                                     proposal.project.customer.company_id,
                                                      proposal.project.customer.address.street.replace("\n", "<br/>"),
                                                      proposal.project.customer.address.zipcode,
                                                      proposal.project.customer.address.city,

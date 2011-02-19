@@ -2,7 +2,7 @@ from django.test import TestCase
 from contact.models import Contact, CONTACT_TYPE_PERSON, Address
 from django.core.urlresolvers import reverse
 
-class ExpensePermissionTest(TestCase):
+class ContactPermissionTest(TestCase):
     fixtures = ['test_users']
 
     def setUp(self):
@@ -56,3 +56,36 @@ class ExpensePermissionTest(TestCase):
         response = self.client.post(reverse("contact_edit", kwargs={'id': self.contact2.id}),
                                     {'name': 'test modify'})
         self.assertEquals(response.status_code, 404)
+
+class ContactTest(TestCase):
+    fixtures = ['test_users']
+
+    def setUp(self):
+        self.client.login(username='test', password='test')
+
+    def testBug95(self):
+        """
+        Company id is mandatory for company contact
+        """
+        response = self.client.post(reverse('contact_add'),
+                                    {'contact-name': 'Customer',
+                                     'contact-contact_type': '2',
+                                     'contact-company_id':'',
+                                     'phonenumber_set-TOTAL_FORMS': '1',
+                                     'phonenumber_set-INITIAL_FORMS': '0',
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75000',
+                                     'address-city': 'Paris'})
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(len(response.context['contactForm'].errors), 1)
+
+        response = self.client.post(reverse('contact_add'),
+                                    {'contact-name': 'Customer',
+                                     'contact-contact_type': '1',
+                                     'contact-company_id':'',
+                                     'phonenumber_set-TOTAL_FORMS': '1',
+                                     'phonenumber_set-INITIAL_FORMS': '0',
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75000',
+                                     'address-city': 'Paris'})
+        self.assertEquals(response.status_code, 302)

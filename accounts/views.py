@@ -393,6 +393,7 @@ def invoice_download(request, id):
     customer_header_content = """
     %s<br/>
     %s<br/>
+    SIRET : %s<br/>
     %s<br/>
     %s %s<br/>
     %s<br/>
@@ -408,6 +409,7 @@ def invoice_download(request, id):
                 '',
                 Paragraph(customer_header_content % (invoice.customer.name,
                                                      invoice.customer.legal_form,
+                                                     invoice.customer.company_id,
                                                      invoice.customer.address.street.replace("\n", "<br/>"),
                                                      invoice.customer.address.zipcode,
                                                      invoice.customer.address.city,

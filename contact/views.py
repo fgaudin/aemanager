@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.template.context import RequestContext
 from contact.forms import ContactForm, AddressForm, PhoneNumberForm, \
     ContactSearchForm
-from contact.models import Contact, PhoneNumber
+from contact.models import Contact, PhoneNumber, CONTACT_TYPE_PERSON
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db.transaction import commit_on_success
@@ -53,7 +53,9 @@ def contact_create_or_edit(request, id=None):
         contactForm.fields['contacts'].queryset = contacts
         addressForm = AddressForm(request.POST, instance=address, prefix="address")
         phonenumberformset = PhoneNumberFormSet(request.POST, instance=contact)
-
+        # company id is not required if contact is a person
+        if int(request.POST.get('contact-contact_type', 0)) == CONTACT_TYPE_PERSON:
+            contactForm.fields['company_id'].required = False
         if contactForm.is_valid() and addressForm.is_valid() and phonenumberformset.is_valid():
             user = request.user
             address = addressForm.save(commit=False)
