@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-18 21:02+0100\n"
+"POT-Creation-Date: 2011-02-19 13:56+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -312,8 +312,9 @@ msgstr "Date d'exécution : %(begin_date)s au %(end_date)s"
 msgid ""
 "Your subscription has expired. You need to subscribe again to keep using "
 "%(site_name)s"
-msgstr "Votre abonnement a expiré. Vous devez vous réabonner pour continuer "
-"à utiliser %(site_name)s"
+msgstr ""
+"Votre abonnement a expiré. Vous devez vous réabonner pour continuer à "
+"utiliser %(site_name)s"
 
 #: autoentrepreneur/forms.py:8 autoentrepreneur/models.py:65
 msgid "Company name"
@@ -717,9 +718,10 @@ msgid "Your password has been modified successfully"
 msgstr "Votre mot de passe a été sauvegardé avec succès"
 
 #: core/views.py:34
-msgid "How-to : create a contact, a project, a proposal and finally an invoice"
+msgid ""
+"How-to : create a customer, a project, a proposal and finally an invoice"
 msgstr ""
-"Mode d'emploi : créer un contact, un projet, un devis et finalement une "
+"Mode d'emploi : créer un client, un projet, un devis et finalement une "
 "facture"
 
 #: core/views.py:200 templates/menu.html:9 templates/core/index.html:3
@@ -1134,8 +1136,8 @@ msgid "Accounts"
 msgstr "Comptes"
 
 #: templates/menu.html:55
-msgid "Contacts"
-msgstr "Contacts"
+msgid "Customers"
+msgstr "Clients"
 
 #: templates/menu.html:61 templates/contact/search.html:10
 #: templates/project/list.html:10
@@ -1612,3 +1614,6 @@ msgstr ""
 #: templates/registration/registration_form.html:31
 msgid "Register"
 msgstr "S'enregistrer"
+
+#~ msgid "Contacts"
+#~ msgstr "Contacts"

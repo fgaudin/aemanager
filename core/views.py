@@ -31,7 +31,7 @@ def index(request):
     profile = user.get_profile()
 
     if not Proposal.objects.filter(owner=user).count():
-        messages.info(request, _('How-to : create a contact, a project, a proposal and finally an invoice'))
+        messages.info(request, _('How-to : create a customer, a project, a proposal and finally an invoice'))
 
     today = datetime.date.today()
     one_year_back = datetime.date(today.year - 1, today.month, today.day)

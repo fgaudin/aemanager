@@ -112,16 +112,21 @@ class SubscriptionTest(TestCase):
         self.assertTrue(profile.is_allowed())
 
     def testNextDateBeforeExpiration(self):
-        # do not run this test on February 29
         user = User.objects.get(pk=1)
         profile = user.get_profile()
+        expiration_date = datetime.date.today() + datetime.timedelta(10)
         Subscription.objects.create(owner=user,
                                     state=SUBSCRIPTION_STATE_TRIAL,
-                                    expiration_date=datetime.date.today() + datetime.timedelta(10),
+                                    expiration_date=expiration_date,
                                     transaction_id='XXX')
 
         next_date = profile.get_next_expiration_date()
-        self.assertEquals(next_date, datetime.date.today() + datetime.timedelta(375))
+        try:
+            computed_next_date = datetime.date(expiration_date.year + 1, expiration_date.month, expiration_date.day)
+        except:
+            # case of February 29th
+            computed_next_date = datetime.date(expiration_date.year + 1, 3, 1)
+        self.assertEquals(next_date, computed_next_date)
 
     def testNextDateAfterExpiration(self):
         # do not run this test on February 29
@@ -148,12 +153,12 @@ class SubscriptionTest(TestCase):
         self.assertEquals(next_date, datetime.date.today() + datetime.timedelta(365))
 
     def testNextDateWhenPaymentFailsWithRunningSubscription(self):
-        # do not run this test on February 29
         user = User.objects.get(pk=1)
         profile = user.get_profile()
+        expiration_date = datetime.date.today() + datetime.timedelta(10)
         Subscription.objects.create(owner=user,
                                     state=SUBSCRIPTION_STATE_TRIAL,
-                                    expiration_date=datetime.date.today() + datetime.timedelta(10),
+                                    expiration_date=expiration_date,
                                     transaction_id='XXX')
 
         Subscription.objects.create(owner=user,
@@ -162,7 +167,13 @@ class SubscriptionTest(TestCase):
                                     transaction_id='XXY')
 
         next_date = profile.get_next_expiration_date()
-        self.assertEquals(next_date, datetime.date.today() + datetime.timedelta(375))
+
+        try:
+            computed_next_date = datetime.date(expiration_date.year + 1, expiration_date.month, expiration_date.day)
+        except:
+            # case of February 29th
+            computed_next_date = datetime.date(expiration_date.year + 1, 3, 1)
+        self.assertEquals(next_date, computed_next_date)
 
     def testTransactionIdIsUnique(self):
         user = User.objects.get(pk=1)

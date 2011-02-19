@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-18 21:02+0100\n"
+"POT-Creation-Date: 2011-02-19 13:56+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -706,7 +706,8 @@ msgid "Your password has been modified successfully"
 msgstr ""
 
 #: core/views.py:34
-msgid "How-to : create a contact, a project, a proposal and finally an invoice"
+msgid ""
+"How-to : create a customer, a project, a proposal and finally an invoice"
 msgstr ""
 
 #: core/views.py:200 templates/menu.html:9 templates/core/index.html:3
@@ -1107,7 +1108,7 @@ msgid "Accounts"
 msgstr ""
 
 #: templates/menu.html:55
-msgid "Contacts"
+msgid "Customers"
 msgstr ""
 
 #: templates/menu.html:61 templates/contact/search.html:10
