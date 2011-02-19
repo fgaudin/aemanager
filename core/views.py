@@ -358,9 +358,17 @@ def unregister(request):
                               context_instance=RequestContext(request))
 
 def csrf_failure(request, reason=""):
+    email = "unknown"
+    if request.user.is_authenticated():
+        email = request.user.email
+    else:
+        if request.method == 'POST':
+            email = request.POST.get('email', 'unknown')
+
     subject = _('CSRF error')
-    message = _("An error occured on %(path)s, reason : %(reason)s") % {'path': request.path,
-                                                                        'reason': reason}
+    message = _("An error occured for %(email)s on %(path)s, reason : %(reason)s") % {'email': email,
+                                                                                      'path': request.path,
+                                                                                      'reason': reason}
     mail_admins(subject, message)
     return render_to_response('csrf.html',
                               {'title': _('Error')},
