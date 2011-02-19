@@ -239,6 +239,10 @@ a .menu-right {
     width: 15em;
 }
 
+.inline-form {
+    display: inline;
+}
+
 form .aligned p, form .aligned ul {
     margin: 0 0 0 15em;
 }
