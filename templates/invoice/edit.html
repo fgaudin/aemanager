@@ -58,7 +58,7 @@ jQuery(document).ready(function(){
         });
 
         jQuery('input:text', new_row).labelInside();
-        jQuery('.proposal-field', new_row).proposalOverview('{% trans "proposal" %}', '{% url proposal_detail id=0 %}');
+        jQuery('.proposal-field', new_row).proposalOverview('{% trans "Proposal" %}', '{% url proposal_detail id=0 %}');
         jQuery('.balance_payments_label', new_row).rowHelp();
 
         jQuery(new_row).show();

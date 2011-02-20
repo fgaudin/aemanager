@@ -257,11 +257,13 @@ def invoice_create_or_edit(request, id=None, customer_id=None):
                 for deleted_invoicerowform in invoicerowformset.deleted_forms:
                     deleted_invoicerowform.cleaned_data['ownedobject_ptr'].delete()
 
+                invoice.check_amounts()
+
                 messages.success(request, _('The invoice has been saved successfully'))
                 return redirect(reverse('invoice_detail', kwargs={'id': invoice.id}))
             except InvoiceRowAmountError:
                 transaction.rollback()
-                messages.error(request, _("Amount invoiced for proposal can't be greater than proposal amount"))
+                messages.error(request, _("Amounts invoiced can't be greater than proposals remaining amounts"))
             except InvoiceIdNotUniqueError:
                 transaction.rollback()
                 invoiceForm._errors["invoice_id"] = invoiceForm.error_class([_("Invoice id must be unique")])

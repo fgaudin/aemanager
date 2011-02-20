@@ -171,11 +171,16 @@ class Invoice(OwnedObject):
             raise InvoiceIdNotUniqueError(ugettext("Invoice id must be unique"))
         super(Invoice, self).save(force_insert, force_update, using, user)
 
-    def toPdf(self):
-        """
-        Generate a PDF file for the invoice
-        """
-        pass
+    def check_amounts(self):
+        proposals = Proposal.objects.filter(invoice_rows__invoice=self).distinct()
+        for proposal in proposals:
+            remaining_amount = proposal.get_remaining_to_invoice(exclude_invoice=self)
+            rows_amount = InvoiceRow.objects.filter(invoice=self,
+                                                    proposal=proposal).aggregate(amount=Sum('amount'))['amount'] or 0
+            if float(remaining_amount) < float(rows_amount):
+                raise InvoiceRowAmountError(ugettext("Amounts invoiced can't be greater than proposals remaining amounts"))
+
+        return True
 
 class InvoiceRowAmountError(Exception):
     pass
@@ -185,20 +190,7 @@ class InvoiceRow(Row):
     proposal = models.ForeignKey(Proposal, related_name="invoice_rows", verbose_name=_('Proposal'))
     balance_payments = models.BooleanField(verbose_name=_('Balance payments for the proposal'), help_text=_('"Balancing payments for the proposal" means there will be no future invoices for the selected proposal. Thus the amount remaining to invoice for this proposal will fall to zero and its state will be set to "balanced" when all invoices are paid.'))
 
-    def isAmountValid(self):
-        invoicerows = InvoiceRow.objects.filter(proposal=self.proposal)
-        if self.id:
-            invoicerows = invoicerows.exclude(id=self.id)
-        invoicerow_sum = float(invoicerows.aggregate(sum=Sum('amount'))['sum'] or 0)
-        invoicerow_amount = float(self.unit_price) * float(self.quantity)
-        if float(self.proposal.amount) < (invoicerow_sum + invoicerow_amount):
-            return False
-
-        return True
-
     def save(self, force_insert=False, force_update=False, using=None, user=None):
-        if not self.isAmountValid():
-            raise InvoiceRowAmountError(ugettext("Sum of invoice row amount can't exceed proposal amount"))
         super(InvoiceRow, self).save(force_insert, force_update, using, user)
 
 def update_invoice_amount(sender, instance, created=None, **kwargs):

@@ -1,15 +1,17 @@
+from decimal import Decimal
+import datetime
+import hashlib
 from django.core.urlresolvers import reverse
 from django.test import TestCase
-from project.models import Proposal, PROPOSAL_STATE_DRAFT, ROW_CATEGORY_SERVICE, \
-    ROW_CATEGORY_PRODUCT, PROPOSAL_STATE_BALANCED, PROPOSAL_STATE_ACCEPTED
-from accounts.models import INVOICE_STATE_EDITED, Invoice, InvoiceRow, \
-    INVOICE_STATE_SENT, InvoiceRowAmountError, PAYMENT_TYPE_CHECK, \
-    PAYMENT_TYPE_CASH, Expense, INVOICE_STATE_PAID
 from django.contrib.auth.models import User
 from django.utils import simplejson
 from django.utils.formats import localize
-import datetime
-import hashlib
+from project.models import Proposal, PROPOSAL_STATE_DRAFT, ROW_CATEGORY_SERVICE, \
+    ROW_CATEGORY_PRODUCT, PROPOSAL_STATE_BALANCED, PROPOSAL_STATE_ACCEPTED, \
+    ProposalRow
+from accounts.models import INVOICE_STATE_EDITED, Invoice, InvoiceRow, \
+    INVOICE_STATE_SENT, InvoiceRowAmountError, PAYMENT_TYPE_CHECK, \
+    PAYMENT_TYPE_CASH, Expense, INVOICE_STATE_PAID
 
 class ExpensePermissionTest(TestCase):
     fixtures = ['test_users']
@@ -524,7 +526,7 @@ class InvoiceTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['invoice'], i)
 
-    def testAmountLTEProposal(self):
+    def testAmountGTEProposal(self):
         i = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
                                    invoice_id=1,
                                    state=INVOICE_STATE_EDITED,
@@ -572,8 +574,9 @@ class InvoiceTest(TestCase):
                                            owner_id=1)
 
         user = User.objects.get(pk=1)
-        i2_row.unit_price = 100.6
-        self.assertRaises(InvoiceRowAmountError, i2_row.save, user=user)
+        i2_row.unit_price = Decimal('100.6')
+        i2_row.save(user=user)
+        self.assertRaises(InvoiceRowAmountError, i2.check_amounts)
 
         response = self.client.post(reverse('invoice_edit', kwargs={'id': i.id}),
                                     {'invoice-invoice_id': 1,
@@ -598,7 +601,7 @@ class InvoiceTest(TestCase):
                                      'invoice_rows-0-unit_price': 100.6 })
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Amount invoiced for proposal can&#39;t be greater than proposal amount")
+        self.assertContains(response, "Amounts invoiced can&#39;t be greater than proposals remaining amounts")
 
     def testInvoiceIdIsUnique(self):
         """
@@ -961,6 +964,65 @@ class InvoiceTest(TestCase):
                                      })
         self.assertEquals(response.status_code, 302)
         self.assertEquals(Invoice.objects.get(pk=i.id).state, INVOICE_STATE_PAID)
+
+    def testBug96(self):
+        """
+        Negative value raise exception if a positive row
+        is greater than proposal amount
+        """
+        p = Proposal.objects.create(project_id=30,
+                                    update_date=datetime.date.today(),
+                                    state=PROPOSAL_STATE_ACCEPTED,
+                                    begin_date=datetime.date(2010, 8, 1),
+                                    end_date=datetime.date(2010, 8, 15),
+                                    contract_content='Content of contract',
+                                    amount=1100,
+                                    owner_id=1)
+
+        p_row = ProposalRow.objects.create(proposal_id=p.id,
+                                           label='Day of work',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           quantity=12,
+                                           unit_price='100',
+                                           owner_id=1)
+        p_row2 = ProposalRow.objects.create(proposal_id=p.id,
+                                            label='Discount',
+                                            category=ROW_CATEGORY_SERVICE,
+                                            quantity= -1,
+                                            unit_price='100',
+                                            owner_id=1)
+
+        response = self.client.post(reverse('invoice_add', kwargs={'customer_id': p.project.customer.id}),
+                                    {'invoice-invoice_id': 1,
+                                     'invoice-state': INVOICE_STATE_EDITED,
+                                     'invoice-edition_date': '2010-8-31',
+                                     'invoice-payment_date': '2010-9-30',
+                                     'invoice-paid_date': '2010-10-30',
+                                     'invoice-payment_type': PAYMENT_TYPE_CHECK,
+                                     'invoice-execution_begin_date': '2010-8-1',
+                                     'invoice-execution_end_date': '2010-8-7',
+                                     'invoice-penalty_date': '2010-10-8',
+                                     'invoice-penalty_rate': 1.5,
+                                     'invoice-discount_conditions':'Nothing',
+                                     'invoice_rows-TOTAL_FORMS': 2,
+                                     'invoice_rows-INITIAL_FORMS': 0,
+                                     'invoice_rows-0-ownedobject_ptr': '',
+                                     'invoice_rows-0-label': 'Day of work',
+                                     'invoice_rows-0-proposal': p.id,
+                                     'invoice_rows-0-category': ROW_CATEGORY_SERVICE,
+                                     'invoice_rows-0-quantity': 12,
+                                     'invoice_rows-0-unit_price': 100,
+                                     'invoice_rows-0-balance_payments': True,
+                                     'invoice_rows-1-ownedobject_ptr': '',
+                                     'invoice_rows-1-label': 'Discount',
+                                     'invoice_rows-1-proposal': p.id,
+                                     'invoice_rows-1-category': ROW_CATEGORY_SERVICE,
+                                     'invoice_rows-1-quantity':-1,
+                                     'invoice_rows-1-unit_price': 100,
+                                     'invoice_rows-1-balance_payments': True })
+
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals(Invoice.objects.get(invoice_id=1).amount, 1100)
 
 class ExpenseTest(TestCase):
     fixtures = ['test_users', ]
