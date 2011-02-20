@@ -13,7 +13,7 @@ from django.db.transaction import commit_on_success
 from contact.models import Contact
 from django.forms.models import inlineformset_factory
 from project.models import Proposal, PROPOSAL_STATE_BALANCED, \
-    PROPOSAL_STATE_ACCEPTED
+    PROPOSAL_STATE_ACCEPTED, PROPOSAL_STATE_DRAFT
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db import transaction
@@ -209,7 +209,7 @@ def invoice_list_export(request):
 @settings_required
 @subscription_required
 @commit_on_success
-def invoice_create_or_edit(request, id=None, customer_id=None):
+def invoice_create_or_edit(request, id=None, customer_id=None, proposal_id=None):
     if id:
         title = _('Edit an invoice')
         invoice = get_object_or_404(Invoice, pk=id, owner=request.user)
@@ -218,6 +218,14 @@ def invoice_create_or_edit(request, id=None, customer_id=None):
         title = _('Draw up an invoice')
         invoice = None
         customer = get_object_or_404(Contact, pk=customer_id, owner=request.user)
+
+    proposal = None
+    if proposal_id:
+        proposal = get_object_or_404(Proposal,
+                                     pk=proposal_id,
+                                     project__customer=customer,
+                                     owner=request.user,
+                                     state__in=[PROPOSAL_STATE_ACCEPTED])
 
     InvoiceRowFormSet = inlineformset_factory(Invoice,
                                               InvoiceRow,
@@ -276,17 +284,40 @@ def invoice_create_or_edit(request, id=None, customer_id=None):
         if not invoice:
             initial_data = {'invoice_id': (max_invoice_id['invoice_id'] or 0) + 1,
                             'edition_date': datetime.datetime.now()}
+            if proposal:
+                initial_data['execution_begin_date'] = proposal.begin_date
+                initial_data['execution_end_date'] = proposal.end_date
+
         invoiceForm = InvoiceForm(instance=invoice,
                                   prefix="invoice",
                                   initial=initial_data)
+
+        initial_row_data = None
+        if proposal:
+            initial_row_data = []
+            for proposal_row in proposal.proposal_rows.all():
+                initial_row_data.append({'label': proposal_row.label,
+                                         'proposal': proposal,
+                                         'balance_payments': True,
+                                         'category': proposal_row.category,
+                                         'quantity': proposal_row.quantity,
+                                         'unit_price': proposal_row.unit_price})
+            InvoiceRowFormSet.extra = len(initial_row_data) + 1
+
         invoicerowformset = InvoiceRowFormSet(instance=invoice)
+        i = 0
         for invoicerowform in invoicerowformset.forms:
             invoicerowform.fields['proposal'].queryset = proposals
+            # for all rows except last
+            if i < InvoiceRowFormSet.extra - 1:
+                invoicerowform.initial = initial_row_data[i]
+                i = i + 1
 
 
     return render_to_response('invoice/edit.html',
                               {'active': 'accounts',
                                'title': title,
+                               'from_proposal': proposal,
                                'invoiceForm': invoiceForm,
                                'invoicerowformset': invoicerowformset},
                                context_instance=RequestContext(request))

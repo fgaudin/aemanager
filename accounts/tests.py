@@ -142,6 +142,13 @@ class InvoicePermissionTest(TestCase):
         """
         pass
 
+    def testInvoiceAddFromProposal(self):
+        self.proposal2.state = PROPOSAL_STATE_ACCEPTED
+        self.proposal2.save()
+        response = self.client.get(reverse('invoice_add_from_proposal', kwargs={'customer_id': self.proposal1.project.customer.id,
+                                                                                'proposal_id': self.proposal2.id}))
+        self.assertEqual(response.status_code, 404)
+
     def testInvoiceEdit(self):
         response = self.client.get(reverse('invoice_edit', kwargs={'id': self.invoice2.id}))
         self.assertEqual(response.status_code, 404)
@@ -316,6 +323,41 @@ class InvoiceTest(TestCase):
                                                      quantity=10,
                                                      unit_price='100')
         self.assertEqual(len(invoice_rows), 1)
+
+    def testGetAddFromProposal(self):
+        """
+        Tests getting Add invoice from proposal page
+        """
+        p_row = ProposalRow.objects.create(proposal_id=self.proposal.id,
+                                           label='Day of work',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           quantity=12,
+                                           unit_price='100',
+                                           owner_id=1)
+        p_row2 = ProposalRow.objects.create(proposal_id=self.proposal.id,
+                                            label='Discount',
+                                            category=ROW_CATEGORY_SERVICE,
+                                            quantity=3,
+                                            unit_price='150',
+                                            owner_id=1)
+
+        response = self.client.get(reverse('invoice_add_from_proposal', kwargs={'customer_id': self.proposal.project.customer_id,
+                                                                                'proposal_id': self.proposal.id}))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['invoiceForm'].initial['execution_begin_date'], datetime.date(2010, 8, 1))
+        self.assertEqual(response.context['invoiceForm'].initial['execution_end_date'], datetime.date(2010, 8, 15))
+        self.assertEqual(response.context['invoicerowformset'].forms[0].initial, {'category': 1,
+                                                                                 'balance_payments': True,
+                                                                                 'unit_price': Decimal('150.00'),
+                                                                                 'label': u'Discount',
+                                                                                 'proposal': self.proposal,
+                                                                                 'quantity': Decimal('3.0')})
+        self.assertEqual(response.context['invoicerowformset'].forms[1].initial, {'category': 1,
+                                                                                 'balance_payments': True,
+                                                                                 'unit_price': Decimal('100.00'),
+                                                                                 'label': u'Day of work',
+                                                                                 'proposal': self.proposal,
+                                                                                 'quantity': Decimal('12.0')})
 
     def testGetEdit(self):
         """

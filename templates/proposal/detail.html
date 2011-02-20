@@ -79,6 +79,7 @@
 <div>{% trans "No rows" %}</div>
 {% endif %}
 
+{% if proposal.can_be_converted_to_invoice %}<div class="context-menu"><a href="{% url invoice_add_from_proposal customer_id=proposal.project.customer.id proposal_id=proposal.id %}">{% trans "Convert proposal to invoice" %}</a></div>{% endif %}
 <h1>{% trans "Invoices" %}</h1>
 {% if invoices %}
 <div class="search-list">

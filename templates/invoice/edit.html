@@ -68,6 +68,10 @@ jQuery(document).ready(function(){
 
     jQuery('.delete-checkbox').hide()
     activate_delete();
+
+    {% if from_proposal %}
+    jQuery('.proposal-field:first').change();
+    {% endif %}
 });
 </script>
 {% endblock %}

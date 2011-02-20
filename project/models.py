@@ -158,6 +158,9 @@ class Proposal(OwnedObject):
     def is_accepted(self):
         return self.state == PROPOSAL_STATE_ACCEPTED or self.state == PROPOSAL_STATE_BALANCED
 
+    def can_be_converted_to_invoice(self):
+        return self.state == PROPOSAL_STATE_ACCEPTED and self.get_remaining_to_invoice() > 0
+
     def get_next_states(self):
         if self.state == PROPOSAL_STATE_DRAFT:
             return (PROPOSAL_STATE[PROPOSAL_STATE_SENT - 1],)
