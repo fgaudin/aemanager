@@ -65,7 +65,6 @@ def expense_list(request):
 
 @settings_required
 @subscription_required
-@csrf_exempt
 @commit_on_success
 def expense_add(request):
     response = {'error': 'ko'}
@@ -93,7 +92,6 @@ def expense_add(request):
 
 @settings_required
 @subscription_required
-@csrf_exempt
 @commit_on_success
 def expense_edit(request):
     id = request.GET.get('id')
@@ -122,7 +120,6 @@ def expense_edit(request):
 
 @settings_required
 @subscription_required
-@csrf_exempt
 @commit_on_success
 def expense_delete(request):
     response = {'error': 'ko'}

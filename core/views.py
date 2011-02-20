@@ -370,7 +370,9 @@ def csrf_failure(request, reason=""):
                                                                                       'path': request.path,
                                                                                       'reason': reason}
     mail_admins(subject, message)
-    return render_to_response('csrf.html',
-                              {'title': _('Error')},
-                              context_instance=RequestContext(request))
+    response = render_to_response('csrf.html',
+                                  {'title': _('Error')},
+                                  context_instance=RequestContext(request))
+    response.status_code = 403
+    return response
 

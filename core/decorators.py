@@ -4,6 +4,8 @@ from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
+from django.utils.functional import wraps
+from django.utils.decorators import available_attrs
 
 def settings_required(view_func, redirect_field_name=REDIRECT_FIELD_NAME):
     """
@@ -15,4 +17,4 @@ def settings_required(view_func, redirect_field_name=REDIRECT_FIELD_NAME):
             return view_func(request, *args, **kwargs)
         messages.info(request, _('You need to fill these informations to continue'))
         return HttpResponseRedirect(reverse('settings_edit'))
-    return login_required(decorator, redirect_field_name=redirect_field_name)
+    return login_required(wraps(view_func, assigned=available_attrs(view_func))(decorator), redirect_field_name=redirect_field_name)

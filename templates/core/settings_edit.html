@@ -5,6 +5,12 @@
 <form action="" method="post">
     {% csrf_token %}
     <fieldset class="module aligned">
+    {% with user as object %}{% with "username" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}{% endwith %}
+    {% with user as object %}{% with "email" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}{% endwith %}
     {% with userform as form %}
     {% include "form.html" %}
     {% endwith %}

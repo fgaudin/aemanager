@@ -64,7 +64,8 @@
                                  "reference": reference,
                                  "amount": amount,
                                  "payment_type": payment_type,
-                                 "description": description },
+                                 "description": description,
+                                 "csrfmiddlewaretoken": '{{ csrf_token }}'},
                                 function(data){
                                     if(data.error == 'ok') {
                                         row = jQuery('#' + data.id);
@@ -96,7 +97,8 @@
                 if (window.confirm('{% trans "Are you sure to want to delete this row" %}')) {
                     expense_id = jQuery(e.target).parents('tr').attr('id');
                     jQuery.post("{% url expense_delete %}",
-                                {"id": expense_id},
+                                {"id": expense_id,
+                                 "csrfmiddlewaretoken": '{{ csrf_token }}'},
                                 function(data){
                                     if(data.error == 'ok') {
                                         jQuery('tr#'+data.id).remove();
@@ -137,7 +139,8 @@ jQuery(document).ready(function(){
                      "reference": reference,
                      "amount": amount,
                      "payment_type": payment_type,
-                     "description": description },
+                     "description": description,
+                     "csrfmiddlewaretoken": '{{ csrf_token }}'},
                     function(data){
                         if(data.error == 'ok') {
                             row = jQuery('#add-row').clone();
