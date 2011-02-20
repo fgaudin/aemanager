@@ -44,9 +44,9 @@
           $this.change(function(){
               var id = jQuery(this).val();
               if (id) {
-                  url = url.replace('0',id) + '?ajax=true';
+                  var get_url = url.replace('0',id) + '?ajax=true';
                   var offset = jQuery(this).offset();
-                  $.get(url, function(data){
+                  $.get(get_url, function(data){
                       $(data).dialog({
                           width: 450,
                           position: [offset.left+100, offset.top-550],
