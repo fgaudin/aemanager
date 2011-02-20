@@ -10,7 +10,7 @@
 <script src="{{ MEDIA_URL }}js/elrte-1.2/js/elrte.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="{{ MEDIA_URL }}js/elrte-1.2/js/i18n/elrte.fr.js" type="text/javascript" charset="utf-8"></script>
 <script src="{{ MEDIA_URL }}js/wysiwyg_editor.js" type="text/javascript" charset="utf-8"></script>
-<script src="{{ MEDIA_URL }}js/empty_label.js" type="text/javascript" charset="utf-8"></script>
+<script src="{{ MEDIA_URL }}js/rows.js" type="text/javascript" charset="utf-8"></script>
 
 <script type="text/javascript">
 jQuery(document).ready(function(){
@@ -24,7 +24,7 @@ jQuery(document).ready(function(){
         }
     });
 
-    jQuery('.proposal-row input:text').bindRowEvents();
+    jQuery('.proposal-row input:text').labelInside();
 
     jQuery('#proposal-edit-form').submit(function() {
         jQuery('.proposal-row input.empty-field:text').val('');
@@ -69,7 +69,7 @@ jQuery(document).ready(function(){
             jQuery(this).attr('id',jQuery(this).attr('id').replace(/(proposal_rows-)[0-9]+/,'$1' + row_count));
         });
 
-        jQuery('input:text', new_row).bindRowEvents();
+        jQuery('input:text', new_row).labelInside();
 
         jQuery(new_row).show();
         jQuery('#id_proposal_rows-TOTAL_FORMS').val(parseInt(jQuery('#id_proposal_rows-TOTAL_FORMS').val(), 10) + 1);

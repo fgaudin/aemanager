@@ -1,0 +1,49 @@
+{% load i18n %}
+{% load modeltags %}
+{% load arithmetictags %}
+{% load htmltags %}
+
+<div>
+    <fieldset class="module aligned">
+        {% with proposal as object %}{% with "reference" as name %}
+        {% include "detail_field.html" %}
+        {% endwith %}{% endwith %}
+        {% with proposal as object %}{% with "begin_date" as name %}
+        {% include "detail_field.html" %}
+        {% endwith %}{% endwith %}
+        {% with proposal as object %}{% with "end_date" as name %}
+        {% include "detail_field.html" %}
+        {% endwith %}{% endwith %}
+        <div class="detail-row">
+          <div><label>{% trans "Remaining to invoice" %} :</label> {{ proposal.get_remaining_to_invoice }}</div>
+        </div>
+    </fieldset>
+    {% if proposal.proposal_rows.all %}
+    <div class="search-list">
+        <table>
+            <thead>
+                <tr>
+                    <th>{% trans "Label" %}</th>
+                    <th>{% trans "Category" %}</th>
+                    <th>{% trans "Quantity" %}</th>
+                    <th>{% trans "Unit price" %}</th>
+                    <th>{% trans "Total price" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for proposalrow in proposal.proposal_rows.all %}
+               <tr class="{% cycle 'row1' 'row2' %}">
+                    <td>{{ proposalrow.label }}</td>
+                    <td>{{ proposalrow.get_category_display }}</td>
+                    <td>{{ proposalrow.quantity }}</td>
+                    <td>{{ proposalrow.unit_price }}</td>
+                    <td>{{ proposalrow.unit_price|multiply:proposalrow.quantity }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div>{% trans "No rows" %}</div>
+    {% endif %}
+</div>

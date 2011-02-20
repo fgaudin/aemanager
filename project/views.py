@@ -405,8 +405,10 @@ def proposal_detail(request, id):
     proposal = get_object_or_404(Proposal, pk=id, owner=request.user)
     invoices = Invoice.objects.filter(invoice_rows__proposal=proposal).distinct()
     next_states = proposal.get_next_states()
-
-    return render_to_response('proposal/detail.html',
+    template = 'proposal/detail.html'
+    if request.GET.get('ajax', False):
+        template = 'proposal/detail_ajax.html'
+    return render_to_response(template,
                               {'active': 'business',
                                'title': _('Proposal for %s') % (proposal.project),
                                'proposal': proposal,
