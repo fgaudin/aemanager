@@ -18,6 +18,12 @@ ISSUE_STATE_CLOSED = 2
 ISSUE_STATE = ((ISSUE_STATE_OPEN, _('Open')),
                (ISSUE_STATE_CLOSED, _('Closed')))
 
+class IssueManager(models.Manager):
+    def unread_messages(self, user):
+        return self.filter(category__in=[ISSUE_CATEGORY_SUBSCRIPTION, ISSUE_CATEGORY_MESSAGE],
+                           owner=user,
+                           state=ISSUE_STATE_OPEN).count()
+
 class Issue(models.Model):
     owner = models.ForeignKey(User, verbose_name=_('User'), null=True)
     category = models.IntegerField(verbose_name=_('Category'), choices=ISSUE_CATEGORY, help_text=_('Only bugs and features are public'))
@@ -25,6 +31,8 @@ class Issue(models.Model):
     message = models.TextField(verbose_name=_('Message'))
     update_date = models.DateTimeField(verbose_name=_('Update date'))
     state = models.IntegerField(verbose_name=_('State'), choices=ISSUE_STATE, default=ISSUE_STATE_OPEN)
+
+    objects = IssueManager()
 
     def __unicode__(self):
         return '%s' % (self.subject)

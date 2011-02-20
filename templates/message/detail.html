@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load modeltags %}
+
+{% block context_menu %}
+<div><a href="{% url message_list %}">{% trans "Back to list" %}</a></div>
+{% endblock %}
+
+{% block content %}
+<fieldset class="module aligned">
+    {% with issue as object %}
+    <div class="detail-row">
+      <div>
+      <label>{% trans "Author" %} :</label> {% if user.is_superuser and issue.owner %}<a href="{% url admin:auth_user_change issue.owner.pk %}">{% endif %}{{ issue.owner|display_name }}{% if user.is_superuser %}</a>{% endif %}
+      </div>
+    </div>
+    <div class="detail-row">
+      <div>
+      <label>{{ issue|verbose_name:"category" }} :</label> {{ issue.get_category_display }}
+      </div>
+    </div>
+    {% with "update_date" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}
+    {% with "subject" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}
+    {% with "message" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}
+    {% endwith %}
+</fieldset>
+
+<h1>{% trans "Comments" %}</h1>
+{% if issue.comment_set.all %}
+<div class="search-list">
+    <table>
+        <thead>
+            <tr>
+                <th class="author-col">{% trans "Author" %}</th>
+                <th class="date-col">{% trans "Update date" %}</th>
+                <th>{% trans "Message" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for comment in issue.comment_set.all %}
+           <tr class="{% cycle 'row1' 'row2' %}">
+                <td>{{ comment.owner|display_name }}</td>
+                <td>{{ comment.update_date }}</td>
+                <td>{{ comment.message }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div>{% trans "No comments" %}</div>
+{% endif %}
+
+<h1>{% trans "Comment" %}</h1>
+<form action="{% url message_add issue_id=issue.id %}" method="post" id="comment-add-form">
+    {% csrf_token %}
+    <fieldset class="module aligned">
+    {% with commentForm as form %}
+    {% include "form.html" %}
+    {% endwith %}
+    </fieldset>
+    <div class="submit-row">
+    <input class="default" type="submit" name="action" value="{% trans "Send" %}" />
+    </div>
+</form>
+{% endblock %}

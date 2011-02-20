@@ -115,6 +115,9 @@ class UserProfile(models.Model):
 
         return False
 
+    def unread_message_count(self):
+        return Issue.objects.unread_messages(self.user)
+
     def get_next_expiration_date(self):
         last_valid_expiration_date = Subscription.objects.filter(owner=self.user,
                                                                  state__in=[SUBSCRIPTION_STATE_PAID,

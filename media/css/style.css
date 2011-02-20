@@ -480,3 +480,7 @@ div.html {
     color: gray;
     text-align:left;
 }
+
+.unread {
+    font-weight: bold;
+}

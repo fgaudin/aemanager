@@ -1,13 +1,352 @@
 from django.test import TestCase
 from bugtracker.models import ISSUE_CATEGORY_BUG, ISSUE_STATE_OPEN, Issue, \
     ISSUE_CATEGORY_FEATURE, ISSUE_CATEGORY_SUBSCRIPTION, ISSUE_STATE_CLOSED, \
-    Vote, Comment
+    Vote, Comment, ISSUE_CATEGORY_MESSAGE
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib.auth.models import User
 import datetime
 
-class BugTrackerTest(TestCase):
+class IssuePermissionTest(TestCase):
+    fixtures = ['test_users']
+
+    def setUp(self):
+        self.client.login(username='test', password='test')
+
+    def testGetEditIssue(self):
+        i1 = Issue.objects.create(owner_id=2,
+                                  category=ISSUE_CATEGORY_BUG,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_OPEN)
+
+        response = self.client.get(reverse('issue_edit', kwargs={'id': i1.id}))
+        self.assertEquals(response.status_code, 404)
+
+    def testPostEditIssue(self):
+        i1 = Issue.objects.create(owner_id=2,
+                                  category=ISSUE_CATEGORY_BUG,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_OPEN)
+
+        response = self.client.post(reverse('issue_edit', kwargs={'id': i1.id}),
+                                    {'category': ISSUE_CATEGORY_FEATURE,
+                                     'subject': 'test subject2',
+                                     'message': 'test message2'})
+        self.assertEquals(response.status_code, 404)
+
+    def testGetDeleteIssue(self):
+        i1 = Issue.objects.create(owner_id=2,
+                                  category=ISSUE_CATEGORY_BUG,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_OPEN)
+        response = self.client.get(reverse('issue_delete', kwargs={'id': i1.id}))
+        self.assertEquals(response.status_code, 404)
+
+    def testPostDeleteIssue(self):
+        i1 = Issue.objects.create(owner_id=2,
+                                  category=ISSUE_CATEGORY_BUG,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_OPEN)
+        response = self.client.post(reverse('issue_delete', kwargs={'id': i1.id}),
+                                   {'delete': 'Ok'})
+        self.assertEquals(response.status_code, 404)
+
+    def testGetCloseIssue(self):
+        i1 = Issue.objects.create(owner_id=2,
+                                  category=ISSUE_CATEGORY_BUG,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_OPEN)
+        response = self.client.get(reverse('issue_close', kwargs={'id': i1.id}))
+        self.assertEquals(response.status_code, 404)
+
+    def testPostCloseIssue(self):
+        i1 = Issue.objects.create(owner_id=2,
+                                  category=ISSUE_CATEGORY_BUG,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_OPEN)
+        response = self.client.post(reverse('issue_close', kwargs={'id': i1.id}),
+                                    {'message': 'Closed'})
+        self.assertEquals(response.status_code, 404)
+
+    def testGetReopenIssue(self):
+        i1 = Issue.objects.create(owner_id=2,
+                                  category=ISSUE_CATEGORY_BUG,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_CLOSED)
+        response = self.client.get(reverse('issue_reopen', kwargs={'id': i1.id}))
+        self.assertEquals(response.status_code, 404)
+
+    def testPostReopenIssue(self):
+        i1 = Issue.objects.create(owner_id=2,
+                                  category=ISSUE_CATEGORY_BUG,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_CLOSED)
+
+        response = self.client.post(reverse('issue_reopen', kwargs={'id': i1.id}),
+                                    {'message': 'Reopen'})
+        self.assertEquals(response.status_code, 404)
+
+    def testCommentIssue(self):
+        """
+        Nothing to test
+        """
+        pass
+
+    def testGetEditComment(self):
+        i1 = Issue.objects.create(owner_id=1,
+                                  category=ISSUE_CATEGORY_BUG,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_OPEN)
+
+        c1 = Comment.objects.create(owner_id=2,
+                                    message='comment',
+                                    update_date=datetime.datetime.now(),
+                                    issue=i1)
+        response = self.client.get(reverse('comment_edit', kwargs={'id': c1.id}))
+        self.assertEquals(response.status_code, 404)
+
+    def testPostEditComment(self):
+        i1 = Issue.objects.create(owner_id=1,
+                                  category=ISSUE_CATEGORY_BUG,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_OPEN)
+
+        c1 = Comment.objects.create(owner_id=2,
+                                    message='comment',
+                                    update_date=datetime.datetime.now(),
+                                    issue=i1)
+        response = self.client.post(reverse('comment_edit', kwargs={'id': c1.id}),
+                                    {'message': 'comment 2'})
+        self.assertEquals(response.status_code, 404)
+
+    def testGetDeleteComment(self):
+        i1 = Issue.objects.create(owner_id=1,
+                                  category=ISSUE_CATEGORY_BUG,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_OPEN)
+
+        c1 = Comment.objects.create(owner_id=2,
+                                    message='comment',
+                                    update_date=datetime.datetime.now(),
+                                    issue=i1)
+        response = self.client.get(reverse('comment_delete', kwargs={'id': c1.id}))
+        self.assertEquals(response.status_code, 404)
+
+    def testPostDeleteComment(self):
+        i1 = Issue.objects.create(owner_id=1,
+                                  category=ISSUE_CATEGORY_BUG,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_OPEN)
+
+        c1 = Comment.objects.create(owner_id=2,
+                                    message='comment',
+                                    update_date=datetime.datetime.now(),
+                                    issue=i1)
+        response = self.client.post(reverse('comment_delete', kwargs={'id': c1.id}),
+                                    {'delete': 'Ok'})
+        self.assertEquals(response.status_code, 404)
+
+class MessagePermissionTest(TestCase):
+    fixtures = ['test_users']
+
+    def setUp(self):
+        self.client.login(username='test', password='test')
+
+    def testMessageList(self):
+        i1 = Issue.objects.create(owner_id=1,
+                                  category=ISSUE_CATEGORY_MESSAGE,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_OPEN)
+
+        i2 = Issue.objects.create(owner_id=2,
+                                  category=ISSUE_CATEGORY_MESSAGE,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_OPEN)
+
+        response = self.client.get(reverse('message_list'))
+        self.assertEquals(set(response.context['issues']), set([i1]))
+
+    def testIssueDetail(self):
+        i1 = Issue.objects.create(owner_id=2,
+                                  category=ISSUE_CATEGORY_MESSAGE,
+                                  subject='test',
+                                  message='test',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_CLOSED)
+
+        response = self.client.get(reverse('issue_detail', kwargs={'id': i1.id}))
+        self.assertEquals(response.status_code, 404)
+
+    def testGetEditMessage(self):
+        i1 = Issue.objects.create(owner_id=1,
+                                  category=ISSUE_CATEGORY_MESSAGE,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_OPEN)
+
+        response = self.client.get(reverse('issue_edit', kwargs={'id': i1.id}))
+        self.assertEquals(response.status_code, 404)
+
+        i1.owner_id = 2
+        i1.save()
+        response = self.client.get(reverse('issue_edit', kwargs={'id': i1.id}))
+        self.assertEquals(response.status_code, 404)
+
+    def testPostEditMessage(self):
+        i1 = Issue.objects.create(owner_id=1,
+                                  category=ISSUE_CATEGORY_MESSAGE,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_OPEN)
+
+        response = self.client.post(reverse('issue_edit', kwargs={'id': i1.id}),
+                                    {'category': ISSUE_CATEGORY_FEATURE,
+                                     'subject': 'test subject2',
+                                     'message': 'test message2'})
+        self.assertEquals(response.status_code, 404)
+
+        i1.owner_id = 2
+        i1.save()
+        response = self.client.post(reverse('issue_edit', kwargs={'id': i1.id}),
+                                    {'category': ISSUE_CATEGORY_FEATURE,
+                                     'subject': 'test subject2',
+                                     'message': 'test message2'})
+        self.assertEquals(response.status_code, 404)
+
+    def testPostDeleteMessage(self):
+        i1 = Issue.objects.create(owner_id=1,
+                                  category=ISSUE_CATEGORY_MESSAGE,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_OPEN)
+        response = self.client.post(reverse('issue_delete', kwargs={'id': i1.id}),
+                                   {'delete': 'Ok'})
+        self.assertEquals(response.status_code, 404)
+
+        i1.owner_id = 2
+        i1.save()
+
+        response = self.client.post(reverse('issue_delete', kwargs={'id': i1.id}),
+                                   {'delete': 'Ok'})
+        self.assertEquals(response.status_code, 404)
+
+    def testCommentMessage(self):
+        i1 = Issue.objects.create(owner_id=2,
+                                  category=ISSUE_CATEGORY_MESSAGE,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_OPEN)
+        response = self.client.post(reverse('comment_add', kwargs={'issue_id': i1.id}),
+                                    {'message': 'Comment'})
+        self.assertEquals(response.status_code, 404)
+
+        i1.owner_id = 2
+        i1.save()
+
+        response = self.client.post(reverse('comment_add', kwargs={'issue_id': i1.id}),
+                                    {'message': 'Comment'})
+        self.assertEquals(response.status_code, 404)
+
+    def testGetEditComment(self):
+        i1 = Issue.objects.create(owner_id=1,
+                                  category=ISSUE_CATEGORY_MESSAGE,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_OPEN)
+
+        c1 = Comment.objects.create(owner_id=1,
+                                    message='comment',
+                                    update_date=datetime.datetime.now(),
+                                    issue=i1)
+        response = self.client.get(reverse('comment_edit', kwargs={'id': c1.id}))
+        self.assertEquals(response.status_code, 404)
+
+        c1.owner_id = 2
+        c1.save()
+
+        response = self.client.get(reverse('comment_edit', kwargs={'id': c1.id}))
+        self.assertEquals(response.status_code, 404)
+
+    def testPostEditComment(self):
+        i1 = Issue.objects.create(owner_id=1,
+                                  category=ISSUE_CATEGORY_MESSAGE,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_OPEN)
+
+        c1 = Comment.objects.create(owner_id=1,
+                                    message='comment',
+                                    update_date=datetime.datetime.now(),
+                                    issue=i1)
+        response = self.client.post(reverse('comment_edit', kwargs={'id': c1.id}),
+                                    {'message': 'comment 2'})
+        self.assertEquals(response.status_code, 404)
+
+        c1.owner_id = 2
+        c1.save()
+
+        response = self.client.post(reverse('comment_edit', kwargs={'id': c1.id}),
+                                    {'message': 'comment 2'})
+        self.assertEquals(response.status_code, 404)
+
+    def testPostDeleteComment(self):
+        i1 = Issue.objects.create(owner_id=1,
+                                  category=ISSUE_CATEGORY_MESSAGE,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_OPEN)
+
+        c1 = Comment.objects.create(owner_id=1,
+                                    message='comment',
+                                    update_date=datetime.datetime.now(),
+                                    issue=i1)
+        response = self.client.post(reverse('comment_delete', kwargs={'id': c1.id}),
+                                    {'delete': 'Ok'})
+        self.assertEquals(response.status_code, 404)
+
+        c1.owner_id = 2
+        c1.save()
+
+        response = self.client.post(reverse('comment_delete', kwargs={'id': c1.id}),
+                                    {'delete': 'Ok'})
+        self.assertEquals(response.status_code, 404)
+
+class IssueTest(TestCase):
     fixtures = ['test_users']
 
     def setUp(self):

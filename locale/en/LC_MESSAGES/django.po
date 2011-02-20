@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-20 18:52+0100\n"
+"POT-Creation-Date: 2011-02-20 22:01+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -184,12 +184,12 @@ msgid ""
 "when all invoices are paid."
 msgstr ""
 
-#: accounts/views.py:61 templates/menu.html:46
+#: accounts/views.py:61 templates/menu.html:47
 #: templates/core/charts_widget.html:37
 msgid "Expenses"
 msgstr ""
 
-#: accounts/views.py:144 templates/menu.html:43
+#: accounts/views.py:144 templates/menu.html:44
 #: templates/core/invoices_widget.html:3 templates/project/detail.html:52
 #: templates/proposal/detail.html:83
 msgid "Invoices"
@@ -454,7 +454,8 @@ msgstr ""
 
 #: bugtracker/models.py:23 project/models.py:260
 #: templates/invoice/detail.html:71 templates/issue/list.html:19
-#: templates/proposal/detail.html:59 templates/proposal/detail_ajax.html:27
+#: templates/message/list.html:20 templates/proposal/detail.html:59
+#: templates/proposal/detail_ajax.html:27
 msgid "Category"
 msgstr ""
 
@@ -463,97 +464,107 @@ msgid "Only bugs and features are public"
 msgstr ""
 
 #: bugtracker/models.py:24 templates/issue/list.html:16
+#: templates/message/list.html:15
 msgid "Subject"
 msgstr ""
 
-#: bugtracker/models.py:25 bugtracker/models.py:43
-#: templates/issue/detail.html:61
+#: bugtracker/models.py:25 bugtracker/models.py:43 bugtracker/views.py:172
+#: templates/issue/detail.html:61 templates/message/detail.html:42
 msgid "Message"
 msgstr ""
 
 #: bugtracker/models.py:26 bugtracker/models.py:45 project/models.py:18
 #: project/models.py:143 templates/issue/detail.html:60
-#: templates/issue/list.html:18
+#: templates/issue/list.html:18 templates/message/detail.html:41
+#: templates/message/list.html:19
 msgid "Update date"
 msgstr ""
 
-#: bugtracker/models.py:44 bugtracker/models.py:58 bugtracker/views.py:130
+#: bugtracker/models.py:44 bugtracker/models.py:58 bugtracker/views.py:152
 msgid "Issue"
 msgstr ""
 
-#: bugtracker/views.py:21 bugtracker/views.py:31
+#: bugtracker/views.py:22 bugtracker/views.py:45
 msgid "Issue reporting"
 msgstr ""
 
-#: bugtracker/views.py:41
+#: bugtracker/views.py:36 templates/menu.html:95
+msgid "Messages"
+msgstr ""
+
+#: bugtracker/views.py:55
 msgid "Edit an issue"
 msgstr ""
 
-#: bugtracker/views.py:44 templates/issue/list.html:5
+#: bugtracker/views.py:58 templates/issue/list.html:5
 msgid "Send an issue"
 msgstr ""
 
-#: bugtracker/views.py:54
+#: bugtracker/views.py:69
 msgid "The issue has been saved successfully"
 msgstr ""
 
-#: bugtracker/views.py:82
+#: bugtracker/views.py:72
+msgid "The message has been saved successfully"
+msgstr ""
+
+#: bugtracker/views.py:102
 msgid "The issue has been closed successfully"
 msgstr ""
 
-#: bugtracker/views.py:89
+#: bugtracker/views.py:109
 msgid "Close an issue"
 msgstr ""
 
-#: bugtracker/views.py:109
+#: bugtracker/views.py:129
 msgid "The issue has been reopened successfully"
 msgstr ""
 
-#: bugtracker/views.py:116
+#: bugtracker/views.py:136
 msgid "Reopen an issue"
 msgstr ""
 
-#: bugtracker/views.py:145
+#: bugtracker/views.py:188
 msgid "The issue has been deleted successfully"
 msgstr ""
 
-#: bugtracker/views.py:152
+#: bugtracker/views.py:195
 msgid "Delete an issue"
 msgstr ""
 
-#: bugtracker/views.py:160
+#: bugtracker/views.py:203
 msgid "Edit a comment"
 msgstr ""
 
-#: bugtracker/views.py:164
+#: bugtracker/views.py:209 bugtracker/views.py:237
 msgid "Send a comment"
 msgstr ""
 
-#: bugtracker/views.py:176
+#: bugtracker/views.py:223 bugtracker/views.py:257
 msgid "Your comment has been saved successfully"
 msgstr ""
 
-#: bugtracker/views.py:195
+#: bugtracker/views.py:280
 msgid "The comment has been deleted successfully"
 msgstr ""
 
-#: bugtracker/views.py:202
+#: bugtracker/views.py:287
 msgid "Delete a comment"
 msgstr ""
 
-#: bugtracker/views.py:215
+#: bugtracker/views.py:300
 msgid "Your vote has been saved successfully"
 msgstr ""
 
-#: bugtracker/views.py:217
+#: bugtracker/views.py:302
 msgid "You can't vote anymore"
 msgstr ""
 
-#: bugtracker/views.py:219
+#: bugtracker/views.py:304
 msgid "No votes for closed issues"
 msgstr ""
 
-#: bugtracker/views.py:230
+#: bugtracker/views.py:315
 msgid "Your vote has been removed successfully"
 msgstr ""
 
@@ -712,7 +723,7 @@ msgid ""
 "How-to : create a customer, a project, a proposal and finally an invoice"
 msgstr ""
 
-#: core/views.py:200 templates/menu.html:9 templates/core/index.html:3
+#: core/views.py:200 templates/menu.html:10 templates/core/index.html:3
 msgid "Dashboard"
 msgstr ""
 
@@ -720,7 +731,7 @@ msgstr ""
 msgid "Your settings have been updated successfully"
 msgstr ""
 
-#: core/views.py:239 templates/menu.html:79
+#: core/views.py:239 templates/menu.html:81
 msgid "Settings"
 msgstr ""
 
@@ -728,11 +739,11 @@ msgstr ""
 msgid "Your password has not been modified"
 msgstr ""
 
-#: core/views.py:265 templates/menu.html:82
+#: core/views.py:265 templates/menu.html:84
 msgid "Change password"
 msgstr ""
 
-#: core/views.py:280 templates/menu.html:85
+#: core/views.py:280 templates/menu.html:88
 msgid "My subscription"
 msgstr ""
 
@@ -775,6 +786,14 @@ msgstr ""
 
 #: core/views.py:374
 msgid "Error"
+msgstr ""
+
+#: core/templatetags/modeltags.py:34
+msgid "Administrator"
+msgstr ""
+
+#: core/templatetags/modeltags.py:39 templates/issue/list.html:28
+msgid "User deleted"
 msgstr ""
 
 #: project/forms.py:8 project/forms.py:30
@@ -975,11 +994,11 @@ msgstr ""
 msgid "The project has been saved successfully"
 msgstr ""
 
-#: project/views.py:238 templates/menu.html:22
+#: project/views.py:238 templates/menu.html:23
 msgid "Running projects"
 msgstr ""
 
-#: project/views.py:302 templates/menu.html:25
+#: project/views.py:302 templates/menu.html:26
 msgid "Finished projects"
 msgstr ""
 
@@ -1095,39 +1114,44 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: templates/menu.html:16
+#: templates/menu.html:17
 msgid "Business"
 msgstr ""
 
-#: templates/menu.html:28 templates/menu.html.py:64
+#: templates/menu.html:29 templates/menu.html.py:65
 #: templates/expense/list.html:195 templates/invoice/edit.html:134
 #: templates/proposal/edit.html:121
 msgid "Add"
 msgstr ""
 
-#: templates/menu.html:37
+#: templates/menu.html:38
 msgid "Accounts"
 msgstr ""
 
-#: templates/menu.html:55
+#: templates/menu.html:56
 msgid "Customers"
 msgstr ""
 
-#: templates/menu.html:61 templates/contact/search.html:11
+#: templates/menu.html:62 templates/contact/search.html:11
 #: templates/project/list.html:11
 msgid "Search"
 msgstr ""
 
-#: templates/menu.html:73
+#: templates/menu.html:75
 msgid "My account"
 msgstr ""
 
-#: templates/menu.html:93
+#: templates/menu.html:91
+msgid "My messages"
+msgstr ""
+
+#: templates/menu.html:104
 msgid "Logout"
 msgstr ""
 
 #: templates/comment/edit.html:13 templates/issue/detail.html:90
-#: templates/issue/edit.html:13
+#: templates/issue/edit.html:13 templates/message/detail.html:69
+#: templates/message/edit.html:13
 msgid "Send"
 msgstr ""
 
@@ -1432,6 +1456,7 @@ msgid "No invoices"
 msgstr ""
 
 #: templates/issue/detail.html:6 templates/issue/detail.html.py:7
+#: templates/message/detail.html:6
 msgid "Back to list"
 msgstr ""
 
@@ -1444,13 +1469,9 @@ msgid "Reopen"
 msgstr ""
 
 #: templates/issue/detail.html:26 templates/issue/detail.html.py:59
-#: templates/issue/list.html:17
+#: templates/issue/list.html:17 templates/message/detail.html:14
+#: templates/message/detail.html.py:40 templates/message/list.html:17
 msgid "Author"
-msgstr ""
-
-#: templates/issue/detail.html:26 templates/issue/detail.html.py:68
-#: templates/issue/list.html:28
-msgid "User deleted"
 msgstr ""
 
 #: templates/issue/detail.html:40 templates/issue/list.html:21
@@ -1463,14 +1484,15 @@ msgid "%(votes_remaining)s votes remaining"
 msgstr ""
 
 #: templates/issue/detail.html:53 templates/issue/list.html:20
+#: templates/message/detail.html:34 templates/message/list.html:21
 msgid "Comments"
 msgstr ""
 
-#: templates/issue/detail.html:78
+#: templates/issue/detail.html:78 templates/message/detail.html:57
 msgid "No comments"
 msgstr ""
 
-#: templates/issue/detail.html:81
+#: templates/issue/detail.html:81 templates/message/detail.html:60
 msgid "Comment"
 msgstr ""
 
@@ -1484,6 +1506,14 @@ msgstr ""
 
 #: templates/issue/list.html:39
 msgid "No issues"
+msgstr ""
+
+#: templates/message/list.html:6
+msgid "Send a message"
+msgstr ""
+
+#: templates/message/list.html:40
+msgid "No messages"
 msgstr ""
 
 #: templates/project/detail.html:23

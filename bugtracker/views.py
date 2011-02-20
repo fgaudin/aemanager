@@ -1,7 +1,8 @@
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template.context import RequestContext
 from bugtracker.models import ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE, Issue, \
-    ISSUE_STATE_OPEN, Comment, Vote, ISSUE_STATE_CLOSED
+    ISSUE_STATE_OPEN, Comment, Vote, ISSUE_STATE_CLOSED, \
+    ISSUE_CATEGORY_SUBSCRIPTION, ISSUE_CATEGORY_MESSAGE
 from django.utils.translation import ugettext_lazy as _
 from bugtracker.forms import IssueForm, CommentForm
 from django.contrib.auth.decorators import login_required
@@ -9,7 +10,7 @@ from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db.transaction import commit_on_success
 from django.conf import settings
-from django.db.models.aggregates import Count
+from django.db.models.aggregates import Count, Max
 from core.decorators import settings_required
 import datetime
 
@@ -21,6 +22,19 @@ def issue_list(request):
                                'title': _('Issue reporting'),
                                'issues': issues,
                                'state': 'open'},
+                              context_instance=RequestContext(request))
+
+@settings_required
+def message_list(request):
+    if request.user.is_superuser:
+        issues = Issue.objects.filter(category__in=[ISSUE_CATEGORY_SUBSCRIPTION, ISSUE_CATEGORY_MESSAGE]).annotate(last_update=Max('comment__update_date')).order_by('-last_update')
+    else:
+        issues = Issue.objects.filter(category__in=[ISSUE_CATEGORY_SUBSCRIPTION, ISSUE_CATEGORY_MESSAGE],
+                                      owner=request.user).annotate(last_update=Max('comment__update_date')).order_by('-last_update')
+    return render_to_response('message/list.html',
+                              {'active': 'settings',
+                               'title': _('Messages'),
+                               'issues': issues},
                               context_instance=RequestContext(request))
 
 @settings_required
@@ -39,7 +53,10 @@ def closed_issue_list(request):
 def issue_create_or_edit(request, id=None):
     if id:
         title = _('Edit an issue')
-        issue = get_object_or_404(Issue, pk=id, owner=request.user)
+        issue = get_object_or_404(Issue,
+                                  pk=id,
+                                  owner=request.user,
+                                  category__in=[ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE])
     else:
         title = _('Send an issue')
         issue = None
@@ -51,8 +68,14 @@ def issue_create_or_edit(request, id=None):
             issue.update_date = datetime.datetime.now()
             issue.owner = request.user
             issue.save()
-            messages.success(request, _('The issue has been saved successfully'))
-            return redirect(reverse('issue_list'))
+            if issue.category in [ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE]:
+                message = _('The issue has been saved successfully')
+                redirect_url = reverse('issue_list')
+            else:
+                message = _('The message has been saved successfully')
+                redirect_url = reverse('message_list')
+            messages.success(request, message)
+            return redirect(redirect_url)
     else:
         form = IssueForm(instance=issue)
 
@@ -65,7 +88,10 @@ def issue_create_or_edit(request, id=None):
 @settings_required
 @commit_on_success
 def issue_close(request, id):
-    issue = get_object_or_404(Issue, pk=id, owner=request.user)
+    issue = get_object_or_404(Issue,
+                              pk=id,
+                              owner=request.user,
+                              category__in=[ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE])
 
     if request.method == 'POST':
         commentForm = CommentForm(request.POST)
@@ -93,7 +119,10 @@ def issue_close(request, id):
 @settings_required
 @commit_on_success
 def issue_reopen(request, id):
-    issue = get_object_or_404(Issue, pk=id, owner=request.user)
+    issue = get_object_or_404(Issue,
+                              pk=id,
+                              owner=request.user,
+                              category__in=[ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE])
 
     if request.method == 'POST':
         commentForm = CommentForm(request.POST)
@@ -119,7 +148,9 @@ def issue_reopen(request, id):
 
 @settings_required
 def issue_detail(request, id):
-    issue = get_object_or_404(Issue, pk=id, category__in=[ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE])
+    issue = get_object_or_404(Issue,
+                              pk=id,
+                              category__in=[ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE])
     commentForm = CommentForm()
     votes_remaining = Vote.objects.votes_remaining(request.user)
     user_votes = Vote.objects.filter(issue=issue,
@@ -135,9 +166,32 @@ def issue_detail(request, id):
                               context_instance=RequestContext(request))
 
 @settings_required
+def message_detail(request, id):
+    if request.user.is_superuser:
+        issue = get_object_or_404(Issue, pk=id,
+                                  category__in=[ISSUE_CATEGORY_MESSAGE, ISSUE_CATEGORY_SUBSCRIPTION])
+    else:
+        issue = get_object_or_404(Issue, pk=id,
+                                  category__in=[ISSUE_CATEGORY_MESSAGE, ISSUE_CATEGORY_SUBSCRIPTION],
+                                  owner=request.user)
+        issue.state = ISSUE_STATE_CLOSED
+        issue.save()
+    commentForm = CommentForm()
+
+    return render_to_response('message/detail.html',
+                              {'active': 'settings',
+                               'title': _('Message'),
+                               'issue': issue,
+                               'commentForm': commentForm},
+                              context_instance=RequestContext(request))
+
+@settings_required
 @commit_on_success
 def issue_delete(request, id):
-    issue = get_object_or_404(Issue, pk=id, owner=request.user)
+    issue = get_object_or_404(Issue,
+                              pk=id,
+                              category__in=[ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE],
+                              owner=request.user)
 
     if request.method == 'POST':
         if request.POST.get('delete'):
@@ -158,12 +212,17 @@ def issue_delete(request, id):
 def comment_create_or_edit(request, id=None, issue_id=None):
     if id:
         title = _('Edit a comment')
-        comment = get_object_or_404(Comment, pk=id, owner=request.user)
+        comment = get_object_or_404(Comment,
+                                    pk=id,
+                                    owner=request.user,
+                                    issue__category__in=[ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE])
         issue = comment.issue
     else:
         title = _('Send a comment')
         comment = None
-        issue = get_object_or_404(Issue, pk=issue_id)
+        issue = get_object_or_404(Issue,
+                                  pk=issue_id,
+                                  category__in=[ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE])
 
     if request.method == 'POST':
         form = CommentForm(request.POST, instance=comment)
@@ -186,8 +245,49 @@ def comment_create_or_edit(request, id=None, issue_id=None):
 
 @settings_required
 @commit_on_success
+def comment_message_create(request, issue_id=None):
+    title = _('Send a comment')
+    if request.user.is_superuser:
+        issue = get_object_or_404(Issue,
+                                  pk=issue_id,
+                                  category__in=[ISSUE_CATEGORY_MESSAGE, ISSUE_CATEGORY_SUBSCRIPTION])
+
+    else:
+        issue = get_object_or_404(Issue,
+                                  pk=issue_id,
+                                  category__in=[ISSUE_CATEGORY_MESSAGE, ISSUE_CATEGORY_SUBSCRIPTION],
+                                  owner=request.user)
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.issue = issue
+            comment.update_date = datetime.datetime.now()
+            comment.owner = request.user
+            comment.save()
+            if request.user.is_superuser:
+                issue.state = ISSUE_STATE_OPEN
+                issue.save()
+            messages.success(request, _('Your comment has been saved successfully'))
+            return redirect(reverse('message_detail', kwargs={'id': issue.id}))
+    else:
+        form = CommentForm(instance=comment)
+
+    return render_to_response('comment/edit.html',
+                              {'active': 'settings',
+                               'title': title,
+                               'form': form},
+                              context_instance=RequestContext(request))
+
+
+@settings_required
+@commit_on_success
 def comment_delete(request, id):
-    comment = get_object_or_404(Comment, pk=id, owner=request.user)
+    comment = get_object_or_404(Comment,
+                                pk=id,
+                                owner=request.user,
+                                issue__category__in=[ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE])
 
     if request.method == 'POST':
         if request.POST.get('delete'):
@@ -206,7 +306,9 @@ def comment_delete(request, id):
 @settings_required
 @commit_on_success
 def vote(request, issue_id):
-    issue = get_object_or_404(Issue, pk=issue_id)
+    issue = get_object_or_404(Issue,
+                              pk=issue_id,
+                              category__in=[ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE])
     votes_remaining = Vote.objects.votes_remaining(request.user)
     if issue.state == ISSUE_STATE_OPEN:
         if votes_remaining:
@@ -222,7 +324,9 @@ def vote(request, issue_id):
 @settings_required
 @commit_on_success
 def unvote(request, issue_id):
-    issue = get_object_or_404(Issue, pk=issue_id)
+    issue = get_object_or_404(Issue,
+                              pk=issue_id,
+                              category__in=[ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE])
     votes = Vote.objects.filter(owner=request.user,
                                 issue=issue)
     if len(votes):

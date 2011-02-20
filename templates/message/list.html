@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load modeltags %}
+
+{% block context_menu %}
+<div><a href="{% url issue_add %}">{% trans "Send a message" %}</a></div>
+{% endblock %}
+
+{% block content %}
+{% if issues %}
+<div class="search-list">
+    <table>
+        <thead>
+            <tr>
+                <th>{% trans "Subject" %}</th>
+                {% if user.is_superuser %}
+                <th>{% trans "Author" %}</th>
+                {% endif %}
+                <th>{% trans "Update date" %}</th>
+                <th>{% trans "Category" %}</th>
+                <th>{% trans "Comments" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for issue in issues %}
+           <tr class="{% cycle 'row2' 'row1' %} row{% if issue.is_open %} unread{% endif %}">
+                <td><a href="{% url message_detail id=issue.id %}">{{ issue.subject }}</a></td>
+                {% if user.is_superuser %}
+                <td><a href="{% url message_detail id=issue.id %}">{{ issue.owner|display_name }}</a></td>
+                {% endif %}
+                <td><a href="{% url message_detail id=issue.id %}">{{ issue.update_date }}</a></td>
+                <td><a href="{% url message_detail id=issue.id %}">{{ issue.get_category_display }}</a></td>
+                <td><a href="{% url message_detail id=issue.id %}">{{ issue.comment_set.count }}</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div>{% trans "No messages" %}</div>
+{% endif %}
+{% endblock %}

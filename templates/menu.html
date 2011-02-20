@@ -3,6 +3,7 @@
     <div class="nav-left"></div>
     <div class="nav">
         <ul id="navigation">
+            {% if not user.is_superuser %}
             <li class="{% if active == "dashboard" %}active{% endif %}">
                 <a href="/">
                     <span class="menu-left"></span>
@@ -67,6 +68,7 @@
                     <div class="btm-bg"></div>
                 </div>
             </li>
+            {% endif %}
             <li class="last{% if active == "account" %} active{% endif %}">
                 <a href="{% url settings_edit %}">
                     <span class="menu-left"></span>
@@ -81,9 +83,18 @@
                         <li>
                             <a href="{% url change_password %}">{% trans "Change password" %}</a>
                         </li>
+                        {% if not user.is_superuser %}
                         <li>
                             <a href="{% url subscribe %}">{% trans "My subscription" %}</a>
                         </li>
+                        <li>
+                            <a href="{% url message_list %}">{% trans "My messages" %}{% if user.get_profile.unread_message_count %} ({{ user.get_profile.unread_message_count }}){% endif %}</a>
+                        </li>
+                        {% else %}
+                        <li>
+                            <a href="{% url message_list %}">{% trans "Messages" %}</a>
+                        </li>
+                        {% endif %}
                     </ul>
                     <div class="btm-bg"></div>
                 </div>
