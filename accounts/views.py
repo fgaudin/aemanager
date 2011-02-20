@@ -22,7 +22,7 @@ from custom_canvas import NumberedCanvas
 from core.decorators import settings_required
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from autoentrepreneur.decorators import subscription_required
-from django.views.decorators.csrf import csrf_exempt
+from django.db.models.query_utils import Q
 import datetime
 from reportlab.platypus import Paragraph, Frame, Spacer, BaseDocTemplate, PageTemplate
 from reportlab.lib.styles import ParagraphStyle
@@ -225,9 +225,10 @@ def invoice_create_or_edit(request, id=None, customer_id=None):
                                               fk_name="invoice",
                                               extra=1)
 
-    proposals = Proposal.objects.filter(project__customer=customer,
+    proposals = Proposal.objects.filter(Q(project__customer=customer,
                                         state=PROPOSAL_STATE_ACCEPTED,
-                                        owner=request.user)
+                                        owner=request.user) |
+                                        Q(invoice_rows__invoice=invoice)).distinct()
 
     if request.method == 'POST':
         invoiceForm = InvoiceForm(request.POST, instance=invoice, prefix="invoice")
