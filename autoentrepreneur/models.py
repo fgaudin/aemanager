@@ -291,7 +291,7 @@ def user_post_save(sender, instance, created, **kwargs):
         today = datetime.date.today()
         subscription = Subscription.objects.create(owner=instance,
                                                    state=SUBSCRIPTION_STATE_TRIAL,
-                                                   expiration_date=today + datetime.timedelta(30),
+                                                   expiration_date=today + datetime.timedelta(settings.TRIAL_DURATION),
                                                    transaction_id='TRIAL-%i%i%i-%i' % (today.year, today.month, today.day, instance.id))
 
 post_save.connect(user_post_save, sender=User)
