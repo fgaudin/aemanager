@@ -2,6 +2,7 @@
 {% load i18n %}
 
 {% block content %}
+{% if projects.object_list %}
 <form action="" method="get">
     <fieldset class="module aligned">
     {{ form.name.label }} : {{ form.name }}
@@ -47,4 +48,7 @@
         {% endif %}
     </span>
 </div>
+{% else %}
+<div>{% trans "No projects" %}</div>
+{% endif %}
 {% endblock %}

@@ -216,6 +216,7 @@ a .menu-right {
     font-size: 18px;
     border-bottom: 1px dashed #C1D9F0;
     margin-bottom: 15px;
+    margin-top: 10px;
 }
 .content h2 {
     font-weight: 400;

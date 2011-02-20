@@ -8,6 +8,7 @@
 {% endblock %}
 
 {% block content %}
+{% if issues %}
 <div class="search-list">
     <table>
         <thead>
@@ -34,4 +35,7 @@
         </tbody>
     </table>
 </div>
+{% else %}
+<div>{% trans "No issues" %}</div>
+{% endif %}
 {% endblock %}
