@@ -139,9 +139,17 @@ class InvoicePermissionTest(TestCase):
 
     def testInvoiceAdd(self):
         """
-        nothing to test
+        test added for bug 109
+        proposals displayed are not all owned
         """
-        pass
+        self.proposal1.state = PROPOSAL_STATE_ACCEPTED
+        self.proposal1.save()
+        self.proposal2.state = PROPOSAL_STATE_ACCEPTED
+        self.proposal2.save()
+        self.proposal2.invoice_rows.all().delete()
+        response = self.client.get(reverse('invoice_add', kwargs={'customer_id': self.proposal1.project.customer.id}))
+        self.assertEquals(set(response.context['invoicerowformset'].forms[0].fields['proposal'].queryset),
+                          set([self.proposal1]))
 
     def testInvoiceAddFromProposal(self):
         self.proposal2.state = PROPOSAL_STATE_ACCEPTED

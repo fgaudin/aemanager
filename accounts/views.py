@@ -233,10 +233,14 @@ def invoice_create_or_edit(request, id=None, customer_id=None, proposal_id=None)
                                               fk_name="invoice",
                                               extra=1)
 
-    proposals = Proposal.objects.filter(Q(project__customer=customer,
-                                        state=PROPOSAL_STATE_ACCEPTED,
-                                        owner=request.user) |
-                                        Q(invoice_rows__invoice=invoice)).distinct()
+    filter = Q(project__customer=customer,
+               state=PROPOSAL_STATE_ACCEPTED,
+               owner=request.user)
+    if invoice:
+        filter = filter | Q(invoice_rows__invoice=invoice,
+                            owner=request.user)
+
+    proposals = Proposal.objects.filter(filter).distinct()
 
     if request.method == 'POST':
         invoiceForm = InvoiceForm(request.POST, instance=invoice, prefix="invoice")
