@@ -3,7 +3,7 @@
 {% load arithmetictags %}
 {% load htmltags %}
 
-<div>
+<div id="proposal-overview-{{ proposal.id }}">
     <fieldset class="module aligned">
         {% with proposal as object %}{% with "reference" as name %}
         {% include "detail_field.html" %}

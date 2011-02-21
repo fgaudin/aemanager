@@ -42,16 +42,20 @@
       return $(this).each(function(){
           var $this = $(this);
           $this.change(function(){
-              var id = jQuery(this).val();
+              var id = $this.val();
               if (id) {
-                  var get_url = url.replace('0',id) + '?ajax=true';
-                  var offset = jQuery(this).offset();
-                  $.get(get_url, function(data){
-                      $(data).dialog({
-                          width: 450,
-                          position: [offset.left+100, offset.top-550],
-                          title: title});
-                  });
+                  var already_open = $('#proposal-overview-' + id).length;
+                  if (!already_open) {
+                      var get_url = url.replace('0',id) + '?ajax=true';
+                      var offset = jQuery(this).offset();
+                      $.get(get_url, function(data){
+                          $(data).dialog({
+                              width: 450,
+                              position: [offset.left+100, offset.top-550],
+                              title: title,
+                              close: function(ev, ui) { $(this).remove()}});
+                      });
+                  }
                   // and check balance payments if needed
                   if ($('.proposal-field option:selected[value="' + id + '"]').parent('.proposal-field').nextAll('.balance-payments-field:checked').length) {
                       $this.nextAll('.balance-payments-field').attr('checked', true);
