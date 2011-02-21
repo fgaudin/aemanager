@@ -1,5 +1,5 @@
 from django.shortcuts import render_to_response, redirect, get_object_or_404
-from django.template.context import RequestContext
+from django.template.context import RequestContext, Context
 from django.utils.translation import ugettext_lazy as _, ugettext
 from core.forms import UserForm, PasswordForm
 from autoentrepreneur.forms import UserProfileForm
@@ -9,17 +9,24 @@ from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils import simplejson
-from accounts.models import Expense, Invoice
+from accounts.models import Expense, Invoice, INVOICE_STATE_PAID, \
+    PAYMENT_TYPE_BANK_CARD, InvoiceRow
 from core.decorators import settings_required
 from autoentrepreneur.models import AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC, \
     Subscription, SUBSCRIPTION_STATE_NOT_PAID, SUBSCRIPTION_STATE_PAID
-from project.models import Proposal
+from project.models import Proposal, Project, PROJECT_STATE_FINISHED, \
+    PROPOSAL_STATE_BALANCED, ROW_CATEGORY_SERVICE, ProposalRow
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from autoentrepreneur.decorators import subscription_required
 from django.contrib.auth import logout
 from django.core.mail import mail_admins
 from announcement.models import Announcement
+from contact.models import Contact, CONTACT_TYPE_COMPANY, Address
+from django.contrib.sites.models import Site
+from django.http import HttpResponse
+from django.core.mail.message import EmailMessage
+from django.template import loader
 import time
 import datetime
 import urllib, urllib2
@@ -270,7 +277,7 @@ def change_password(request):
                                'passwordform': passwordform},
                               context_instance=RequestContext(request))
 
-@login_required
+@settings_required
 def subscribe(request):
     profile = request.user.get_profile()
     current_subscription = profile.get_last_subscription()
@@ -312,9 +319,11 @@ def paypal_ipn(request):
     payment_status = data['payment_status']
     payment_amount = data['mc_gross']
     payment_currency = data['mc_currency']
+    item_name = data['item_name']
     user_id = data['custom']
     user = get_object_or_404(User, pk=user_id)
     profile = user.get_profile()
+    last_subscription = profile.get_last_subscription()
 
     subscription, created = Subscription.objects.get_or_create(transaction_id=transaction_id,
                                                                defaults={'owner': user,
@@ -335,6 +344,100 @@ def paypal_ipn(request):
         else:
             subscription.error_message = ugettext('Paid')
             subscription.state = SUBSCRIPTION_STATE_PAID
+
+            # create an invoice for this payment
+            # first, get the provider user
+            provider = User.objects.get(email=settings.SERVICE_PROVIDER_EMAIL)
+            # look for a customer corresponding to user
+            address, created = Address.objects.get_or_create(contact__email=user.email,
+                                                             owner=provider,
+                                                             defaults={'street': profile.address.street,
+                                                                       'zipcode': profile.address.zipcode,
+                                                                       'city': profile.address.city,
+                                                                       'country': profile.address.country,
+                                                                       'owner': provider})
+            customer, created = Contact.objects.get_or_create(email=user.email,
+                                                              defaults={'contact_type': CONTACT_TYPE_COMPANY,
+                                                                        'name': '%s %s' % (user.first_name, user.last_name),
+                                                                        'company_id': profile.company_id,
+                                                                        'legal_form': 'Auto-entrepreneur',
+                                                                        'email': user.email,
+                                                                        'address': address,
+                                                                        'owner': provider})
+            # create a related project if needed
+            # set it to finished to clear daily business
+            project, created = Project.objects.get_or_create(state=PROJECT_STATE_FINISHED,
+                                                             customer=customer,
+                                                             name='Subscription %s - %s %s' % (Site.objects.get_current().name, user.first_name, user.last_name),
+                                                             defaults={'state': PROJECT_STATE_FINISHED,
+                                                                       'customer': customer,
+                                                                       'name': 'Subscription %s - %s %s' % (Site.objects.get_current().name, user.first_name, user.last_name),
+                                                                       'owner': provider})
+
+            # create proposal for this subscription
+            begin_date = datetime.date.today()
+            if begin_date < last_subscription.expiration_date:
+                begin_date = last_subscription.expiration_date
+
+            proposal = Proposal.objects.create(project=project,
+                                               reference='subscription-%i%i%i' % (subscription.expiration_date.year,
+                                                                                  subscription.expiration_date.month,
+                                                                                  subscription.expiration_date.day),
+                                               state=PROPOSAL_STATE_BALANCED,
+                                               begin_date=begin_date,
+                                               end_date=subscription.expiration_date,
+                                               contract_content='',
+                                               update_date=datetime.date.today(),
+                                               expiration_date=None,
+                                               owner=provider)
+            proposal_row = ProposalRow.objects.create(proposal=proposal,
+                                                      label=item_name,
+                                                      category=ROW_CATEGORY_SERVICE,
+                                                      quantity=1,
+                                                      unit_price='%s' % settings.PAYPAL_APP_SUBSCRIPTION_AMOUNT,
+                                                      owner=provider)
+
+            # finally create invoice
+            invoice = Invoice.objects.create(customer=customer,
+                                             invoice_id=Invoice.objects.get_next_invoice_id(provider),
+                                             state=INVOICE_STATE_PAID,
+                                             amount=payment_amount,
+                                             edition_date=datetime.date.today(),
+                                             payment_date=datetime.date.today(),
+                                             paid_date=datetime.date.today(),
+                                             payment_type=PAYMENT_TYPE_BANK_CARD,
+                                             execution_begin_date=begin_date,
+                                             execution_end_date=subscription.expiration_date,
+                                             penalty_date=None,
+                                             penalty_rate=None,
+                                             discount_conditions=None,
+                                             owner=provider)
+
+            invoice_row = InvoiceRow.objects.create(proposal=proposal,
+                                                    invoice=invoice,
+                                                    label=item_name,
+                                                    category=ROW_CATEGORY_SERVICE,
+                                                    quantity=1,
+                                                    unit_price=payment_amount,
+                                                    balance_payments=True,
+                                                    owner=provider)
+
+            # generate invoice in pdf
+            response = HttpResponse(mimetype='application/pdf')
+            invoice.to_pdf(provider, response)
+
+            subject_template = loader.get_template('core/subscription_paid_email_subject.html')
+            subject_context = {'site_name': Site.objects.get_current().name}
+            subject = subject_template.render(Context(subject_context))
+            body_template = loader.get_template('core/subscription_paid_email.html')
+            body_context = {'site_name': Site.objects.get_current().name,
+                            'expiration_date': subscription.expiration_date}
+            body = body_template.render(Context(body_context))
+            email = EmailMessage(subject=subject,
+                                 body=body,
+                                 to=[user.email])
+            email.attach('facture_%i.pdf' % (invoice.invoice_id), response.content, 'application/pdf')
+            email.send(fail_silently=(not settings.DEBUG))
 
         subscription.save()
 

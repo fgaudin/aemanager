@@ -1,3 +1,15 @@
+# coding=utf-8
+
+from django.utils.formats import localize
+import datetime
+from custom_canvas import NumberedCanvas
+from reportlab.platypus import Paragraph, Frame, Spacer, BaseDocTemplate, PageTemplate
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.rl_config import defaultPageSize
+from reportlab.lib.units import inch
+from reportlab.lib.enums import TA_CENTER
+from reportlab.platypus import Table, TableStyle
+from reportlab.lib import colors
 from django.db import models
 from core.models import OwnedObject
 from django.utils.translation import ugettext_lazy as _, ugettext
@@ -5,9 +17,8 @@ from contact.models import Contact
 from django.core.urlresolvers import reverse
 from project.models import Row, Proposal, update_row_amount, \
     ROW_CATEGORY_SERVICE, ROW_CATEGORY, PROPOSAL_STATE_ACCEPTED, ProposalRow
-from django.db.models.aggregates import Sum, Min
+from django.db.models.aggregates import Sum, Min, Max
 from django.db.models.signals import post_save, pre_save, post_delete
-import datetime
 
 PAYMENT_TYPE_CASH = 1
 PAYMENT_TYPE_BANK_CARD = 2
@@ -39,6 +50,9 @@ INVOICE_STATE = ((INVOICE_STATE_EDITED, _('Edited')),
               (INVOICE_STATE_PAID, _('Paid')))
 
 class InvoiceManager(models.Manager):
+    def get_next_invoice_id(self, owner):
+        return (Invoice.objects.filter(owner=owner).aggregate(invoice_id=Max('invoice_id'))['invoice_id'] or 0) + 1
+
     def get_paid_sales(self, owner, year=None):
         if not year:
             year = datetime.date.today().year
@@ -181,6 +195,185 @@ class Invoice(OwnedObject):
                 raise InvoiceRowAmountError(ugettext("Amounts invoiced can't be greater than proposals remaining amounts"))
 
         return True
+
+    def to_pdf(self, user, response):
+        def invoice_footer(canvas, doc):
+            canvas.saveState()
+            canvas.setFont('Times-Roman', 10)
+            PAGE_WIDTH = defaultPageSize[0]
+            footer_text = "%s %s - SIRET : %s - %s, %s %s" % (user.first_name,
+                                                                  user.last_name,
+                                                                  user.get_profile().company_id,
+                                                                  user.get_profile().address.street,
+                                                                  user.get_profile().address.zipcode,
+                                                                  user.get_profile().address.city)
+            if user.get_profile().address.country:
+                footer_text = footer_text + ", %s" % (user.get_profile().address.country)
+
+            canvas.drawCentredString(PAGE_WIDTH / 2.0, 0.5 * inch, footer_text)
+            canvas.restoreState()
+
+        filename = ugettext('invoice_%(invoice_id)d.pdf') % {'invoice_id': self.invoice_id}
+        response['Content-Disposition'] = 'attachment; filename=%s' % (filename)
+
+        doc = BaseDocTemplate(response, title=ugettext('Invoice #%(invoice_id)d') % {'invoice_id': self.invoice_id}, leftMargin=0.5 * inch, rightMargin=0.5 * inch)
+        frameT = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height + 0.5 * inch, id='normal')
+        doc.addPageTemplates([PageTemplate(id='all', frames=frameT, onPage=invoice_footer), ])
+
+        styleH = ParagraphStyle({})
+        styleH.fontSize = 14
+        styleH.leading = 16
+        styleH.borderPadding = (5,) * 4
+
+        styleTotal = ParagraphStyle({})
+        styleTotal.fontSize = 14
+        styleTotal.leading = 16
+        styleTotal.borderColor = colors.black
+        styleTotal.borderWidth = 0.5
+        styleTotal.borderPadding = (5,) * 4
+
+        styleH2 = ParagraphStyle({})
+        styleH2.fontSize = 14
+        styleH2.leading = 16
+
+
+        styleTitle = ParagraphStyle({})
+        styleTitle.fontSize = 14
+        styleTitle.fontName = "Times-Bold"
+
+        styleN = ParagraphStyle({})
+        styleN.fontSize = 12
+        styleN.leading = 14
+
+        styleF = ParagraphStyle({})
+        styleF.fontSize = 10
+        styleF.alignment = TA_CENTER
+
+        story = []
+
+        data = []
+        user_header_content = """
+        %s %s<br/>
+        SIRET : %s<br/>
+        %s<br/>
+        %s %s<br/>
+        %s
+        """
+
+        customer_header_content = """
+        %s<br/>
+        %s<br/>
+        SIRET : %s<br/>
+        %s<br/>
+        %s %s<br/>
+        %s<br/>
+        """
+
+        data.append([Paragraph(user_header_content % (user.first_name,
+                                                      user.last_name,
+                                                      user.get_profile().company_id,
+                                                      user.get_profile().address.street.replace("\n", "<br/>"),
+                                                      user.get_profile().address.zipcode,
+                                                      user.get_profile().address.city,
+                                                      user.get_profile().address.country or ''), styleH),
+                    '',
+                    Paragraph(customer_header_content % (self.customer.name,
+                                                         self.customer.legal_form,
+                                                         self.customer.company_id,
+                                                         self.customer.address.street.replace("\n", "<br/>"),
+                                                         self.customer.address.zipcode,
+                                                         self.customer.address.city,
+                                                         self.customer.address.country or ''), styleH)])
+
+        t1 = Table(data, [3.5 * inch, 0.3 * inch, 3.5 * inch], [1.6 * inch])
+        t1.setStyle(TableStyle([('BOX', (0, 0), (0, 0), 0.25, colors.black),
+                                ('BOX', (2, 0), (2, 0), 0.25, colors.black),
+                                ('VALIGN', (0, 0), (-1, -1), 'TOP'), ]))
+
+        story.append(t1)
+
+        spacer1 = Spacer(doc.width, 0.4 * inch)
+        story.append(spacer1)
+
+        data = []
+        msg = u"Dispense d'immatriculation au registre du commerce et des societes (RCS) et au repertoire des metiers (RM)"
+        data.append([Paragraph(msg, styleN),
+                    '',
+                    Paragraph(_("Date : %s") % (localize(self.edition_date)), styleH2)])
+
+        t2 = Table(data, [3.5 * inch, 0.3 * inch, 3.5 * inch], [0.7 * inch])
+        t2.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP'), ]))
+
+        story.append(t2)
+
+        spacer2 = Spacer(doc.width, 0.4 * inch)
+        story.append(spacer2)
+
+        story.append(Paragraph(_("INVOICE #%d") % (self.invoice_id), styleTitle))
+
+        spacer3 = Spacer(doc.width, 0.1 * inch)
+        story.append(spacer3)
+
+        # invoice row list
+        data = [[ugettext('Label'), ugettext('Quantity'), ugettext('Unit price'), ugettext('Total')]]
+        rows = self.invoice_rows.all()
+        for row in rows:
+            label = row.label
+            if row.proposal.reference:
+                label = label + " - [%s]" % (row.proposal.reference)
+            data.append([label, localize(row.quantity), localize(row.unit_price), localize(row.quantity * row.unit_price)])
+
+        row_count = len(rows)
+        if row_count <= 16:
+            max_row_count = 16
+        else:
+            first_page_count = 21
+            normal_page_count = 33
+            last_page_count = 27
+            max_row_count = first_page_count + ((row_count - first_page_count) // normal_page_count * normal_page_count) + last_page_count
+            if row_count - first_page_count - ((row_count - first_page_count) // normal_page_count * normal_page_count) > last_page_count:
+                max_row_count = max_row_count + normal_page_count
+
+        for i in range(max_row_count - row_count):
+            data.append(['', '', '', ''])
+
+        row_table = Table(data, [4.7 * inch, 0.8 * inch, 0.9 * inch, 0.8 * inch], (max_row_count + 1) * [0.3 * inch])
+        row_table.setStyle(TableStyle([('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+                                       ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
+                                       ('FONT', (0, 0), (-1, 0), 'Times-Bold'),
+                                       ('BOX', (0, 0), (-1, 0), 0.25, colors.black),
+                                       ('INNERGRID', (0, 0), (-1, 0), 0.25, colors.black),
+                                       ('BOX', (0, 1), (0, -1), 0.25, colors.black),
+                                       ('BOX', (1, 1), (1, -1), 0.25, colors.black),
+                                       ('BOX', (2, 1), (2, -1), 0.25, colors.black),
+                                       ('BOX', (3, 1), (3, -1), 0.25, colors.black),
+                                       ]))
+
+        story.append(row_table)
+
+        spacer4 = Spacer(doc.width, 0.55 * inch)
+        story.append(spacer4)
+
+        data = [[[Paragraph(_("Payment date : %s") % (localize(self.payment_date)), styleN),
+                  Paragraph(_("Penalty begins on : %s") % (localize(self.penalty_date) or ''), styleN),
+                  Paragraph(_("Penalty rate : %s") % (localize(self.penalty_rate) or ''), styleN),
+                  Paragraph(_("Discount conditions : %s") % (self.discount_conditions or ''), styleN)],
+                '',
+                [Paragraph(_("TOTAL excl. VAT : %(amount)s %(currency)s") % {'amount': localize(self.amount), 'currency' : "€".decode('utf-8')}, styleTotal),
+                 Spacer(1, 0.25 * inch),
+                 Paragraph(u"TVA non applicable, art. 293 B du CGI", styleN)]], ]
+
+        if self.execution_begin_date and self.execution_end_date:
+            data[0][0].insert(1, Paragraph(_("Execution dates : %(begin_date)s to %(end_date)s") % {'begin_date': localize(self.execution_begin_date), 'end_date' : localize(self.execution_end_date)}, styleN))
+
+        footer_table = Table(data, [4.5 * inch, 0.3 * inch, 2.5 * inch], [1 * inch])
+        footer_table.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP'), ]))
+
+        story.append(footer_table)
+
+        doc.build(story, canvasmaker=NumberedCanvas)
+
+        return response
 
 class InvoiceRowAmountError(Exception):
     pass
