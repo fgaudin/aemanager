@@ -240,6 +240,10 @@ a .menu-right {
     width: 15em;
 }
 
+.aligned label:first-letter {
+    text-transform: capitalize;
+}
+
 .inline-form {
     display: inline;
 }
