@@ -438,14 +438,18 @@ div.html {
     margin-bottom: 50px;
 }
 
-#confirmation-message, #unregistered-content {
+#confirmation-message {
     margin: 50px 0px;
     text-align:center;
 }
 
+#unregistered-content {
+    margin: 50px 20px;
+    text-align:left;
+}
+
 #unregistered-content form {
     margin: 0;
-    text-align:left;
 }
 
 #footer {

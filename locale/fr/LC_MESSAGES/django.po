@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-21 02:38+0100\n"
+"POT-Creation-Date: 2011-02-21 18:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -170,7 +170,7 @@ msgstr ""
 "Les montants facturés ne peuvent pas dépasser les montants restants des devis"
 
 #: accounts/models.py:190 templates/invoice/detail.html:69
-#: templates/invoice/edit.html:17 templates/invoice/edit.html.py:61
+#: templates/invoice/edit.html:17 templates/invoice/edit.html.py:62
 msgid "Proposal"
 msgstr "Devis"
 
@@ -336,28 +336,24 @@ msgstr "Nom de la société"
 msgid "Company id"
 msgstr "SIRET"
 
-#: autoentrepreneur/forms.py:10
-msgid "Bank information"
-msgstr "Informations banquaire"
-
-#: autoentrepreneur/forms.py:11 autoentrepreneur/models.py:27
+#: autoentrepreneur/forms.py:10 autoentrepreneur/models.py:27
 #: autoentrepreneur/models.py:68
 msgid "Activity"
 msgstr "Activité"
 
-#: autoentrepreneur/forms.py:12 autoentrepreneur/models.py:69
+#: autoentrepreneur/forms.py:11 autoentrepreneur/models.py:69
 msgid "Creation date"
 msgstr "Date de création"
 
-#: autoentrepreneur/forms.py:13 autoentrepreneur/models.py:70
+#: autoentrepreneur/forms.py:12 autoentrepreneur/models.py:70
 msgid "Creation help"
 msgstr "ACCRE"
 
-#: autoentrepreneur/forms.py:14 autoentrepreneur/models.py:71
+#: autoentrepreneur/forms.py:13 autoentrepreneur/models.py:71
 msgid "Freeing tax payment"
 msgstr "Prélèvement libératoire sur l'impôt"
 
-#: autoentrepreneur/forms.py:15 autoentrepreneur/models.py:72
+#: autoentrepreneur/forms.py:14 autoentrepreneur/models.py:72
 msgid "Payment option"
 msgstr "Option de paiement"
 
@@ -443,6 +439,12 @@ msgstr ""
 "\n"
 "Notre service évolue en permanence et s'il ne correspond pas à vos besoins "
 "aujourd'hui, vous pouvez revenir le tester plus tard."
+
+#: autoentrepreneur/models.py:85 templates/registration/activation_email.txt:3
+#: templates/registration/password_reset_email.html:13
+#, python-format
+msgid "The %(site_name)s team"
+msgstr "L'équipe %(site_name)s"
 
 #: bugtracker/models.py:11
 msgid "Bug"
@@ -798,16 +800,16 @@ msgstr "S'abonner"
 msgid "Unregister"
 msgstr "Se désinscrire"
 
-#: core/views.py:372
+#: core/views.py:374
 msgid "CSRF error"
 msgstr "Erreur CSRF"
 
-#: core/views.py:373
+#: core/views.py:375
 #, python-format
 msgid "An error occured for %(email)s on %(path)s, reason : %(reason)s"
 msgstr "Une erreur est survenue pour %(email)s à %(path)s, raison : %(reason)s"
 
-#: core/views.py:378
+#: core/views.py:380
 msgid "Error"
 msgstr "Erreur"
 
@@ -1156,7 +1158,7 @@ msgid "Business"
 msgstr "Affaires"
 
 #: templates/menu.html:29 templates/menu.html.py:65
-#: templates/expense/list.html:195 templates/invoice/edit.html:134
+#: templates/expense/list.html:195 templates/invoice/edit.html:136
 #: templates/proposal/edit.html:121
 msgid "Add"
 msgstr "Ajouter"
@@ -1214,7 +1216,7 @@ msgid "No master aggreements"
 msgstr "Aucun contrat-cadre"
 
 #: templates/contact/edit.html:119 templates/contract/edit.html:61
-#: templates/core/settings_edit.html:26 templates/invoice/edit.html:140
+#: templates/core/settings_edit.html:26 templates/invoice/edit.html:142
 #: templates/project/edit.html:23 templates/proposal/edit.html:144
 msgid "Save"
 msgstr "Sauvegarder"
@@ -1471,7 +1473,7 @@ msgstr "Facture pour <a href=\"%(customer_url)s\">%(customer)s</a>"
 msgid "Exported file"
 msgstr "Fichier exporté"
 
-#: templates/invoice/detail.html:62 templates/invoice/edit.html:120
+#: templates/invoice/detail.html:62 templates/invoice/edit.html:122
 #: templates/proposal/detail.html:52 templates/proposal/edit.html:108
 msgid "Detail rows"
 msgstr "Lignes de détail"
@@ -1654,16 +1656,125 @@ msgid "Password"
 msgstr "Mot de passe"
 
 #: templates/registration/login.html:39
+#: templates/registration/password_reset_complete.html:12
 msgid "Log in"
 msgstr "Connexion"
 
-#: templates/registration/login.html:48
+#: templates/registration/login.html:49
 msgid "Not yet registered ?"
 msgstr "Pas encore inscrit ?"
 
-#: templates/registration/login.html:48
+#: templates/registration/login.html:49
 msgid "Create an account"
 msgstr "Créer un compte"
+
+#: templates/registration/login.html:50
+msgid "Forgot your password? Click here"
+msgstr "Mot de passe oublié ? Cliquez ici"
+
+#: templates/registration/password_reset_complete.html:4
+#: templates/registration/password_reset_complete.html:8
+msgid "Password reset complete"
+msgstr "Mise à jour du mot de passe effectuée avec succès"
+
+#: templates/registration/password_reset_complete.html:10
+msgid "Your password has been set.  You may go ahead and log in now."
+msgstr "Votre mot de passe a été défini. Vous pouvez maintenant vous authentifier."
+
+#: templates/registration/password_reset_confirm.html:4
+#: templates/registration/password_reset_form.html:4
+#: templates/registration/password_reset_form.html:8
+msgid "Password reset"
+msgstr "Réinitialisation du mot de passe"
+
+#: templates/registration/password_reset_confirm.html:10
+msgid "Enter new password"
+msgstr "Saisissez un nouveau mot de passe"
+
+#: templates/registration/password_reset_confirm.html:12
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr "Saisissez deux fois votre nouveau mot de passe afin de vérifier qu'il est "
+"correctement saisi."
+
+#: templates/registration/password_reset_confirm.html:16
+msgid "New password:"
+msgstr "Nouveau mot de passe :"
+
+#: templates/registration/password_reset_confirm.html:18
+msgid "Confirm password:"
+msgstr "Confirmation du mot de passe :"
+
+#: templates/registration/password_reset_confirm.html:19
+msgid "Change my password"
+msgstr "Modifier mon mot de passe"
+
+#: templates/registration/password_reset_confirm.html:24
+msgid "Password reset unsuccessful"
+msgstr "Échec lors de la mise à jour du mot de passe"
+
+#: templates/registration/password_reset_confirm.html:26
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a new password reset."
+msgstr ""
+"Le lien de mise à jour du mot de passe n'était pas valide, probablement en "
+"raison de sa précédente utilisation. Veuillez renouveler votre demande de "
+"mise à jour de mot de passe."
+
+#: templates/registration/password_reset_done.html:4
+#: templates/registration/password_reset_done.html:8
+msgid "Password reset successful"
+msgstr "Mot de passe mis à jour avec succès"
+
+#: templates/registration/password_reset_done.html:10
+msgid ""
+"We've e-mailed you instructions for setting your password to the e-mail "
+"address you submitted. You should be receiving it shortly."
+msgstr ""
+"Nous vous avons envoyé par courriel les instructions pour changer de mot de "
+"passe à l'adresse que vous avez indiquée. Vous devriez le recevoir "
+"rapidement."
+
+#: templates/registration/password_reset_email.html:2
+msgid "You're receiving this e-mail because you requested a password reset"
+msgstr ""
+"Vous recevez ce courriel car vous avez demandé un changement de mot de passe"
+
+#: templates/registration/password_reset_email.html:3
+#, python-format
+msgid "for your user account at %(site_name)s"
+msgstr "pour votre compte sur le site %(site_name)s"
+
+#: templates/registration/password_reset_email.html:5
+msgid "Please go to the following page and choose a new password:"
+msgstr ""
+"Veuillez vous rendre sur cette page et choisir un nouveau mot de passe :"
+
+#: templates/registration/password_reset_email.html:9
+msgid "Your username, in case you've forgotten:"
+msgstr "Votre nom d'utilisateur, en cas d'oubli :"
+
+#: templates/registration/password_reset_email.html:11
+msgid "Thanks for using our site!"
+msgstr "Merci d'utiliser notre site !"
+
+#: templates/registration/password_reset_form.html:10
+msgid ""
+"Forgotten your password? Enter your e-mail address below, and we'll e-mail "
+"instructions for setting a new one."
+msgstr ""
+"Mot de passe perdu ? Saisissez votre adresse électronique ci-dessous et nous "
+"vous enverrons les instructions pour en créer un nouveau."
+
+#: templates/registration/password_reset_form.html:14
+msgid "E-mail address:"
+msgstr "Adresse électronique :"
+
+#: templates/registration/password_reset_form.html:14
+msgid "Reset my password"
+msgstr "Réinitialiser mon mot de passe"
 
 #: templates/registration/registration_complete.html:5
 msgid ""
@@ -1676,3 +1787,6 @@ msgstr ""
 #: templates/registration/registration_form.html:31
 msgid "Register"
 msgstr "S'enregistrer"
+
+#~ msgid "Bank information"
+#~ msgstr "Informations banquaire"

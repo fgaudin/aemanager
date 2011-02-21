@@ -81,6 +81,9 @@ class UserProfile(models.Model):
         message = _("You have left the site and your data has been deleted.\n\n"
                     "Our service is continually evolving and if it does not meet your "
                     "needs today, please come back to test later.")
+        message = message + "\n\n"
+        message = message + _("The %(site_name)s team") % {'site_name': Site.objects.get_current().name}
+
         from_email = settings.DEFAULT_FROM_EMAIL
         recipient_list = [user_email]
         send_mail(subject, message, from_email, recipient_list, fail_silently=False)

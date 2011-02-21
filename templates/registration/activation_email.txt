@@ -1,1 +1,3 @@
 {% load i18n %}{% url registration_activate activation_key as activation_url %}{% blocktrans with site as site and activation_key as activation_key and expiration_days as expiration_days %}You've just registered on https://{{ site }}. You have {{ expiration_days }} days to activate your account by following this link : https://{{ site }}{{ activation_url }}{% endblocktrans %}
+
+{% blocktrans with site.name as site_name %}The {{ site_name }} team{% endblocktrans %}

@@ -367,7 +367,9 @@ def csrf_failure(request, reason=""):
         email = request.user.email
     else:
         if request.method == 'POST':
-            email = request.POST.get('email', 'unknown')
+            email = request.POST.get('email', None)
+            if not email:
+                email = request.POST.get('username', 'unknown')
 
     subject = _('CSRF error')
     message = _("An error occured for %(email)s on %(path)s, reason : %(reason)s") % {'email': email,
