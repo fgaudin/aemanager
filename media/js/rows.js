@@ -52,6 +52,10 @@
                           position: [offset.left+100, offset.top-550],
                           title: title});
                   });
+                  // and check balance payments if needed
+                  if ($('.proposal-field option:selected[value="' + id + '"]').parent('.proposal-field').nextAll('.balance-payments-field:checked').length) {
+                      $this.nextAll('.balance-payments-field').attr('checked', true);
+                  }
               }
           });
       });
@@ -66,6 +70,21 @@
                 },
                 delay: 0,
                 showURL: false
+          });
+      });
+  };
+
+  $.fn.balanceAll = function(){
+      return $(this).each(function(){
+          var $this = $(this);
+          $this.click(function(e){
+              var proposal = $(e.currentTarget).prevAll('.proposal-field');
+              if (proposal.val()) {
+                  var state = $(e.currentTarget).attr('checked');
+                  $('.proposal-field option:selected[value="' + proposal.val() + '"]').each(function(){
+                      $(this).parent('.proposal-field').nextAll('.balance-payments-field').attr('checked',state);
+                  });
+              }
           });
       });
   };

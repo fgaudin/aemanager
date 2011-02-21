@@ -16,6 +16,7 @@ jQuery(document).ready(function(){
     jQuery('.invoice-row input:text').labelInside();
     jQuery('.proposal-field').proposalOverview('{% trans "Proposal" %}', '{% url proposal_detail id=0 %}');
     jQuery('.balance_payments_label').rowHelp();
+    jQuery('.balance-payments-field').balanceAll();
 
     jQuery('#invoice-edit-form').submit(function() {
         jQuery('.invoice-row input.empty-field:text').val('');
@@ -60,6 +61,7 @@ jQuery(document).ready(function(){
         jQuery('input:text', new_row).labelInside();
         jQuery('.proposal-field', new_row).proposalOverview('{% trans "Proposal" %}', '{% url proposal_detail id=0 %}');
         jQuery('.balance_payments_label', new_row).rowHelp();
+        jQuery('.balance-payments-field', new_row).balanceAll();
 
         jQuery(new_row).show();
         jQuery('#id_invoice_rows-TOTAL_FORMS').val(parseInt(row_count, 10) + 1);
