@@ -63,6 +63,25 @@ class ContactTest(TestCase):
     def setUp(self):
         self.client.login(username='test', password='test')
 
+    def testContactList(self):
+        """
+        add for bug #108
+        """
+        address1 = Address.objects.create(street="3 rue de la paix",
+                                          zipcode="75000",
+                                          city="Paris",
+                                          country=None,
+                                          owner_id=1)
+        self.contact1 = Contact.objects.create(contact_type=CONTACT_TYPE_PERSON,
+                                               name="contact1",
+                                               firstname="first name",
+                                               email="test1@test.com",
+                                               address=address1,
+                                               owner_id=1)
+        response = self.client.get(reverse("contact_search"))
+        self.assertEquals(response.status_code, 200)
+        self.assertContains(response, "first name")
+
     def testBug95(self):
         """
         Company id is mandatory for company contact
