@@ -1,4 +1,5 @@
 from decimal import Decimal
+from django.test.testcases import TransactionTestCase
 import datetime
 import hashlib
 from django.core.urlresolvers import reverse
@@ -1065,6 +1066,103 @@ class InvoiceTest(TestCase):
 
         self.assertEquals(response.status_code, 302)
         self.assertEquals(Invoice.objects.get(invoice_id=1).amount, 1100)
+
+class InvoiceBug106Test(TransactionTestCase):
+    fixtures = ['test_users', 'test_contacts', 'test_projects']
+
+    def setUp(self):
+        self.client.login(username='test', password='test')
+
+    def testBug106(self):
+        """
+        Saving fails when editing an invoice when another is balancing
+        """
+        p = Proposal.objects.create(project_id=30,
+                                    update_date=datetime.date.today(),
+                                    state=PROPOSAL_STATE_ACCEPTED,
+                                    begin_date=datetime.date(2010, 8, 1),
+                                    end_date=datetime.date(2010, 8, 15),
+                                    contract_content='Content of contract',
+                                    amount=2000,
+                                    owner_id=1)
+
+        p_row = ProposalRow.objects.create(proposal_id=p.id,
+                                           label='Day of work',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           quantity=20,
+                                           unit_price='100',
+                                           owner_id=1)
+
+        i = Invoice.objects.create(customer_id=p.project.customer_id,
+                                   invoice_id=1,
+                                   state=INVOICE_STATE_SENT,
+                                   edition_date=datetime.date(2010, 8, 31),
+                                   payment_date=datetime.date(2010, 9, 30),
+                                   paid_date=None,
+                                   payment_type=PAYMENT_TYPE_CHECK,
+                                   execution_begin_date=datetime.date(2010, 8, 1),
+                                   execution_end_date=datetime.date(2010, 8, 7),
+                                   penalty_date=datetime.date(2010, 10, 8),
+                                   penalty_rate='1.5',
+                                   discount_conditions='Nothing',
+                                   owner_id=1)
+
+        i_row = InvoiceRow.objects.create(proposal_id=p.id,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=10,
+                                          unit_price='100',
+                                          balance_payments=False,
+                                          owner_id=1)
+
+        i2 = Invoice.objects.create(customer_id=p.project.customer_id,
+                                    invoice_id=2,
+                                    state=INVOICE_STATE_EDITED,
+                                    edition_date=datetime.date(2010, 8, 31),
+                                    payment_date=datetime.date(2010, 9, 30),
+                                    paid_date=None,
+                                    payment_type=PAYMENT_TYPE_CHECK,
+                                    execution_begin_date=datetime.date(2010, 8, 1),
+                                    execution_end_date=datetime.date(2010, 8, 7),
+                                    penalty_date=datetime.date(2010, 10, 8),
+                                    penalty_rate='1.5',
+                                    discount_conditions='Nothing',
+                                    owner_id=1)
+
+        i2_row = InvoiceRow.objects.create(proposal_id=p.id,
+                                           invoice_id=i2.id,
+                                           label='Day of work',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           quantity=10,
+                                           unit_price='100',
+                                           balance_payments=True,
+                                           owner_id=1)
+
+        response = self.client.post(reverse('invoice_edit', kwargs={'id': i.id}),
+                                    {'invoice-invoice_id': 1,
+                                     'invoice-state': INVOICE_STATE_EDITED,
+                                     'invoice-edition_date': '2010-8-31',
+                                     'invoice-payment_date': '2010-9-29',
+                                     'invoice-paid_date': '2010-10-30',
+                                     'invoice-payment_type': PAYMENT_TYPE_CHECK,
+                                     'invoice-execution_begin_date': '2010-8-1',
+                                     'invoice-execution_end_date': '2010-8-7',
+                                     'invoice-penalty_date': '2010-10-8',
+                                     'invoice-penalty_rate': 1.5,
+                                     'invoice-discount_conditions':'Nothing',
+                                     'invoice_rows-TOTAL_FORMS': 1,
+                                     'invoice_rows-INITIAL_FORMS': 1,
+                                     'invoice_rows-0-ownedobject_ptr': i_row.id,
+                                     'invoice_rows-0-label': 'Day of work',
+                                     'invoice_rows-0-proposal': p.id,
+                                     'invoice_rows-0-category': ROW_CATEGORY_SERVICE,
+                                     'invoice_rows-0-quantity': 10,
+                                     'invoice_rows-0-unit_price': 100,
+                                     'invoice_rows-0-balance_payments': False })
+
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals(Invoice.objects.get(pk=i.id).payment_date, datetime.date(2010, 9, 29))
 
 class ExpenseTest(TestCase):
     fixtures = ['test_users', ]

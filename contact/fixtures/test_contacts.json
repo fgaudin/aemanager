@@ -41,7 +41,7 @@
         }
     },
     {
-        "pk": 12,
+        "pk": 2,
         "model": "core.ownedobject",
         "fields": {
             "owner": 1

@@ -171,10 +171,8 @@ class Proposal(OwnedObject):
 
     def get_remaining_to_invoice(self, exclude_invoice=None):
         balancing_invoices = self.invoice_rows.filter(balance_payments=True)
-        if exclude_invoice:
-            balancing_invoices = balancing_invoices.exclude(invoice=exclude_invoice)
         has_balancing_invoice = balancing_invoices.count()
-        if has_balancing_invoice:
+        if not exclude_invoice and has_balancing_invoice:
             return 0
 
         invoice_rows = self.invoice_rows.filter(invoice__state__gte=1)
