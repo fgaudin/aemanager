@@ -19,6 +19,7 @@ from django.contrib.auth.models import User
 from autoentrepreneur.decorators import subscription_required
 from django.contrib.auth import logout
 from django.core.mail import mail_admins
+from announcement.models import Announcement
 import time
 import datetime
 import urllib, urllib2
@@ -195,9 +196,12 @@ def index(request):
               'expenses_progression':simplejson.dumps(expenses_progression),
               'profit_progression':simplejson.dumps(profit_progression)}
 
+    announcements = Announcement.objects.filter(enabled=True)
+
     return render_to_response('core/index.html',
                               {'active': 'dashboard',
                                'title': _('Dashboard'),
+                               'announcements': announcements,
                                'sales': sales,
                                'sales_previous_year': sales_previous_year,
                                'years': [today.year, today.year - 1],

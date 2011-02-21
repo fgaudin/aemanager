@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-20 22:01+0100\n"
+"POT-Creation-Date: 2011-02-21 02:38+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -104,7 +104,7 @@ msgstr "Éditée"
 msgid "Sent"
 msgstr "Envoyé"
 
-#: accounts/models.py:39 autoentrepreneur/models.py:36 core/views.py:332
+#: accounts/models.py:39 autoentrepreneur/models.py:36 core/views.py:336
 msgid "Paid"
 msgstr "Payée"
 
@@ -119,7 +119,7 @@ msgid "Invoice id"
 msgstr "Numéro de facture"
 
 #: accounts/models.py:131 autoentrepreneur/models.py:41
-#: bugtracker/models.py:27 project/forms.py:27 project/models.py:95
+#: bugtracker/models.py:33 project/forms.py:27 project/models.py:95
 #: project/models.py:138 templates/core/subscribe.html:10
 #: templates/invoice/list.html:25 templates/project/detail.html:31
 #: templates/project/detail.html.py:59 templates/project/list.html:21
@@ -231,7 +231,7 @@ msgstr "Etablir une facture"
 msgid "The invoice has been saved successfully"
 msgstr "La facture a été sauvegardée avec succès"
 
-#: accounts/views.py:280 contact/views.py:76 core/views.py:231
+#: accounts/views.py:280 contact/views.py:76 core/views.py:235
 #: project/views.py:74 project/views.py:171 project/views.py:382
 msgid "Data provided are invalid"
 msgstr "Les données saisies sont invalides"
@@ -309,6 +309,14 @@ msgstr "TOTAL HT : %(amount)s %(currency)s"
 #, python-format
 msgid "Execution dates : %(begin_date)s to %(end_date)s"
 msgstr "Date d'exécution : %(begin_date)s au %(end_date)s"
+
+#: announcement/models.py:6
+msgid "Announcement"
+msgstr "Annonce"
+
+#: announcement/models.py:7
+msgid "Enabled"
+msgstr "Activée"
 
 #: autoentrepreneur/decorators.py:19
 #, python-format
@@ -460,39 +468,39 @@ msgstr "Ouvert"
 msgid "Closed"
 msgstr "Fermé"
 
-#: bugtracker/models.py:22 bugtracker/models.py:42 bugtracker/models.py:59
+#: bugtracker/models.py:28 bugtracker/models.py:50 bugtracker/models.py:67
 msgid "User"
 msgstr "Utilisateur"
 
-#: bugtracker/models.py:23 project/models.py:260
+#: bugtracker/models.py:29 project/models.py:260
 #: templates/invoice/detail.html:71 templates/issue/list.html:19
 #: templates/message/list.html:20 templates/proposal/detail.html:59
 #: templates/proposal/detail_ajax.html:27
 msgid "Category"
 msgstr "Catégorie"
 
-#: bugtracker/models.py:23
+#: bugtracker/models.py:29
 msgid "Only bugs and features are public"
 msgstr "Seuls les bugs et les demandes de fonctionnalités sont publics"
 
-#: bugtracker/models.py:24 templates/issue/list.html:16
+#: bugtracker/models.py:30 templates/issue/list.html:16
 #: templates/message/list.html:15
 msgid "Subject"
 msgstr "Sujet"
 
-#: bugtracker/models.py:25 bugtracker/models.py:43 bugtracker/views.py:172
+#: bugtracker/models.py:31 bugtracker/models.py:51 bugtracker/views.py:183
 #: templates/issue/detail.html:61 templates/message/detail.html:42
 msgid "Message"
 msgstr "Message"
 
-#: bugtracker/models.py:26 bugtracker/models.py:45 project/models.py:18
+#: bugtracker/models.py:32 bugtracker/models.py:53 project/models.py:18
 #: project/models.py:143 templates/issue/detail.html:60
 #: templates/issue/list.html:18 templates/message/detail.html:41
 #: templates/message/list.html:19
 msgid "Update date"
 msgstr "Date de modification"
 
-#: bugtracker/models.py:44 bugtracker/models.py:58 bugtracker/views.py:152
+#: bugtracker/models.py:52 bugtracker/models.py:66 bugtracker/views.py:161
 msgid "Issue"
 msgstr "Problème"
 
@@ -508,75 +516,75 @@ msgstr "Messages"
 msgid "Edit an issue"
 msgstr "Éditer un problème"
 
-#: bugtracker/views.py:58 templates/issue/list.html:5
+#: bugtracker/views.py:61 templates/issue/list.html:5
 msgid "Send an issue"
 msgstr "Envoyer un problème"
 
-#: bugtracker/views.py:69
+#: bugtracker/views.py:72
 msgid "The issue has been saved successfully"
 msgstr "Le problème a été sauvegardé avec succès"
 
-#: bugtracker/views.py:72
+#: bugtracker/views.py:75
 msgid "The message has been saved successfully"
 msgstr "Le message a été sauvegardé avec succès"
 
-#: bugtracker/views.py:102
+#: bugtracker/views.py:108
 msgid "The issue has been closed successfully"
 msgstr "Le problème a été fermé avec succès"
 
-#: bugtracker/views.py:109
+#: bugtracker/views.py:115
 msgid "Close an issue"
 msgstr "Fermer un problème"
 
-#: bugtracker/views.py:129
+#: bugtracker/views.py:138
 msgid "The issue has been reopened successfully"
 msgstr "Le problème a été réouvert avec succès"
 
-#: bugtracker/views.py:136
+#: bugtracker/views.py:145
 msgid "Reopen an issue"
 msgstr "Réouvrir un problème"
 
-#: bugtracker/views.py:188
+#: bugtracker/views.py:199
 msgid "The issue has been deleted successfully"
 msgstr "Le problème a été supprimé avec succès"
 
-#: bugtracker/views.py:195
+#: bugtracker/views.py:206
 msgid "Delete an issue"
 msgstr "Supprimer un problème"
 
-#: bugtracker/views.py:203
+#: bugtracker/views.py:214
 msgid "Edit a comment"
 msgstr "Éditer un commentaire"
 
-#: bugtracker/views.py:209 bugtracker/views.py:237
+#: bugtracker/views.py:221 bugtracker/views.py:249
 msgid "Send a comment"
 msgstr "Envoyer un commentaire"
 
-#: bugtracker/views.py:223 bugtracker/views.py:257
+#: bugtracker/views.py:235 bugtracker/views.py:272
 msgid "Your comment has been saved successfully"
 msgstr "Votre commentaire a été sauvegardé avec succès"
 
-#: bugtracker/views.py:280
+#: bugtracker/views.py:295
 msgid "The comment has been deleted successfully"
 msgstr "Le commentaire a été supprimé avec succès"
 
-#: bugtracker/views.py:287
+#: bugtracker/views.py:302
 msgid "Delete a comment"
 msgstr "Supprimer un commentaire"
 
-#: bugtracker/views.py:300
+#: bugtracker/views.py:317
 msgid "Your vote has been saved successfully"
 msgstr "Votre vote a été sauvegardé avec succès"
 
-#: bugtracker/views.py:302
+#: bugtracker/views.py:319
 msgid "You can't vote anymore"
 msgstr "Vous ne pouvez plus voter"
 
-#: bugtracker/views.py:304
+#: bugtracker/views.py:321
 msgid "No votes for closed issues"
 msgstr "Pas de vote pour les problèmes fermés"
 
-#: bugtracker/views.py:315
+#: bugtracker/views.py:334
 msgid "Your vote has been removed successfully"
 msgstr "Votre vote a été supprimé avec succès"
 
@@ -723,83 +731,83 @@ msgstr ""
 msgid "You must agree to the terms to register"
 msgstr "Vous devez accepter les conditions pour vous inscrire"
 
-#: core/tests.py:66 core/views.py:257
+#: core/tests.py:66 core/views.py:261
 msgid "Wrong password"
 msgstr "Mot de passe erroné"
 
-#: core/tests.py:81 core/views.py:255
+#: core/tests.py:81 core/views.py:259
 msgid "Your password has been modified successfully"
 msgstr "Votre mot de passe a été sauvegardé avec succès"
 
-#: core/views.py:34
+#: core/views.py:35
 msgid ""
 "How-to : create a customer, a project, a proposal and finally an invoice"
 msgstr ""
 "Mode d'emploi : créer un client, un projet, un devis et finalement une "
 "facture"
 
-#: core/views.py:200 templates/menu.html:10 templates/core/index.html:3
+#: core/views.py:203 templates/menu.html:10 templates/core/index.html:3
 msgid "Dashboard"
 msgstr "Tableau de bord"
 
-#: core/views.py:228
+#: core/views.py:232
 msgid "Your settings have been updated successfully"
 msgstr "Vos paramètres ont été sauvegardés avec succès"
 
-#: core/views.py:239 templates/menu.html:81
+#: core/views.py:243 templates/menu.html:81
 msgid "Settings"
 msgstr "Paramètres"
 
-#: core/views.py:259
+#: core/views.py:263
 msgid "Your password has not been modified"
 msgstr "Votre mot de passe n'a pas été modifié"
 
-#: core/views.py:265 templates/menu.html:84
+#: core/views.py:269 templates/menu.html:84
 msgid "Change password"
 msgstr "Changer de mot de passe"
 
-#: core/views.py:280 templates/menu.html:88
+#: core/views.py:284 templates/menu.html:88
 msgid "My subscription"
 msgstr "Mon abonnement"
 
-#: core/views.py:292
+#: core/views.py:296
 msgid "Subscription paid"
 msgstr "Abonnement payé"
 
-#: core/views.py:320
+#: core/views.py:324
 msgid "Not verified"
 msgstr "Non vérifié"
 
-#: core/views.py:324
+#: core/views.py:328
 msgid "Receiver is not as defined in settings. Spoofing ?"
 msgstr "Le destinataire n'est pas celui défini dans settings. Spoofing ?"
 
-#: core/views.py:326
+#: core/views.py:330
 msgid "Payment not completed"
 msgstr "Paiement non complet"
 
-#: core/views.py:328 core/views.py:330
+#: core/views.py:332 core/views.py:334
 msgid "Amount altered. Bad guy ?"
 msgstr "Montant modifié. Gros vilain ?"
 
-#: core/views.py:339
+#: core/views.py:343
 msgid "Subscribe"
 msgstr "S'abonner"
 
-#: core/views.py:357 templates/core/unregister.html:15
+#: core/views.py:361 templates/core/unregister.html:15
 msgid "Unregister"
 msgstr "Se désinscrire"
 
-#: core/views.py:368
+#: core/views.py:372
 msgid "CSRF error"
 msgstr "Erreur CSRF"
 
-#: core/views.py:369
+#: core/views.py:373
 #, python-format
 msgid "An error occured for %(email)s on %(path)s, reason : %(reason)s"
 msgstr "Une erreur est survenue pour %(email)s à %(path)s, raison : %(reason)s"
 
-#: core/views.py:374
+#: core/views.py:378
 msgid "Error"
 msgstr "Erreur"
 
@@ -1180,7 +1188,6 @@ msgstr "Se déconnecter"
 
 #: templates/comment/edit.html:13 templates/issue/detail.html:90
 #: templates/issue/edit.html:13 templates/message/detail.html:69
-#: templates/message/edit.html:13
 msgid "Send"
 msgstr "Envoyer"
 
@@ -1275,6 +1282,10 @@ msgstr "Chiffre d'affaire"
 #: templates/core/charts_widget.html:38
 msgid "Profit"
 msgstr "Bénéfice"
+
+#: templates/core/index.html:58
+msgid "Info"
+msgstr "Info"
 
 #: templates/core/invoices_widget.html:4 templates/core/sales_widget.html:36
 msgid "Waiting payments"

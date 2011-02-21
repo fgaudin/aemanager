@@ -484,3 +484,16 @@ div.html {
 .unread {
     font-weight: bold;
 }
+
+#announcements {
+    height:70px;
+    position:relative;
+    overflow: hidden;
+}
+
+.announcement {
+    margin-bottom:20px;
+    position:relative;
+    overflow: hidden;
+    height:70px;
+}

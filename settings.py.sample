@@ -116,6 +116,7 @@ INSTALLED_APPS = (
     'registration',
     # aemanager apps
     'accounts',
+    'announcement',
     'autoentrepreneur',
     'bugtracker',
     'contact',
