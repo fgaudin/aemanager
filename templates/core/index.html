@@ -25,7 +25,9 @@ jQuery(document).ready(function(){
                 if (lines) {
                     line_count = lines.length;
                 }
-                jQuery(this).scrollTo('max', line_count*1200, {
+                var average_line_length = jQuery(this).html().length/line_count;
+                var slowdown_factor = average_line_length / 50;
+                jQuery(this).scrollTo('max', line_count*1200 * slowdown_factor, {
                     easing:'linear',
                     onAfter: function(){
                         var next_element = jQuery(element).next();
