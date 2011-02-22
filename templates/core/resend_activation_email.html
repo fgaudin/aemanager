@@ -1,0 +1,16 @@
+{% extends "unregistered_base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Re-send activation email" %}{% endblock %}
+
+{% block content %}
+
+<h1>{% trans "Re-send activation email" %}</h1>
+
+<p>{% trans "You have not received the activation email ? First check your emails, it may have been incorrectly classified as spam." %}</p>
+
+<form action="" method="post">{% csrf_token %}
+{{ form.email.errors }}
+<p><label for="id_email">{% trans 'E-mail address:' %}</label> {{ form.email }} <input type="submit" value="{% trans 'Resend activation email' %}" /></p>
+</form>
+{% endblock %}

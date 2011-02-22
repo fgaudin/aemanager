@@ -1,7 +1,7 @@
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template.context import RequestContext, Context
 from django.utils.translation import ugettext_lazy as _, ugettext
-from core.forms import UserForm, PasswordForm
+from core.forms import UserForm, PasswordForm, ResendActivationEmailForm
 from autoentrepreneur.forms import UserProfileForm
 from contact.forms import AddressForm
 from django.db.transaction import commit_on_success
@@ -31,6 +31,7 @@ import time
 import datetime
 import urllib, urllib2
 from django.conf import settings
+from registration.models import RegistrationProfile
 
 @settings_required
 @subscription_required
@@ -484,4 +485,26 @@ def csrf_failure(request, reason=""):
                                   context_instance=RequestContext(request))
     response.status_code = 403
     return response
+
+def resend_activation_email(request):
+    if request.method == 'POST':
+        form = ResendActivationEmailForm(request.POST)
+        if form.is_valid():
+            cleaned_data = form.cleaned_data
+            email = cleaned_data['email']
+            try:
+                profile = RegistrationProfile.objects.get(user__email=email)
+                if profile.activation_key_expired():
+                    form._errors['email'] = form.error_class([_("Activation key expired. You may already have activated your account. If not, activation delay may have passed, you have to wait for your previous registration to be deleted (max. 1 day).")])
+                else:
+                    site = Site.objects.get_current()
+                    profile.send_activation_email(site)
+                    return redirect(reverse('registration_complete'))
+            except RegistrationProfile.DoesNotExist:
+                form._errors['email'] = form.error_class([_("Email address not found. Activation delay may have expired. Try subscribing again.")])
+    else:
+        form = ResendActivationEmailForm()
+    return render_to_response('core/resend_activation_email.html',
+                              {'form': form},
+                              context_instance=RequestContext(request))
 

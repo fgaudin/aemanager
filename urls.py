@@ -2,6 +2,7 @@ from django.conf.urls.defaults import *
 
 from django.contrib import admin
 from django.conf import settings
+from core.views import resend_activation_email
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -15,6 +16,9 @@ urlpatterns = patterns('',
         view='django.contrib.auth.views.logout',
         name='logout',
         kwargs={'next_page': '/'}),
+    url(regex=r'^resend_activation_email/$',
+        view=resend_activation_email,
+        name='resend_activation_email'),
     url(regex=r'^tos/$',
         view='django.views.generic.simple.direct_to_template',
         name='tos',

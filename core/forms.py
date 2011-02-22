@@ -33,3 +33,7 @@ class RegistrationFormUniqueEmailAndTos(RegistrationFormUniqueEmail):
     tos = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class': 'required'}),
                              label=_(u'I have read and agree to the Terms of Sale and Service'),
                              error_messages={'required': _("You must agree to the terms to register")})
+
+class ResendActivationEmailForm(forms.Form):
+    email = forms.EmailField(label=_('Email'), widget=forms.TextInput(attrs={'class': 'required',
+                                                                             'maxlength':75}))
