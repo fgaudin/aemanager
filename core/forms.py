@@ -37,3 +37,9 @@ class RegistrationFormUniqueEmailAndTos(RegistrationFormUniqueEmail):
 class ResendActivationEmailForm(forms.Form):
     email = forms.EmailField(label=_('Email'), widget=forms.TextInput(attrs={'class': 'required',
                                                                              'maxlength':75}))
+
+class ContactUsForm(forms.Form):
+    name = forms.CharField(label=_('Name'), max_length=50)
+    email = forms.EmailField(label=_('Email'))
+    subject = forms.CharField(label=_('Subject'))
+    message = forms.CharField(label=_('Message'), widget=forms.Textarea())

@@ -1,7 +1,8 @@
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template.context import RequestContext, Context
 from django.utils.translation import ugettext_lazy as _, ugettext
-from core.forms import UserForm, PasswordForm, ResendActivationEmailForm
+from core.forms import UserForm, PasswordForm, ResendActivationEmailForm, \
+    ContactUsForm
 from autoentrepreneur.forms import UserProfileForm
 from contact.forms import AddressForm
 from django.db.transaction import commit_on_success
@@ -508,3 +509,18 @@ def resend_activation_email(request):
                               {'form': form},
                               context_instance=RequestContext(request))
 
+def contact_us(request):
+    if request.method == 'POST':
+        form = ContactUsForm(request.POST)
+        if form.is_valid():
+            cleaned_data = form.cleaned_data
+            EmailMessage(subject=u'[%s] %s' % (Site.objects.get_current().name, cleaned_data['subject']),
+                         body=cleaned_data['message'],
+                         from_email=cleaned_data['email'],
+                         to=[a[1] for a in settings.MANAGERS]).send(fail_silently=(not settings.DEBUG))
+            return redirect(reverse('message_sent'))
+    else:
+        form = ContactUsForm()
+    return render_to_response('core/contact_us.html',
+                              {'form': form},
+                              context_instance=RequestContext(request))

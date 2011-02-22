@@ -1,0 +1,22 @@
+{% extends "unregistered_base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Contact us" %}{% endblock %}
+
+{% block content %}
+
+<h1>{% trans "Contact us" %}</h1>
+
+<form action="" method="post">{% csrf_token %}
+{% csrf_token %}
+    <fieldset class="module aligned">
+    {% with form as form %}
+    {% include "form.html" %}
+    {% endwith %}
+    </fieldset>
+
+    <div class="submit-row">
+    <input class="default" type="submit" name="action" value="{% trans "Send" %}" />
+    </div>
+</form>
+{% endblock %}

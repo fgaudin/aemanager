@@ -45,11 +45,11 @@
             </div>
             <br class="clear">
             </div>
-        <div id="footer">
-        {% trans "Not yet registered ?" %} <a href="{% url registration_register %}">{% trans "Create an account" %}</a><br/><br/>
-        <a href="{% url django.contrib.auth.views.password_reset %}">{% trans "Forgot your password? Click here" %}</a><br/>
-        <a href="{% url resend_activation_email %}">{% trans "Resend activation link? Click here" %}</a>
-        </div>
+            <div id="footer">
+            {% trans "Not yet registered ?" %} <a href="{% url registration_register %}">{% trans "Create an account" %}</a><br/><br/>
+            <a href="{% url django.contrib.auth.views.password_reset %}">{% trans "Forgot your password? Click here" %}</a><br/>
+            <a href="{% url resend_activation_email %}">{% trans "Resend activation link? Click here" %}</a>
+            </div>
         </div>
     </body>
 </html>

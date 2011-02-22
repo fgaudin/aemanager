@@ -2,7 +2,7 @@ from django.conf.urls.defaults import *
 
 from django.contrib import admin
 from django.conf import settings
-from core.views import resend_activation_email
+from core.views import resend_activation_email, contact_us
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -12,6 +12,13 @@ urlpatterns = patterns('',
     url(regex=r'^$',
         view='core.views.index',
         name='index'),
+    url(regex=r'^contact_us/$',
+        view=contact_us,
+        name='contact_us'),
+    url(regex=r'^contact/sent/$',
+        view='django.views.generic.simple.direct_to_template',
+        name='message_sent',
+        kwargs={'template': 'core/message_sent.html'}),
     url(regex=r'^logout/$',
         view='django.contrib.auth.views.logout',
         name='logout',
