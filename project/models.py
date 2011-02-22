@@ -1,4 +1,15 @@
 # -*- coding: utf-8 -*-
+
+import datetime
+from custom_canvas import NumberedCanvas
+from reportlab.platypus import Paragraph, Frame, Spacer, BaseDocTemplate, PageTemplate
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.rl_config import defaultPageSize
+from reportlab.lib.units import inch
+from reportlab.lib.enums import TA_CENTER
+from reportlab.platypus import Table, TableStyle
+from reportlab.lib import colors
+
 from decimal import Decimal
 from django.db import models
 from django.utils.translation import ugettext_lazy as _, ugettext
@@ -199,6 +210,192 @@ class Proposal(OwnedObject):
     Generate a PDF file for the proposal
     """
     def to_pdf(self, user, response):
+        def proposal_footer(canvas, doc):
+            canvas.saveState()
+            canvas.setFont('Times-Roman', 10)
+            PAGE_WIDTH = defaultPageSize[0]
+            footer_text = "%s %s - SIRET : %s - %s, %s %s" % (user.first_name,
+                                                                  user.last_name,
+                                                                  user.get_profile().company_id,
+                                                                  user.get_profile().address.street,
+                                                                  user.get_profile().address.zipcode,
+                                                                  user.get_profile().address.city)
+            if user.get_profile().address.country:
+                footer_text = footer_text + ", %s" % (user.get_profile().address.country)
+
+            canvas.drawCentredString(PAGE_WIDTH / 2.0, 0.5 * inch, footer_text)
+            canvas.restoreState()
+
+        filename = ugettext('proposal_%(id)d.pdf') % {'id': self.id}
+        response['Content-Disposition'] = 'attachment; filename=%s' % (filename)
+
+        doc = BaseDocTemplate(response, title=ugettext('Proposal %(reference)s') % {'reference': self.reference}, leftMargin=0.5 * inch, rightMargin=0.5 * inch)
+        frameT = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height + 0.5 * inch, id='normal')
+        doc.addPageTemplates([PageTemplate(id='all', frames=frameT, onPage=proposal_footer), ])
+
+        styleH = ParagraphStyle({})
+        styleH.fontSize = 14
+        styleH.leading = 16
+        styleH.borderPadding = (5,) * 4
+
+        styleTotal = ParagraphStyle({})
+        styleTotal.fontSize = 14
+        styleTotal.leading = 16
+        styleTotal.borderColor = colors.black
+        styleTotal.borderWidth = 0.5
+        styleTotal.borderPadding = (5,) * 4
+
+        styleH2 = ParagraphStyle({})
+        styleH2.fontSize = 14
+        styleH2.leading = 16
+
+
+        styleTitle = ParagraphStyle({})
+        styleTitle.fontSize = 14
+        styleTitle.fontName = "Times-Bold"
+
+        styleN = ParagraphStyle({})
+        styleN.fontSize = 12
+        styleN.leading = 14
+
+        styleF = ParagraphStyle({})
+        styleF.fontSize = 10
+        styleF.alignment = TA_CENTER
+
+        styleLabel = ParagraphStyle({})
+
+        story = []
+
+        data = []
+        user_header_content = """
+        %s %s<br/>
+        SIRET : %s<br/>
+        %s<br/>
+        %s %s<br/>
+        %s
+        """
+
+        customer_header_content = """
+        %s<br/>
+        %s<br/>
+        SIRET : %s<br/>
+        %s<br/>
+        %s %s<br/>
+        %s<br/>
+        """
+
+        data.append([Paragraph(user_header_content % (user.first_name,
+                                                      user.last_name,
+                                                      user.get_profile().company_id,
+                                                      user.get_profile().address.street.replace("\n", "<br/>"),
+                                                      user.get_profile().address.zipcode,
+                                                      user.get_profile().address.city,
+                                                      user.get_profile().address.country or ''), styleH),
+                    '',
+                    Paragraph(customer_header_content % (self.project.customer.name,
+                                                         self.project.customer.legal_form,
+                                                         self.project.customer.company_id,
+                                                         self.project.customer.address.street.replace("\n", "<br/>"),
+                                                         self.project.customer.address.zipcode,
+                                                         self.project.customer.address.city,
+                                                         self.project.customer.address.country or ''), styleH)])
+
+        t1 = Table(data, [3.5 * inch, 0.3 * inch, 3.5 * inch], [1.6 * inch])
+        t1.setStyle(TableStyle([('BOX', (0, 0), (0, 0), 0.25, colors.black),
+                                ('BOX', (2, 0), (2, 0), 0.25, colors.black),
+                                ('VALIGN', (0, 0), (-1, -1), 'TOP'), ]))
+
+        story.append(t1)
+
+        spacer1 = Spacer(doc.width, 0.4 * inch)
+        story.append(spacer1)
+
+        data = []
+        msg = u"Dispense d'immatriculation au registre du commerce et des societes (RCS) et au repertoire des metiers (RM)"
+        data.append([Paragraph(msg, styleN),
+                    '',
+                    Paragraph(_("Date : %s") % (localize(self.update_date)), styleH2)])
+
+        t2 = Table(data, [3.5 * inch, 0.3 * inch, 3.5 * inch], [0.7 * inch])
+        t2.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP'), ]))
+
+        story.append(t2)
+
+        spacer2 = Spacer(doc.width, 0.4 * inch)
+        story.append(spacer2)
+
+        story.append(Paragraph(_("PROPOSAL %s") % (self.reference), styleTitle))
+
+        spacer3 = Spacer(doc.width, 0.1 * inch)
+        story.append(spacer3)
+
+        # invoice row list
+        data = [[ugettext('Label'), ugettext('Quantity'), ugettext('Unit price'), ugettext('Total')]]
+        rows = self.proposal_rows.all()
+        extra_rows = 0
+        label_width = 4.6 * inch
+        for row in rows:
+            para = Paragraph(row.label, styleLabel)
+            para.width = label_width
+            splitted_para = para.breakLines(label_width)
+            label = " ".join(splitted_para.lines[0][1])
+            data.append([label, localize(row.quantity), localize(row.unit_price), localize(row.quantity * row.unit_price)])
+            for extra_row in splitted_para.lines[1:]:
+                label = " ".join(extra_row[1])
+                data.append([label, '', '', ''])
+                extra_rows = extra_rows + 1
+
+        row_count = len(rows) + extra_rows
+        if row_count <= 16:
+            max_row_count = 16
+        else:
+            first_page_count = 21
+            normal_page_count = 33
+            last_page_count = 27
+            max_row_count = first_page_count + ((row_count - first_page_count) // normal_page_count * normal_page_count) + last_page_count
+            if row_count - first_page_count - ((row_count - first_page_count) // normal_page_count * normal_page_count) > last_page_count:
+                max_row_count = max_row_count + normal_page_count
+
+        for i in range(max_row_count - row_count):
+            data.append(['', '', '', ''])
+
+        row_table = Table(data, [4.7 * inch, 0.8 * inch, 0.9 * inch, 0.8 * inch], (max_row_count + 1) * [0.3 * inch])
+        row_table.setStyle(TableStyle([('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+                                       ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
+                                       ('FONT', (0, 0), (-1, 0), 'Times-Bold'),
+                                       ('BOX', (0, 0), (-1, 0), 0.25, colors.black),
+                                       ('INNERGRID', (0, 0), (-1, 0), 0.25, colors.black),
+                                       ('BOX', (0, 1), (0, -1), 0.25, colors.black),
+                                       ('BOX', (1, 1), (1, -1), 0.25, colors.black),
+                                       ('BOX', (2, 1), (2, -1), 0.25, colors.black),
+                                       ('BOX', (3, 1), (3, -1), 0.25, colors.black),
+                                       ]))
+
+        story.append(row_table)
+
+        spacer4 = Spacer(doc.width, 0.55 * inch)
+        story.append(spacer4)
+
+        data = [[[Paragraph(_("Proposal valid through : %s") % (localize(self.expiration_date) or ''), styleN)],
+                '',
+                [Paragraph(_("TOTAL excl. VAT : %(amount)s %(currency)s") % {'amount': localize(self.amount), 'currency' : "€".decode('utf-8')}, styleTotal),
+                 Spacer(1, 0.25 * inch),
+                 Paragraph(u"TVA non applicable, art. 293 B du CGI", styleN)]], ]
+
+        if self.begin_date and self.end_date:
+            data[0][0].append(Paragraph(_("Execution dates : %(begin_date)s to %(end_date)s") % {'begin_date': localize(self.begin_date), 'end_date' : localize(self.end_date)}, styleN))
+
+        footer_table = Table(data, [4.5 * inch, 0.3 * inch, 2.5 * inch], [1 * inch])
+        footer_table.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP'), ]))
+
+        story.append(footer_table)
+
+        doc.build(story, canvasmaker=NumberedCanvas)
+
+        return response
+
+
+    def contract_to_pdf(self, user, response):
         css_file = open("%s%s" % (settings.MEDIA_ROOT, "/css/pisa.css"), 'r')
         css = css_file.read()
 

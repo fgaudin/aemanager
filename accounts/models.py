@@ -249,6 +249,8 @@ class Invoice(OwnedObject):
         styleF.fontSize = 10
         styleF.alignment = TA_CENTER
 
+        styleLabel = ParagraphStyle({})
+
         story = []
 
         data = []
@@ -317,13 +319,22 @@ class Invoice(OwnedObject):
         # invoice row list
         data = [[ugettext('Label'), ugettext('Quantity'), ugettext('Unit price'), ugettext('Total')]]
         rows = self.invoice_rows.all()
+        extra_rows = 0
+        label_width = 4.0 * inch
         for row in rows:
-            label = row.label
+            para = Paragraph(row.label, styleLabel)
+            para.width = label_width
+            splitted_para = para.breakLines(label_width)
+            label = " ".join(splitted_para.lines[0][1])
             if row.proposal.reference:
                 label = label + " - [%s]" % (row.proposal.reference)
             data.append([label, localize(row.quantity), localize(row.unit_price), localize(row.quantity * row.unit_price)])
+            for extra_row in splitted_para.lines[1:]:
+                label = " ".join(extra_row[1])
+                data.append([label, '', '', ''])
+                extra_rows = extra_rows + 1
 
-        row_count = len(rows)
+        row_count = len(rows) + extra_rows
         if row_count <= 16:
             max_row_count = 16
         else:
