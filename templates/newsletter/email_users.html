@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<form action="" method="post" id="email-users-form">
+    {% csrf_token %}
+    <fieldset class="module aligned">
+    {% with form as form %}
+    {% include "form.html" %}
+    {% endwith %}
+    </fieldset>
+    <div class="submit-row">
+    <input class="default" type="submit" name="action" value="{% trans "Save" %}" />
+    </div>
+</form>
+
+{% if message_list %}
+<div class="search-list">
+    <table>
+        <thead>
+            <tr>
+                <th>{% trans "To" %}</th>
+                <th>{% trans "Subject" %}</th>
+                <th>{% trans "Update date" %}</th>
+                <th>{% trans "Sent" %}</th>
+                <th>{% trans "Action" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for message in message_list %}
+           <tr class="{% cycle 'row1' 'row2' %}">
+                <td><a href="{% url email_users message.id %}">{{ message.get_to_display }}</a></td>
+                <td><a href="{% url email_users message.id %}">{{ message.subject }}</a></td>
+                <td><a href="{% url email_users message.id %}">{{ message.update_datetime }}</a></td>
+                <td><a href="{% url email_users message.id %}">{% if message.sent %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}</a></td>
+                <td><a href="{% url email_delete message.id %}">{% trans "delete" %}</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+{% trans "No messages" %}
+{% endif %}
+{% endblock %}

@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from contact.models import Address
 from django.db.models.signals import post_save
-from django.db.models.aggregates import Max
+from django.db.models.aggregates import Max, Count
 from core.models import OwnedObject
 from bugtracker.models import Issue, Comment, Vote
 from django.core.mail import send_mail
@@ -37,11 +37,34 @@ SUBSCRIPTION_STATE = ((SUBSCRIPTION_STATE_NOT_PAID, _('Not paid')),
                       (SUBSCRIPTION_STATE_TRIAL, _('Trial')),
                       (SUBSCRIPTION_STATE_FREE, _('Free')))
 
+class SubscriptionManager(models.Manager):
+    def get_users_with_paid_subscription(self):
+        return Subscription.objects.filter(expiration_date__gte=datetime.date.today(),
+                                           state=SUBSCRIPTION_STATE_PAID).values('owner__email',
+                                                                                 'owner__first_name',
+                                                                                 'owner__last_name').distinct()
+
+    def get_users_with_trial_subscription(self):
+        return Subscription.objects.all().values('owner').annotate(sub_count=Count('id'),
+                                                                   state=Max('state'),
+                                                                   date=Max('expiration_date')).values('owner__email',
+                                                                                                       'owner__first_name',
+                                                                                                       'owner__last_name').filter(sub_count=1,
+                                                                                                                                  date__gte=datetime.date.today(),
+                                                                                                                                  state=SUBSCRIPTION_STATE_TRIAL).distinct()
+
+    def get_users_with_expired_subscription(self):
+        return Subscription.objects.all().values('owner').annotate(max_date=Max('expiration_date')).values('owner__email',
+                                                                                                           'owner__first_name',
+                                                                                                           'owner__last_name').filter(max_date__lt=datetime.date.today()).distinct()
+
 class Subscription(OwnedObject):
     state = models.IntegerField(choices=SUBSCRIPTION_STATE, verbose_name=_('State'))
     expiration_date = models.DateField(verbose_name=_('Expiration date'), help_text=_('format: mm/dd/yyyy'))
     transaction_id = models.CharField(verbose_name=_('Transaction id'), unique=True, max_length=50)
     error_message = models.CharField(verbose_name=_('Error message'), max_length=150, null=True, blank=True)
+
+    objects = SubscriptionManager()
 
 AUTOENTREPRENEUR_PAYMENT_OPTION_QUATERLY = 1
 AUTOENTREPRENEUR_PAYMENT_OPTION_MONTHLY = 2
@@ -70,6 +93,9 @@ class UserProfile(models.Model):
     creation_help = models.BooleanField(verbose_name=_('Creation help')) # accre
     freeing_tax_payment = models.BooleanField(verbose_name=_('Freeing tax payment')) # versement liberatoire
     payment_option = models.IntegerField(choices=AUTOENTREPRENEUR_PAYMENT_OPTION, blank=True, null=True, verbose_name=_('Payment option'))
+
+    def __unicode__(self):
+        return self.user.__unicode__()
 
     def unregister(self):
         user_email = self.user.email

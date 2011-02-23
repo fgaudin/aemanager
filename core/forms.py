@@ -4,6 +4,7 @@ from django import forms
 from django.forms.widgets import PasswordInput
 from django.utils.translation import ugettext_lazy as _
 from registration.forms import RegistrationFormUniqueEmail
+from django.contrib.sites.models import Site
 
 class UserForm(ModelForm):
     first_name = forms.CharField(label=_('first name'), max_length=30)
@@ -43,3 +44,7 @@ class ContactUsForm(forms.Form):
     email = forms.EmailField(label=_('Email'))
     subject = forms.CharField(label=_('Subject'))
     message = forms.CharField(label=_('Message'), widget=forms.Textarea())
+
+    def __init__(self, *args, **kwargs):
+        super(ContactUsForm, self).__init__(*args, **kwargs)
+        self.fields['subject'].widget.attrs['class'] = 'mail-subject'

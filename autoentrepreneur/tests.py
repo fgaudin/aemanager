@@ -15,6 +15,7 @@ from django.core.urlresolvers import reverse
 from django.core import mail
 from django.contrib.sites.models import Site
 from django.utils.translation import ugettext
+from django.conf import settings
 import datetime
 
 class SubscriptionTest(TestCase):
@@ -314,3 +315,105 @@ class UnregisterTest(TestCase):
         self.assertEquals(len(mail.outbox), 1)
         self.assertEquals(mail.outbox[0].subject, ugettext("You've just unregistered from %(site)s") % {'site': Site.objects.get_current()})
         self.assertEquals(mail.outbox[0].to, ['test@example.com'])
+
+class SubscriptionUserSelect(TestCase):
+
+    def setUp(self):
+        # user in trial period
+        self.user1 = User.objects.create_user('user1', 'user1@example.com', 'test')
+        self.user1.first_name = 'User 1'
+        self.user1.last_name = 'User 1'
+        self.user1.save()
+        # user in trial but having paid to continue
+        self.user2 = User.objects.create_user('user2', 'user2@example.com', 'test')
+        self.user2.first_name = 'User 2'
+        self.user2.last_name = 'User 2'
+        self.user2.save()
+        Subscription.objects.create(owner=self.user2,
+                                    state=SUBSCRIPTION_STATE_PAID,
+                                    expiration_date=datetime.date.today() + datetime.timedelta(10),
+                                    transaction_id='paiduser2')
+        # user after trial with paid subscription
+        self.user3 = User.objects.create_user('user3', 'user3@example.com', 'test')
+        self.user3.first_name = 'User 3'
+        self.user3.last_name = 'User 3'
+        self.user3.save()
+        sub = Subscription.objects.get(owner=self.user3)
+        sub.expiration_date = datetime.date.today() - datetime.timedelta(10)
+        sub.save()
+        Subscription.objects.create(owner=self.user3,
+                                    state=SUBSCRIPTION_STATE_PAID,
+                                    expiration_date=datetime.date.today() + datetime.timedelta(10),
+                                    transaction_id='paiduser3')
+        # user with expired trial subscription
+        self.user4 = User.objects.create_user('user4', 'user4@example.com', 'test')
+        self.user4.first_name = 'User 4'
+        self.user4.last_name = 'User 4'
+        self.user4.save()
+        sub = Subscription.objects.get(owner=self.user4)
+        sub.expiration_date = datetime.date.today() - datetime.timedelta(10)
+        sub.save()
+        # user with expired paid subscription
+        self.user5 = User.objects.create_user('user5', 'user5@example.com', 'test')
+        self.user5.first_name = 'User 5'
+        self.user5.last_name = 'User 5'
+        self.user5.save()
+        sub = Subscription.objects.get(owner=self.user5)
+        sub.expiration_date = datetime.date.today() - datetime.timedelta(20)
+        sub.save()
+        Subscription.objects.create(owner=self.user5,
+                                    state=SUBSCRIPTION_STATE_PAID,
+                                    expiration_date=datetime.date.today() - datetime.timedelta(10),
+                                    transaction_id='paiduser5')
+        # user with free pass during trial
+        self.user6 = User.objects.create_user('user6', 'user6@example.com', 'test')
+        self.user6.first_name = 'User 6'
+        self.user6.last_name = 'User 6'
+        self.user6.save()
+        Subscription.objects.create(owner=self.user6,
+                                    state=SUBSCRIPTION_STATE_FREE,
+                                    expiration_date=datetime.date.today() + datetime.timedelta(10),
+                                    transaction_id='freeuser6')
+        # user with free pass after trial
+        self.user7 = User.objects.create_user('user7', 'user7@example.com', 'test')
+        self.user7.first_name = 'User 7'
+        self.user7.last_name = 'User 7'
+        self.user7.save()
+        sub = Subscription.objects.get(owner=self.user7)
+        sub.expiration_date = datetime.date.today() - datetime.timedelta(20)
+        sub.save()
+        Subscription.objects.create(owner=self.user7,
+                                    state=SUBSCRIPTION_STATE_FREE,
+                                    expiration_date=datetime.date.today() + datetime.timedelta(10),
+                                    transaction_id='freeuser7')
+
+    def testTrialUser(self):
+        users = Subscription.objects.get_users_with_trial_subscription()
+        intented_user = {'owner__email':u'user1@example.com',
+                          'owner__first_name':u'User 1',
+                          'owner__last_name':u'User 1'}
+        self.assertEquals(users[0], intented_user)
+
+    def testPaidUser(self):
+        users = Subscription.objects.get_users_with_paid_subscription()
+        intented_user1 = {'owner__email':u'user2@example.com',
+                          'owner__first_name':u'User 2',
+                          'owner__last_name':u'User 2'}
+        intented_user2 = {'owner__email':u'user3@example.com',
+                          'owner__first_name':u'User 3',
+                          'owner__last_name':u'User 3'}
+        self.assertEquals(len(users), 2)
+        self.assertTrue(intented_user1 in users)
+        self.assertTrue(intented_user2 in users)
+
+    def testExpiredUser(self):
+        users = Subscription.objects.get_users_with_expired_subscription()
+        intented_user1 = {'owner__email':u'user4@example.com',
+                          'owner__first_name':u'User 4',
+                          'owner__last_name':u'User 4'}
+        intented_user2 = {'owner__email':u'user5@example.com',
+                          'owner__first_name':u'User 5',
+                          'owner__last_name':u'User 5'}
+        self.assertEquals(len(users), 2)
+        self.assertTrue(intented_user1 in users)
+        self.assertTrue(intented_user2 in users)

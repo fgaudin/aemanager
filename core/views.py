@@ -28,6 +28,7 @@ from django.contrib.sites.models import Site
 from django.http import HttpResponse
 from django.core.mail.message import EmailMessage
 from django.template import loader
+from django.contrib.admin.views.decorators import staff_member_required
 import time
 import datetime
 import urllib, urllib2

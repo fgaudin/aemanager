@@ -427,6 +427,10 @@ div.html {
     margin-left:10px;
 }
 
+textarea {
+    width:500px;
+}
+
 #subscription-message {
     margin: 50px 0px;
     text-align:center;
@@ -504,4 +508,8 @@ div.html {
     position:relative;
     overflow: hidden;
     height:70px;
+}
+
+.mail-subject {
+    width:500px;
 }
