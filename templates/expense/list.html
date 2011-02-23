@@ -5,6 +5,10 @@
 <script src="{% load adminmedia %}{% admin_media_prefix %}js/jquery.min.js" type="text/javascript"></script>
 <script type="text/javascript">
 (function($){
+    $(this).ajaxError(function() {
+      $.display_errors(['{% trans "An error occurred. Did you activate referer in your browser?" %}']);
+    });
+
     cancelEdit = function(el){
         jQuery(el).prev().show()
         jQuery(el).remove();

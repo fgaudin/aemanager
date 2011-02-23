@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-23 01:25+0100\n"
+"POT-Creation-Date: 2011-02-24 00:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,7 +28,7 @@ msgstr "Français"
 
 #: accounts/forms.py:7 accounts/models.py:35 accounts/models.py:146
 #: accounts/views.py:189 project/models.py:150 project/models.py:458
-#: templates/expense/list.html:182 templates/invoice/detail.html:25
+#: templates/expense/list.html:186 templates/invoice/detail.html:25
 #: templates/invoice/list.html:27 templates/project/detail.html:32
 #: templates/project/detail.html.py:60 templates/proposal/detail.html:91
 msgid "Amount"
@@ -72,7 +72,7 @@ msgstr "Virement"
 msgid "Check"
 msgstr "Chèque"
 
-#: accounts/models.py:33 accounts/views.py:189 templates/expense/list.html:180
+#: accounts/models.py:33 accounts/views.py:189 templates/expense/list.html:184
 msgid "Date"
 msgstr "Date"
 
@@ -84,17 +84,17 @@ msgstr "Date"
 msgid "format: mm/dd/yyyy"
 msgstr "format : jj/mm/aaaa"
 
-#: accounts/models.py:34 project/models.py:148 templates/expense/list.html:181
+#: accounts/models.py:34 project/models.py:148 templates/expense/list.html:185
 #: templates/project/detail.html:29
 msgid "Reference"
 msgstr "Référence"
 
 #: accounts/models.py:36 accounts/models.py:149 accounts/views.py:189
-#: templates/expense/list.html:183 templates/invoice/list.html:26
+#: templates/expense/list.html:187 templates/invoice/list.html:26
 msgid "Payment type"
 msgstr "Type de paiement"
 
-#: accounts/models.py:37 templates/expense/list.html:184
+#: accounts/models.py:37 templates/expense/list.html:188
 msgid "Description"
 msgstr "Description"
 
@@ -123,7 +123,7 @@ msgstr "Numéro de facture"
 
 #: accounts/models.py:145 autoentrepreneur/models.py:62
 #: bugtracker/models.py:33 project/forms.py:27 project/models.py:106
-#: project/models.py:149 templates/core/subscribe.html:10
+#: project/models.py:149 templates/core/subscribe.html:9
 #: templates/invoice/list.html:25 templates/project/detail.html:31
 #: templates/project/detail.html.py:59 templates/project/list.html:21
 #: templates/proposal/detail.html:90
@@ -402,11 +402,11 @@ msgid "Free"
 msgstr "Gratuit"
 
 #: autoentrepreneur/models.py:63 project/models.py:155
-#: templates/core/subscribe.html:11
+#: templates/core/subscribe.html:10
 msgid "Expiration date"
 msgstr "Date de validité"
 
-#: autoentrepreneur/models.py:64 templates/core/subscribe.html:12
+#: autoentrepreneur/models.py:64 templates/core/subscribe.html:11
 msgid "Transaction id"
 msgstr "Identifiant de transaction"
 
@@ -1224,7 +1224,7 @@ msgid "Business"
 msgstr "Affaires"
 
 #: templates/menu.html:29 templates/menu.html.py:65
-#: templates/expense/list.html:195 templates/invoice/edit.html:136
+#: templates/expense/list.html:199 templates/invoice/edit.html:136
 #: templates/proposal/edit.html:121
 msgid "Add"
 msgstr "Ajouter"
@@ -1298,18 +1298,18 @@ msgstr "Aucun contrat-cadre"
 msgid "Save"
 msgstr "Sauvegarder"
 
-#: templates/contact/search.html:39 templates/expense/list.html:213
+#: templates/contact/search.html:39 templates/expense/list.html:217
 #: templates/project/list.html:39
 msgid "previous"
 msgstr "précédent"
 
-#: templates/contact/search.html:43 templates/expense/list.html:217
+#: templates/contact/search.html:43 templates/expense/list.html:221
 #: templates/project/list.html:43
 #, python-format
 msgid "Page %(number)s of %(num_pages)s."
 msgstr "Page %(number)s sur %(num_pages)s."
 
-#: templates/contact/search.html:47 templates/expense/list.html:221
+#: templates/contact/search.html:47 templates/expense/list.html:225
 #: templates/project/list.html:47
 msgid "next"
 msgstr "suivant"
@@ -1362,7 +1362,7 @@ msgstr "Chiffre d'affaire"
 msgid "Profit"
 msgstr "Bénéfice"
 
-#: templates/core/index.html:60
+#: templates/core/index.html:62
 msgid "Info"
 msgstr "Info"
 
@@ -1467,7 +1467,7 @@ msgstr "Dépassement"
 msgid "(including %(service_limit)s of service)"
 msgstr "(dont %(service_limit)s de service)"
 
-#: templates/core/subscribe.html:27
+#: templates/core/subscribe.html:25
 #, python-format
 msgid ""
 "\n"
@@ -1479,7 +1479,7 @@ msgstr ""
 "strong> pour <strong>seulement %(price)s€/mois</strong> en cliquant sur le "
 "bouton ci-dessous :\n"
 
-#: templates/core/subscribe.html:44
+#: templates/core/subscribe.html:42
 #, python-format
 msgid ""
 "\n"
@@ -1548,25 +1548,29 @@ msgstr ""
 "ne pouvez pas annuler cette action. Etes-vous sur de vouloir vous "
 "désinscrire ?\n"
 
-#: templates/expense/list.html:46
+#: templates/expense/list.html:9
+msgid "An error occurred. Did you activate referer in your browser?"
+msgstr "Une erreur est survenue. Avez-vous activé le referer dans votre navigateur ?"
+
+#: templates/expense/list.html:50
 msgid "cancel"
 msgstr "annuler"
 
-#: templates/expense/list.html:97
+#: templates/expense/list.html:101
 msgid "Are you sure to want to delete this row"
 msgstr "Êtes-vous sûr de vouloir supprimer cette ligne"
 
-#: templates/expense/list.html:153 templates/expense/list.html.py:204
+#: templates/expense/list.html:157 templates/expense/list.html.py:208
 #: templates/issue/detail.html:71
 msgid "edit"
 msgstr "éditer"
 
-#: templates/expense/list.html:153 templates/expense/list.html.py:204
+#: templates/expense/list.html:157 templates/expense/list.html.py:208
 #: templates/issue/detail.html:71 templates/newsletter/email_users.html:36
 msgid "delete"
 msgstr "supprimer"
 
-#: templates/expense/list.html:185 templates/issue/detail.html:62
+#: templates/expense/list.html:189 templates/issue/detail.html:62
 #: templates/newsletter/email_users.html:26
 msgid "Action"
 msgstr "Action"
