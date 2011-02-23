@@ -12,33 +12,35 @@
 <script type="text/javascript">
 jQuery(document).ready(function(){
     jQuery('.announcement').hide();
+
+    var remove_prev_element = function(el){
+        jQuery(el).fadeOut(500,function(){
+            jQuery(this).remove();
+            announcement_animation('.announcement:first');
+        });
+    };
+
     var announcement_animation = function(el){
         var element = el;
-        var prev_element = jQuery(element).prev();
-        if (!prev_element.length) {
-            prev_element = jQuery('.announcement:last');
-        }
-        jQuery(prev_element).fadeOut(1000, function(){
-            jQuery(element).fadeIn(1000, function(){
-                var lines = jQuery(this).html().match(/<br>/ig);
-                var line_count = 1;
-                if (lines) {
-                    line_count = lines.length;
-                }
-                var average_line_length = jQuery(this).html().length/line_count;
-                var slowdown_factor = average_line_length / 50;
-                jQuery(this).scrollTo('max', line_count*1200 * slowdown_factor, {
-                    easing:'linear',
-                    onAfter: function(){
-                        var next_element = jQuery(element).next();
-                        if (!next_element.length) {
-                            next_element = jQuery('.announcement:first');
-                        }
-                        setTimeout(function(){announcement_animation(next_element)},3000);
-                    }});
-                });
-            });
-        };
+        jQuery(element).fadeIn(1000, function(){
+            var lines = jQuery(this).html().match(/<br>/ig);
+            var line_count = 1;
+            if (lines) {
+                line_count = lines.length;
+            }
+            var average_line_length = jQuery(this).html().length/line_count;
+            var slowdown_factor = average_line_length / 50;
+            jQuery(this).scrollTo('max', line_count*1200 * slowdown_factor, {
+                easing:'linear',
+                onAfter: function(){
+                    var cloned_element = jQuery(element).clone()
+                    jQuery(cloned_element).insertAfter('.announcement:last');
+                    jQuery(cloned_element).hide(function(){
+                        setTimeout(function(){remove_prev_element(element)},3000);
+                    });
+            }});
+        });
+    };
 
     announcement_animation(jQuery('.announcement:first'));
 });
