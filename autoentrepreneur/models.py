@@ -38,25 +38,29 @@ SUBSCRIPTION_STATE = ((SUBSCRIPTION_STATE_NOT_PAID, _('Not paid')),
                       (SUBSCRIPTION_STATE_FREE, _('Free')))
 
 class SubscriptionManager(models.Manager):
+    def get_not_paid_subscription(self, user):
+        return self.filter(state=SUBSCRIPTION_STATE_NOT_PAID,
+                           owner=user).order_by('-expiration_date')
+
     def get_users_with_paid_subscription(self):
-        return Subscription.objects.filter(expiration_date__gte=datetime.date.today(),
-                                           state=SUBSCRIPTION_STATE_PAID).values('owner__email',
-                                                                                 'owner__first_name',
-                                                                                 'owner__last_name').distinct()
+        return self.filter(expiration_date__gte=datetime.date.today(),
+                           state=SUBSCRIPTION_STATE_PAID).values('owner__email',
+                                                                 'owner__first_name',
+                                                                 'owner__last_name').distinct()
 
     def get_users_with_trial_subscription(self):
-        return Subscription.objects.all().values('owner').annotate(sub_count=Count('id'),
-                                                                   state=Max('state'),
-                                                                   date=Max('expiration_date')).values('owner__email',
-                                                                                                       'owner__first_name',
-                                                                                                       'owner__last_name').filter(sub_count=1,
-                                                                                                                                  date__gte=datetime.date.today(),
-                                                                                                                                  state=SUBSCRIPTION_STATE_TRIAL).distinct()
+        return self.all().values('owner').annotate(sub_count=Count('id'),
+                                                   state=Max('state'),
+                                                   date=Max('expiration_date')).values('owner__email',
+                                                                                       'owner__first_name',
+                                                                                       'owner__last_name').filter(sub_count=1,
+                                                                                                                  date__gte=datetime.date.today(),
+                                                                                                                  state=SUBSCRIPTION_STATE_TRIAL).distinct()
 
     def get_users_with_expired_subscription(self):
-        return Subscription.objects.all().values('owner').annotate(max_date=Max('expiration_date')).values('owner__email',
-                                                                                                           'owner__first_name',
-                                                                                                           'owner__last_name').filter(max_date__lt=datetime.date.today()).distinct()
+        return self.all().values('owner').annotate(max_date=Max('expiration_date')).values('owner__email',
+                                                                                           'owner__first_name',
+                                                                                           'owner__last_name').filter(max_date__lt=datetime.date.today()).distinct()
 
 class Subscription(OwnedObject):
     state = models.IntegerField(choices=SUBSCRIPTION_STATE, verbose_name=_('State'))

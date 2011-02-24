@@ -303,6 +303,8 @@ def subscribe(request):
         expired = True
     next_expiration_date = profile.get_next_expiration_date()
     price = round(float(settings.PAYPAL_APP_SUBSCRIPTION_AMOUNT) / 12.0, 2)
+    not_paid_subscriptions = Subscription.objects.get_not_paid_subscription(request.user)
+
     return render_to_response('core/subscribe.html',
                               {'active': 'account',
                                'title': _('My subscription'),
@@ -310,6 +312,7 @@ def subscribe(request):
                                'expired': expired,
                                'next_expiration_date': next_expiration_date,
                                'price': price,
+                               'not_paid_subscriptions': not_paid_subscriptions,
                                'paypal_url': settings.PAYPAL_URL,
                                'button_id': settings.PAYPAL_BUTTON_ID},
                               context_instance=RequestContext(request))

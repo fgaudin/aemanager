@@ -21,6 +21,30 @@
     </table>
 </div>
 
+{% if not_paid_subscriptions %}
+<h1>{% trans "There was a problem with these transactions" %}</h1>
+<div class="search-list">
+    <table>
+        <thead>
+            <tr>
+                <th>{% trans "State" %}</th>
+                <th>{% trans "Expiration date" %}</th>
+                <th>{% trans "Transaction id" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for sub in not_paid_subscriptions %}
+           <tr class="{% cycle 'row1' 'row2' %}">
+                <td>{{ sub.get_state_display }}</td>
+                <td>{{ sub.expiration_date }}</td>
+                <td>{{ sub.transaction_id }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
 <div id="subscription-message">
 {% blocktrans %}
 Keep using this service until <strong>{{ next_expiration_date }}</strong> for <strong>only €{{ price }}/month</strong> by clicking the button below :
