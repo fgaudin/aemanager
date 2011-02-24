@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-24 18:04+0100\n"
+"POT-Creation-Date: 2011-02-24 20:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1898,6 +1898,10 @@ msgstr ""
 #: templates/registration/password_reset_form.html:14
 msgid "Reset my password"
 msgstr "Réinitialiser mon mot de passe"
+
+#: templates/registration/registration_closed.html:6
+msgid "Registrations are closed for now."
+msgstr "Les inscriptions sont fermées pour l'instant."
 
 #: templates/registration/registration_complete.html:5
 msgid ""
