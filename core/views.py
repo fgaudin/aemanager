@@ -105,6 +105,7 @@ def index(request):
     last = 0.0
     for invoice in invoices:
         amount = last + float(invoice.amount)
+        sales_progression.append([int(time.mktime(invoice.paid_date.timetuple())*1000), last])
         sales_progression.append([int(time.mktime(invoice.paid_date.timetuple())*1000), amount])
         last = amount
 
@@ -115,14 +116,23 @@ def index(request):
     waiting_invoices = Invoice.objects.get_waiting_invoices(owner=user)
     for invoice in waiting_invoices:
         amount = last + float(invoice.amount)
-        waiting_progression.append([int(time.mktime(invoice.payment_date.timetuple())*1000), amount])
+        payment_date = invoice.payment_date
+        if payment_date < today:
+            payment_date = today
+        waiting_progression.append([int(time.mktime(payment_date.timetuple())*1000), last])
+        waiting_progression.append([int(time.mktime(payment_date.timetuple())*1000), amount])
         last = amount
+
+    # adding ten days to see last waiting invoice
+    if waiting_progression:
+        waiting_progression.append([int((waiting_progression[-1][0] + 86400 * 10 * 1000)), waiting_progression[-1][1]])
 
     expenses_progression = []
     last = 0.0
     for expense in Expense.objects.filter(date__gte=chart_begin_date,
                                           owner=user).order_by(('date')):
         amount = last + float(expense.amount)
+        expenses_progression.append([int(time.mktime(expense.date.timetuple())*1000), last])
         expenses_progression.append([int(time.mktime(expense.date.timetuple())*1000), amount])
         last = amount
 
@@ -141,10 +151,14 @@ def index(request):
             current_expense = expenses_progression[expense_counter]
             if current_invoice[0] < current_expense[0]:
                 invoice_amount = current_invoice[1]
+                if profit_progression:
+                    profit_progression.append([current_invoice[0], profit_progression[-1][1]])
                 profit_progression.append([current_invoice[0], invoice_amount - expense_amount])
                 invoice_counter = invoice_counter + 1
             else:
                 expense_amount = current_expense[1]
+                if profit_progression:
+                    profit_progression.append([current_expense[0], profit_progression[-1][1]])
                 profit_progression.append([current_expense[0], invoice_amount - expense_amount])
                 expense_counter = expense_counter + 1
 
