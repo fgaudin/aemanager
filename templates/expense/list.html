@@ -47,7 +47,7 @@
                 payment_type = jQuery('.payment-type-value',valueRow).text();
                 jQuery('#id_payment_type option[value='+payment_type+']', editRow).attr('selected', 'selected');
                 jQuery('#id_description', editRow).val(jQuery('.description-col',valueRow).text());
-                jQuery('.action-col', editRow).html('<input type="submit" id="ok" value="Ok" /> <a href="#" class="cancel">{% trans "cancel" %}</a>');
+                jQuery('.action-col', editRow).html('<input type="submit" id="ok" value="Ok" /> <img src="{{ MEDIA_URL }}img/ajax-loading.gif" class="expense-edit-loading" style="display:none"/> <a href="#" class="cancel">{% trans "cancel" %}</a>');
                 jQuery(editRow).insertAfter(valueRow);
                 jQuery(valueRow).hide();
                 jQuery('.cancel').click(function(e){
@@ -56,6 +56,8 @@
                 });
                 jQuery('#ok').click(function(e){
                     e.preventDefault();
+                    jQuery(this).hide();
+                    jQuery('.expense-edit-loading').show();
                     row = jQuery(e.target).parents('tr');
                     id = jQuery(row).attr('id');
                     date = jQuery('#id_date',row).val();
@@ -84,6 +86,8 @@
                                     } else {
                                         jQuery.display_errors(data.error_msg);
                                     }
+                                    jQuery('.expense-edit-loading').hide();
+                                    jQuery('#ok').show();
                                 },
                                 "json");
 
@@ -133,6 +137,8 @@ jQuery(document).ready(function(){
 
     jQuery('#add').click(function(e){
         e.preventDefault();
+        jQuery(this).hide();
+        jQuery('#expense-add-loading').show();
         date = jQuery('#id_date').val();
         reference = jQuery('#id_reference').val();
         amount = jQuery('#id_amount').val();
@@ -166,6 +172,8 @@ jQuery(document).ready(function(){
                         } else {
                             jQuery.display_errors(data.error_msg);
                         }
+                        jQuery('#expense-add-loading').hide();
+                        jQuery('#add').show();
                     },
                     "json");
     });
@@ -196,7 +204,10 @@ jQuery(document).ready(function(){
                 <td class="amount-col">{{ form.amount }}</td>
                 <td class="payment-type-col">{{ form.payment_type }}</td>
                 <td class="description-col">{{ form.description }}</td>
-                <td class="action-col"><input type="submit" id="add" value="{% trans "Add" %}" /></td>
+                <td class="action-col">
+                <input type="submit" id="add" value="{% trans "Add" %}" />
+                <img src="{{ MEDIA_URL }}img/ajax-loading.gif" id="expense-add-loading" style="display:none"/>
+                </td>
             </tr>
         {% for expense in expenses.object_list %}
            <tr id="{{ expense.id }}" class="{% cycle 'row2' 'row1' %} row">

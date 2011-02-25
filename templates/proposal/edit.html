@@ -17,9 +17,11 @@ jQuery(document).ready(function(){
     jQuery('#id_proposal-contract_model').change(function(){
         var proposal_id = jQuery('#id_proposal-contract_model option:selected').val();
         if (proposal_id) {
+            jQuery('#contract-loading').show();
             jQuery.getJSON('{% url proposal_get_contract %}', {'id': proposal_id}, function(data){
                 jQuery('#id_proposal-contract_content').html(data);
                 jQuery('#id_proposal-contract_content').elrte('val', data);
+                jQuery('#contract-loading').hide();
             });
         }
     });
@@ -122,7 +124,14 @@ jQuery(document).ready(function(){
         </div>
     </div>
     {% with proposalForm.contract_model as field %}
-    {% include "field.html" %}
+    <div class="form-row">
+    {{ field.errors }}
+      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label> {{ field }} <img src="{{ MEDIA_URL }}img/ajax-loading.gif" id="contract-loading" style="display:none"/>
+      {% if field.field.help_text %}
+        <p class="help">{{ field.field.help_text|safe }}</p>
+      {% endif %}
+      </div>
+    </div>
     {% endwith %}
     <div class="big-textarea">
     {% with proposalForm.contract_content as field %}

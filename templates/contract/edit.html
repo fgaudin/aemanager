@@ -14,10 +14,12 @@ jQuery(document).ready(function(){
     jQuery('#id_contract-contract_model').change(function(){
         var contract_id = jQuery('#id_contract-contract_model option:selected').val();
         if (contract_id) {
+            jQuery('#contract-loading').show();
             jQuery.getJSON('{% url contract_get_content %}', {'id': contract_id}, function(data){
                 jQuery('#id_contract-title').val(data['title']);
                 jQuery('#id_contract-content').html(data['content']);
                 jQuery('#id_contract-content').elrte('val', data['content']);
+                jQuery('#contract-loading').hide();
             });
         }
     });
@@ -37,7 +39,14 @@ jQuery(document).ready(function(){
         {{ hidden }}
     {% endfor %}
     {% with contractForm.contract_model as field %}
-    {% include "field.html" %}
+    <div class="form-row">
+    {{ field.errors }}
+      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label> {{ field }} <img src="{{ MEDIA_URL }}img/ajax-loading.gif" id="contract-loading" style="display:none"/>
+      {% if field.field.help_text %}
+        <p class="help">{{ field.field.help_text|safe }}</p>
+      {% endif %}
+      </div>
+    </div>
     {% endwith %}
     {% with contractForm.title as field %}
     {% include "field.html" %}
