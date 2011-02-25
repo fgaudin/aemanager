@@ -402,6 +402,43 @@ class SubscriptionUserSelect(TestCase):
                                     state=SUBSCRIPTION_STATE_FREE,
                                     expiration_date=datetime.date.today() + datetime.timedelta(10),
                                     transaction_id='freeuser7')
+        # unregistered user in trial
+        self.user8 = User.objects.create_user('user8', 'user8@example.com', 'test')
+        self.user8.first_name = 'User 8'
+        self.user8.last_name = 'User 8'
+        self.user8.is_active = False
+        self.user8.save()
+        profile = self.user8.get_profile()
+        profile.unregister_datetime = datetime.datetime.now()
+        profile.save()
+        # unregistered user with paid subscription
+        self.user9 = User.objects.create_user('user9', 'user9@example.com', 'test')
+        self.user9.first_name = 'User 9'
+        self.user9.last_name = 'User 9'
+        self.user9.is_active = False
+        self.user9.save()
+        profile = self.user9.get_profile()
+        profile.unregister_datetime = datetime.datetime.now()
+        profile.save()
+        sub = Subscription.objects.get(owner=self.user9)
+        sub.expiration_date = datetime.date.today() - datetime.timedelta(10)
+        sub.save()
+        Subscription.objects.create(owner=self.user9,
+                                    state=SUBSCRIPTION_STATE_PAID,
+                                    expiration_date=datetime.date.today() + datetime.timedelta(10),
+                                    transaction_id='paiduser9')
+        # unregistered user with expired subscription
+        self.user10 = User.objects.create_user('user10', 'user10@example.com', 'test')
+        self.user10.first_name = 'User 10'
+        self.user10.last_name = 'User 10'
+        self.user10.is_active = False
+        self.user10.save()
+        profile = self.user10.get_profile()
+        profile.unregister_datetime = datetime.datetime.now()
+        profile.save()
+        sub = Subscription.objects.get(owner=self.user10)
+        sub.expiration_date = datetime.date.today() - datetime.timedelta(10)
+        sub.save()
 
     def testTrialUser(self):
         users = Subscription.objects.get_users_with_trial_subscription()

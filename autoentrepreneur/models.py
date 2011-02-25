@@ -44,6 +44,7 @@ class SubscriptionManager(models.Manager):
 
     def get_users_with_paid_subscription(self):
         return self.filter(expiration_date__gte=datetime.date.today(),
+                           owner__is_active=True,
                            state=SUBSCRIPTION_STATE_PAID).values('owner__email',
                                                                  'owner__first_name',
                                                                  'owner__last_name').distinct()
@@ -58,9 +59,9 @@ class SubscriptionManager(models.Manager):
                                                                                                                   state=SUBSCRIPTION_STATE_TRIAL).distinct()
 
     def get_users_with_expired_subscription(self):
-        return self.all().values('owner').annotate(max_date=Max('expiration_date')).values('owner__email',
-                                                                                           'owner__first_name',
-                                                                                           'owner__last_name').filter(max_date__lt=datetime.date.today()).distinct()
+        return self.filter(owner__is_active=True).values('owner').annotate(max_date=Max('expiration_date')).values('owner__email',
+                                                                                                                   'owner__first_name',
+                                                                                                                   'owner__last_name').filter(max_date__lt=datetime.date.today()).distinct()
 
 class Subscription(OwnedObject):
     state = models.IntegerField(choices=SUBSCRIPTION_STATE, verbose_name=_('State'))
