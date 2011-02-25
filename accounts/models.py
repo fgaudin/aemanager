@@ -156,6 +156,9 @@ class Invoice(OwnedObject):
 
     objects = InvoiceManager()
 
+    class Meta:
+        ordering = ['invoice_id']
+
     def __unicode__(self):
         return "<a href=\"%s\">%s</a>" % (reverse('invoice_detail', kwargs={'id' : self.id}), ugettext("invoice #%d") % (self.invoice_id))
 
