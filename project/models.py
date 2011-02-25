@@ -156,6 +156,9 @@ class Proposal(OwnedObject):
 
     objects = ProposalManager()
 
+    class Meta:
+        ordering = ['begin_date', 'update_date']
+
     def __unicode__(self):
         if self.begin_date and self.end_date:
             return _('Proposal %(reference)s from %(begin_date)s to %(end_date)s for %(project)s') % {'reference': self.reference,
