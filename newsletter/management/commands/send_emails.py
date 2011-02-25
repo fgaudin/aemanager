@@ -9,7 +9,6 @@ from django.contrib.sites.models import Site
 from django.template.context import Context
 
 class Command(BaseCommand):
-    args = '<poll_id poll_id ...>'
     help = 'Send newsletter emails (not already sent)'
 
     def handle(self, *args, **options):

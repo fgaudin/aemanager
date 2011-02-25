@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-24 20:23+0100\n"
+"POT-Creation-Date: 2011-02-25 02:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -419,20 +419,27 @@ msgstr ""
 msgid "Address"
 msgstr ""
 
-#: autoentrepreneur/models.py:110 autoentrepreneur/tests.py:316
+#: autoentrepreneur/models.py:100
+msgid "Unregister date"
+msgstr ""
+
+#: autoentrepreneur/models.py:114 autoentrepreneur/tests.py:316
 #, python-format
 msgid "You've just unregistered from %(site)s"
 msgstr ""
 
-#: autoentrepreneur/models.py:111
+#: autoentrepreneur/models.py:115
+#, python-format
 msgid ""
-"You have left the site and your data has been deleted.\n"
+"You have left the site and your data will been deleted in "
+"%(account_delete_delay)s days. If you change your mind please contact us at "
+"%(contact_mail)s.\n"
 "\n"
 "Our service is continually evolving and if it does not meet your needs "
 "today, please come back to test later."
 msgstr ""
 
-#: autoentrepreneur/models.py:115
+#: autoentrepreneur/models.py:121
 #: templates/registration/activation_email.txt:3
 #: templates/registration/password_reset_email.html:13
 #, python-format

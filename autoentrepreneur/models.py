@@ -97,26 +97,35 @@ class UserProfile(models.Model):
     creation_help = models.BooleanField(verbose_name=_('Creation help')) # accre
     freeing_tax_payment = models.BooleanField(verbose_name=_('Freeing tax payment')) # versement liberatoire
     payment_option = models.IntegerField(choices=AUTOENTREPRENEUR_PAYMENT_OPTION, blank=True, null=True, verbose_name=_('Payment option'))
+    unregister_datetime = models.DateTimeField(verbose_name=_('Unregister date'), null=True, blank=True)
 
     def __unicode__(self):
         return self.user.__unicode__()
 
     def unregister(self):
-        user_email = self.user.email
-        Issue.objects.filter(owner=self.user).update(owner=None)
-        Comment.objects.filter(owner=self.user).update(owner=None)
-        Vote.objects.filter(owner=self.user).delete()
-        self.user.delete()
+        """
+        marked as to be deleted
+        will be deleted by command delete_unregistered_users
+        """
+        self.unregister_datetime = datetime.datetime.now()
+        self.save()
+        self.user.is_active = False
+        self.user.save()
         subject = _("You've just unregistered from %(site)s") % {'site': Site.objects.get_current().name}
-        message = _("You have left the site and your data has been deleted.\n\n"
+        message = _("You have left the site and your data will been deleted in %(account_delete_delay)s days. "
+                    "If you change your mind please contact us at %(contact_mail)s.\n\n"
                     "Our service is continually evolving and if it does not meet your "
-                    "needs today, please come back to test later.")
+                    "needs today, please come back to test later.") % {'account_delete_delay':settings.ACCOUNT_UNREGISTER_DAYS,
+                                                                       'contact_mail': settings.MANAGERS[0][1]}
         message = message + "\n\n"
         message = message + _("The %(site_name)s team") % {'site_name': Site.objects.get_current().name}
 
         from_email = settings.DEFAULT_FROM_EMAIL
+        user_email = self.user.email
         recipient_list = [user_email]
         send_mail(subject, message, from_email, recipient_list, fail_silently=False)
+
+
 
     def settings_defined(self):
         settings_defined = False

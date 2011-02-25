@@ -16,6 +16,7 @@ from django.core import mail
 from django.contrib.sites.models import Site
 from django.utils.translation import ugettext
 from django.conf import settings
+from django.core.management import call_command
 import datetime
 
 class SubscriptionTest(TestCase):
@@ -298,6 +299,24 @@ class UnregisterTest(TestCase):
         response = self.client.post(reverse('unregister'),
                                     {'unregister': 'ok'})
         self.assertEquals(response.status_code, 302)
+
+        self.assertEquals(len(mail.outbox), 1)
+        self.assertEquals(mail.outbox[0].subject, ugettext("You've just unregistered from %(site)s") % {'site': Site.objects.get_current()})
+        self.assertEquals(mail.outbox[0].to, ['test@example.com'])
+        self.assertFalse(User.objects.get(pk=1).is_active)
+        self.assertTrue(UserProfile.objects.get(pk=1).unregister_datetime is not None)
+
+        call_command('delete_unregistered_users')
+
+        self.assertEquals(User.objects.filter(pk=1).count(), 1)
+        self.assertEquals(UserProfile.objects.filter(pk=1).count(), 1)
+
+        profile = UserProfile.objects.get(pk=1)
+        profile.unregister_datetime = profile.unregister_datetime - datetime.timedelta(settings.ACCOUNT_UNREGISTER_DAYS)
+        profile.save()
+
+        call_command('delete_unregistered_users')
+
         self.assertEquals(Address.objects.count(), 1)
         self.assertEquals(Contact.objects.count(), 0)
         self.assertEquals(Project.objects.count(), 0)
@@ -312,9 +331,6 @@ class UnregisterTest(TestCase):
         self.assertEquals(Subscription.objects.filter(owner__id=1).count(), 0)
         self.assertEquals(User.objects.filter(pk=1).count(), 0)
         self.assertEquals(UserProfile.objects.filter(pk=1).count(), 0)
-        self.assertEquals(len(mail.outbox), 1)
-        self.assertEquals(mail.outbox[0].subject, ugettext("You've just unregistered from %(site)s") % {'site': Site.objects.get_current()})
-        self.assertEquals(mail.outbox[0].to, ['test@example.com'])
 
 class SubscriptionUserSelect(TestCase):
 
