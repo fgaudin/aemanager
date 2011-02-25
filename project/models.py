@@ -103,7 +103,7 @@ PROJECT_STATE = ((PROJECT_STATE_PROSPECT, _('Prospect')),
 class Project(OwnedObject):
     name = models.CharField(max_length=255, verbose_name=_('Name'))
     customer = models.ForeignKey(Contact, verbose_name=_('Customer'))
-    state = models.IntegerField(choices=PROJECT_STATE, default=PROJECT_STATE_PROSPECT, verbose_name=_('State'))
+    state = models.IntegerField(choices=PROJECT_STATE, default=PROJECT_STATE_PROSPECT, verbose_name=_('State'), db_index=True)
 
     def __unicode__(self):
         return self.name
@@ -146,7 +146,7 @@ class ProposalManager(models.Manager):
 class Proposal(OwnedObject):
     project = models.ForeignKey(Project)
     reference = models.CharField(max_length=20, blank=True, null=True, verbose_name=_('Reference'))
-    state = models.IntegerField(choices=PROPOSAL_STATE, default=PROPOSAL_STATE_DRAFT, verbose_name=_('State'))
+    state = models.IntegerField(choices=PROPOSAL_STATE, default=PROPOSAL_STATE_DRAFT, verbose_name=_('State'), db_index=True)
     amount = models.DecimalField(blank=True, null=True, max_digits=12, decimal_places=2, verbose_name=_('Amount'))
     begin_date = models.DateField(blank=True, null=True, verbose_name=_('Begin date'), help_text=_('format: mm/dd/yyyy'))
     end_date = models.DateField(blank=True, null=True, verbose_name=_('End date'), help_text=_('format: mm/dd/yyyy'))

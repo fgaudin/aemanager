@@ -26,11 +26,11 @@ class IssueManager(models.Manager):
 
 class Issue(models.Model):
     owner = models.ForeignKey(User, verbose_name=_('User'), null=True)
-    category = models.IntegerField(verbose_name=_('Category'), choices=ISSUE_CATEGORY, help_text=_('Only bugs and features are public'))
+    category = models.IntegerField(verbose_name=_('Category'), choices=ISSUE_CATEGORY, help_text=_('Only bugs and features are public'), db_index=True)
     subject = models.CharField(verbose_name=_('Subject'), max_length=255)
     message = models.TextField(verbose_name=_('Message'))
     update_date = models.DateTimeField(verbose_name=_('Update date'))
-    state = models.IntegerField(verbose_name=_('State'), choices=ISSUE_STATE, default=ISSUE_STATE_OPEN)
+    state = models.IntegerField(verbose_name=_('State'), choices=ISSUE_STATE, default=ISSUE_STATE_OPEN, db_index=True)
 
     objects = IssueManager()
 

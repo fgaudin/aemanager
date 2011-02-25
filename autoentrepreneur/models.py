@@ -64,8 +64,8 @@ class SubscriptionManager(models.Manager):
                                                                                                                    'owner__last_name').filter(max_date__lt=datetime.date.today()).distinct()
 
 class Subscription(OwnedObject):
-    state = models.IntegerField(choices=SUBSCRIPTION_STATE, verbose_name=_('State'))
-    expiration_date = models.DateField(verbose_name=_('Expiration date'), help_text=_('format: mm/dd/yyyy'))
+    state = models.IntegerField(choices=SUBSCRIPTION_STATE, verbose_name=_('State'), db_index=True)
+    expiration_date = models.DateField(verbose_name=_('Expiration date'), help_text=_('format: mm/dd/yyyy'), db_index=True)
     transaction_id = models.CharField(verbose_name=_('Transaction id'), unique=True, max_length=50)
     error_message = models.CharField(verbose_name=_('Error message'), max_length=150, null=True, blank=True)
 

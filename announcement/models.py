@@ -4,7 +4,7 @@ from django.utils.text import truncate_words
 
 class Announcement(models.Model):
     content = models.TextField(verbose_name=_('Announcement'))
-    enabled = models.BooleanField(default=False, verbose_name=_('Enabled'))
+    enabled = models.BooleanField(default=False, verbose_name=_('Enabled'), db_index=True)
 
     def __unicode__(self):
         return truncate_words(self.content, 10)
