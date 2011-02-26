@@ -71,6 +71,11 @@ class Subscription(OwnedObject):
 
     objects = SubscriptionManager()
 
+    def __unicode__(self):
+        return "%s - %s - %s" % (self.owner.username,
+                                 self.get_state_display(),
+                                 self.expiration_date)
+
 AUTOENTREPRENEUR_PAYMENT_OPTION_QUATERLY = 1
 AUTOENTREPRENEUR_PAYMENT_OPTION_MONTHLY = 2
 AUTOENTREPRENEUR_PAYMENT_OPTION = ((AUTOENTREPRENEUR_PAYMENT_OPTION_QUATERLY, _('Quaterly')),
