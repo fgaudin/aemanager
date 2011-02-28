@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Ma Petite Auto-Entreprise, gestion de votre activité d'auto-entrepreneur</title>
+    <title>Ma petite Auto-Entreprise :: Logiciel de gestion en ligne destiné aux auto-entrepreneurs</title>
     <style media="all" type="text/css">@import "{% load adminmedia %}{% admin_media_prefix %}css/base.css";</style>
     <style media="all" type="text/css">@import "{% load adminmedia %}{% admin_media_prefix %}css/forms.css";</style>
     <style media="all" type="text/css">@import "{{ MEDIA_URL }}css/style.css";</style>
@@ -14,8 +14,7 @@
   </head>
 
   <body>
-    <div id="header"><a href="{{ parent_site_url }}"><img src="{{ logo_url }}" /></a><br />
-      Logiciel de gestion pour auto-entrepreneur</div>
+    <div id="unregistered-header"><a href="{{ parent_site_url }}"><img src="{{ logo_url }}" /></a></div>
     <div id="unregistered-content">
     {% block content %}
 

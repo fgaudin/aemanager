@@ -447,13 +447,24 @@ textarea {
     text-align:center;
 }
 
+#unregistered-header {
+    margin:5px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #CCCCCC;
+}
+
 #unregistered-content {
-    margin: 50px 20px;
+    margin: 20px;
+    margin-bottom: 30px;
     text-align:left;
 }
 
 #unregistered-content form {
     margin: 0;
+}
+
+body.login {
+    background-color: white !important;
 }
 
 #footer {
