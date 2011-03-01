@@ -21,7 +21,7 @@
     $.display_errors = function(errors){
         if(errors.length) {
             jQuery.clear_errors();
-            el = jQuery('<ul class="messages"></ul>');
+            var el = jQuery('<ul class="messages"></ul>');
             jQuery(errors).each(function(){
                 jQuery(el).append('<li class="error">' + this + '</li>');
             });
@@ -35,16 +35,16 @@
         {
             jQuery('.edit-row', this).click(function(e){
                 e.preventDefault();
-                valueRow = jQuery(e.target).parents('tr');
+                var valueRow = jQuery(e.target).parents('tr');
                 jQuery('.cancel').click();
-                editRow = jQuery('#add-row').clone();
+                var editRow = jQuery('#add-row').clone();
                 jQuery(editRow).attr('id',jQuery(valueRow).attr('id'));
                 jQuery(editRow).removeClass().addClass(jQuery(valueRow).attr('class'));
                 jQuery('#id_date', editRow).val(jQuery('.date-col',valueRow).text());
                 jQuery('#id_reference', editRow).val(jQuery('.reference-col',valueRow).text());
                 jQuery('#id_amount', editRow).val(jQuery('.amount-col',valueRow).text());
                 jQuery('#id_payment_type option:selected', editRow).attr('selected','');
-                payment_type = jQuery('.payment-type-value',valueRow).text();
+                var payment_type = jQuery('.payment-type-value',valueRow).text();
                 jQuery('#id_payment_type option[value='+payment_type+']', editRow).attr('selected', 'selected');
                 jQuery('#id_description', editRow).val(jQuery('.description-col',valueRow).text());
                 jQuery('.action-col', editRow).html('<input type="submit" id="ok" value="Ok" /> <img src="{{ MEDIA_URL }}img/ajax-loading.gif" class="expense-edit-loading" style="display:none"/> <a href="#" class="cancel">{% trans "cancel" %}</a>');
@@ -58,13 +58,13 @@
                     e.preventDefault();
                     jQuery(this).hide();
                     jQuery('.expense-edit-loading').show();
-                    row = jQuery(e.target).parents('tr');
-                    id = jQuery(row).attr('id');
-                    date = jQuery('#id_date',row).val();
-                    reference = jQuery('#id_reference',row).val();
-                    amount = jQuery('#id_amount',row).val();
-                    payment_type = jQuery('#id_payment_type',row).val();
-                    description = jQuery('#id_description',row).val();
+                    var row = jQuery(e.target).parents('tr');
+                    var id = jQuery(row).attr('id');
+                    var date = jQuery('#id_date',row).val();
+                    var reference = jQuery('#id_reference',row).val();
+                    var amount = jQuery('#id_amount',row).val();
+                    var payment_type = jQuery('#id_payment_type',row).val();
+                    var description = jQuery('#id_description',row).val();
                     jQuery.post("{% url expense_edit %}?id="+id,
                                 {"date": date,
                                  "reference": reference,
@@ -74,7 +74,7 @@
                                  "csrfmiddlewaretoken": '{{ csrf_token }}'},
                                 function(data){
                                     if(data.error == 'ok') {
-                                        row = jQuery('#' + data.id);
+                                        var row = jQuery('#' + data.id);
                                         jQuery('.date-col',row).text(data.date);
                                         jQuery('.reference-col',row).text(data.reference);
                                         jQuery('.amount-col',row).text(data.amount);
@@ -103,7 +103,7 @@
             jQuery('.delete-row', this).click(function(e){
                 e.preventDefault();
                 if (window.confirm('{% trans "Are you sure to want to delete this row" %}')) {
-                    expense_id = jQuery(e.target).parents('tr').attr('id');
+                    var expense_id = jQuery(e.target).parents('tr').attr('id');
                     jQuery.post("{% url expense_delete %}",
                                 {"id": expense_id,
                                  "csrfmiddlewaretoken": '{{ csrf_token }}'},
@@ -139,11 +139,11 @@ jQuery(document).ready(function(){
         e.preventDefault();
         jQuery(this).hide();
         jQuery('#expense-add-loading').show();
-        date = jQuery('#id_date').val();
-        reference = jQuery('#id_reference').val();
-        amount = jQuery('#id_amount').val();
-        payment_type = jQuery('#id_payment_type').val();
-        description = jQuery('#id_description').val();
+        var date = jQuery('#id_date').val();
+        var reference = jQuery('#id_reference').val();
+        var amount = jQuery('#id_amount').val();
+        var payment_type = jQuery('#id_payment_type').val();
+        var description = jQuery('#id_description').val();
         jQuery.post("{% url expense_add %}",
                     {"date": date,
                      "reference": reference,
@@ -153,7 +153,7 @@ jQuery(document).ready(function(){
                      "csrfmiddlewaretoken": '{{ csrf_token }}'},
                     function(data){
                         if(data.error == 'ok') {
-                            row = jQuery('#add-row').clone();
+                            var row = jQuery('#add-row').clone();
                             jQuery(row).attr('id',data.id);
                             jQuery('.date-col',row).text(data.date);
                             jQuery('.reference-col',row).text(data.reference);

@@ -45,7 +45,7 @@
     <div id="footer">
         <a href="{{ parent_site_url }}">{% trans "Homepage" %}</a> -
         <a href="{% url issue_list %}">{% trans "Contact/Bug report" %}</a> -
-        <a href="javascript:window.open('{% url tos %}');">{% trans "TOSS" %}</a> -
+        <a href="#" onClick="window.open('{% url tos %}'); return(false);">{% trans "TOSS" %}</a> -
         {% blocktrans with "https://github.com/fgaudin/aemanager" as aemanager_url %}powered by <a href="{{ aemanager_url }}">aemanager</a>{% endblocktrans %}
     </div>
   </body>
