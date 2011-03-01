@@ -448,7 +448,8 @@ textarea {
 }
 
 #unregistered-header {
-    margin:5px;
+    background-color:#EFEFFF;
+    padding:5px;
     padding-bottom: 10px;
     border-bottom: 1px solid #CCCCCC;
 }

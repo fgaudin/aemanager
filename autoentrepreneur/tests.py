@@ -131,7 +131,6 @@ class SubscriptionTest(TestCase):
         self.assertEquals(next_date, computed_next_date)
 
     def testNextDateAfterExpiration(self):
-        # do not run this test on February 29
         user = User.objects.get(pk=1)
         profile = user.get_profile()
         Subscription.objects.create(owner=user,
@@ -139,11 +138,16 @@ class SubscriptionTest(TestCase):
                                     expiration_date=datetime.date.today() - datetime.timedelta(10),
                                     transaction_id='XXX')
 
+        expiration_date = datetime.date.today()
+        try:
+            computed_next_date = datetime.date(expiration_date.year + 1, expiration_date.month, expiration_date.day)
+        except:
+            # case of February 29th
+            computed_next_date = datetime.date(expiration_date.year + 1, 3, 1)
         next_date = profile.get_next_expiration_date()
-        self.assertEquals(next_date, datetime.date.today() + datetime.timedelta(365))
+        self.assertEquals(next_date, computed_next_date)
 
     def testNextDateWhenPaymentFails(self):
-        # do not run this test on February 29
         user = User.objects.get(pk=1)
         profile = user.get_profile()
         Subscription.objects.create(owner=user,
@@ -151,8 +155,14 @@ class SubscriptionTest(TestCase):
                                     expiration_date=datetime.date.today() + datetime.timedelta(365),
                                     transaction_id='XXX')
 
+        expiration_date = datetime.date.today()
+        try:
+            computed_next_date = datetime.date(expiration_date.year + 1, expiration_date.month, expiration_date.day)
+        except:
+            # case of February 29th
+            computed_next_date = datetime.date(expiration_date.year + 1, 3, 1)
         next_date = profile.get_next_expiration_date()
-        self.assertEquals(next_date, datetime.date.today() + datetime.timedelta(365))
+        self.assertEquals(next_date, computed_next_date)
 
     def testNextDateWhenPaymentFailsWithRunningSubscription(self):
         user = User.objects.get(pk=1)
