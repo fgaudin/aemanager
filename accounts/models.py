@@ -330,7 +330,7 @@ class Invoice(OwnedObject):
             splitted_para = para.breakLines(label_width)
             label = " ".join(splitted_para.lines[0][1])
             if row.proposal.reference:
-                label = label + " - [%s]" % (row.proposal.reference)
+                label = "%s - [%s]" % (label.decode('utf-8'), row.proposal.reference)
             data.append([label, localize(row.quantity), localize(row.unit_price), localize(row.quantity * row.unit_price)])
             for extra_row in splitted_para.lines[1:]:
                 label = " ".join(extra_row[1])

@@ -1,3 +1,4 @@
+# coding=utf-8
 from decimal import Decimal
 from django.test.testcases import TransactionTestCase
 import datetime
@@ -1074,6 +1075,37 @@ class InvoiceTest(TestCase):
 
         self.assertEquals(response.status_code, 302)
         self.assertEquals(Invoice.objects.get(invoice_id=1).amount, 1100)
+
+    def testBug141(self):
+        """
+        Non ascii characters make invoice download crashes
+        """
+        i = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                   invoice_id=1,
+                                   state=INVOICE_STATE_EDITED,
+                                   amount='1000',
+                                   edition_date=datetime.date(2010, 8, 31),
+                                   payment_date=datetime.date(2010, 9, 30),
+                                   paid_date=None,
+                                   payment_type=PAYMENT_TYPE_CHECK,
+                                   execution_begin_date=datetime.date(2010, 8, 1),
+                                   execution_end_date=datetime.date(2010, 8, 7),
+                                   penalty_date=datetime.date(2010, 10, 8),
+                                   penalty_rate='1.5',
+                                   discount_conditions='Néant',
+                                   owner_id=1)
+
+        i_row = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                          invoice_id=i.id,
+                                          label='Test accent é',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=10,
+                                          unit_price='100',
+                                          balance_payments=False,
+                                          owner_id=1)
+
+        response = self.client.get(reverse('invoice_download', kwargs={'id': i.id}))
+        self.assertEqual(response.status_code, 200)
 
 class InvoiceBug106Test(TransactionTestCase):
     fixtures = ['test_users', 'test_contacts', 'test_projects']
