@@ -17,3 +17,6 @@ class UserProfileForm(ModelForm):
         model = UserProfile
         exclude = ['user', 'address', 'unregister_datetime']
 
+    def __init__(self, *args, **kwargs):
+        super(UserProfileForm, self).__init__(*args, **kwargs)
+        self.fields['creation_date'].widget.attrs['class'] = 'date'

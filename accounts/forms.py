@@ -10,12 +10,25 @@ class ExpenseForm(ModelForm):
         model = Expense
         exclude = ['owner']
 
+    def __init__(self, *args, **kwargs):
+        super(ExpenseForm, self).__init__(*args, **kwargs)
+        self.fields['date'].widget.attrs['class'] = 'date'
+
 class InvoiceForm(ModelForm):
     penalty_rate = forms.DecimalField(max_digits=4, decimal_places=2, label=_('Penalty rate'), localize=True, required=False)
 
     class Meta:
         model = Invoice
         exclude = ['owner', 'proposal', 'amount']
+
+    def __init__(self, *args, **kwargs):
+        super(InvoiceForm, self).__init__(*args, **kwargs)
+        self.fields['edition_date'].widget.attrs['class'] = 'date'
+        self.fields['payment_date'].widget.attrs['class'] = 'date'
+        self.fields['paid_date'].widget.attrs['class'] = 'date'
+        self.fields['execution_begin_date'].widget.attrs['class'] = 'date'
+        self.fields['execution_end_date'].widget.attrs['class'] = 'date'
+        self.fields['penalty_date'].widget.attrs['class'] = 'date'
 
     def clean(self):
         super(InvoiceForm, self).clean()

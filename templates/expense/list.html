@@ -2,7 +2,10 @@
 {% load i18n %}
 
 {% block extrahead %}
-<script src="{% load adminmedia %}{% admin_media_prefix %}js/jquery.min.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/smoothness/jquery-ui-1.8.10.custom.css" media="screen"/>
+<script src="{{ MEDIA_URL }}js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="{{ MEDIA_URL }}js/jquery-ui-1.8.10.custom.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="{{ MEDIA_URL }}js/core.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
 (function($){
     $(this).ajaxError(function() {
@@ -31,16 +34,19 @@
 
     $.fn.editable = function()
     {
+        var lang = jQuery.getLang();
         return this.each(function()
         {
             jQuery('.edit-row', this).click(function(e){
                 e.preventDefault();
                 var valueRow = jQuery(e.target).parents('tr');
                 jQuery('.cancel').click();
-                var editRow = jQuery('#add-row').clone();
+                var editRow = jQuery('#add-row').clone(false);
                 jQuery(editRow).attr('id',jQuery(valueRow).attr('id'));
                 jQuery(editRow).removeClass().addClass(jQuery(valueRow).attr('class'));
-                jQuery('#id_date', editRow).val(jQuery('.date-col',valueRow).text());
+                jQuery('#id_date', editRow).attr('id', 'id_edit_date');
+                jQuery('#id_edit_date', editRow).val(jQuery('.date-col',valueRow).text());
+                jQuery('#id_edit_date', editRow).removeClass('hasDatepicker');
                 jQuery('#id_reference', editRow).val(jQuery('.reference-col',valueRow).text());
                 jQuery('#id_amount', editRow).val(jQuery('.amount-col',valueRow).text());
                 jQuery('#id_payment_type option:selected', editRow).attr('selected','');
@@ -49,6 +55,7 @@
                 jQuery('#id_description', editRow).val(jQuery('.description-col',valueRow).text());
                 jQuery('.action-col', editRow).html('<input type="submit" id="ok" value="Ok" /> <img src="{{ MEDIA_URL }}img/ajax-loading.gif" class="expense-edit-loading" style="display:none"/> <a href="#" class="cancel">{% trans "cancel" %}</a>');
                 jQuery(editRow).insertAfter(valueRow);
+                jQuery('.date', editRow).datepicker(jQuery.datepicker.regional[lang.substr(0,2)]);
                 jQuery(valueRow).hide();
                 jQuery('.cancel').click(function(e){
                     e.preventDefault();
@@ -60,7 +67,7 @@
                     jQuery('.expense-edit-loading').show();
                     var row = jQuery(e.target).parents('tr');
                     var id = jQuery(row).attr('id');
-                    var date = jQuery('#id_date',row).val();
+                    var date = jQuery('#id_edit_date',row).val();
                     var reference = jQuery('#id_reference',row).val();
                     var amount = jQuery('#id_amount',row).val();
                     var payment_type = jQuery('#id_payment_type',row).val();
@@ -121,6 +128,10 @@
 })(jQuery);
 
 jQuery(document).ready(function(){
+    var lang = jQuery.getLang();
+    jQuery.include('{{ MEDIA_URL }}js/datepicker_i18n','jquery.ui.datepicker-'+lang.substr(0,2)+'.js');
+    jQuery('.date').datepicker(jQuery.datepicker.regional[lang.substr(0,2)]);
+
     redraw_background = function(){
         var rowClass = 'row2';
         jQuery('#add-row').nextAll().each(function(){

@@ -35,6 +35,12 @@ class ProposalForm(ModelForm):
         model = Proposal
         exclude = ['owner', 'project', 'update_date', 'amount']
 
+    def __init__(self, *args, **kwargs):
+        super(ProposalForm, self).__init__(*args, **kwargs)
+        self.fields['begin_date'].widget.attrs['class'] = 'date'
+        self.fields['end_date'].widget.attrs['class'] = 'date'
+        self.fields['expiration_date'].widget.attrs['class'] = 'date'
+
 class ProposalRowForm(ModelForm):
     quantity = forms.DecimalField(max_digits=5, decimal_places=1, label=_('Quantity'), localize=True)
     unit_price = forms.DecimalField(max_digits=12, decimal_places=2, label=_('Unit price'), localize=True)
