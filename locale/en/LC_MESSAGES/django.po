@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-28 19:10+0100\n"
+"POT-Creation-Date: 2011-03-02 22:16+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,28 +27,28 @@ msgstr ""
 
 #: accounts/forms.py:7 accounts/models.py:35 accounts/models.py:146
 #: accounts/views.py:189 project/models.py:150 project/models.py:461
-#: templates/expense/list.html:194 templates/invoice/detail.html:25
+#: templates/expense/list.html:205 templates/invoice/detail.html:25
 #: templates/invoice/list.html:27 templates/project/detail.html:32
 #: templates/project/detail.html.py:60 templates/proposal/detail.html:91
 msgid "Amount"
 msgstr ""
 
-#: accounts/forms.py:14 accounts/models.py:154
+#: accounts/forms.py:18 accounts/models.py:154
 msgid "Penalty rate"
 msgstr ""
 
-#: accounts/forms.py:27
+#: accounts/forms.py:40
 msgid "This field is required since invoice state is set to \"paid\"."
 msgstr ""
 
-#: accounts/forms.py:35 accounts/models.py:323 project/forms.py:39
+#: accounts/forms.py:48 accounts/models.py:323 project/forms.py:45
 #: project/models.py:336 project/models.py:459
 #: templates/invoice/detail.html:72 templates/proposal/detail.html:60
 #: templates/proposal/detail_ajax.html:28
 msgid "Quantity"
 msgstr ""
 
-#: accounts/forms.py:36 accounts/models.py:323 project/forms.py:40
+#: accounts/forms.py:49 accounts/models.py:323 project/forms.py:46
 #: project/models.py:336 project/models.py:460
 #: templates/invoice/detail.html:73 templates/proposal/detail.html:61
 #: templates/proposal/detail_ajax.html:29
@@ -71,29 +71,30 @@ msgstr ""
 msgid "Check"
 msgstr ""
 
-#: accounts/models.py:33 accounts/views.py:189 templates/expense/list.html:192
+#: accounts/models.py:33 accounts/views.py:189 templates/expense/list.html:203
 msgid "Date"
 msgstr ""
 
 #: accounts/models.py:33 accounts/models.py:147 accounts/models.py:148
 #: accounts/models.py:150 accounts/models.py:151 accounts/models.py:152
-#: accounts/models.py:153 autoentrepreneur/models.py:68
-#: autoentrepreneur/models.py:102 project/models.py:29 project/models.py:151
-#: project/models.py:152 project/models.py:154 project/models.py:155
+#: accounts/models.py:153 autoentrepreneur/forms.py:11
+#: autoentrepreneur/models.py:68 autoentrepreneur/models.py:102
+#: project/models.py:29 project/models.py:151 project/models.py:152
+#: project/models.py:154 project/models.py:155
 msgid "format: mm/dd/yyyy"
 msgstr ""
 
-#: accounts/models.py:34 project/models.py:148 templates/expense/list.html:193
+#: accounts/models.py:34 project/models.py:148 templates/expense/list.html:204
 #: templates/project/detail.html:29
 msgid "Reference"
 msgstr ""
 
 #: accounts/models.py:36 accounts/models.py:149 accounts/views.py:189
-#: templates/expense/list.html:195 templates/invoice/list.html:26
+#: templates/expense/list.html:206 templates/invoice/list.html:26
 msgid "Payment type"
 msgstr ""
 
-#: accounts/models.py:37 templates/expense/list.html:196
+#: accounts/models.py:37 templates/expense/list.html:207
 msgid "Description"
 msgstr ""
 
@@ -232,7 +233,7 @@ msgid "Execution dates : %(begin_date)s to %(end_date)s"
 msgstr ""
 
 #: accounts/models.py:397 templates/invoice/detail.html:69
-#: templates/invoice/edit.html:17 templates/invoice/edit.html.py:62
+#: templates/invoice/edit.html:22 templates/invoice/edit.html.py:67
 msgid "Proposal"
 msgstr ""
 
@@ -423,7 +424,7 @@ msgstr ""
 msgid "Unregister date"
 msgstr ""
 
-#: autoentrepreneur/models.py:120 autoentrepreneur/tests.py:304
+#: autoentrepreneur/models.py:120 autoentrepreneur/tests.py:314
 #, python-format
 msgid "You've just unregistered from %(site)s"
 msgstr ""
@@ -485,14 +486,14 @@ msgstr ""
 msgid "Only bugs and features are public"
 msgstr ""
 
-#: bugtracker/models.py:30 core/forms.py:45 newsletter/models.py:14
+#: bugtracker/models.py:30 core/forms.py:51 newsletter/models.py:14
 #: templates/issue/list.html:16 templates/message/list.html:15
 #: templates/newsletter/email_users.html:23
 msgid "Subject"
 msgstr ""
 
 #: bugtracker/models.py:31 bugtracker/models.py:51 bugtracker/views.py:183
-#: core/forms.py:46 newsletter/models.py:15 templates/issue/detail.html:61
+#: core/forms.py:52 newsletter/models.py:15 templates/issue/detail.html:61
 #: templates/message/detail.html:42
 msgid "Message"
 msgstr ""
@@ -608,13 +609,13 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: contact/forms.py:35 contact/models.py:33 core/forms.py:43
+#: contact/forms.py:35 contact/models.py:33 core/forms.py:49
 #: project/forms.py:25 project/models.py:104 templates/contact/search.html:19
 #: templates/project/list.html:19
 msgid "Name"
 msgstr ""
 
-#: contact/forms.py:36 contact/models.py:40 core/forms.py:39 core/forms.py:44
+#: contact/forms.py:36 contact/models.py:40 core/forms.py:45 core/forms.py:50
 #: templates/contact/search.html:20
 msgid "Email"
 msgstr ""
@@ -733,6 +734,14 @@ msgstr ""
 
 #: core/forms.py:36
 msgid "You must agree to the terms to register"
+msgstr ""
+
+#: core/forms.py:40
+msgid "only letters, numbers and underscores are accepted"
+msgstr ""
+
+#: core/forms.py:42
+msgid "This value must contain only letters, numbers and underscores."
 msgstr ""
 
 #: core/tests.py:66 core/views.py:285
@@ -1202,8 +1211,8 @@ msgid "Business"
 msgstr ""
 
 #: templates/menu.html:29 templates/menu.html.py:65
-#: templates/expense/list.html:208 templates/invoice/edit.html:136
-#: templates/proposal/edit.html:123
+#: templates/expense/list.html:219 templates/invoice/edit.html:141
+#: templates/proposal/edit.html:128
 msgid "Add"
 msgstr ""
 
@@ -1270,24 +1279,24 @@ msgid "No master aggreements"
 msgstr ""
 
 #: templates/contact/edit.html:119 templates/contract/edit.html:70
-#: templates/core/settings_edit.html:26 templates/invoice/edit.html:142
+#: templates/core/settings_edit.html:41 templates/invoice/edit.html:147
 #: templates/newsletter/email_users.html:13 templates/project/edit.html:23
-#: templates/proposal/edit.html:153
+#: templates/proposal/edit.html:158
 msgid "Save"
 msgstr ""
 
-#: templates/contact/search.html:39 templates/expense/list.html:228
+#: templates/contact/search.html:39 templates/expense/list.html:239
 #: templates/project/list.html:39
 msgid "previous"
 msgstr ""
 
-#: templates/contact/search.html:43 templates/expense/list.html:232
+#: templates/contact/search.html:43 templates/expense/list.html:243
 #: templates/project/list.html:43
 #, python-format
 msgid "Page %(number)s of %(num_pages)s."
 msgstr ""
 
-#: templates/contact/search.html:47 templates/expense/list.html:236
+#: templates/contact/search.html:47 templates/expense/list.html:247
 #: templates/project/list.html:47
 msgid "next"
 msgstr ""
@@ -1301,7 +1310,7 @@ msgstr ""
 msgid "download pdf file"
 msgstr ""
 
-#: templates/contract/edit.html:62 templates/proposal/edit.html:145
+#: templates/contract/edit.html:62 templates/proposal/edit.html:150
 msgid "Keywords you can use"
 msgstr ""
 
@@ -1510,29 +1519,29 @@ msgid ""
 "undo this action. Are you sure to want to unregister ?\n"
 msgstr ""
 
-#: templates/expense/list.html:9
+#: templates/expense/list.html:12
 msgid "An error occurred. Did you activate referer in your browser?"
 msgstr ""
 
-#: templates/expense/list.html:50
+#: templates/expense/list.html:56
 msgid "cancel"
 msgstr ""
 
-#: templates/expense/list.html:105
+#: templates/expense/list.html:112
 msgid "Are you sure to want to delete this row"
 msgstr ""
 
-#: templates/expense/list.html:163 templates/expense/list.html.py:219
+#: templates/expense/list.html:174 templates/expense/list.html.py:230
 #: templates/issue/detail.html:71
 msgid "edit"
 msgstr ""
 
-#: templates/expense/list.html:163 templates/expense/list.html.py:219
+#: templates/expense/list.html:174 templates/expense/list.html.py:230
 #: templates/issue/detail.html:71 templates/newsletter/email_users.html:36
 msgid "delete"
 msgstr ""
 
-#: templates/expense/list.html:197 templates/issue/detail.html:62
+#: templates/expense/list.html:208 templates/issue/detail.html:62
 #: templates/newsletter/email_users.html:26
 msgid "Action"
 msgstr ""
@@ -1546,8 +1555,8 @@ msgstr ""
 msgid "Exported file"
 msgstr ""
 
-#: templates/invoice/detail.html:62 templates/invoice/edit.html:122
-#: templates/proposal/detail.html:52 templates/proposal/edit.html:110
+#: templates/invoice/detail.html:62 templates/invoice/edit.html:127
+#: templates/proposal/detail.html:52 templates/proposal/edit.html:115
 msgid "Detail rows"
 msgstr ""
 

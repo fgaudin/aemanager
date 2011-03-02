@@ -35,6 +35,12 @@ class RegistrationFormUniqueEmailAndTos(RegistrationFormUniqueEmail):
                              label=_(u'I have read and agree to the Terms of Sale and Service'),
                              error_messages={'required': _("You must agree to the terms to register")})
 
+    def __init__(self, *args, **kwargs):
+        super(RegistrationFormUniqueEmailAndTos, self).__init__(*args, **kwargs)
+        self.fields['username'].help_text = _('only letters, numbers and underscores are accepted')
+        # only to override a missing translation in django-registration
+        self.fields['username'].error_messages['invalid'] = _("This value must contain only letters, numbers and underscores.")
+
 class ResendActivationEmailForm(forms.Form):
     email = forms.EmailField(label=_('Email'), widget=forms.TextInput(attrs={'class': 'required',
                                                                              'maxlength':75}))
