@@ -5,7 +5,7 @@ from django.db.transaction import commit_on_success, rollback
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from project.models import Project, PROJECT_STATE_STARTED, Proposal, ProposalRow, \
     Contract, PROJECT_STATE_FINISHED, \
-    ProposalAmountError
+    ProposalAmountError, PROPOSAL_STATE_SENT
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.template.context import RequestContext
@@ -374,6 +374,10 @@ def proposal_create_or_edit(request, id=None, project_id=None):
                 proposal.update_amount()
 
                 messages.success(request, _('The proposal has been saved successfully'))
+                if proposal.begin_date and proposal.end_date and proposal.begin_date > proposal.end_date:
+                    messages.warning(request, _("Begin date is greater than end date, is this normal ?"))
+                if proposal.expiration_date and proposal.expiration_date < datetime.date.today() and proposal.state < PROPOSAL_STATE_SENT:
+                    messages.warning(request, _("Expiration date is in the past while the proposal is not yet sent, is this normal ?"))
                 return redirect(reverse('proposal_detail', kwargs={'id': proposal.id}))
             except ProposalAmountError:
                 rollback()

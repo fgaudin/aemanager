@@ -13,11 +13,10 @@ from django.db.transaction import commit_on_success
 from contact.models import Contact
 from django.forms.models import inlineformset_factory
 from project.models import Proposal, PROPOSAL_STATE_BALANCED, \
-    PROPOSAL_STATE_ACCEPTED, PROPOSAL_STATE_DRAFT
+    PROPOSAL_STATE_ACCEPTED
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db import transaction
-from django.db.models.aggregates import Max
 from custom_canvas import NumberedCanvas
 from core.decorators import settings_required
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
@@ -273,6 +272,12 @@ def invoice_create_or_edit(request, id=None, customer_id=None, proposal_id=None)
                 invoice.check_amounts()
 
                 messages.success(request, _('The invoice has been saved successfully'))
+                if invoice.paid_date and invoice.paid_date > datetime.date.today():
+                    messages.warning(request, _("Paid date is in the future, is this normal ?"))
+                if invoice.execution_begin_date and invoice.execution_end_date and invoice.execution_begin_date > invoice.execution_end_date:
+                    messages.warning(request, _("Execution begin date is greater than execution end date, is this normal ?"))
+                if invoice.penalty_date and invoice.penalty_date < invoice.payment_date:
+                    messages.warning(request, _("Payment date is greater than penalty date, is this normal ?"))
                 return redirect(reverse('invoice_detail', kwargs={'id': invoice.id}))
             except InvoiceRowAmountError:
                 transaction.rollback()

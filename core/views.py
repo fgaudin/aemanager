@@ -250,10 +250,12 @@ def settings_edit(request):
 
         if userform.is_valid() and profileform.is_valid() and addressform.is_valid():
             userform.save()
-            profileform.save()
+            profile = profileform.save()
             address = addressform.save(commit=False)
             address.save(user=user)
             messages.success(request, _('Your settings have been updated successfully'))
+            if profile.creation_date > datetime.date.today():
+                messages.warning(request, _("Creation date is in the future, is this normal ?"))
             return redirect(reverse('settings_edit'))
         else:
             messages.error(request, _('Data provided are invalid'))

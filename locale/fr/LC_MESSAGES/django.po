@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-03 19:08+0100\n"
+"POT-Creation-Date: 2011-03-04 00:06+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,7 +27,7 @@ msgid "French"
 msgstr "Français"
 
 #: accounts/forms.py:7 accounts/models.py:35 accounts/models.py:146
-#: accounts/views.py:189 project/models.py:150 project/models.py:461
+#: accounts/views.py:188 project/models.py:150 project/models.py:461
 #: templates/expense/list.html:205 templates/invoice/detail.html:25
 #: templates/invoice/list.html:27 templates/project/detail.html:32
 #: templates/project/detail.html.py:60 templates/proposal/detail.html:91
@@ -72,7 +72,7 @@ msgstr "Virement"
 msgid "Check"
 msgstr "Chèque"
 
-#: accounts/models.py:33 accounts/views.py:189 templates/expense/list.html:203
+#: accounts/models.py:33 accounts/views.py:188 templates/expense/list.html:203
 msgid "Date"
 msgstr "Date"
 
@@ -90,7 +90,7 @@ msgstr "format : jj/mm/aaaa"
 msgid "Reference"
 msgstr "Référence"
 
-#: accounts/models.py:36 accounts/models.py:149 accounts/views.py:189
+#: accounts/models.py:36 accounts/models.py:149 accounts/views.py:188
 #: templates/expense/list.html:206 templates/invoice/list.html:26
 msgid "Payment type"
 msgstr "Type de paiement"
@@ -108,11 +108,11 @@ msgstr "Éditée"
 msgid "Sent"
 msgstr "Envoyé"
 
-#: accounts/models.py:50 autoentrepreneur/models.py:36 core/views.py:365
+#: accounts/models.py:50 autoentrepreneur/models.py:36 core/views.py:367
 msgid "Paid"
 msgstr "Payée"
 
-#: accounts/models.py:143 accounts/views.py:189 project/forms.py:26
+#: accounts/models.py:143 accounts/views.py:188 project/forms.py:26
 #: project/models.py:26 project/models.py:105 templates/invoice/list.html:23
 #: templates/project/list.html:20
 msgid "Customer"
@@ -164,11 +164,11 @@ msgstr "Conditions d'escompte"
 msgid "invoice #%d"
 msgstr "facture n°%d"
 
-#: accounts/models.py:188 accounts/views.py:282
+#: accounts/models.py:188 accounts/views.py:287
 msgid "Invoice id must be unique"
 msgstr "Le numéro de facture doit être unique"
 
-#: accounts/models.py:198 accounts/views.py:279
+#: accounts/models.py:198 accounts/views.py:284
 msgid "Amounts invoiced can't be greater than proposals remaining amounts"
 msgstr ""
 "Les montants facturés ne peuvent pas dépasser les montants restants des devis"
@@ -255,62 +255,75 @@ msgstr ""
 "à zero et son état passera à \"soldé\" quand toutes les factures auront été "
 "payées."
 
-#: accounts/views.py:61 templates/menu.html:47
+#: accounts/views.py:60 templates/menu.html:47
 #: templates/core/charts_widget.html:37
 msgid "Expenses"
 msgstr "Dépenses"
 
-#: accounts/views.py:144 templates/menu.html:44
+#: accounts/views.py:143 templates/menu.html:44
 #: templates/core/invoices_widget.html:3 templates/project/detail.html:52
 #: templates/proposal/detail.html:83
 msgid "Invoices"
 msgstr "Factures"
 
-#: accounts/views.py:173
+#: accounts/views.py:172
 #, python-format
 msgid "invoice_book_%(year)d.pdf"
 msgstr "livre_des_recettes_%(year)d.pdf"
 
-#: accounts/views.py:177 accounts/views.py:186
+#: accounts/views.py:176 accounts/views.py:185
 #, python-format
 msgid "Invoice book %(year)d"
 msgstr "Livre des recettes %(year)d"
 
-#: accounts/views.py:189
+#: accounts/views.py:188
 msgid "Ref."
 msgstr "Ref."
 
-#: accounts/views.py:189 templates/invoice/list.html:24
+#: accounts/views.py:188 templates/invoice/list.html:24
 msgid "Nature"
 msgstr "Nature"
 
-#: accounts/views.py:214
+#: accounts/views.py:213
 msgid "Edit an invoice"
 msgstr "Éditer une facture"
 
-#: accounts/views.py:218 templates/project/detail.html:51
+#: accounts/views.py:217 templates/project/detail.html:51
 msgid "Draw up an invoice"
 msgstr "Etablir une facture"
 
-#: accounts/views.py:275
+#: accounts/views.py:274
 msgid "The invoice has been saved successfully"
 msgstr "La facture a été sauvegardée avec succès"
 
-#: accounts/views.py:284 contact/views.py:76 core/views.py:259
-#: project/views.py:74 project/views.py:171 project/views.py:382
+#: accounts/views.py:276
+msgid "Paid date is in the future, is this normal ?"
+msgstr "La date de réception du paiement est dans le futur, est-ce normal ?"
+
+#: accounts/views.py:278
+msgid ""
+"Execution begin date is greater than execution end date, is this normal ?"
+msgstr "La date de début d'exécution est supérieure à la date de fin d'exécution, est-ce normal ?"
+
+#: accounts/views.py:280
+msgid "Payment date is greater than penalty date, is this normal ?"
+msgstr "La date de paiement est supérieure à la date des pénalités, est-ce normal ?"
+
+#: accounts/views.py:289 contact/views.py:76 core/views.py:261
+#: project/views.py:74 project/views.py:171 project/views.py:386
 msgid "Data provided are invalid"
 msgstr "Les données saisies sont invalides"
 
-#: accounts/views.py:336
+#: accounts/views.py:341
 #, python-format
 msgid "Invoice for %s"
 msgstr "Facture pour %s"
 
-#: accounts/views.py:349
+#: accounts/views.py:354
 msgid "The invoice has been deleted successfully"
 msgstr "La facture a été supprimée avec succès"
 
-#: accounts/views.py:356
+#: accounts/views.py:361
 msgid "Delete an invoice"
 msgstr "Supprimer une facture"
 
@@ -827,11 +840,11 @@ msgstr ""
 "Ce champ ne peux contenir que des lettres, chiffres et tirets bas "
 "(underscore)"
 
-#: core/tests.py:66 core/views.py:285
+#: core/tests.py:66 core/views.py:287
 msgid "Wrong password"
 msgstr "Mot de passe erroné"
 
-#: core/tests.py:81 core/views.py:283
+#: core/tests.py:81 core/views.py:285
 msgid "Your password has been modified successfully"
 msgstr "Votre mot de passe a été sauvegardé avec succès"
 
@@ -850,64 +863,68 @@ msgstr "Tableau de bord"
 msgid "Your settings have been updated successfully"
 msgstr "Vos paramètres ont été sauvegardés avec succès"
 
-#: core/views.py:267 templates/menu.html:81
+#: core/views.py:258
+msgid "Creation date is in the future, is this normal ?"
+msgstr "La date de création est dans le futur, est-ce normal ?"
+
+#: core/views.py:269 templates/menu.html:81
 msgid "Settings"
 msgstr "Paramètres"
 
-#: core/views.py:287
+#: core/views.py:289
 msgid "Your password has not been modified"
 msgstr "Votre mot de passe n'a pas été modifié"
 
-#: core/views.py:293 templates/menu.html:84
+#: core/views.py:295 templates/menu.html:84
 msgid "Change password"
 msgstr "Changer de mot de passe"
 
-#: core/views.py:310 templates/menu.html:88
+#: core/views.py:312 templates/menu.html:88
 msgid "My subscription"
 msgstr "Mon abonnement"
 
-#: core/views.py:323
+#: core/views.py:325
 msgid "Subscription paid"
 msgstr "Abonnement payé"
 
-#: core/views.py:353
+#: core/views.py:355
 msgid "Not verified"
 msgstr "Non vérifié"
 
-#: core/views.py:357
+#: core/views.py:359
 msgid "Receiver is not as defined in settings. Spoofing ?"
 msgstr "Le destinataire n'est pas celui défini dans settings. Spoofing ?"
 
-#: core/views.py:359
+#: core/views.py:361
 msgid "Payment not completed"
 msgstr "Paiement non complet"
 
-#: core/views.py:361 core/views.py:363
+#: core/views.py:363 core/views.py:365
 msgid "Amount altered. Bad guy ?"
 msgstr "Montant modifié. Gros vilain ?"
 
-#: core/views.py:466
+#: core/views.py:468
 msgid "Subscribe"
 msgstr "S'abonner"
 
-#: core/views.py:484 templates/core/unregister.html:15
+#: core/views.py:486 templates/core/unregister.html:15
 msgid "Unregister"
 msgstr "Se désinscrire"
 
-#: core/views.py:497
+#: core/views.py:499
 msgid "CSRF error"
 msgstr "Erreur CSRF"
 
-#: core/views.py:498
+#: core/views.py:500
 #, python-format
 msgid "An error occured for %(email)s on %(path)s, reason : %(reason)s"
 msgstr "Une erreur est survenue pour %(email)s à %(path)s, raison : %(reason)s"
 
-#: core/views.py:503
+#: core/views.py:505
 msgid "Error"
 msgstr "Erreur"
 
-#: core/views.py:517
+#: core/views.py:519
 msgid ""
 "Activation key expired. You may already have activated your account. If not, "
 "activation delay may have passed, you have to wait for your previous "
@@ -917,7 +934,7 @@ msgstr ""
 "ce n'est pas le cas, le délai d'activation peut être écoulé, vous devez "
 "attendre que votre inscription précédente soit supprimée (max. 1 journée)."
 
-#: core/views.py:523
+#: core/views.py:525
 msgid ""
 "Email address not found. Activation delay may have expired. Try subscribing "
 "again."
@@ -1118,7 +1135,7 @@ msgstr "Devis %(reference)s du %(begin_date)s au %(end_date)s pour %(project)s"
 msgid "Proposal %(reference)s for %(project)s"
 msgstr "Devis %(reference)s pour %(project)s"
 
-#: project/models.py:209 project/views.py:380
+#: project/models.py:209 project/views.py:384
 msgid "Proposal amount can't be less than sum of invoices"
 msgstr "Le montant du devis ne peut être inférieur à la somme des factures"
 
@@ -1220,20 +1237,31 @@ msgstr "Ajouter un devis"
 msgid "The proposal has been saved successfully"
 msgstr "Le devis a été sauvegardé avec succès"
 
-#: project/views.py:413
+#: project/views.py:378
+msgid "Begin date is greater than end date, is this normal ?"
+msgstr "La date de début est supérieure à la date de fin, est-ce normal ?"
+
+#: project/views.py:380
+msgid ""
+"Expiration date is in the past while the proposal is not yet sent, is this "
+"normal ?"
+msgstr "La date de validité est dans le passé alors que le devis n'a pas encore "
+"été envoyé, est-ce normal ?"
+
+#: project/views.py:417
 #, python-format
 msgid "Proposal for %s"
 msgstr "Devis pour %s"
 
-#: project/views.py:429
+#: project/views.py:433
 msgid "The proposal has been deleted successfully"
 msgstr "Le devis a été supprimé avec succès"
 
-#: project/views.py:436
+#: project/views.py:440
 msgid "Delete a proposal"
 msgstr "Supprimer un devis"
 
-#: project/views.py:468
+#: project/views.py:472
 #, python-format
 msgid "proposal_contract_%(id)d.pdf"
 msgstr "devis_contrat_%(id)d.pdf"
