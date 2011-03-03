@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-02 22:16+0100\n"
+"POT-Creation-Date: 2011-03-03 03:47+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -506,7 +506,7 @@ msgstr "Seuls les bugs et les demandes de fonctionnalités sont publics"
 msgid "Subject"
 msgstr "Sujet"
 
-#: bugtracker/models.py:31 bugtracker/models.py:51 bugtracker/views.py:183
+#: bugtracker/models.py:31 bugtracker/models.py:51 bugtracker/views.py:198
 #: core/forms.py:52 newsletter/models.py:15 templates/issue/detail.html:61
 #: templates/message/detail.html:42
 msgid "Message"
@@ -519,91 +519,145 @@ msgstr "Message"
 msgid "Update date"
 msgstr "Date de modification"
 
-#: bugtracker/models.py:52 bugtracker/models.py:66 bugtracker/views.py:161
+#: bugtracker/models.py:52 bugtracker/models.py:66 bugtracker/views.py:176
 msgid "Issue"
 msgstr "Problème"
 
-#: bugtracker/views.py:22 bugtracker/views.py:45
+#: bugtracker/views.py:23 bugtracker/views.py:46
 msgid "Issue reporting"
 msgstr "Rapport de problème"
 
-#: bugtracker/views.py:36 templates/menu.html:95
+#: bugtracker/views.py:37 templates/menu.html:95
 msgid "Messages"
 msgstr "Messages"
 
-#: bugtracker/views.py:55
+#: bugtracker/views.py:56
 msgid "Edit an issue"
 msgstr "Éditer un problème"
 
-#: bugtracker/views.py:61 templates/issue/list.html:5
+#: bugtracker/views.py:61
+msgid "An issue has been updated"
+msgstr "Un problème a été mis à jour"
+
+#: bugtracker/views.py:63 templates/issue/list.html:5
 msgid "Send an issue"
 msgstr "Envoyer un problème"
 
-#: bugtracker/views.py:72
+#: bugtracker/views.py:65
+msgid "An issue has been opened"
+msgstr "Un problème a été ouvert"
+
+#: bugtracker/views.py:76
 msgid "The issue has been saved successfully"
 msgstr "Le problème a été sauvegardé avec succès"
 
-#: bugtracker/views.py:75
+#: bugtracker/views.py:78 bugtracker/views.py:150 bugtracker/views.py:254
+#, python-format
+msgid "%(issue_subject)s : %(issue_url)s"
+msgstr "%(issue_subject)s : %(issue_url)s"
+
+#: bugtracker/views.py:81
 msgid "The message has been saved successfully"
 msgstr "Le message a été sauvegardé avec succès"
 
-#: bugtracker/views.py:108
+#: bugtracker/views.py:83
+msgid "A new message has been posted"
+msgstr "Un message a été posté"
+
+#: bugtracker/views.py:84 bugtracker/views.py:301
+#, python-format
+msgid "%(message_subject)s : %(message_url)s"
+msgstr "%(message_subject)s : %(message_url)s"
+
+#: bugtracker/views.py:118
 msgid "The issue has been closed successfully"
 msgstr "Le problème a été fermé avec succès"
 
-#: bugtracker/views.py:115
+#: bugtracker/views.py:125
 msgid "Close an issue"
 msgstr "Fermer un problème"
 
-#: bugtracker/views.py:138
+#: bugtracker/views.py:149
+msgid "An issue has been reopened"
+msgstr "Un problème a été réouvert"
+
+#: bugtracker/views.py:153
 msgid "The issue has been reopened successfully"
 msgstr "Le problème a été réouvert avec succès"
 
-#: bugtracker/views.py:145
+#: bugtracker/views.py:160
 msgid "Reopen an issue"
 msgstr "Réouvrir un problème"
 
-#: bugtracker/views.py:199
+#: bugtracker/views.py:214
 msgid "The issue has been deleted successfully"
 msgstr "Le problème a été supprimé avec succès"
 
-#: bugtracker/views.py:206
+#: bugtracker/views.py:221
 msgid "Delete an issue"
 msgstr "Supprimer un problème"
 
-#: bugtracker/views.py:214
+#: bugtracker/views.py:229
 msgid "Edit a comment"
 msgstr "Éditer un commentaire"
 
-#: bugtracker/views.py:221 bugtracker/views.py:249
+#: bugtracker/views.py:235
+msgid "A comment has been updated"
+msgstr "Un commentaire a été mis à jour"
+
+#: bugtracker/views.py:237 bugtracker/views.py:271
 msgid "Send a comment"
 msgstr "Envoyer un commentaire"
 
-#: bugtracker/views.py:235 bugtracker/views.py:272
+#: bugtracker/views.py:242
+msgid "A comment has been added"
+msgstr "Un commentaire a été ajouté"
+
+#: bugtracker/views.py:257 bugtracker/views.py:304
 msgid "Your comment has been saved successfully"
 msgstr "Votre commentaire a été sauvegardé avec succès"
 
 #: bugtracker/views.py:295
+#, python-format
+msgid "You have received an answer on %(site_name)s"
+msgstr "Vous avez reçu une réponse sur %(site_name)s"
+
+#: bugtracker/views.py:296
+#, python-format
+msgid ""
+"%(message_url)s\n"
+"\n"
+"%(message)s"
+msgstr ""
+"%(message_url)s\n"
+"\n"
+"%(message)s"
+
+#: bugtracker/views.py:300
+msgid "An answer has been posted"
+msgstr "Une réponse a été postée"
+
+#: bugtracker/views.py:327
 msgid "The comment has been deleted successfully"
 msgstr "Le commentaire a été supprimé avec succès"
 
-#: bugtracker/views.py:302
+#: bugtracker/views.py:334
 msgid "Delete a comment"
 msgstr "Supprimer un commentaire"
 
-#: bugtracker/views.py:317
+#: bugtracker/views.py:349
 msgid "Your vote has been saved successfully"
 msgstr "Votre vote a été sauvegardé avec succès"
 
-#: bugtracker/views.py:319
+#: bugtracker/views.py:351
 msgid "You can't vote anymore"
 msgstr "Vous ne pouvez plus voter"
 
-#: bugtracker/views.py:321
+#: bugtracker/views.py:353
 msgid "No votes for closed issues"
 msgstr "Pas de vote pour les problèmes fermés"
 
-#: bugtracker/views.py:334
+#: bugtracker/views.py:366
 msgid "Your vote has been removed successfully"
 msgstr "Votre vote a été supprimé avec succès"
 
@@ -757,7 +811,9 @@ msgstr "seuls des lettres, chiffres et tirets bas (underscore) sont acceptés"
 
 #: core/forms.py:42
 msgid "This value must contain only letters, numbers and underscores."
-msgstr "Ce champ ne peux contenir que des lettres, chiffres et tirets bas (underscore)"
+msgstr ""
+"Ce champ ne peux contenir que des lettres, chiffres et tirets bas "
+"(underscore)"
 
 #: core/tests.py:66 core/views.py:285
 msgid "Wrong password"

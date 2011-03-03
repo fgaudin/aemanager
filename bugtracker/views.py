@@ -5,13 +5,14 @@ from bugtracker.models import ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE, Issue,
     ISSUE_CATEGORY_SUBSCRIPTION, ISSUE_CATEGORY_MESSAGE
 from django.utils.translation import ugettext_lazy as _
 from bugtracker.forms import IssueForm, CommentForm
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db.transaction import commit_on_success
-from django.conf import settings
 from django.db.models.aggregates import Count, Max
 from core.decorators import settings_required
+from django.core.mail import mail_admins
+from django.contrib.sites.models import Site
+from django.conf import settings
 import datetime
 
 @settings_required
@@ -57,9 +58,11 @@ def issue_create_or_edit(request, id=None):
                                   pk=id,
                                   owner=request.user,
                                   category__in=[ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE])
+        mail_subject = _('An issue has been updated')
     else:
         title = _('Send an issue')
         issue = None
+        mail_subject = _('An issue has been opened')
 
     if request.method == 'POST':
         form = IssueForm(request.POST, instance=issue)
@@ -68,12 +71,19 @@ def issue_create_or_edit(request, id=None):
             issue.update_date = datetime.datetime.now()
             issue.owner = request.user
             issue.save()
+            domain = Site.objects.get_current().domain
             if issue.category in [ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE]:
                 message = _('The issue has been saved successfully')
                 redirect_url = reverse('issue_list')
+                mail_message = _('%(issue_subject)s : %(issue_url)s') % {'issue_subject': issue.subject,
+                                                                         'issue_url': 'https://%s%s' % (domain, reverse('issue_detail', kwargs={'id': issue.id}))}
             else:
                 message = _('The message has been saved successfully')
                 redirect_url = reverse('message_list')
+                mail_subject = _('A new message has been posted')
+                mail_message = _('%(message_subject)s : %(message_url)s') % {'message_subject': issue.subject,
+                                                                             'message_url': 'https://%s%s' % (domain, reverse('message_detail', kwargs={'id': issue.id}))}
+            mail_admins(mail_subject, mail_message, fail_silently=(not settings.DEBUG))
             messages.success(request, message)
             return redirect(redirect_url)
     else:
@@ -135,6 +145,11 @@ def issue_reopen(request, id):
             issue.state = ISSUE_STATE_OPEN
             issue.owner = request.user
             issue.save()
+            domain = Site.objects.get_current().domain
+            mail_subject = _('An issue has been reopened')
+            mail_message = _('%(issue_subject)s : %(issue_url)s') % {'issue_subject': issue.subject,
+                                                                     'issue_url': 'https://%s%s' % (domain, reverse('issue_detail', kwargs={'id': issue.id}))}
+            mail_admins(mail_subject, mail_message, fail_silently=(not settings.DEBUG))
             messages.success(request, _('The issue has been reopened successfully'))
             return redirect(reverse('issue_list'))
     else:
@@ -217,12 +232,14 @@ def comment_create_or_edit(request, id=None, issue_id=None):
                                     owner=request.user,
                                     issue__category__in=[ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE])
         issue = comment.issue
+        mail_subject = _('A comment has been updated')
     else:
         title = _('Send a comment')
         comment = None
         issue = get_object_or_404(Issue,
                                   pk=issue_id,
                                   category__in=[ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE])
+        mail_subject = _('A comment has been added')
 
     if request.method == 'POST':
         form = CommentForm(request.POST, instance=comment)
@@ -232,6 +249,11 @@ def comment_create_or_edit(request, id=None, issue_id=None):
             comment.update_date = datetime.datetime.now()
             comment.owner = request.user
             comment.save()
+
+            domain = Site.objects.get_current().domain
+            mail_message = _('%(issue_subject)s : %(issue_url)s') % {'issue_subject': issue.subject,
+                                                                     'issue_url': 'https://%s%s' % (domain, reverse('issue_detail', kwargs={'id': issue.id}))}
+            mail_admins(mail_subject, mail_message, fail_silently=(not settings.DEBUG))
             messages.success(request, _('Your comment has been saved successfully'))
             return redirect(reverse('issue_detail', kwargs={'id': issue.id}))
     else:
@@ -266,9 +288,19 @@ def comment_message_create(request, issue_id=None):
             comment.update_date = datetime.datetime.now()
             comment.owner = request.user
             comment.save()
+            site = Site.objects.get_current()
             if request.user.is_superuser:
                 issue.state = ISSUE_STATE_OPEN
                 issue.save()
+                mail_subject = _('You have received an answer on %(site_name)s') % {'site_name': site.name}
+                mail_message = _("%(message_url)s\n\n%(message)s") % {'message_url': 'https://%s%s' % (site.domain, reverse('message_detail', kwargs={'id': issue.id})),
+                                                                      'message': comment.message}
+                issue.owner.email_user(mail_subject, mail_message)
+            else:
+                mail_subject = _('An answer has been posted')
+                mail_message = _('%(message_subject)s : %(message_url)s') % {'message_subject': issue.subject,
+                                                                             'message_url': 'https://%s%s' % (site.domain, reverse('message_detail', kwargs={'id': issue.id}))}
+                mail_admins(mail_subject, mail_message, fail_silently=(not settings.DEBUG))
             messages.success(request, _('Your comment has been saved successfully'))
             return redirect(reverse('message_detail', kwargs={'id': issue.id}))
     else:

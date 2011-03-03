@@ -5,6 +5,9 @@ from bugtracker.models import ISSUE_CATEGORY_BUG, ISSUE_STATE_OPEN, Issue, \
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core import mail
+from django.utils.translation import ugettext
+from django.contrib.sites.models import Site
 import datetime
 
 class IssuePermissionTest(TestCase):
@@ -442,6 +445,9 @@ class IssueTest(TestCase):
         self.assertEquals(issues[0].message, 'test message')
         self.assertEquals(issues[0].state, ISSUE_STATE_OPEN)
         self.assertEquals(issues[0].owner_id, 1)
+        self.assertEquals(len(mail.outbox), 1)
+        self.assertEquals(mail.outbox[0].subject, "%s%s" % (settings.EMAIL_SUBJECT_PREFIX, ugettext("An issue has been opened")))
+        self.assertEquals(mail.outbox[0].to, [settings.ADMINS[0][1]])
 
     def testGetEditIssue(self):
         i1 = Issue.objects.create(owner_id=1,
@@ -474,6 +480,9 @@ class IssueTest(TestCase):
         self.assertEquals(issues[0].message, 'test message2')
         self.assertEquals(issues[0].state, ISSUE_STATE_OPEN)
         self.assertEquals(issues[0].owner_id, 1)
+        self.assertEquals(len(mail.outbox), 1)
+        self.assertEquals(mail.outbox[0].subject, "%s%s" % (settings.EMAIL_SUBJECT_PREFIX, ugettext("An issue has been updated")))
+        self.assertEquals(mail.outbox[0].to, [settings.ADMINS[0][1]])
 
     def testGetDeleteIssue(self):
         i1 = Issue.objects.create(owner_id=1,
@@ -546,6 +555,9 @@ class IssueTest(TestCase):
         self.assertEquals(response.status_code, 302)
         self.assertEquals(Issue.objects.get(pk=i1.id).state, ISSUE_STATE_OPEN)
         self.assertEquals(i1.comment_set.count(), 1)
+        self.assertEquals(len(mail.outbox), 1)
+        self.assertEquals(mail.outbox[0].subject, "%s%s" % (settings.EMAIL_SUBJECT_PREFIX, ugettext("An issue has been reopened")))
+        self.assertEquals(mail.outbox[0].to, [settings.ADMINS[0][1]])
 
     def testCommentIssue(self):
         i1 = Issue.objects.create(owner_id=1,
@@ -559,6 +571,9 @@ class IssueTest(TestCase):
                                     {'message': 'Comment'})
         self.assertEquals(response.status_code, 302)
         self.assertEquals(i1.comment_set.count(), 1)
+        self.assertEquals(len(mail.outbox), 1)
+        self.assertEquals(mail.outbox[0].subject, "%s%s" % (settings.EMAIL_SUBJECT_PREFIX, ugettext("A comment has been added")))
+        self.assertEquals(mail.outbox[0].to, [settings.ADMINS[0][1]])
 
     def testGetEditComment(self):
         i1 = Issue.objects.create(owner_id=1,
@@ -591,6 +606,9 @@ class IssueTest(TestCase):
                                     {'message': 'comment 2'})
         self.assertEquals(response.status_code, 302)
         self.assertEquals(Comment.objects.get(pk=c1.id).message, 'comment 2')
+        self.assertEquals(len(mail.outbox), 1)
+        self.assertEquals(mail.outbox[0].subject, "%s%s" % (settings.EMAIL_SUBJECT_PREFIX, ugettext("A comment has been updated")))
+        self.assertEquals(mail.outbox[0].to, [settings.ADMINS[0][1]])
 
     def testGetDeleteComment(self):
         i1 = Issue.objects.create(owner_id=1,
@@ -682,3 +700,64 @@ class IssueTest(TestCase):
         response = self.client.get(reverse('vote', kwargs={'issue_id': i1.id}))
         self.assertEquals(response.status_code, 302)
         self.assertEquals(i1.vote_count(), 0)
+
+class MessageTest(TestCase):
+    fixtures = ['test_users']
+
+    def setUp(self):
+        self.client.login(username='test', password='test')
+
+    def testPostCreateMessage(self):
+        response = self.client.post(reverse('issue_add'),
+                                    {'category': ISSUE_CATEGORY_MESSAGE,
+                                     'subject': 'test subject',
+                                     'message': 'test message'})
+        self.assertEquals(response.status_code, 302)
+        issues = Issue.objects.all()
+        self.assertEquals(len(issues), 1)
+        self.assertEquals(issues[0].category, ISSUE_CATEGORY_MESSAGE)
+        self.assertEquals(issues[0].subject, 'test subject')
+        self.assertEquals(issues[0].message, 'test message')
+        self.assertEquals(issues[0].state, ISSUE_STATE_OPEN)
+        self.assertEquals(issues[0].owner_id, 1)
+        self.assertEquals(len(mail.outbox), 1)
+        self.assertEquals(mail.outbox[0].subject, "%s%s" % (settings.EMAIL_SUBJECT_PREFIX, ugettext("A new message has been posted")))
+        self.assertEquals(mail.outbox[0].to, [settings.ADMINS[0][1]])
+
+    def testCommentMessage(self):
+        i1 = Issue.objects.create(owner_id=1,
+                                  category=ISSUE_CATEGORY_MESSAGE,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_OPEN)
+
+        response = self.client.post(reverse('message_add', kwargs={'issue_id': i1.id}),
+                                    {'message': 'Comment'})
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals(i1.comment_set.count(), 1)
+        self.assertEquals(len(mail.outbox), 1)
+        self.assertEquals(mail.outbox[0].subject, "%s%s" % (settings.EMAIL_SUBJECT_PREFIX, ugettext("An answer has been posted")))
+        self.assertEquals(mail.outbox[0].to, [settings.ADMINS[0][1]])
+
+    def testAnswerFromAdmin(self):
+        i1 = Issue.objects.create(owner_id=1,
+                                  category=ISSUE_CATEGORY_MESSAGE,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_OPEN)
+
+        admin = User.objects.get(pk=2)
+        admin.is_superuser = True
+        admin.save()
+        self.client.logout()
+        self.client.login(username='test2', password='test')
+        response = self.client.post(reverse('message_add', kwargs={'issue_id': i1.id}),
+                                    {'message': 'Comment'})
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals(i1.comment_set.count(), 1)
+        self.assertEquals(len(mail.outbox), 1)
+        site = Site.objects.get_current()
+        self.assertEquals(mail.outbox[0].subject, ugettext('You have received an answer on %(site_name)s') % {'site_name': site.name})
+        self.assertEquals(mail.outbox[0].to, [User.objects.get(pk=1).email])
