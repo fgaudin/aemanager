@@ -38,7 +38,7 @@
       </div>
     </div>
     {% with contact.address as object %}{% with "street" as name %}
-    {% include "detail_field.html" %}
+    {% include "detail_multiline_field.html" %}
     {% endwith %}{% endwith %}
     {% with contact.address as object %}{% with "zipcode" as name %}
     {% include "detail_field.html" %}

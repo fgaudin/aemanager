@@ -23,10 +23,10 @@
     {% include "detail_field.html" %}
     {% endwith %}
     {% with "subject" as name %}
-    {% include "detail_field.html" %}
+    {% include "detail_multiline_field.html" %}
     {% endwith %}
     {% with "message" as name %}
-    {% include "detail_field.html" %}
+    {% include "detail_multiline_field.html" %}
     {% endwith %}
     {% endwith %}
 </fieldset>
@@ -47,7 +47,7 @@
            <tr class="{% cycle 'row1' 'row2' %}">
                 <td>{{ comment.owner|display_name }}</td>
                 <td>{{ comment.update_date }}</td>
-                <td>{{ comment.message }}</td>
+                <td>{{ comment.message|linebreaksbr }}</td>
             </tr>
         {% endfor %}
         </tbody>

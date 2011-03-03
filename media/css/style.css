@@ -525,3 +525,8 @@ body.login {
 .mail-subject {
     width:500px;
 }
+
+.multiline-value {
+    margin-left: 15em;
+    padding-left:10px;
+}
