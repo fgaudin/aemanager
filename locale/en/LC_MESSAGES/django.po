@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-03 03:47+0100\n"
+"POT-Creation-Date: 2011-03-03 19:08+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -471,7 +471,7 @@ msgstr ""
 msgid "Closed"
 msgstr ""
 
-#: bugtracker/models.py:28 bugtracker/models.py:50 bugtracker/models.py:67
+#: bugtracker/models.py:28 bugtracker/models.py:59 bugtracker/models.py:76
 msgid "User"
 msgstr ""
 
@@ -492,123 +492,139 @@ msgstr ""
 msgid "Subject"
 msgstr ""
 
-#: bugtracker/models.py:31 bugtracker/models.py:51 bugtracker/views.py:198
+#: bugtracker/models.py:31 bugtracker/models.py:60 bugtracker/views.py:199
 #: core/forms.py:52 newsletter/models.py:15 templates/issue/detail.html:61
 #: templates/message/detail.html:42
 msgid "Message"
 msgstr ""
 
-#: bugtracker/models.py:32 bugtracker/models.py:53 newsletter/models.py:16
+#: bugtracker/models.py:32 bugtracker/models.py:62 newsletter/models.py:16
 #: project/models.py:29 project/models.py:154 templates/issue/detail.html:60
 #: templates/issue/list.html:18 templates/message/detail.html:41
 #: templates/message/list.html:19 templates/newsletter/email_users.html:24
 msgid "Update date"
 msgstr ""
 
-#: bugtracker/models.py:52 bugtracker/models.py:66 bugtracker/views.py:176
+#: bugtracker/models.py:61 bugtracker/models.py:75 bugtracker/views.py:177
 msgid "Issue"
 msgstr ""
 
-#: bugtracker/views.py:23 bugtracker/views.py:46
-msgid "Issue reporting"
-msgstr ""
-
-#: bugtracker/views.py:37 templates/menu.html:95
-msgid "Messages"
-msgstr ""
-
-#: bugtracker/views.py:56
-msgid "Edit an issue"
-msgstr ""
-
-#: bugtracker/views.py:61
-msgid "An issue has been updated"
-msgstr ""
-
-#: bugtracker/views.py:63 templates/issue/list.html:5
-msgid "Send an issue"
-msgstr ""
-
-#: bugtracker/views.py:65
+#: bugtracker/tests.py:449 bugtracker/views.py:66
 msgid "An issue has been opened"
 msgstr ""
 
-#: bugtracker/views.py:76
-msgid "The issue has been saved successfully"
+#: bugtracker/tests.py:484 bugtracker/views.py:62
+msgid "An issue has been updated"
 msgstr ""
 
-#: bugtracker/views.py:78 bugtracker/views.py:150 bugtracker/views.py:254
-#, python-format
-msgid "%(issue_subject)s : %(issue_url)s"
-msgstr ""
-
-#: bugtracker/views.py:81
-msgid "The message has been saved successfully"
-msgstr ""
-
-#: bugtracker/views.py:83
-msgid "A new message has been posted"
-msgstr ""
-
-#: bugtracker/views.py:84 bugtracker/views.py:301
-#, python-format
-msgid "%(message_subject)s : %(message_url)s"
-msgstr ""
-
-#: bugtracker/views.py:118
-msgid "The issue has been closed successfully"
-msgstr ""
-
-#: bugtracker/views.py:125
-msgid "Close an issue"
-msgstr ""
-
-#: bugtracker/views.py:149
+#: bugtracker/tests.py:559 bugtracker/views.py:150
 msgid "An issue has been reopened"
 msgstr ""
 
-#: bugtracker/views.py:153
-msgid "The issue has been reopened successfully"
-msgstr ""
-
-#: bugtracker/views.py:160
-msgid "Reopen an issue"
-msgstr ""
-
-#: bugtracker/views.py:214
-msgid "The issue has been deleted successfully"
-msgstr ""
-
-#: bugtracker/views.py:221
-msgid "Delete an issue"
-msgstr ""
-
-#: bugtracker/views.py:229
-msgid "Edit a comment"
-msgstr ""
-
-#: bugtracker/views.py:235
-msgid "A comment has been updated"
-msgstr ""
-
-#: bugtracker/views.py:237 bugtracker/views.py:271
-msgid "Send a comment"
-msgstr ""
-
-#: bugtracker/views.py:242
+#: bugtracker/tests.py:575 bugtracker/tests.py:613 bugtracker/tests.py:655
+#: bugtracker/views.py:243
 msgid "A comment has been added"
 msgstr ""
 
-#: bugtracker/views.py:257 bugtracker/views.py:304
-msgid "Your comment has been saved successfully"
+#: bugtracker/tests.py:615 bugtracker/tests.py:616 bugtracker/tests.py:657
+#: bugtracker/tests.py:658 bugtracker/views.py:262
+#, python-format
+msgid "A new comment has been added on issue #%(id)d"
 msgstr ""
 
-#: bugtracker/views.py:295
+#: bugtracker/tests.py:694 bugtracker/views.py:236
+msgid "A comment has been updated"
+msgstr ""
+
+#: bugtracker/tests.py:808 bugtracker/views.py:84
+msgid "A new message has been posted"
+msgstr ""
+
+#: bugtracker/tests.py:824 bugtracker/views.py:320
+msgid "An answer has been posted"
+msgstr ""
+
+#: bugtracker/tests.py:846 bugtracker/views.py:315
 #, python-format
 msgid "You have received an answer on %(site_name)s"
 msgstr ""
 
-#: bugtracker/views.py:296
+#: bugtracker/views.py:24 bugtracker/views.py:47
+msgid "Issue reporting"
+msgstr ""
+
+#: bugtracker/views.py:38 templates/menu.html:95
+msgid "Messages"
+msgstr ""
+
+#: bugtracker/views.py:57
+msgid "Edit an issue"
+msgstr ""
+
+#: bugtracker/views.py:64 templates/issue/list.html:5
+msgid "Send an issue"
+msgstr ""
+
+#: bugtracker/views.py:77
+msgid "The issue has been saved successfully"
+msgstr ""
+
+#: bugtracker/views.py:79 bugtracker/views.py:151 bugtracker/views.py:256
+#, python-format
+msgid "%(issue_subject)s : %(issue_url)s"
+msgstr ""
+
+#: bugtracker/views.py:82
+msgid "The message has been saved successfully"
+msgstr ""
+
+#: bugtracker/views.py:85 bugtracker/views.py:321
+#, python-format
+msgid "%(message_subject)s : %(message_url)s"
+msgstr ""
+
+#: bugtracker/views.py:119
+msgid "The issue has been closed successfully"
+msgstr ""
+
+#: bugtracker/views.py:126
+msgid "Close an issue"
+msgstr ""
+
+#: bugtracker/views.py:154
+msgid "The issue has been reopened successfully"
+msgstr ""
+
+#: bugtracker/views.py:161
+msgid "Reopen an issue"
+msgstr ""
+
+#: bugtracker/views.py:215
+msgid "The issue has been deleted successfully"
+msgstr ""
+
+#: bugtracker/views.py:222
+msgid "Delete an issue"
+msgstr ""
+
+#: bugtracker/views.py:230
+msgid "Edit a comment"
+msgstr ""
+
+#: bugtracker/views.py:238 bugtracker/views.py:291
+msgid "Send a comment"
+msgstr ""
+
+#: bugtracker/views.py:263
+#, python-format
+msgid "%(user)s wrote:"
+msgstr ""
+
+#: bugtracker/views.py:277 bugtracker/views.py:324
+msgid "Your comment has been saved successfully"
+msgstr ""
+
+#: bugtracker/views.py:316
 #, python-format
 msgid ""
 "%(message_url)s\n"
@@ -616,31 +632,27 @@ msgid ""
 "%(message)s"
 msgstr ""
 
-#: bugtracker/views.py:300
-msgid "An answer has been posted"
-msgstr ""
-
-#: bugtracker/views.py:327
+#: bugtracker/views.py:347
 msgid "The comment has been deleted successfully"
 msgstr ""
 
-#: bugtracker/views.py:334
+#: bugtracker/views.py:354
 msgid "Delete a comment"
 msgstr ""
 
-#: bugtracker/views.py:349
+#: bugtracker/views.py:369
 msgid "Your vote has been saved successfully"
 msgstr ""
 
-#: bugtracker/views.py:351
+#: bugtracker/views.py:371
 msgid "You can't vote anymore"
 msgstr ""
 
-#: bugtracker/views.py:353
+#: bugtracker/views.py:373
 msgid "No votes for closed issues"
 msgstr ""
 
-#: bugtracker/views.py:366
+#: bugtracker/views.py:386
 msgid "Your vote has been removed successfully"
 msgstr ""
 

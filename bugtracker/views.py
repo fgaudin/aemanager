@@ -10,9 +10,10 @@ from django.core.urlresolvers import reverse
 from django.db.transaction import commit_on_success
 from django.db.models.aggregates import Count, Max
 from core.decorators import settings_required
-from django.core.mail import mail_admins
+from django.core.mail import mail_admins, send_mass_mail
 from django.contrib.sites.models import Site
 from django.conf import settings
+from core.templatetags.modeltags import display_name
 import datetime
 
 @settings_required
@@ -251,9 +252,28 @@ def comment_create_or_edit(request, id=None, issue_id=None):
             comment.save()
 
             domain = Site.objects.get_current().domain
+            # notify admin
             mail_message = _('%(issue_subject)s : %(issue_url)s') % {'issue_subject': issue.subject,
                                                                      'issue_url': 'https://%s%s' % (domain, reverse('issue_detail', kwargs={'id': issue.id}))}
             mail_admins(mail_subject, mail_message, fail_silently=(not settings.DEBUG))
+            # notify users who have commented except owner of this comment
+            emails_to_notify = issue.emails_to_notify()
+            emails_to_notify.remove(comment.owner.email)
+            notification_subject = _('A new comment has been added on issue #%(id)d') % {'id': issue.id}
+            notification_message = _("%(user)s wrote:") % {'user': display_name(comment.owner)}
+            notification_message = "%s\n\n%s\n\n%s" % ('https://%s%s' % (domain,
+                                                                         reverse('issue_detail',
+                                                                                 kwargs={'id': issue.id})),
+                                                       notification_message,
+                                                       comment.message)
+            notification_messages = []
+            for email in emails_to_notify:
+                notification_messages.append((notification_subject,
+                                              notification_message,
+                                              settings.DEFAULT_FROM_EMAIL,
+                                              [email]))
+            send_mass_mail(notification_messages, fail_silently=(not settings.DEBUG))
+
             messages.success(request, _('Your comment has been saved successfully'))
             return redirect(reverse('issue_detail', kwargs={'id': issue.id}))
     else:

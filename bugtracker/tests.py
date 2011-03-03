@@ -575,6 +575,90 @@ class IssueTest(TestCase):
         self.assertEquals(mail.outbox[0].subject, "%s%s" % (settings.EMAIL_SUBJECT_PREFIX, ugettext("A comment has been added")))
         self.assertEquals(mail.outbox[0].to, [settings.ADMINS[0][1]])
 
+    def testCommentNotification(self):
+        user3 = User.objects.create_user('test_user3', 'test3@example.com', 'test')
+
+        i1 = Issue.objects.create(owner=user3,
+                                  category=ISSUE_CATEGORY_BUG,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_OPEN)
+
+        c1 = Comment.objects.create(owner_id=2,
+                                    message='comment',
+                                    update_date=datetime.datetime.now(),
+                                    issue=i1)
+        c2 = Comment.objects.create(owner=user3,
+                                    message='comment',
+                                    update_date=datetime.datetime.now(),
+                                    issue=i1)
+        c3 = Comment.objects.create(owner_id=1,
+                                    message='comment',
+                                    update_date=datetime.datetime.now(),
+                                    issue=i1)
+        c4 = Comment.objects.create(owner_id=2,
+                                    message='comment',
+                                    update_date=datetime.datetime.now(),
+                                    issue=i1)
+        c5 = Comment.objects.create(owner=None,
+                                    message='comment',
+                                    update_date=datetime.datetime.now(),
+                                    issue=i1)
+
+        response = self.client.post(reverse('comment_add', kwargs={'issue_id': i1.id}),
+                                    {'message': 'Comment'})
+
+        self.assertEquals(len(mail.outbox), 3)
+        self.assertEquals(mail.outbox[0].subject, "%s%s" % (settings.EMAIL_SUBJECT_PREFIX, ugettext("A comment has been added")))
+        self.assertEquals(mail.outbox[0].to, [settings.ADMINS[0][1]])
+        self.assertEquals(mail.outbox[1].subject, ugettext('A new comment has been added on issue #%(id)d') % {'id': i1.id})
+        self.assertEquals(mail.outbox[2].subject, ugettext('A new comment has been added on issue #%(id)d') % {'id': i1.id})
+        recipients = [mail.outbox[1].to[0], mail.outbox[2].to[0]]
+        self.assertEquals(set(recipients), set(['test2@example.com', 'test3@example.com']))
+
+    def testCommentNotificationWithDeletedIssueOwner(self):
+        user3 = User.objects.create_user('test_user3', 'test3@example.com', 'test')
+
+        i1 = Issue.objects.create(owner=None,
+                                  category=ISSUE_CATEGORY_BUG,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_OPEN)
+
+        c1 = Comment.objects.create(owner_id=2,
+                                    message='comment',
+                                    update_date=datetime.datetime.now(),
+                                    issue=i1)
+        c2 = Comment.objects.create(owner=user3,
+                                    message='comment',
+                                    update_date=datetime.datetime.now(),
+                                    issue=i1)
+        c3 = Comment.objects.create(owner_id=1,
+                                    message='comment',
+                                    update_date=datetime.datetime.now(),
+                                    issue=i1)
+        c4 = Comment.objects.create(owner_id=2,
+                                    message='comment',
+                                    update_date=datetime.datetime.now(),
+                                    issue=i1)
+        c5 = Comment.objects.create(owner=None,
+                                    message='comment',
+                                    update_date=datetime.datetime.now(),
+                                    issue=i1)
+
+        response = self.client.post(reverse('comment_add', kwargs={'issue_id': i1.id}),
+                                    {'message': 'Comment'})
+
+        self.assertEquals(len(mail.outbox), 3)
+        self.assertEquals(mail.outbox[0].subject, "%s%s" % (settings.EMAIL_SUBJECT_PREFIX, ugettext("A comment has been added")))
+        self.assertEquals(mail.outbox[0].to, [settings.ADMINS[0][1]])
+        self.assertEquals(mail.outbox[1].subject, ugettext('A new comment has been added on issue #%(id)d') % {'id': i1.id})
+        self.assertEquals(mail.outbox[2].subject, ugettext('A new comment has been added on issue #%(id)d') % {'id': i1.id})
+        recipients = [mail.outbox[1].to[0], mail.outbox[2].to[0]]
+        self.assertEquals(set(recipients), set(['test2@example.com', 'test3@example.com']))
+
     def testGetEditComment(self):
         i1 = Issue.objects.create(owner_id=1,
                                   category=ISSUE_CATEGORY_BUG,

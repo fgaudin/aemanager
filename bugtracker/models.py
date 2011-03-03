@@ -46,6 +46,15 @@ class Issue(models.Model):
     def is_closed(self):
         return self.state == ISSUE_STATE_CLOSED
 
+    def emails_to_notify(self):
+        if self.owner:
+            emails = [self.owner.email]
+        else:
+            emails = []
+        emails = emails + list(self.comment_set.exclude(owner=None).values_list('owner__email',
+                                                                                flat=True).order_by().distinct())
+        return list(set(emails))
+
 class Comment(models.Model):
     owner = models.ForeignKey(User, verbose_name=_('User'), null=True)
     message = models.TextField(verbose_name=_('Message'))
