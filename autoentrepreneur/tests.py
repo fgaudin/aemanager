@@ -342,7 +342,7 @@ class UnregisterTest(TestCase):
         self.assertEquals(User.objects.filter(pk=1).count(), 0)
         self.assertEquals(UserProfile.objects.filter(pk=1).count(), 0)
 
-class SubscriptionUserSelect(TestCase):
+class SubscriptionUserSelectTest(TestCase):
 
     def setUp(self):
         # user in trial period
@@ -450,6 +450,15 @@ class SubscriptionUserSelect(TestCase):
         sub.expiration_date = datetime.date.today() - datetime.timedelta(10)
         sub.save()
 
+        # user with only free pass
+        self.user11 = User.objects.create_user('user11', 'user11@example.com', 'test')
+        self.user11.first_name = 'User 11'
+        self.user11.last_name = 'User 11'
+        self.user11.save()
+        sub = Subscription.objects.get(owner=self.user11)
+        sub.state = SUBSCRIPTION_STATE_FREE
+        sub.save()
+
     def testTrialUser(self):
         users = Subscription.objects.get_users_with_trial_subscription()
         intented_user = {'owner__email':u'user1@example.com',
@@ -480,3 +489,18 @@ class SubscriptionUserSelect(TestCase):
         self.assertEquals(len(users), 2)
         self.assertTrue(intented_user1 in users)
         self.assertTrue(intented_user2 in users)
+
+    def test137(self):
+        """
+        Test users list when a user has only one free subscription
+        Think there may be a bug here because of assuming there is
+        at least one trial subscription in a query
+        """
+        User.objects.all().exclude(username='user11').delete()
+        self.assertEquals(len(User.objects.all()), 1)
+        l1 = Subscription.objects.get_users_with_paid_subscription()
+        l2 = Subscription.objects.get_users_with_trial_subscription()
+        l3 = Subscription.objects.get_users_with_expired_subscription()
+        self.assertEquals(len(l1), 0)
+        self.assertEquals(len(l2), 0)
+        self.assertEquals(len(l3), 0)
