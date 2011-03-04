@@ -15,9 +15,8 @@
 
 <script type="text/javascript">
 jQuery(document).ready(function(){
-    var lang = jQuery.getLang();
-    jQuery.include('{{ MEDIA_URL }}js/datepicker_i18n','jquery.ui.datepicker-'+lang.substr(0,2)+'.js');
-    jQuery('.date').datepicker(jQuery.datepicker.regional[lang.substr(0,2)]);
+    jQuery.include('{{ MEDIA_URL }}js/datepicker_i18n','jquery.ui.datepicker-'+"{{ LANGUAGE_CODE }}".substr(0,2)+'.js');
+    jQuery('.date').datepicker(jQuery.datepicker.regional["{{ LANGUAGE_CODE }}".substr(0,2)]);
 
     jQuery('#id_proposal-contract_model').change(function(){
         var proposal_id = jQuery('#id_proposal-contract_model option:selected').val();

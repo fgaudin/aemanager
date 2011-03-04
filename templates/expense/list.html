@@ -34,7 +34,6 @@
 
     $.fn.editable = function()
     {
-        var lang = jQuery.getLang();
         return this.each(function()
         {
             jQuery('.edit-row', this).click(function(e){
@@ -55,7 +54,7 @@
                 jQuery('#id_description', editRow).val(jQuery('.description-col',valueRow).text());
                 jQuery('.action-col', editRow).html('<input type="submit" id="ok" value="Ok" /> <img src="{{ MEDIA_URL }}img/ajax-loading.gif" class="expense-edit-loading" style="display:none"/> <a href="#" class="cancel">{% trans "cancel" %}</a>');
                 jQuery(editRow).insertAfter(valueRow);
-                jQuery('.date', editRow).datepicker(jQuery.datepicker.regional[lang.substr(0,2)]);
+                jQuery('.date', editRow).datepicker(jQuery.datepicker.regional["{{ LANGUAGE_CODE }}".substr(0,2)]);
                 jQuery(valueRow).hide();
                 jQuery('.cancel').click(function(e){
                     e.preventDefault();
@@ -128,9 +127,8 @@
 })(jQuery);
 
 jQuery(document).ready(function(){
-    var lang = jQuery.getLang();
-    jQuery.include('{{ MEDIA_URL }}js/datepicker_i18n','jquery.ui.datepicker-'+lang.substr(0,2)+'.js');
-    jQuery('.date').datepicker(jQuery.datepicker.regional[lang.substr(0,2)]);
+    jQuery.include('{{ MEDIA_URL }}js/datepicker_i18n','jquery.ui.datepicker-'+"{{ LANGUAGE_CODE }}".substr(0,2)+'.js');
+    jQuery('.date').datepicker(jQuery.datepicker.regional["{{ LANGUAGE_CODE }}".substr(0,2)]);
 
     redraw_background = function(){
         var rowClass = 'row2';

@@ -8,10 +8,9 @@
 <script src="{{ MEDIA_URL }}js/core.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
 jQuery(document).ready(function(){
-    var lang = jQuery.getLang();
-    jQuery.include('{{ MEDIA_URL }}js/datepicker_i18n','jquery.ui.datepicker-'+lang.substr(0,2)+'.js');
+    jQuery.include('{{ MEDIA_URL }}js/datepicker_i18n','jquery.ui.datepicker-'+"{{ LANGUAGE_CODE }}".substr(0,2)+'.js');
 
-    jQuery('.date').datepicker(jQuery.datepicker.regional[lang.substr(0,2)]);
+    jQuery('.date').datepicker(jQuery.datepicker.regional["{{ LANGUAGE_CODE }}".substr(0,2)]);
 });
 </script>
 {% endblock %}
