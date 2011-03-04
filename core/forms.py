@@ -41,6 +41,16 @@ class RegistrationFormUniqueEmailAndTos(RegistrationFormUniqueEmail):
         # only to override a missing translation in django-registration
         self.fields['username'].error_messages['invalid'] = _("This value must contain only letters, numbers and underscores.")
 
+    def clean_username(self):
+        """
+        Validate that the username is different from "demo"
+        to protect demo account
+        """
+        super(RegistrationFormUniqueEmailAndTos, self).clean_username()
+        if self.cleaned_data['username'] == 'demo':
+            raise forms.ValidationError(_("A user with that username already exists."))
+        return self.cleaned_data['username']
+
 class ResendActivationEmailForm(forms.Form):
     email = forms.EmailField(label=_('Email'), widget=forms.TextInput(attrs={'class': 'required',
                                                                              'maxlength':75}))
