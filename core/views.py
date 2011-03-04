@@ -341,6 +341,7 @@ def paypal_ipn(request):
     payment_status = data['payment_status']
     payment_amount = data['mc_gross']
     payment_currency = data['mc_currency']
+    fee = data['mc_fee']
     item_name = data['item_name']
     user_id = data['custom']
     user = get_object_or_404(User, pk=user_id)
@@ -443,6 +444,14 @@ def paypal_ipn(request):
                                                     unit_price=payment_amount,
                                                     balance_payments=True,
                                                     owner=provider)
+            # create expense for paypal fee
+            expense = Expense.objects.create(date=datetime.date.today(),
+                                             reference=transaction_id,
+                                             supplier='Paypal',
+                                             amount=fee,
+                                             payment_type=PAYMENT_TYPE_BANK_CARD,
+                                             description='Commission paypal',
+                                             owner=provider)
 
             # generate invoice in pdf
             response = HttpResponse(mimetype='application/pdf')
