@@ -1240,12 +1240,14 @@ class ExpenseTest(TestCase):
         response = self.client.post(reverse('expense_add'),
                                     {'date': datetime.date(2010, 4, 1),
                                      'reference': 'DEFG',
+                                     'supplier': 'Supplier 1',
                                      'amount': '400',
                                      'payment_type': PAYMENT_TYPE_CASH,
                                      'description': 'Add payment'})
 
         result = Expense.objects.filter(date=datetime.date(2010, 4, 1),
                                         reference='DEFG',
+                                        supplier='Supplier 1',
                                         amount='400.0',
                                         payment_type=PAYMENT_TYPE_CASH,
                                         description='Add payment',
@@ -1254,6 +1256,7 @@ class ExpenseTest(TestCase):
         json_response = simplejson.loads(response.content)
         self.assertEquals(json_response, {u'date': localize(datetime.date(2010, 4, 1)),
                                           u'reference': 'DEFG',
+                                          u'supplier': 'Supplier 1',
                                           u'amount': '400',
                                           u'payment_type': PAYMENT_TYPE_CASH,
                                           u'payment_type_label': 'Cash',
@@ -1264,6 +1267,7 @@ class ExpenseTest(TestCase):
     def testPostEdit(self):
         expense1 = Expense.objects.create(date=datetime.date(2010, 1, 1),
                                           reference='ABCD',
+                                          supplier='Supplier 1',
                                           amount='100.0',
                                           payment_type=PAYMENT_TYPE_CHECK,
                                           description='First expense',
@@ -1271,12 +1275,14 @@ class ExpenseTest(TestCase):
         response = self.client.post(reverse('expense_edit') + '?id=%d' % (expense1.id),
                                     {'date': datetime.date(2010, 4, 1),
                                      'reference': 'DEFG',
+                                     'supplier': 'Supplier 1',
                                      'amount': '400',
                                      'payment_type': PAYMENT_TYPE_CASH,
                                      'description': 'Edit payment'})
 
         result = Expense.objects.filter(date=datetime.date(2010, 4, 1),
                                         reference='DEFG',
+                                        supplier='Supplier 1',
                                         amount='400.0',
                                         payment_type=PAYMENT_TYPE_CASH,
                                         description='Edit payment',
@@ -1285,6 +1291,7 @@ class ExpenseTest(TestCase):
         json_response = simplejson.loads(response.content)
         self.assertEquals(json_response, {u'date': localize(datetime.date(2010, 4, 1)),
                                           u'reference': 'DEFG',
+                                          u'supplier': 'Supplier 1',
                                           u'amount': '400',
                                           u'payment_type': PAYMENT_TYPE_CASH,
                                           u'payment_type_label': 'Cash',
@@ -1307,3 +1314,27 @@ class ExpenseTest(TestCase):
         json_response = simplejson.loads(response.content)
         self.assertEquals(json_response, {u'id': expense1.id,
                                           u'error': 'ok'})
+
+    def testExpenseBookDownloadPdf(self):
+        """
+        Tests non-regression on pdf
+        """
+        for i in range(1, 50):
+            expense = Expense.objects.create(date=datetime.date(2010, 1, 1),
+                                             reference='ABCD',
+                                             supplier='Supplier 1',
+                                             amount='100.0',
+                                             payment_type=PAYMENT_TYPE_CHECK,
+                                             description='First expense',
+                                             owner_id=1)
+
+
+        response = self.client.get(reverse('expense_list_export') + '?year=%(year)s' % {'year': '2010'})
+        self.assertEqual(response.status_code, 200)
+        f = open('/tmp/expense_book.pdf', 'w')
+        f.write(response.content)
+        f.close()
+        content = response.content.split("\n")
+        invariant_content = content[0:85] + content[86:140] + content[141:-1]
+        self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
+                          "b212ced9c807ec7c698e49dd288c333a")

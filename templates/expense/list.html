@@ -47,6 +47,7 @@
                 jQuery('#id_edit_date', editRow).val(jQuery('.date-col',valueRow).text());
                 jQuery('#id_edit_date', editRow).removeClass('hasDatepicker');
                 jQuery('#id_reference', editRow).val(jQuery('.reference-col',valueRow).text());
+                jQuery('#id_supplier', editRow).val(jQuery('.supplier-col',valueRow).text());
                 jQuery('#id_amount', editRow).val(jQuery('.amount-col',valueRow).text());
                 jQuery('#id_payment_type option:selected', editRow).attr('selected','');
                 var payment_type = jQuery('.payment-type-value',valueRow).text();
@@ -68,12 +69,14 @@
                     var id = jQuery(row).attr('id');
                     var date = jQuery('#id_edit_date',row).val();
                     var reference = jQuery('#id_reference',row).val();
+                    var supplier = jQuery('#id_supplier',row).val();
                     var amount = jQuery('#id_amount',row).val();
                     var payment_type = jQuery('#id_payment_type',row).val();
                     var description = jQuery('#id_description',row).val();
                     jQuery.post("{% url expense_edit %}?id="+id,
                                 {"date": date,
                                  "reference": reference,
+                                 "supplier": supplier,
                                  "amount": amount,
                                  "payment_type": payment_type,
                                  "description": description,
@@ -83,6 +86,7 @@
                                         var row = jQuery('#' + data.id);
                                         jQuery('.date-col',row).text(data.date);
                                         jQuery('.reference-col',row).text(data.reference);
+                                        jQuery('.supplier-col',row).text(data.supplier);
                                         jQuery('.amount-col',row).text(data.amount);
                                         jQuery('.payment-type-col',row).html('<span class="payment-type-value" style="display:none">' + data.payment_type + '</span>' + data.payment_type_label);
                                         jQuery('.description-col',row).text(data.description);
@@ -150,12 +154,14 @@ jQuery(document).ready(function(){
         jQuery('#expense-add-loading').show();
         var date = jQuery('#id_date').val();
         var reference = jQuery('#id_reference').val();
+        var supplier = jQuery('#id_supplier').val();
         var amount = jQuery('#id_amount').val();
         var payment_type = jQuery('#id_payment_type').val();
         var description = jQuery('#id_description').val();
         jQuery.post("{% url expense_add %}",
                     {"date": date,
                      "reference": reference,
+                     "supplier": supplier,
                      "amount": amount,
                      "payment_type": payment_type,
                      "description": description,
@@ -166,6 +172,7 @@ jQuery(document).ready(function(){
                             jQuery(row).attr('id',data.id);
                             jQuery('.date-col',row).text(data.date);
                             jQuery('.reference-col',row).text(data.reference);
+                            jQuery('.supplier-col',row).text(data.supplier);
                             jQuery('.amount-col',row).text(data.amount);
                             jQuery('.payment-type-col',row).html('<span class="payment-type-value" style="display:none">' + data.payment_type + '</span>' + data.payment_type_label);
                             jQuery('.description-col',row).text(data.description);
@@ -175,6 +182,7 @@ jQuery(document).ready(function(){
                             redraw_background();
                             jQuery.clear_errors();
                             jQuery('#id_reference').val('');
+                            jQuery('#id_supplier').val('');
                             jQuery('#id_amount').val('');
                             jQuery('#id_payment_type').val('');
                             jQuery('#id_description').val('');
@@ -194,12 +202,23 @@ jQuery(document).ready(function(){
 {% endblock %}
 
 {% block content %}
+<div>
+    <form action="{% url expense_list_export %}" method="get">
+        {% trans "Export purchase book" %} &nbsp;<select name="year">
+        {% for year in years %}
+            <option value="{{ year }}">{{ year }}</option>
+        {% endfor %}
+        </select>&nbsp;<input type="submit" value="{% trans "Export" %}" />
+    </form>
+</div>
+
 <div class="search-list">
     <table>
         <thead>
             <tr>
                 <th>{% trans "Date" %}</th>
                 <th>{% trans "Reference" %}</th>
+                <th>{% trans "Supplier" %}</th>
                 <th>{% trans "Amount" %}</th>
                 <th>{% trans "Payment type" %}</th>
                 <th>{% trans "Description" %}</th>
@@ -210,6 +229,7 @@ jQuery(document).ready(function(){
             <tr class="row1" id="add-row">
                 <td class="date-col">{{ form.date }}</td>
                 <td class="reference-col">{{ form.reference }}</td>
+                <td class="supplier-col">{{ form.supplier }}</td>
                 <td class="amount-col">{{ form.amount }}</td>
                 <td class="payment-type-col">{{ form.payment_type }}</td>
                 <td class="description-col">{{ form.description }}</td>
@@ -222,6 +242,7 @@ jQuery(document).ready(function(){
            <tr id="{{ expense.id }}" class="{% cycle 'row2' 'row1' %} row">
                 <td class="date-col">{{ expense.date }}</td>
                 <td class="reference-col">{{ expense.reference }}</td>
+                <td class="supplier-col">{{ expense.supplier|default:'' }}</td>
                 <td class="amount-col">{{ expense.amount }}</td>
                 <td class="payment-type-col"><span style="display:none" class="payment-type-value">{{ expense.payment_type }}</span>{{ expense.get_payment_type_display }}</td>
                 <td class="description-col">{{ expense.description }}</td>

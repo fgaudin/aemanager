@@ -15,6 +15,9 @@ urlpatterns = patterns('accounts.views',
     url(regex=r'^expenses/delete/$',
         view='expense_delete',
         name='expense_delete'),
+    url(regex=r'^expenses/list_export/$',
+        view='expense_list_export',
+        name='expense_list_export'),
 
     # invoices
     url(regex=r'^invoice/$',

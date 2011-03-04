@@ -32,6 +32,7 @@ PAYMENT_TYPE = ((PAYMENT_TYPE_CASH, _('Cash')),
 class Expense(OwnedObject):
     date = models.DateField(verbose_name=_('Date'), help_text=_('format: mm/dd/yyyy'), db_index=True)
     reference = models.CharField(max_length=50, blank=True, null=True, verbose_name=_('Reference'))
+    supplier = models.CharField(max_length=70, blank=True, null=True, verbose_name=_('Supplier'))
     amount = models.DecimalField(max_digits=12, decimal_places=2, verbose_name=_('Amount'))
     payment_type = models.IntegerField(choices=PAYMENT_TYPE, verbose_name=_('Payment type'))
     description = models.CharField(max_length=100, blank=True, null=True, verbose_name=_('Description'))

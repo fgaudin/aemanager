@@ -36,6 +36,7 @@ from reportlab.lib import colors
 def expense_list(request):
     user = request.user
     expense_list = Expense.objects.filter(owner=user).order_by('-date', '-reference')
+    years = range(datetime.date.today().year, user.get_profile().creation_date.year - 1, -1)
 
     paginator = Paginator(expense_list, 25)
 
@@ -59,7 +60,8 @@ def expense_list(request):
                               {'active': 'accounts',
                                'title': _('Expenses'),
                                'form': form,
-                               'expenses': expenses},
+                               'expenses': expenses,
+                               'years': years},
                               context_instance=RequestContext(request))
 
 @settings_required
@@ -77,6 +79,7 @@ def expense_add(request):
             response['id'] = expense.id
             response['date'] = localize(expense.date)
             response['reference'] = expense.reference
+            response['supplier'] = expense.supplier
             response['amount'] = localize(expense.amount)
             response['payment_type'] = expense.payment_type
             response['payment_type_label'] = expense.get_payment_type_display()
@@ -104,6 +107,7 @@ def expense_edit(request):
             response['id'] = expense.id
             response['date'] = localize(expense.date)
             response['reference'] = expense.reference
+            response['supplier'] = expense.supplier
             response['amount'] = localize(expense.amount)
             response['payment_type'] = expense.payment_type
             response['payment_type_label'] = expense.get_payment_type_display()
@@ -131,6 +135,66 @@ def expense_delete(request):
 
     return HttpResponse(simplejson.dumps(response),
                         mimetype='application/javascript')
+
+@settings_required
+@subscription_required
+def expense_list_export(request):
+    user = request.user
+
+    def expense_list_footer(canvas, doc):
+        canvas.saveState()
+        canvas.setFont('Times-Roman', 10)
+        PAGE_WIDTH = defaultPageSize[0]
+        footer_text = "%s %s - SIRET : %s - %s, %s %s" % (user.first_name,
+                                                          user.last_name,
+                                                          user.get_profile().company_id,
+                                                          user.get_profile().address.street,
+                                                          user.get_profile().address.zipcode,
+                                                          user.get_profile().address.city)
+        if user.get_profile().address.country:
+            footer_text = footer_text + ", %s" % (user.get_profile().address.country)
+        canvas.drawCentredString(PAGE_WIDTH / 2.0, 0.5 * inch, footer_text)
+        canvas.restoreState()
+
+    year = int(request.GET.get('year'))
+    expenses = Expense.objects.filter(owner=user,
+                                      date__year=year).order_by('date')
+    filename = ugettext('purchase_book_%(year)d.pdf') % {'year': year}
+    response = HttpResponse(mimetype='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename=%s' % (filename)
+
+    doc = BaseDocTemplate(response, title=ugettext('Purchase book %(year)d') % {'year': year})
+    frameT = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='normal')
+    doc.addPageTemplates([PageTemplate(id='all', frames=frameT, onPage=expense_list_footer), ])
+
+    styleH = ParagraphStyle({})
+    styleH.fontSize = 14
+    styleH.borderColor = colors.black
+    styleH.alignment = TA_CENTER
+
+    p = Paragraph(ugettext('Purchase book %(year)d') % {'year': year}, styleH)
+    spacer = Spacer(1 * inch, 0.5 * inch)
+
+    data = [[ugettext('Date'), ugettext('Ref.'), ugettext('Supplier'), ugettext('Nature'), ugettext('Amount'), ugettext('Payment type')]]
+
+    for expense in expenses:
+        data.append([localize(expense.date), expense.reference, expense.supplier, expense.description, localize(expense.amount), expense.get_payment_type_display()])
+    t = Table(data, [0.8 * inch, 0.9 * inch, 1.6 * inch, 1.7 * inch, 0.7 * inch, 1.2 * inch], (len(expenses) + 1) * [0.3 * inch])
+    t.setStyle(TableStyle([('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+                           ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
+                           ('ALIGN', (2, 1), (3, -1), 'LEFT'),
+                           ('ALIGN', (4, 1), (4, -1), 'RIGHT'),
+                           ('FONT', (0, 0), (-1, 0), 'Times-Bold'),
+                           ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+                           ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+                           ]))
+
+    story = []
+    story.append(p)
+    story.append(spacer)
+    story.append(t)
+    doc.build(story, canvasmaker=NumberedCanvas)
+    return response
 
 @settings_required
 @subscription_required

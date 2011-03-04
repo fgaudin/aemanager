@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-04 14:55+0100\n"
+"POT-Creation-Date: 2011-03-04 15:43+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,15 +26,16 @@ msgstr "Anglais"
 msgid "French"
 msgstr "Français"
 
-#: accounts/forms.py:7 accounts/models.py:35 accounts/models.py:146
-#: accounts/views.py:188 project/models.py:150 project/models.py:461
-#: templates/expense/list.html:203 templates/invoice/detail.html:25
-#: templates/invoice/list.html:27 templates/project/detail.html:32
-#: templates/project/detail.html.py:60 templates/proposal/detail.html:91
+#: accounts/forms.py:7 accounts/models.py:36 accounts/models.py:147
+#: accounts/views.py:178 accounts/views.py:252 project/models.py:150
+#: project/models.py:461 templates/expense/list.html:222
+#: templates/invoice/detail.html:25 templates/invoice/list.html:27
+#: templates/project/detail.html:32 templates/project/detail.html.py:60
+#: templates/proposal/detail.html:91
 msgid "Amount"
 msgstr "Montant"
 
-#: accounts/forms.py:18 accounts/models.py:154
+#: accounts/forms.py:18 accounts/models.py:155
 msgid "Penalty rate"
 msgstr "Taux de pénalité"
 
@@ -42,14 +43,14 @@ msgstr "Taux de pénalité"
 msgid "This field is required since invoice state is set to \"paid\"."
 msgstr "Ce champ est obligatoire car la facture est à l'état \"payée\"."
 
-#: accounts/forms.py:48 accounts/models.py:323 project/forms.py:45
+#: accounts/forms.py:48 accounts/models.py:324 project/forms.py:45
 #: project/models.py:336 project/models.py:459
 #: templates/invoice/detail.html:72 templates/proposal/detail.html:60
 #: templates/proposal/detail_ajax.html:28
 msgid "Quantity"
 msgstr "Quantité"
 
-#: accounts/forms.py:49 accounts/models.py:323 project/forms.py:46
+#: accounts/forms.py:49 accounts/models.py:324 project/forms.py:46
 #: project/models.py:336 project/models.py:460
 #: templates/invoice/detail.html:73 templates/proposal/detail.html:61
 #: templates/proposal/detail_ajax.html:29
@@ -72,57 +73,63 @@ msgstr "Virement"
 msgid "Check"
 msgstr "Chèque"
 
-#: accounts/models.py:33 accounts/views.py:188 templates/expense/list.html:201
+#: accounts/models.py:33 accounts/views.py:178 accounts/views.py:252
+#: templates/expense/list.html:219
 msgid "Date"
 msgstr "Date"
 
-#: accounts/models.py:33 accounts/models.py:147 accounts/models.py:148
-#: accounts/models.py:150 accounts/models.py:151 accounts/models.py:152
-#: accounts/models.py:153 autoentrepreneur/forms.py:11
+#: accounts/models.py:33 accounts/models.py:148 accounts/models.py:149
+#: accounts/models.py:151 accounts/models.py:152 accounts/models.py:153
+#: accounts/models.py:154 autoentrepreneur/forms.py:11
 #: autoentrepreneur/models.py:68 autoentrepreneur/models.py:102
 #: project/models.py:29 project/models.py:151 project/models.py:152
 #: project/models.py:154 project/models.py:155
 msgid "format: mm/dd/yyyy"
 msgstr "format : jj/mm/aaaa"
 
-#: accounts/models.py:34 project/models.py:148 templates/expense/list.html:202
+#: accounts/models.py:34 project/models.py:148 templates/expense/list.html:220
 #: templates/project/detail.html:29
 msgid "Reference"
 msgstr "Référence"
 
-#: accounts/models.py:36 accounts/models.py:149 accounts/views.py:188
-#: templates/expense/list.html:204 templates/invoice/list.html:26
+#: accounts/models.py:35 accounts/views.py:178 templates/expense/list.html:221
+msgid "Supplier"
+msgstr "Fournisseur"
+
+#: accounts/models.py:37 accounts/models.py:150 accounts/views.py:178
+#: accounts/views.py:252 templates/expense/list.html:223
+#: templates/invoice/list.html:26
 msgid "Payment type"
 msgstr "Type de paiement"
 
-#: accounts/models.py:37 templates/expense/list.html:205
+#: accounts/models.py:38 templates/expense/list.html:224
 msgid "Description"
 msgstr "Description"
 
-#: accounts/models.py:48
+#: accounts/models.py:49
 msgid "Edited"
 msgstr "Éditée"
 
-#: accounts/models.py:49 newsletter/models.py:17 project/models.py:125
+#: accounts/models.py:50 newsletter/models.py:17 project/models.py:125
 #: templates/newsletter/email_users.html:25
 msgid "Sent"
 msgstr "Envoyé"
 
-#: accounts/models.py:50 autoentrepreneur/models.py:36 core/views.py:367
+#: accounts/models.py:51 autoentrepreneur/models.py:36 core/views.py:367
 msgid "Paid"
 msgstr "Payée"
 
-#: accounts/models.py:143 accounts/views.py:188 project/forms.py:26
+#: accounts/models.py:144 accounts/views.py:252 project/forms.py:26
 #: project/models.py:26 project/models.py:105 templates/invoice/list.html:23
 #: templates/project/list.html:20
 msgid "Customer"
 msgstr "Client"
 
-#: accounts/models.py:144 templates/invoice/list.html:20
+#: accounts/models.py:145 templates/invoice/list.html:20
 msgid "Invoice id"
 msgstr "Numéro de facture"
 
-#: accounts/models.py:145 autoentrepreneur/models.py:67
+#: accounts/models.py:146 autoentrepreneur/models.py:67
 #: bugtracker/models.py:33 project/forms.py:27 project/models.py:106
 #: project/models.py:149 templates/core/subscribe.html:9
 #: templates/core/subscribe.html.py:30 templates/invoice/list.html:25
@@ -131,119 +138,119 @@ msgstr "Numéro de facture"
 msgid "State"
 msgstr "État"
 
-#: accounts/models.py:147 templates/invoice/list.html:21
+#: accounts/models.py:148 templates/invoice/list.html:21
 msgid "Edition date"
 msgstr "Date d'édition"
 
-#: accounts/models.py:148
+#: accounts/models.py:149
 msgid "Payment date"
 msgstr "Date de paiement"
 
-#: accounts/models.py:150 templates/invoice/list.html:22
+#: accounts/models.py:151 templates/invoice/list.html:22
 msgid "Paid date"
 msgstr "Date de réception du paiement"
 
-#: accounts/models.py:151
+#: accounts/models.py:152
 msgid "Execution begin date"
 msgstr "Date de début d'exécution"
 
-#: accounts/models.py:152
+#: accounts/models.py:153
 msgid "Execution end date"
 msgstr "Date de fin d'exécution"
 
-#: accounts/models.py:153
+#: accounts/models.py:154
 msgid "Penalty date"
 msgstr "Date des pénalités"
 
-#: accounts/models.py:155
+#: accounts/models.py:156
 msgid "Discount conditions"
 msgstr "Conditions d'escompte"
 
-#: accounts/models.py:163
+#: accounts/models.py:164
 #, python-format
 msgid "invoice #%d"
 msgstr "facture n°%d"
 
-#: accounts/models.py:188 accounts/views.py:287
+#: accounts/models.py:189 accounts/views.py:351
 msgid "Invoice id must be unique"
 msgstr "Le numéro de facture doit être unique"
 
-#: accounts/models.py:198 accounts/views.py:284
+#: accounts/models.py:199 accounts/views.py:348
 msgid "Amounts invoiced can't be greater than proposals remaining amounts"
 msgstr ""
 "Les montants facturés ne peuvent pas dépasser les montants restants des devis"
 
-#: accounts/models.py:219
+#: accounts/models.py:220
 #, python-format
 msgid "invoice_%(invoice_id)d.pdf"
 msgstr "facture_%(invoice_id)d.pdf"
 
-#: accounts/models.py:222
+#: accounts/models.py:223
 #, python-format
 msgid "Invoice #%(invoice_id)d"
 msgstr "Facture #%(invoice_id)d"
 
-#: accounts/models.py:307 project/models.py:320
+#: accounts/models.py:308 project/models.py:320
 #, python-format
 msgid "Date : %s"
 msgstr "Date : %s"
 
-#: accounts/models.py:317
+#: accounts/models.py:318
 #, python-format
 msgid "INVOICE #%d"
 msgstr "FACTURE N°%d"
 
-#: accounts/models.py:323 project/models.py:336 project/models.py:457
+#: accounts/models.py:324 project/models.py:336 project/models.py:457
 #: templates/invoice/detail.html:68 templates/proposal/detail.html:58
 #: templates/proposal/detail_ajax.html:26
 msgid "Label"
 msgstr "Libellé"
 
-#: accounts/models.py:323 project/models.py:336
+#: accounts/models.py:324 project/models.py:336
 #: templates/core/sales_widget.html:38
 msgid "Total"
 msgstr "Total"
 
-#: accounts/models.py:371
+#: accounts/models.py:372
 #, python-format
 msgid "Payment date : %s"
 msgstr "Date de paiement : %s"
 
-#: accounts/models.py:372
+#: accounts/models.py:373
 #, python-format
 msgid "Penalty begins on : %s"
 msgstr "Pénalité à compter du : %s"
 
-#: accounts/models.py:373
+#: accounts/models.py:374
 #, python-format
 msgid "Penalty rate : %s"
 msgstr "Taux de pénalité : %s"
 
-#: accounts/models.py:374
+#: accounts/models.py:375
 #, python-format
 msgid "Discount conditions : %s"
 msgstr "Conditions d'escompte : %s"
 
-#: accounts/models.py:376 project/models.py:384
+#: accounts/models.py:377 project/models.py:384
 #, python-format
 msgid "TOTAL excl. VAT : %(amount)s %(currency)s"
 msgstr "TOTAL HT : %(amount)s %(currency)s"
 
-#: accounts/models.py:381 project/models.py:389
+#: accounts/models.py:382 project/models.py:389
 #, python-format
 msgid "Execution dates : %(begin_date)s to %(end_date)s"
 msgstr "Date d'exécution : %(begin_date)s au %(end_date)s"
 
-#: accounts/models.py:397 templates/invoice/detail.html:69
+#: accounts/models.py:398 templates/invoice/detail.html:69
 #: templates/invoice/edit.html:21 templates/invoice/edit.html.py:66
 msgid "Proposal"
 msgstr "Devis"
 
-#: accounts/models.py:398
+#: accounts/models.py:399
 msgid "Balance payments for the proposal"
 msgstr "Solde le devis"
 
-#: accounts/models.py:398
+#: accounts/models.py:399
 msgid ""
 "\"Balancing payments for the proposal\" means there will be no future "
 "invoices for the selected proposal. Thus the amount remaining to invoice for "
@@ -255,76 +262,86 @@ msgstr ""
 "à zero et son état passera à \"soldé\" quand toutes les factures auront été "
 "payées."
 
-#: accounts/views.py:60 templates/core/charts_widget.html:37
+#: accounts/views.py:61 templates/core/charts_widget.html:37
 msgid "Expenses"
 msgstr "Dépenses"
 
-#: accounts/views.py:143 templates/core/invoices_widget.html:3
+#: accounts/views.py:162
+#, python-format
+msgid "purchase_book_%(year)d.pdf"
+msgstr "registre_des_achats_%(year)d.pdf"
+
+#: accounts/views.py:166 accounts/views.py:175
+#, python-format
+msgid "Purchase book %(year)d"
+msgstr "Registre des achats %(year)d"
+
+#: accounts/views.py:178 accounts/views.py:252
+msgid "Ref."
+msgstr "Ref."
+
+#: accounts/views.py:178 accounts/views.py:252 templates/invoice/list.html:24
+msgid "Nature"
+msgstr "Nature"
+
+#: accounts/views.py:207 templates/core/invoices_widget.html:3
 #: templates/project/detail.html:52 templates/proposal/detail.html:83
 msgid "Invoices"
 msgstr "Factures"
 
-#: accounts/views.py:172
+#: accounts/views.py:236
 #, python-format
 msgid "invoice_book_%(year)d.pdf"
 msgstr "livre_des_recettes_%(year)d.pdf"
 
-#: accounts/views.py:176 accounts/views.py:185
+#: accounts/views.py:240 accounts/views.py:249
 #, python-format
 msgid "Invoice book %(year)d"
 msgstr "Livre des recettes %(year)d"
 
-#: accounts/views.py:188
-msgid "Ref."
-msgstr "Ref."
-
-#: accounts/views.py:188 templates/invoice/list.html:24
-msgid "Nature"
-msgstr "Nature"
-
-#: accounts/views.py:213
+#: accounts/views.py:277
 msgid "Edit an invoice"
 msgstr "Éditer une facture"
 
-#: accounts/views.py:217 templates/project/detail.html:51
+#: accounts/views.py:281 templates/project/detail.html:51
 msgid "Draw up an invoice"
 msgstr "Etablir une facture"
 
-#: accounts/views.py:274
+#: accounts/views.py:338
 msgid "The invoice has been saved successfully"
 msgstr "La facture a été sauvegardée avec succès"
 
-#: accounts/views.py:276
+#: accounts/views.py:340
 msgid "Paid date is in the future, is this normal ?"
 msgstr "La date de réception du paiement est dans le futur, est-ce normal ?"
 
-#: accounts/views.py:278
+#: accounts/views.py:342
 msgid ""
 "Execution begin date is greater than execution end date, is this normal ?"
 msgstr ""
 "La date de début d'exécution est supérieure à la date de fin d'exécution, "
 "est-ce normal ?"
 
-#: accounts/views.py:280
+#: accounts/views.py:344
 msgid "Payment date is greater than penalty date, is this normal ?"
 msgstr ""
 "La date de paiement est supérieure à la date des pénalités, est-ce normal ?"
 
-#: accounts/views.py:289 contact/views.py:76 core/views.py:261
+#: accounts/views.py:353 contact/views.py:76 core/views.py:261
 #: project/views.py:74 project/views.py:171 project/views.py:386
 msgid "Data provided are invalid"
 msgstr "Les données saisies sont invalides"
 
-#: accounts/views.py:341
+#: accounts/views.py:405
 #, python-format
 msgid "Invoice for %s"
 msgstr "Facture pour %s"
 
-#: accounts/views.py:354
+#: accounts/views.py:418
 msgid "The invoice has been deleted successfully"
 msgstr "La facture a été supprimée avec succès"
 
-#: accounts/views.py:361
+#: accounts/views.py:425
 msgid "Delete an invoice"
 msgstr "Supprimer une facture"
 
@@ -1345,7 +1362,7 @@ msgid "Business"
 msgstr "Affaires"
 
 #: templates/menu.html:29 templates/menu.html.py:65
-#: templates/expense/list.html:217 templates/invoice/edit.html:140
+#: templates/expense/list.html:237 templates/invoice/edit.html:140
 #: templates/proposal/edit.html:127
 msgid "Add"
 msgstr "Ajouter"
@@ -1427,18 +1444,18 @@ msgstr "Aucun contrat-cadre"
 msgid "Save"
 msgstr "Sauvegarder"
 
-#: templates/contact/search.html:39 templates/expense/list.html:237
+#: templates/contact/search.html:39 templates/expense/list.html:258
 #: templates/project/list.html:39
 msgid "previous"
 msgstr "précédent"
 
-#: templates/contact/search.html:43 templates/expense/list.html:241
+#: templates/contact/search.html:43 templates/expense/list.html:262
 #: templates/project/list.html:43
 #, python-format
 msgid "Page %(number)s of %(num_pages)s."
 msgstr "Page %(number)s sur %(num_pages)s."
 
-#: templates/contact/search.html:47 templates/expense/list.html:245
+#: templates/contact/search.html:47 templates/expense/list.html:266
 #: templates/project/list.html:47
 msgid "next"
 msgstr "suivant"
@@ -1686,25 +1703,33 @@ msgid "An error occurred. Did you activate referer in your browser?"
 msgstr ""
 "Une erreur est survenue. Avez-vous activé le referer dans votre navigateur ?"
 
-#: templates/expense/list.html:55
+#: templates/expense/list.html:56
 msgid "cancel"
 msgstr "annuler"
 
-#: templates/expense/list.html:111
+#: templates/expense/list.html:115
 msgid "Are you sure to want to delete this row"
 msgstr "Êtes-vous sûr de vouloir supprimer cette ligne"
 
-#: templates/expense/list.html:172 templates/expense/list.html.py:228
+#: templates/expense/list.html:179 templates/expense/list.html.py:249
 #: templates/issue/detail.html:71
 msgid "edit"
 msgstr "éditer"
 
-#: templates/expense/list.html:172 templates/expense/list.html.py:228
+#: templates/expense/list.html:179 templates/expense/list.html.py:249
 #: templates/issue/detail.html:71 templates/newsletter/email_users.html:36
 msgid "delete"
 msgstr "supprimer"
 
-#: templates/expense/list.html:206 templates/issue/detail.html:62
+#: templates/expense/list.html:207
+msgid "Export purchase book"
+msgstr "Exporter le registre des achats"
+
+#: templates/expense/list.html:211 templates/invoice/list.html:12
+msgid "Export"
+msgstr "Exporter"
+
+#: templates/expense/list.html:225 templates/issue/detail.html:62
 #: templates/newsletter/email_users.html:26
 msgid "Action"
 msgstr "Action"
@@ -1748,10 +1773,6 @@ msgstr "Aucune ligne"
 #: templates/invoice/list.html:8
 msgid "Export invoice book"
 msgstr "Exporter le livre des recettes"
-
-#: templates/invoice/list.html:12
-msgid "Export"
-msgstr "Exporter"
 
 #: templates/invoice/list.html:47 templates/project/detail.html:75
 #: templates/proposal/detail.html:106
