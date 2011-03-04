@@ -791,7 +791,7 @@ class InvoiceTest(TestCase):
         content = response.content.split("\n")
         invariant_content = content[0:66] + content[67:109] + content[110:-1]
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
-                          "34add645a3e199065411596852525544")
+                          "02733b5a405761e60bcc410e251d1cc5")
 
     def testInvoiceBookDownloadPdf(self):
         """

@@ -81,9 +81,9 @@
                 <td><a href="{% url proposal_detail invoicerow.proposal.id %}">{{ invoicerow.proposal }}</a></td>
                 <td>{% if invoicerow.balance_payments %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}</td>
                 <td>{{ invoicerow.get_category_display }}</td>
-                <td>{{ invoicerow.quantity }}</td>
-                <td>{{ invoicerow.unit_price }}</td>
-                <td>{{ invoicerow.amount }}</td>
+                <td>{{ invoicerow.quantity|floatformat }}</td>
+                <td>{{ invoicerow.unit_price|floatformat }}</td>
+                <td>{{ invoicerow.amount|floatformat }}</td>
             </tr>
         {% endfor %}
         </tbody>

@@ -67,9 +67,9 @@
            <tr class="{% cycle 'row1' 'row2' %}">
                 <td>{{ proposalrow.label }}</td>
                 <td>{{ proposalrow.get_category_display }}</td>
-                <td>{{ proposalrow.quantity }}</td>
-                <td>{{ proposalrow.unit_price }}</td>
-                <td>{{ proposalrow.unit_price|multiply:proposalrow.quantity }}</td>
+                <td>{{ proposalrow.quantity|floatformat }}</td>
+                <td>{{ proposalrow.unit_price|floatformat }}</td>
+                <td>{{ proposalrow.unit_price|multiply:proposalrow.quantity|floatformat }}</td>
             </tr>
         {% endfor %}
         </tbody>
@@ -96,7 +96,7 @@
            <tr class="{% cycle 'row1' 'row2' %}">
                 <td><a href="{% url invoice_detail invoice.id %}">{{ invoice.invoice_id }}</a></td>
                 <td><a href="{% url invoice_detail invoice.id %}">{{ invoice.get_state_display }}</a></td>
-                <td><a href="{% url invoice_detail invoice.id %}">{{ invoice.amount|default:"" }}</a></td>
+                <td><a href="{% url invoice_detail invoice.id %}">{{ invoice.amount|default:""|floatformat }}</a></td>
             </tr>
         {% endfor %}
         </tbody>

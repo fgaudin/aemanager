@@ -33,12 +33,12 @@ jQuery(document).ready(function(){
     <div>{% trans "Period" %} : {% blocktrans with taxes.period_begin as period_begin and taxes.period_end as period_end %}{{ period_begin }} to {{ period_end }}{% endblocktrans %}</div>
     <div>{% trans "Paid sales" %} : {{ taxes.paid_sales_for_period }}</div>
     <div>{% trans "Rate" %} : {{ taxes.tax_rate }}%</div>
-    <div>{% trans "Amount to pay" %} : {% blocktrans with taxes.amount_to_pay as amount_to_pay and taxes.tax_due_date as tax_due_date %}{{ amount_to_pay }} before {{ tax_due_date }}{% endblocktrans %}</div>
+    <div>{% trans "Amount to pay" %} : {% blocktrans with taxes.amount_to_pay|floatformat:"-2" as amount_to_pay and taxes.tax_due_date as tax_due_date %}{{ amount_to_pay }} before {{ tax_due_date }}{% endblocktrans %}</div>
 </div>
 
 <div id="next_period">
     <div>{% trans "Period" %} : {% blocktrans with next_taxes.period_begin as period_begin and next_taxes.period_end as period_end %}{{ period_begin }} to {{ period_end }}{% endblocktrans %}</div>
     <div>{% trans "Paid sales" %} : {{ next_taxes.paid_sales_for_period }}</div>
     <div>{% trans "Rate" %} : {{ next_taxes.tax_rate }}%</div>
-    <div>{% trans "Amount to pay" %} : {% blocktrans with next_taxes.amount_to_pay as amount_to_pay and next_taxes.tax_due_date as tax_due_date %}{{ amount_to_pay }} before {{ tax_due_date }}{% endblocktrans %}</div>
+    <div>{% trans "Amount to pay" %} : {% blocktrans with next_taxes.amount_to_pay|floatformat:"-2" as amount_to_pay and next_taxes.tax_due_date as tax_due_date %}{{ amount_to_pay }} before {{ tax_due_date }}{% endblocktrans %}</div>
 </div>

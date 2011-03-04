@@ -1,5 +1,5 @@
 # coding=utf-8
-
+from decimal import Decimal
 from django.utils.formats import localize
 import datetime
 from custom_canvas import NumberedCanvas
@@ -332,7 +332,13 @@ class Invoice(OwnedObject):
             label = " ".join(splitted_para.lines[0][1])
             if row.proposal.reference:
                 label = "%s - [%s]" % (label.decode('utf-8'), row.proposal.reference)
-            data.append([label, localize(row.quantity), localize(row.unit_price), localize(row.quantity * row.unit_price)])
+            quantity = row.quantity
+            quantity = quantity.quantize(Decimal(1)) if quantity == quantity.to_integral() else quantity.normalize()
+            unit_price = row.unit_price
+            unit_price = unit_price.quantize(Decimal(1)) if unit_price == unit_price.to_integral() else unit_price.normalize()
+            total = row.quantity * row.unit_price
+            total = total.quantize(Decimal(1)) if total == total.to_integral() else total.normalize()
+            data.append([label, localize(quantity), localize(unit_price), localize(total)])
             for extra_row in splitted_para.lines[1:]:
                 label = " ".join(extra_row[1])
                 data.append([label, '', '', ''])
@@ -368,13 +374,14 @@ class Invoice(OwnedObject):
 
         spacer4 = Spacer(doc.width, 0.55 * inch)
         story.append(spacer4)
-
+        invoice_amount = self.amount
+        invoice_amount = invoice_amount.quantize(Decimal(1)) if invoice_amount == invoice_amount.to_integral() else invoice_amount.normalize()
         data = [[[Paragraph(_("Payment date : %s") % (localize(self.payment_date)), styleN),
                   Paragraph(_("Penalty begins on : %s") % (localize(self.penalty_date) or ''), styleN),
                   Paragraph(_("Penalty rate : %s") % (localize(self.penalty_rate) or ''), styleN),
                   Paragraph(_("Discount conditions : %s") % (self.discount_conditions or ''), styleN)],
                 '',
-                [Paragraph(_("TOTAL excl. VAT : %(amount)s %(currency)s") % {'amount': localize(self.amount), 'currency' : "€".decode('utf-8')}, styleTotal),
+                [Paragraph(_("TOTAL excl. VAT : %(amount)s %(currency)s") % {'amount': localize(invoice_amount), 'currency' : "€".decode('utf-8')}, styleTotal),
                  Spacer(1, 0.25 * inch),
                  Paragraph(u"TVA non applicable, art. 293 B du CGI", styleN)]], ]
 
