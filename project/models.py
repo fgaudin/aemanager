@@ -281,8 +281,6 @@ class Proposal(OwnedObject):
         customer_header_content = """
         %s<br/>
         %s<br/>
-        SIRET : %s<br/>
-        %s<br/>
         %s %s<br/>
         %s<br/>
         """
@@ -296,8 +294,6 @@ class Proposal(OwnedObject):
                                                       user.get_profile().address.country or ''), styleH),
                     '',
                     Paragraph(customer_header_content % (self.project.customer.name,
-                                                         self.project.customer.legal_form,
-                                                         self.project.customer.company_id,
                                                          self.project.customer.address.street.replace("\n", "<br/>"),
                                                          self.project.customer.address.zipcode,
                                                          self.project.customer.address.city,
