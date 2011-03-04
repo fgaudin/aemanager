@@ -348,7 +348,7 @@ class Proposal(OwnedObject):
             unit_price = unit_price.quantize(Decimal(1)) if unit_price == unit_price.to_integral() else unit_price.normalize()
             total = row.quantity * row.unit_price
             total = total.quantize(Decimal(1)) if total == total.to_integral() else total.normalize()
-            data.append([label, localize(quantity), localize(unit_price), localize(total)])
+            data.append([label, localize(quantity), "%s %s" % (localize(unit_price), "€".decode('utf-8')), "%s %s" % (localize(total), "€".decode('utf-8'))])
             for extra_row in splitted_para.lines[1:]:
                 label = " ".join(extra_row[1])
                 data.append([label, '', '', ''])
