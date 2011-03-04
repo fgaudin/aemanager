@@ -20,7 +20,7 @@ Il permet de :
 Auteur et licence
 -----------------
 
-Aemanager est un logiciel libre sous GPLv3 écrit par François Gaudin
+Aemanager est un logiciel libre sous AGPLv3 écrit par François Gaudin
 
 Installation
 ------------
