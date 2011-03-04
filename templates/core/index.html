@@ -62,7 +62,7 @@ jQuery(document).ready(function(){
 <h2>{% trans "Info" %}</h2>
     <div  id="announcements">
     {% for announcement in announcements %}
-    <div class="announcement">{{ announcement.content|linebreaksbr }}</div>
+    <div class="announcement">{% autoescape off %}{{ announcement.content|linebreaksbr }}{% endautoescape %}</div>
     {% endfor %}
     </div>
 </div>
