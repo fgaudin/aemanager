@@ -220,7 +220,10 @@ def index(request):
               'expenses_progression':simplejson.dumps(expenses_progression),
               'profit_progression':simplejson.dumps(profit_progression)}
 
-    announcements = Announcement.objects.filter(enabled=True)
+    announcements = Announcement.objects.filter(enabled=True, important=False)
+    important_announcements = Announcement.objects.filter(enabled=True, important=True)
+    for important_announcement in important_announcements:
+        messages.warning(request, important_announcement.content)
 
     return render_to_response('core/index.html',
                               {'active': 'dashboard',
