@@ -17,6 +17,11 @@
         <div class="detail-row">
           <div><label>{% trans "Remaining to invoice" %} :</label> {{ proposal.get_remaining_to_invoice }}</div>
         </div>
+        <div class="detail-row">
+          <div>
+          <label>{{ proposal|verbose_name:"payment_delay" }} :</label> {{ proposal.get_payment_delay }}
+          </div>
+        </div>
     </fieldset>
     {% if proposal.proposal_rows.all %}
     <div class="search-list">

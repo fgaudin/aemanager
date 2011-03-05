@@ -1,7 +1,9 @@
 from django.forms import ModelForm
 from django.utils.translation import ugettext_lazy as _
 from project.models import Project, PROJECT_STATE, PROJECT_STATE_STARTED, \
-    Proposal, ProposalRow, Contract
+    Proposal, ProposalRow, Contract, PAYMENT_DELAY_OTHER, \
+    PAYMENT_DELAY_TYPE_OTHER_END_OF_MONTH, \
+    PAYMENT_DELAY_TYPE_OTHER_END_OF_MONTH_PLUS_DELAY
 from django import forms
 
 class ContractForm(ModelForm):
@@ -40,6 +42,22 @@ class ProposalForm(ModelForm):
         self.fields['begin_date'].widget.attrs['class'] = 'date'
         self.fields['end_date'].widget.attrs['class'] = 'date'
         self.fields['expiration_date'].widget.attrs['class'] = 'date'
+
+    def clean(self):
+        super(ProposalForm, self).clean()
+        cleaned_data = self.cleaned_data
+        if cleaned_data['payment_delay'] == PAYMENT_DELAY_OTHER:
+            days = cleaned_data['payment_delay_other']
+            if cleaned_data['payment_delay_type_other'] in [PAYMENT_DELAY_TYPE_OTHER_END_OF_MONTH,
+                                                            PAYMENT_DELAY_TYPE_OTHER_END_OF_MONTH_PLUS_DELAY]:
+                if days > 45:
+                    msg = _("Payment delay can't exceed 45 days end of month.")
+                    self._errors["payment_delay"] = self.error_class([msg])
+            else:
+                if days > 60:
+                    msg = _("Payment delay can't exceed 60 days.")
+                    self._errors["payment_delay"] = self.error_class([msg])
+        return cleaned_data
 
 class ProposalRowForm(ModelForm):
     quantity = forms.DecimalField(max_digits=5, decimal_places=1, label=_('Quantity'), localize=True)

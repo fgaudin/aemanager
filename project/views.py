@@ -389,7 +389,7 @@ def proposal_create_or_edit(request, id=None, project_id=None):
         proposalForm.fields['contract_model'].queryset = proposals
         proposalrowformset = ProposalRowFormSet(instance=proposal)
 
-    substitution_map = Contract.get_substitution_map()
+    substitution_map = Proposal.get_substitution_map()
     substitution_keys = substitution_map.keys()
     keys = ''
     if len(substitution_keys):

@@ -5,7 +5,7 @@ from project.models import Project, PROJECT_STATE_PROSPECT, \
     PROJECT_STATE_PROPOSAL_ACCEPTED, PROJECT_STATE_STARTED, \
     PROJECT_STATE_FINISHED, Proposal, PROPOSAL_STATE_DRAFT, ROW_CATEGORY_SERVICE, \
     PROPOSAL_STATE_SENT, ROW_CATEGORY_PRODUCT, ProposalRow, \
-    ProposalAmountError, Contract
+    ProposalAmountError, Contract, PAYMENT_DELAY_30_DAYS
 from accounts.models import Invoice, InvoiceRow, INVOICE_STATE_EDITED, \
     PAYMENT_TYPE_CHECK
 from contact.models import Contact, Address
@@ -438,6 +438,7 @@ class ProposalTest(TestCase):
                                     {'proposal-state': PROPOSAL_STATE_DRAFT,
                                      'proposal-begin_date': '2010-8-1',
                                      'proposal-end_date': '2010-8-15',
+                                     'proposal-payment_delay': PAYMENT_DELAY_30_DAYS,
                                      'proposal-contract_content': 'Content of contract',
                                      'proposal_rows-TOTAL_FORMS': 1,
                                      'proposal_rows-INITIAL_FORMS': 0,
@@ -451,6 +452,7 @@ class ProposalTest(TestCase):
                                          state=PROPOSAL_STATE_DRAFT,
                                          begin_date=datetime.date(2010, 8, 1),
                                          end_date=datetime.date(2010, 8, 15),
+                                         payment_delay=PAYMENT_DELAY_30_DAYS,
                                          contract_content='Content of contract',
                                          amount=2005,
                                          owner__id=1)
@@ -511,6 +513,7 @@ class ProposalTest(TestCase):
                                      'proposal-amount': 104,
                                      'proposal-begin_date': '2010-8-2',
                                      'proposal-end_date': '2010-8-16',
+                                     'proposal-payment_delay': PAYMENT_DELAY_30_DAYS,
                                      'proposal-contract_content': 'Contract content',
                                      'proposal_rows-TOTAL_FORMS': 1,
                                      'proposal_rows-INITIAL_FORMS': 1,
@@ -525,6 +528,7 @@ class ProposalTest(TestCase):
                                          state=PROPOSAL_STATE_SENT,
                                          begin_date=datetime.date(2010, 8, 2),
                                          end_date=datetime.date(2010, 8, 16),
+                                         payment_delay=PAYMENT_DELAY_30_DAYS,
                                          contract_content='Contract content',
                                          amount=104,
                                          owner__id=1)
@@ -738,6 +742,7 @@ class ProposalTest(TestCase):
                                      'proposal-begin_date': '2010-8-2',
                                      'proposal-end_date': '2010-8-16',
                                      'proposal-contract_content': 'Contract content',
+                                     'proposal-payment_delay': PAYMENT_DELAY_30_DAYS,
                                      'proposal_rows-TOTAL_FORMS': 1,
                                      'proposal_rows-INITIAL_FORMS': 1,
                                      'proposal_rows-0-ownedobject_ptr': p_row.id,

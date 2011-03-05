@@ -530,3 +530,7 @@ body.login {
     margin-left: 15em;
     padding-left:10px;
 }
+
+#id_proposal-payment_delay_other {
+    width:20px;
+}

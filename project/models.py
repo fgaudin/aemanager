@@ -33,14 +33,13 @@ class Contract(OwnedObject):
 
     @staticmethod
     def get_substitution_map():
-        substitution_map = {ugettext('reference'): '',
-                            ugettext('customer'): '',
+        substitution_map = {ugettext('customer'): '',
                             ugettext('customer_legal_form'): '',
                             ugettext('customer_street'): '',
                             ugettext('customer_zipcode'): '',
                             ugettext('customer_city'): '',
                             ugettext('customer_country'): '',
-                            ugettext('customer_national_id'): '',
+                            ugettext('customer_company_id'): '',
                             ugettext('customer_representative'): '',
                             ugettext('customer_representative_function'): '',
                             ugettext('firstname'): '',
@@ -49,7 +48,7 @@ class Contract(OwnedObject):
                             ugettext('zipcode'): '',
                             ugettext('city'): '',
                             ugettext('country'): '',
-                            ugettext('national_id'): '',
+                            ugettext('company_id'): '',
                             }
 
         return substitution_map
@@ -66,7 +65,7 @@ class Contract(OwnedObject):
         substitution_map[ugettext('customer_zipcode')] = self.customer.address.zipcode
         substitution_map[ugettext('customer_city')] = self.customer.address.city
         substitution_map[ugettext('customer_country')] = unicode(self.customer.address.country)
-        substitution_map[ugettext('customer_national_id')] = self.customer.company_id
+        substitution_map[ugettext('customer_company_id')] = self.customer.company_id
         substitution_map[ugettext('customer_representative')] = self.customer.representative
         substitution_map[ugettext('customer_representative_function')] = self.customer.representative_function
         substitution_map[ugettext('firstname')] = user.first_name
@@ -75,7 +74,7 @@ class Contract(OwnedObject):
         substitution_map[ugettext('zipcode')] = user.get_profile().address.zipcode
         substitution_map[ugettext('city')] = user.get_profile().address.city
         substitution_map[ugettext('country')] = unicode(user.get_profile().address.country)
-        substitution_map[ugettext('national_id')] = user.get_profile().company_id
+        substitution_map[ugettext('company_id')] = user.get_profile().company_id
 
         contract_content = "<h1>%s</h1>%s" % (self.title, self.content.replace('&nbsp;', ' '))
 
@@ -127,6 +126,22 @@ PROPOSAL_STATE = ((PROPOSAL_STATE_DRAFT, _('Draft')),
                   (PROPOSAL_STATE_BALANCED, _('Balanced')),
                   (PROPOSAL_STATE_REFUSED, _('Refused')))
 
+PAYMENT_DELAY_30_DAYS = 1
+PAYMENT_DELAY_60_DAYS = 2
+PAYMENT_DELAY_45_DAYS_END_OF_MONTH = 3
+PAYMENT_DELAY_END_OF_MONTH_PLUS_45_DAYS = 4
+PAYMENT_DELAY_OTHER = 5
+PAYMENT_DELAY = ((PAYMENT_DELAY_30_DAYS, _('30 days')),
+                 (PAYMENT_DELAY_60_DAYS, _('60 days')),
+                 (PAYMENT_DELAY_45_DAYS_END_OF_MONTH, _('45 days end of month')),
+                 (PAYMENT_DELAY_END_OF_MONTH_PLUS_45_DAYS, _('End of month + 45 days')),
+                 (PAYMENT_DELAY_OTHER, _('Other')))
+
+PAYMENT_DELAY_TYPE_OTHER_END_OF_MONTH = 1
+PAYMENT_DELAY_TYPE_OTHER_END_OF_MONTH_PLUS_DELAY = 2
+PAYMENT_DELAY_TYPE_OTHER = ((PAYMENT_DELAY_TYPE_OTHER_END_OF_MONTH, _('End of month')),
+                            (PAYMENT_DELAY_TYPE_OTHER_END_OF_MONTH_PLUS_DELAY, _('End of month + delay')))
+
 class ProposalManager(models.Manager):
     def get_potential_sales(self, owner):
         amount_sum = self.filter(state__lte=PROPOSAL_STATE_SENT,
@@ -153,6 +168,9 @@ class Proposal(OwnedObject):
     contract_content = models.TextField(blank=True, default="", verbose_name=_('Contract'))
     update_date = models.DateField(verbose_name=_('Update date'), help_text=_('format: mm/dd/yyyy'))
     expiration_date = models.DateField(blank=True, null=True, verbose_name=_('Expiration date'), help_text=_('format: mm/dd/yyyy'))
+    payment_delay = models.IntegerField(choices=PAYMENT_DELAY, default=PAYMENT_DELAY_30_DAYS, verbose_name=_('Payment delay'), help_text=_("Can't be more than 60 days or 45 days end of month."))
+    payment_delay_other = models.IntegerField(blank=True, null=True)
+    payment_delay_type_other = models.IntegerField(choices=PAYMENT_DELAY_TYPE_OTHER, blank=True, null=True)
 
     objects = ProposalManager()
 
@@ -195,10 +213,21 @@ class Proposal(OwnedObject):
         invoice_amount = invoice_rows.aggregate(amount=Sum('amount'))
         return self.amount - (invoice_amount['amount'] or 0)
 
-    """
-    Set amount equals to sum of proposal rows if none
-    """
+    def get_payment_delay(self):
+        if self.payment_delay <> PAYMENT_DELAY_OTHER:
+            return self.get_payment_delay_display()
+        else:
+            if self.payment_delay_type_other == PAYMENT_DELAY_TYPE_OTHER_END_OF_MONTH:
+                return _('%(days)d days end of month') % {'days': self.payment_delay_other}
+            elif self.payment_delay_type_other == PAYMENT_DELAY_TYPE_OTHER_END_OF_MONTH_PLUS_DELAY:
+                return _('end of month + %(days)d days') % {'days': self.payment_delay_other}
+            else:
+                return _('%(days)d days') % {'days': self.payment_delay_other}
+
     def update_amount(self):
+        """
+        Set amount equals to sum of proposal rows if none
+        """
         amount = 0
         for row in self.proposal_rows.all():
             amount = amount + row.quantity * row.unit_price
@@ -209,10 +238,10 @@ class Proposal(OwnedObject):
             raise ProposalAmountError(ugettext("Proposal amount can't be less than sum of invoices"))
         self.save(user=self.owner)
 
-    """
-    Generate a PDF file for the proposal
-    """
     def to_pdf(self, user, response):
+        """
+        Generate a PDF file for the proposal
+        """
         def proposal_footer(canvas, doc):
             canvas.saveState()
             canvas.setFont('Times-Roman', 10)
@@ -401,21 +430,45 @@ class Proposal(OwnedObject):
 
         return response
 
+    @staticmethod
+    def get_substitution_map():
+        substitution_map = {ugettext('reference'): '',
+                            ugettext('payment_delay'): '',
+                            ugettext('customer'): '',
+                            ugettext('customer_legal_form'): '',
+                            ugettext('customer_street'): '',
+                            ugettext('customer_zipcode'): '',
+                            ugettext('customer_city'): '',
+                            ugettext('customer_country'): '',
+                            ugettext('customer_company_id'): '',
+                            ugettext('customer_representative'): '',
+                            ugettext('customer_representative_function'): '',
+                            ugettext('firstname'): '',
+                            ugettext('lastname'): '',
+                            ugettext('street'): '',
+                            ugettext('zipcode'): '',
+                            ugettext('city'): '',
+                            ugettext('country'): '',
+                            ugettext('company_id'): '',
+                            }
+
+        return substitution_map
 
     def contract_to_pdf(self, user, response):
         css_file = open("%s%s" % (settings.MEDIA_ROOT, "/css/pisa.css"), 'r')
         css = css_file.read()
 
-        substitution_map = Contract.get_substitution_map()
+        substitution_map = Proposal.get_substitution_map()
 
         substitution_map[ugettext('reference')] = unicode(self.reference)
+        substitution_map[ugettext('payment_delay')] = unicode(self.get_payment_delay())
         substitution_map[ugettext('customer')] = unicode(self.project.customer)
         substitution_map[ugettext('customer_legal_form')] = self.project.customer.legal_form
         substitution_map[ugettext('customer_street')] = self.project.customer.address.street
         substitution_map[ugettext('customer_zipcode')] = self.project.customer.address.zipcode
         substitution_map[ugettext('customer_city')] = self.project.customer.address.city
         substitution_map[ugettext('customer_country')] = unicode(self.project.customer.address.country)
-        substitution_map[ugettext('customer_national_id')] = self.project.customer.company_id
+        substitution_map[ugettext('customer_company_id')] = self.project.customer.company_id
         substitution_map[ugettext('customer_representative')] = self.project.customer.representative
         substitution_map[ugettext('customer_representative_function')] = self.project.customer.representative_function
         substitution_map[ugettext('firstname')] = user.first_name
@@ -424,7 +477,7 @@ class Proposal(OwnedObject):
         substitution_map[ugettext('zipcode')] = user.get_profile().address.zipcode
         substitution_map[ugettext('city')] = user.get_profile().address.city
         substitution_map[ugettext('country')] = unicode(user.get_profile().address.country)
-        substitution_map[ugettext('national_id')] = user.get_profile().company_id
+        substitution_map[ugettext('company_id')] = user.get_profile().company_id
 
         contract_content = self.contract_content.replace('&nbsp;', ' ')
 
