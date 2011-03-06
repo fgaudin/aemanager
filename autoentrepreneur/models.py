@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import logging
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
@@ -6,11 +7,12 @@ from contact.models import Address
 from django.db.models.signals import post_save
 from django.db.models.aggregates import Max, Count
 from core.models import OwnedObject
-from bugtracker.models import Issue, Comment, Vote
+from bugtracker.models import Issue
 from django.core.mail import send_mail
 from django.contrib.sites.models import Site
 import datetime
 from django.conf import settings
+from registration.signals import user_registered
 
 AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC = 1
 AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC = 2
@@ -345,4 +347,9 @@ def user_post_save(sender, instance, created, **kwargs):
                                                    expiration_date=today + datetime.timedelta(settings.TRIAL_DURATION),
                                                    transaction_id='TRIAL-%i%i%i-%i' % (today.year, today.month, today.day, instance.id))
 
+def log_registration(sender, user, request, **kwargs):
+    logger = logging.getLogger('aemanager')
+    logger.info('%s <%s> has registered' % (user.username, user.email))
+
 post_save.connect(user_post_save, sender=User)
+user_registered.connect(log_registration)

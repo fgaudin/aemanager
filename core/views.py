@@ -1,3 +1,4 @@
+import logging
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template.context import RequestContext, Context
 from django.utils.translation import ugettext_lazy as _, ugettext
@@ -489,6 +490,8 @@ def unregister(request):
         if request.POST.get('unregister'):
             logout(request)
             profile.unregister()
+            logger = logging.getLogger('aemanager')
+            logger.info('%s <%s> has unregistered' % (profile.user.username, profile.user.email))
             return redirect(reverse('index'))
         else:
             return redirect(reverse('subscribe'))

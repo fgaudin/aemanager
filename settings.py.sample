@@ -5,6 +5,7 @@ BASE_PATH = os.path.dirname(__file__)
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+DEBUG_TOOLBAR = False
 
 ADMINS = (
     ('', ''),
@@ -163,3 +164,13 @@ LOGO_URL = 'http://example.com/static/img/logo.png'
 PARENT_SITE_URL = 'http://www.example.com'
 TRIAL_DURATION = 30
 SERVICE_PROVIDER_EMAIL = '' # when subscription is paid, create invoice for this account
+
+if DEBUG_TOOLBAR:
+    MIDDLEWARE_CLASSES = MIDDLEWARE_CLASSES + ('debug_toolbar.middleware.DebugToolbarMiddleware',)
+    INTERNAL_IPS = ('127.0.0.1',)
+    INSTALLED_APPS = INSTALLED_APPS + ('debug_toolbar',)
+    DEBUG_TOOLBAR_CONFIG = {'INTERCEPT_REDIRECTS': False}
+
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s',
+                    level=logging.INFO)
+logging.disable(logging.DEBUG)
