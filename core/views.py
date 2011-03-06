@@ -15,7 +15,8 @@ from accounts.models import Expense, Invoice, INVOICE_STATE_PAID, \
     PAYMENT_TYPE_BANK_CARD, InvoiceRow
 from core.decorators import settings_required
 from autoentrepreneur.models import AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC, \
-    Subscription, SUBSCRIPTION_STATE_NOT_PAID, SUBSCRIPTION_STATE_PAID
+    Subscription, SUBSCRIPTION_STATE_NOT_PAID, SUBSCRIPTION_STATE_PAID, \
+    SUBSCRIPTION_STATE_TRIAL
 from project.models import Proposal, Project, PROJECT_STATE_FINISHED, \
     PROPOSAL_STATE_BALANCED, ROW_CATEGORY_SERVICE, ProposalRow
 from django.views.decorators.csrf import csrf_exempt
@@ -44,6 +45,20 @@ def index(request):
 
     if not Proposal.objects.filter(owner=user).count():
         messages.info(request, _('How-to : create a customer, a project, a proposal and finally an invoice'))
+
+    last_subscription = profile.get_last_subscription()
+    delay_before_end_of_subscription = last_subscription.expiration_date - datetime.date.today()
+    if delay_before_end_of_subscription.days <= 30:
+        subscription_message = ''
+        subscription_state = last_subscription.state
+        if subscription_state == SUBSCRIPTION_STATE_TRIAL:
+            subscription_message = _("Your trial ends in %(days)d days, if you want to keep using %(site_name)s don't forget to subscribe") % {'days': delay_before_end_of_subscription.days,
+                                                                                                                                                     'site_name': Site.objects.get_current().name}
+        elif subscription_state == SUBSCRIPTION_STATE_PAID:
+            subscription_message = _("Your subscription ends in %(days)d days, if you want to keep using %(site_name)s don't forget to renew it") % {'days': delay_before_end_of_subscription.days,
+                                                                                                                                                     'site_name': Site.objects.get_current().name}
+        if subscription_message:
+            messages.warning(request, subscription_message)
 
     today = datetime.date.today()
     one_year_back = datetime.date(today.year - 1, today.month, today.day)

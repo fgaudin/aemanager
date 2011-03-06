@@ -220,6 +220,64 @@ class SubscriptionTest(TestCase):
 
         self.assertTrue(profile.is_allowed())
 
+    def testExpirationAlertForTrial(self):
+        self.client.login(username='test', password='test')
+        user = User.objects.get(pk=1)
+        profile = user.get_profile()
+        sub = Subscription.objects.create(owner=user,
+                                          state=SUBSCRIPTION_STATE_TRIAL,
+                                          expiration_date=datetime.date.today() + datetime.timedelta(31),
+                                          transaction_id='XXX')
+
+        response = self.client.get(reverse('index'))
+        self.assertNotContains(response, 'Your trial ends')
+        self.assertNotContains(response, 'Your subscription ends')
+
+        sub.expiration_date = datetime.date.today() + datetime.timedelta(30)
+        sub.save()
+        response = self.client.get(reverse('index'))
+        self.assertContains(response, "Your trial ends in %(days)d days, if you want to keep using %(site_name)s don&#39;t forget to subscribe" % {'days': 30,
+                                                                                                                                                   'site_name': Site.objects.get_current().name})
+        sub.expiration_date = datetime.date.today() + datetime.timedelta(1)
+        sub.save()
+        response = self.client.get(reverse('index'))
+        self.assertContains(response, "Your trial ends in %(days)d days, if you want to keep using %(site_name)s don&#39;t forget to subscribe" % {'days': 1,
+                                                                                                                                                   'site_name': Site.objects.get_current().name})
+        sub.expiration_date = datetime.date.today() + datetime.timedelta(0)
+        sub.save()
+        response = self.client.get(reverse('index'))
+        self.assertContains(response, "Your trial ends in %(days)d days, if you want to keep using %(site_name)s don&#39;t forget to subscribe" % {'days': 0,
+                                                                                                                                                   'site_name': Site.objects.get_current().name})
+
+    def testExpirationAlertForPaid(self):
+        self.client.login(username='test', password='test')
+        user = User.objects.get(pk=1)
+        profile = user.get_profile()
+        sub = Subscription.objects.create(owner=user,
+                                          state=SUBSCRIPTION_STATE_PAID,
+                                          expiration_date=datetime.date.today() + datetime.timedelta(31),
+                                          transaction_id='XXX')
+
+        response = self.client.get(reverse('index'))
+        self.assertNotContains(response, 'Your trial ends')
+        self.assertNotContains(response, 'Your subscription ends')
+
+        sub.expiration_date = datetime.date.today() + datetime.timedelta(30)
+        sub.save()
+        response = self.client.get(reverse('index'))
+        self.assertContains(response, "Your subscription ends in %(days)d days, if you want to keep using %(site_name)s don&#39;t forget to renew it" % {'days': 30,
+                                                                                                                                                         'site_name': Site.objects.get_current().name})
+        sub.expiration_date = datetime.date.today() + datetime.timedelta(1)
+        sub.save()
+        response = self.client.get(reverse('index'))
+        self.assertContains(response, "Your subscription ends in %(days)d days, if you want to keep using %(site_name)s don&#39;t forget to renew it" % {'days': 1,
+                                                                                                                                                         'site_name': Site.objects.get_current().name})
+        sub.expiration_date = datetime.date.today() + datetime.timedelta(0)
+        sub.save()
+        response = self.client.get(reverse('index'))
+        self.assertContains(response, "Your subscription ends in %(days)d days, if you want to keep using %(site_name)s don&#39;t forget to renew it" % {'days': 0,
+                                                                                                                                                         'site_name': Site.objects.get_current().name})
+
 class UnregisterTest(TestCase):
     fixtures = ['test_users']
 

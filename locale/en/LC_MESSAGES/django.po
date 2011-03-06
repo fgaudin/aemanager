@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-05 15:10+0100\n"
+"POT-Creation-Date: 2011-03-06 23:38+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: settings.py:43
+#: settings.py:44
 msgid "English"
 msgstr ""
 
-#: settings.py:44
+#: settings.py:45
 msgid "French"
 msgstr ""
 
@@ -80,7 +80,7 @@ msgstr ""
 #: accounts/models.py:33 accounts/models.py:148 accounts/models.py:149
 #: accounts/models.py:151 accounts/models.py:152 accounts/models.py:153
 #: accounts/models.py:154 autoentrepreneur/forms.py:11
-#: autoentrepreneur/models.py:68 autoentrepreneur/models.py:102
+#: autoentrepreneur/models.py:70 autoentrepreneur/models.py:104
 #: project/models.py:29 project/models.py:166 project/models.py:167
 #: project/models.py:169 project/models.py:170
 msgid "format: mm/dd/yyyy"
@@ -114,7 +114,7 @@ msgstr ""
 msgid "Sent"
 msgstr ""
 
-#: accounts/models.py:51 autoentrepreneur/models.py:36 core/views.py:371
+#: accounts/models.py:51 autoentrepreneur/models.py:38 core/views.py:387
 msgid "Paid"
 msgstr ""
 
@@ -128,7 +128,7 @@ msgstr ""
 msgid "Invoice id"
 msgstr ""
 
-#: accounts/models.py:146 autoentrepreneur/models.py:67
+#: accounts/models.py:146 autoentrepreneur/models.py:69
 #: bugtracker/models.py:33 project/forms.py:29 project/models.py:105
 #: project/models.py:164 templates/core/subscribe.html:9
 #: templates/core/subscribe.html.py:30 templates/invoice/list.html:25
@@ -318,7 +318,7 @@ msgstr ""
 msgid "Payment date is greater than penalty date, is this normal ?"
 msgstr ""
 
-#: accounts/views.py:353 contact/views.py:76 core/views.py:264
+#: accounts/views.py:353 contact/views.py:76 core/views.py:280
 #: project/views.py:74 project/views.py:171 project/views.py:386
 msgid "Data provided are invalid"
 msgstr ""
@@ -359,113 +359,113 @@ msgid ""
 "%(site_name)s"
 msgstr ""
 
-#: autoentrepreneur/forms.py:8 autoentrepreneur/models.py:98
+#: autoentrepreneur/forms.py:8 autoentrepreneur/models.py:100
 msgid "Company name"
 msgstr ""
 
-#: autoentrepreneur/forms.py:9 autoentrepreneur/models.py:99
+#: autoentrepreneur/forms.py:9 autoentrepreneur/models.py:101
 #: contact/forms.py:23 contact/models.py:36
 msgid "Company id"
 msgstr ""
 
-#: autoentrepreneur/forms.py:10 autoentrepreneur/models.py:27
-#: autoentrepreneur/models.py:101
+#: autoentrepreneur/forms.py:10 autoentrepreneur/models.py:29
+#: autoentrepreneur/models.py:103
 msgid "Activity"
 msgstr ""
 
-#: autoentrepreneur/forms.py:11 autoentrepreneur/models.py:102
+#: autoentrepreneur/forms.py:11 autoentrepreneur/models.py:104
 msgid "Creation date"
 msgstr ""
 
-#: autoentrepreneur/forms.py:12 autoentrepreneur/models.py:103
+#: autoentrepreneur/forms.py:12 autoentrepreneur/models.py:105
 msgid "Creation help"
 msgstr ""
 
-#: autoentrepreneur/forms.py:13 autoentrepreneur/models.py:104
+#: autoentrepreneur/forms.py:13 autoentrepreneur/models.py:106
 msgid "Freeing tax payment"
 msgstr ""
 
-#: autoentrepreneur/forms.py:14 autoentrepreneur/models.py:105
+#: autoentrepreneur/forms.py:14 autoentrepreneur/models.py:107
 msgid "Payment option"
 msgstr ""
 
-#: autoentrepreneur/models.py:19
+#: autoentrepreneur/models.py:21
 msgid "Product sale (BIC)"
 msgstr ""
 
-#: autoentrepreneur/models.py:20
+#: autoentrepreneur/models.py:22
 msgid "Provision of a service (BIC)"
 msgstr ""
 
-#: autoentrepreneur/models.py:21
+#: autoentrepreneur/models.py:23
 msgid "Provision of a service (BNC)"
 msgstr ""
 
-#: autoentrepreneur/models.py:22
+#: autoentrepreneur/models.py:24
 msgid "Liberal profession (BNC)"
 msgstr ""
 
-#: autoentrepreneur/models.py:25
+#: autoentrepreneur/models.py:27
 msgid "Year"
 msgstr ""
 
-#: autoentrepreneur/models.py:28 templates/core/sales_widget.html:44
+#: autoentrepreneur/models.py:30 templates/core/sales_widget.html:44
 #: templates/core/sales_widget.html:54
 msgid "Limit"
 msgstr ""
 
-#: autoentrepreneur/models.py:29
+#: autoentrepreneur/models.py:31
 msgid "Limit 2"
 msgstr ""
 
-#: autoentrepreneur/models.py:35
+#: autoentrepreneur/models.py:37
 msgid "Not paid"
 msgstr ""
 
-#: autoentrepreneur/models.py:37
+#: autoentrepreneur/models.py:39
 msgid "Trial"
 msgstr ""
 
-#: autoentrepreneur/models.py:38
+#: autoentrepreneur/models.py:40
 msgid "Free"
 msgstr ""
 
-#: autoentrepreneur/models.py:68 project/models.py:170
+#: autoentrepreneur/models.py:70 project/models.py:170
 #: templates/core/subscribe.html:10 templates/core/subscribe.html.py:31
 msgid "Expiration date"
 msgstr ""
 
-#: autoentrepreneur/models.py:69 templates/core/subscribe.html:11
+#: autoentrepreneur/models.py:71 templates/core/subscribe.html:11
 #: templates/core/subscribe.html.py:32
 msgid "Transaction id"
 msgstr ""
 
-#: autoentrepreneur/models.py:70
+#: autoentrepreneur/models.py:72
 msgid "Error message"
 msgstr ""
 
-#: autoentrepreneur/models.py:81
+#: autoentrepreneur/models.py:83
 msgid "Quaterly"
 msgstr ""
 
-#: autoentrepreneur/models.py:82
+#: autoentrepreneur/models.py:84
 msgid "Monthly"
 msgstr ""
 
-#: autoentrepreneur/models.py:100 contact/models.py:42
+#: autoentrepreneur/models.py:102 contact/models.py:42
 msgid "Address"
 msgstr ""
 
-#: autoentrepreneur/models.py:106
+#: autoentrepreneur/models.py:108
 msgid "Unregister date"
 msgstr ""
 
-#: autoentrepreneur/models.py:120 autoentrepreneur/tests.py:314
+#: autoentrepreneur/models.py:122 autoentrepreneur/tests.py:314
 #, python-format
 msgid "You've just unregistered from %(site)s"
 msgstr ""
 
-#: autoentrepreneur/models.py:121
+#: autoentrepreneur/models.py:123
 #, python-format
 msgid ""
 "You have left the site and your data will been deleted in "
@@ -476,7 +476,7 @@ msgid ""
 "today, please come back to test later."
 msgstr ""
 
-#: autoentrepreneur/models.py:127
+#: autoentrepreneur/models.py:129
 #: templates/registration/activation_email.txt:3
 #: templates/registration/password_reset_email.html:13
 #, python-format
@@ -847,96 +847,110 @@ msgstr ""
 msgid "A user with that username already exists."
 msgstr ""
 
-#: core/tests.py:66 core/views.py:290
+#: core/tests.py:66 core/views.py:306
 msgid "Wrong password"
 msgstr ""
 
-#: core/tests.py:81 core/views.py:288
+#: core/tests.py:81 core/views.py:304
 msgid "Your password has been modified successfully"
 msgstr ""
 
-#: core/views.py:45
+#: core/views.py:47
 msgid ""
 "How-to : create a customer, a project, a proposal and finally an invoice"
 msgstr ""
 
-#: core/views.py:230 templates/menu.html:10 templates/core/index.html:3
+#: core/views.py:55
+#, python-format
+msgid ""
+"Your trial ends in %(days)d days, if you want to keep using %(site_name)s "
+"don't forget to subscribe"
+msgstr ""
+
+#: core/views.py:58
+#, python-format
+msgid ""
+"Your subscription ends in %(days)d days, if you want to keep using "
+"%(site_name)s don't forget to renew it"
+msgstr ""
+
+#: core/views.py:246 templates/menu.html:10 templates/core/index.html:3
 msgid "Dashboard"
 msgstr ""
 
-#: core/views.py:259
+#: core/views.py:275
 msgid "Your settings have been updated successfully"
 msgstr ""
 
-#: core/views.py:261
+#: core/views.py:277
 msgid "Creation date is in the future, is this normal ?"
 msgstr ""
 
-#: core/views.py:272 templates/menu.html:81
+#: core/views.py:288 templates/menu.html:81
 msgid "Settings"
 msgstr ""
 
-#: core/views.py:292
+#: core/views.py:308
 msgid "Your password has not been modified"
 msgstr ""
 
-#: core/views.py:298 templates/menu.html:84
+#: core/views.py:314 templates/menu.html:84
 msgid "Change password"
 msgstr ""
 
-#: core/views.py:315 templates/menu.html:88
+#: core/views.py:331 templates/menu.html:88
 msgid "My subscription"
 msgstr ""
 
-#: core/views.py:328
+#: core/views.py:344
 msgid "Subscription paid"
 msgstr ""
 
-#: core/views.py:359
+#: core/views.py:375
 msgid "Not verified"
 msgstr ""
 
-#: core/views.py:363
+#: core/views.py:379
 msgid "Receiver is not as defined in settings. Spoofing ?"
 msgstr ""
 
-#: core/views.py:365
+#: core/views.py:381
 msgid "Payment not completed"
 msgstr ""
 
-#: core/views.py:367 core/views.py:369
+#: core/views.py:383 core/views.py:385
 msgid "Amount altered. Bad guy ?"
 msgstr ""
 
-#: core/views.py:480
+#: core/views.py:496
 msgid "Subscribe"
 msgstr ""
 
-#: core/views.py:498 templates/core/unregister.html:15
+#: core/views.py:516 templates/core/unregister.html:15
 msgid "Unregister"
 msgstr ""
 
-#: core/views.py:511
+#: core/views.py:529
 msgid "CSRF error"
 msgstr ""
 
-#: core/views.py:512
+#: core/views.py:530
 #, python-format
 msgid "An error occured for %(email)s on %(path)s, reason : %(reason)s"
 msgstr ""
 
-#: core/views.py:517
+#: core/views.py:535
 msgid "Error"
 msgstr ""
 
-#: core/views.py:531
+#: core/views.py:549
 msgid ""
 "Activation key expired. You may already have activated your account. If not, "
 "activation delay may have passed, you have to wait for your previous "
 "registration to be deleted (max. 1 day)."
 msgstr ""
 
-#: core/views.py:537
+#: core/views.py:555
 msgid ""
 "Email address not found. Activation delay may have expired. Try subscribing "
 "again."
