@@ -2015,7 +2015,7 @@ msgid ""
 "\"/\">homepage</a> and log in."
 msgstr ""
 "Votre compte a été activé avec succès. Vous pouvez maintenant retourner sur "
-"la <a href=\"/\">page d'acceuil</a> et vous authentifier."
+"la <a href=\"/\">page d'accueil</a> et vous authentifier."
 
 #: templates/registration/activation_email.txt:1
 #, python-format
