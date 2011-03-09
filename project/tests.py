@@ -75,10 +75,13 @@ class ContractTest(TestCase):
     def testDownloadPdf(self):
         response = self.client.get(reverse('contract_download', kwargs={'id': self.contract1.id}))
         self.assertEqual(response.status_code, 200)
+        f = open('/tmp/contract.pdf', 'w')
+        f.write(response.content)
+        f.close()
         content = response.content.split("\n")
-        invariant_content = content[0:56] + content[57:118] + content[119:-1]
+        invariant_content = content[0:56] + content[57:119] + content[120:-1]
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
-                          "79597f4f8120cf0e93219541c0493326")
+                          "169fe3b9723e3fe495bd4dd82539896e")
 
     def testPostAdd(self):
         response = self.client.post(reverse('contract_add', kwargs={'contact_id': 10}),
@@ -781,9 +784,9 @@ class ProposalTest(TestCase):
         f.write(response.content)
         f.close()
         content = response.content.split("\n")
-        invariant_content = content[0:66] + content[67:109] + content[110:-1]
+        invariant_content = content[0:66] + content[67:110] + content[111:-1]
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
-                          "aeafdffcaa2b654678027255f5652191")
+                          "26d4ef8f99adb8c2b2468fc5b6db2cea")
 
     def testContractDownloadPdf(self):
         """
@@ -809,10 +812,13 @@ class ProposalTest(TestCase):
 
         response = self.client.get(reverse('proposal_contract_download', kwargs={'id': p.id}))
         self.assertEqual(response.status_code, 200)
+        f = open('/tmp/proposal_contract.pdf', 'w')
+        f.write(response.content)
+        f.close()
         content = response.content.split("\n")
-        invariant_content = content[0:56] + content[57:108] + content[109:-1]
+        invariant_content = content[0:56] + content[57:109] + content[110:-1]
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
-                          "40ad0f0fe2051217c71c4fe35a158825")
+                          "583f1f9a28e9dd4103a3eff9b96da7c3")
 
 class Bug31Test(TestCase):
     fixtures = ['test_dashboard_product_sales']

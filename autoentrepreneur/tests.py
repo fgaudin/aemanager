@@ -278,6 +278,275 @@ class SubscriptionTest(TestCase):
         self.assertContains(response, "Your subscription ends in %(days)d days, if you want to keep using %(site_name)s don&#39;t forget to renew it" % {'days': 0,
                                                                                                                                                          'site_name': Site.objects.get_current().name})
 
+    def testExpirationEmailAlert(self):
+        # trial with more than 7 days remaining (no alert)
+        user1 = User.objects.get(pk=1)
+        sub = Subscription.objects.create(owner=user1,
+                                          state=SUBSCRIPTION_STATE_TRIAL,
+                                          expiration_date=datetime.date.today() + datetime.timedelta(8),
+                                          transaction_id='XX1')
+
+        # trial with 7 days remaining (alert)
+        user2 = User.objects.get(pk=2)
+        sub = Subscription.objects.create(owner=user2,
+                                          state=SUBSCRIPTION_STATE_TRIAL,
+                                          expiration_date=datetime.date.today() + datetime.timedelta(7),
+                                          transaction_id='XX2')
+
+        # trial with 6 days remaining (no alert)
+        user3 = User.objects.create_user('user3', 'user3@example.com', 'test')
+        user3.first_name = 'User 3'
+        user3.last_name = 'User 3'
+        user3.save()
+        sub = Subscription.objects.get(owner=user3)
+        sub.expiration_date = datetime.date.today() + datetime.timedelta(6)
+        sub.save()
+
+        # trial with 2 days remaining (no alert)
+        user4 = User.objects.create_user('user4', 'user3@example.com', 'test')
+        user4.first_name = 'User 4'
+        user4.last_name = 'User 4'
+        user4.save()
+        sub = Subscription.objects.get(owner=user4)
+        sub.expiration_date = datetime.date.today() + datetime.timedelta(2)
+        sub.save()
+
+        # trial with 1 day remaining (alert)
+        user5 = User.objects.create_user('user5', 'user5@example.com', 'test')
+        user5.first_name = 'User 5'
+        user5.last_name = 'User 5'
+        user5.save()
+        sub = Subscription.objects.get(owner=user5)
+        sub.expiration_date = datetime.date.today() + datetime.timedelta(1)
+        sub.save()
+        user51 = User.objects.create_user('user51', 'user51@example.com', 'test')
+        user51.first_name = 'User 51'
+        user51.last_name = 'User 51'
+        user51.save()
+        sub = Subscription.objects.get(owner=user51)
+        sub.expiration_date = datetime.date.today() + datetime.timedelta(1)
+        sub.save()
+
+        # trial with 0 days remaining (no alert)
+        user6 = User.objects.create_user('user6', 'user6@example.com', 'test')
+        user6.first_name = 'User 6'
+        user6.last_name = 'User 6'
+        user6.save()
+        sub = Subscription.objects.get(owner=user6)
+        sub.expiration_date = datetime.date.today()
+        sub.save()
+
+        # trial expired for 1 day (no alert)
+        user7 = User.objects.create_user('user7', 'user7@example.com', 'test')
+        user7.first_name = 'User 7'
+        user7.last_name = 'User 7'
+        user7.save()
+        sub = Subscription.objects.get(owner=user7)
+        sub.expiration_date = datetime.date.today() - datetime.timedelta(1)
+        sub.save()
+
+        # paid with more than 7 days remaining (no alert)
+        user8 = User.objects.create_user('user8', 'user8@example.com', 'test')
+        user8.first_name = 'User 8'
+        user8.last_name = 'User 8'
+        user8.save()
+        sub = Subscription.objects.get(owner=user8)
+        sub.expiration_date = datetime.date.today() - datetime.timedelta(10)
+        sub.save()
+        sub = Subscription.objects.create(owner=user8,
+                                          state=SUBSCRIPTION_STATE_PAID,
+                                          expiration_date=datetime.date.today() + datetime.timedelta(8),
+                                          transaction_id='XX8')
+
+        # paid with 7 days remaining (alert)
+        user9 = User.objects.create_user('user9', 'user9@example.com', 'test')
+        user9.first_name = 'User 9'
+        user9.last_name = 'User 9'
+        user9.save()
+        sub = Subscription.objects.get(owner=user9)
+        sub.expiration_date = datetime.date.today() - datetime.timedelta(10)
+        sub.save()
+        sub = Subscription.objects.create(owner=user9,
+                                          state=SUBSCRIPTION_STATE_PAID,
+                                          expiration_date=datetime.date.today() + datetime.timedelta(7),
+                                          transaction_id='XX9')
+
+        # paid with 6 days remaining (no alert)
+        user10 = User.objects.create_user('user10', 'user10@example.com', 'test')
+        user10.first_name = 'User 10'
+        user10.last_name = 'User 10'
+        user10.save()
+        sub = Subscription.objects.get(owner=user10)
+        sub.expiration_date = datetime.date.today() - datetime.timedelta(10)
+        sub.save()
+        sub = Subscription.objects.create(owner=user10,
+                                          state=SUBSCRIPTION_STATE_PAID,
+                                          expiration_date=datetime.date.today() + datetime.timedelta(6),
+                                          transaction_id='XX10')
+
+        # paid with 2 days remaining (no alert)
+        user11 = User.objects.create_user('user11', 'user11@example.com', 'test')
+        user11.first_name = 'User 11'
+        user11.last_name = 'User 11'
+        user11.save()
+        sub = Subscription.objects.get(owner=user11)
+        sub.expiration_date = datetime.date.today() - datetime.timedelta(10)
+        sub.save()
+        sub = Subscription.objects.create(owner=user11,
+                                          state=SUBSCRIPTION_STATE_PAID,
+                                          expiration_date=datetime.date.today() + datetime.timedelta(2),
+                                          transaction_id='XX11')
+
+        # paid with 1 day remaining (alert)
+        user12 = User.objects.create_user('user12', 'user12@example.com', 'test')
+        user12.first_name = 'User 12'
+        user12.last_name = 'User 12'
+        user12.save()
+        sub = Subscription.objects.get(owner=user12)
+        sub.expiration_date = datetime.date.today() - datetime.timedelta(10)
+        sub.save()
+        sub = Subscription.objects.create(owner=user12,
+                                          state=SUBSCRIPTION_STATE_PAID,
+                                          expiration_date=datetime.date.today() + datetime.timedelta(1),
+                                          transaction_id='XX12')
+        user121 = User.objects.create_user('user121', 'user121@example.com', 'test')
+        user121.first_name = 'User 121'
+        user121.last_name = 'User 121'
+        user121.save()
+        sub = Subscription.objects.get(owner=user121)
+        sub.expiration_date = datetime.date.today() - datetime.timedelta(10)
+        sub.save()
+        sub = Subscription.objects.create(owner=user121,
+                                          state=SUBSCRIPTION_STATE_PAID,
+                                          expiration_date=datetime.date.today() + datetime.timedelta(1),
+                                          transaction_id='XX121')
+
+        # paid with 0 day remaining (no alert)
+        user13 = User.objects.create_user('user13', 'user13@example.com', 'test')
+        user13.first_name = 'User 13'
+        user13.last_name = 'User 13'
+        user13.save()
+        sub = Subscription.objects.get(owner=user13)
+        sub.expiration_date = datetime.date.today() - datetime.timedelta(10)
+        sub.save()
+        sub = Subscription.objects.create(owner=user13,
+                                          state=SUBSCRIPTION_STATE_PAID,
+                                          expiration_date=datetime.date.today(),
+                                          transaction_id='XX13')
+
+        # paid expired (no alert)
+        user14 = User.objects.create_user('user14', 'user14@example.com', 'test')
+        user14.first_name = 'User 14'
+        user14.last_name = 'User 14'
+        user14.save()
+        sub = Subscription.objects.get(owner=user14)
+        sub.expiration_date = datetime.date.today() - datetime.timedelta(10)
+        sub.save()
+        sub = Subscription.objects.create(owner=user14,
+                                          state=SUBSCRIPTION_STATE_PAID,
+                                          expiration_date=datetime.date.today() - datetime.timedelta(1),
+                                          transaction_id='XX14')
+
+        # trial with 1 day remaining and paid not expiring subscription (no alert)
+        user15 = User.objects.create_user('user15', 'user15@example.com', 'test')
+        user15.first_name = 'User 15'
+        user15.last_name = 'User 15'
+        user15.save()
+        sub = Subscription.objects.get(owner=user15)
+        sub.expiration_date = datetime.date.today() + datetime.timedelta(1)
+        sub.save()
+        sub = Subscription.objects.create(owner=user15,
+                                          state=SUBSCRIPTION_STATE_PAID,
+                                          expiration_date=datetime.date.today() + datetime.timedelta(30),
+                                          transaction_id='XX15')
+
+        call_command('alert_expiring_subscription')
+
+        self.assertEquals(len(mail.outbox), 6)
+        self.assertEquals(mail.outbox[0].subject, u"Votre p\xe9riode d'essai \xe0 %(site)s expire dans %(days)d jours" % {'site': Site.objects.get_current().name,
+                                                                                                                         'days': 7})
+        self.assertEquals(mail.outbox[0].to, ['%s %s <%s>' % (user2.first_name, user2.last_name, user2.email)])
+        self.assertEquals(mail.outbox[0].body, u"""Votre p\xe9riode d'essai expire dans %(days)d jours.
+
+Pass\xe9 ce d\xe9lai, vous ne pourrez plus acc\xe9der \xe0 l'application \xe0 moins de vous abonner en vous rendant sur https://%(site)s%(subscribe_url)s.
+
+Si vous ne souhaitez plus utiliser l'application, vous pouvez vous d\xe9sinscrire sur cette m\xeame page, vos donn\xe9es seront alors supprim\xe9es dans les 7 jours. Si vous laissez votre compte en l'\xe9tat, vous pourrez \xe0 tout moment souscrire un abonnement et y acc\xe9der \xe0 nouveau. Cependant, si vous ne souscrivez pas d'abonnement, votre compte sera supprim\xe9 d\xe9finitivement au bout d'un an.
+
+L'\xe9quipe %(site_name)s""" % {'site': Site.objects.get_current(),
+                                'site_name': Site.objects.get_current().name,
+                                'days': 7,
+                                'subscribe_url': reverse('subscribe')})
+
+        self.assertEquals(mail.outbox[1].subject, u"Votre p\xe9riode d'essai \xe0 %(site)s expire dans %(days)d jour" % {'site': Site.objects.get_current().name,
+                                                                                                                         'days': 1})
+        self.assertEquals(mail.outbox[1].to, ['%s %s <%s>' % (user5.first_name, user5.last_name, user5.email)])
+        self.assertEquals(mail.outbox[1].body, u"""Votre p\xe9riode d'essai expire dans %(days)d jour.
+
+Pass\xe9 ce d\xe9lai, vous ne pourrez plus acc\xe9der \xe0 l'application \xe0 moins de vous abonner en vous rendant sur https://%(site)s%(subscribe_url)s.
+
+Si vous ne souhaitez plus utiliser l'application, vous pouvez vous d\xe9sinscrire sur cette m\xeame page, vos donn\xe9es seront alors supprim\xe9es dans les 7 jours. Si vous laissez votre compte en l'\xe9tat, vous pourrez \xe0 tout moment souscrire un abonnement et y acc\xe9der \xe0 nouveau. Cependant, si vous ne souscrivez pas d'abonnement, votre compte sera supprim\xe9 d\xe9finitivement au bout d'un an.
+
+L'\xe9quipe %(site_name)s""" % {'site': Site.objects.get_current(),
+                                'site_name': Site.objects.get_current().name,
+                                'days': 1,
+                                'subscribe_url': reverse('subscribe')})
+
+        self.assertEquals(mail.outbox[2].subject, u"Votre p\xe9riode d'essai \xe0 %(site)s expire dans %(days)d jour" % {'site': Site.objects.get_current().name,
+                                                                                                                         'days': 1})
+        self.assertEquals(mail.outbox[2].to, ['%s %s <%s>' % (user51.first_name, user51.last_name, user51.email)])
+        self.assertEquals(mail.outbox[2].body, u"""Votre p\xe9riode d'essai expire dans %(days)d jour.
+
+Pass\xe9 ce d\xe9lai, vous ne pourrez plus acc\xe9der \xe0 l'application \xe0 moins de vous abonner en vous rendant sur https://%(site)s%(subscribe_url)s.
+
+Si vous ne souhaitez plus utiliser l'application, vous pouvez vous d\xe9sinscrire sur cette m\xeame page, vos donn\xe9es seront alors supprim\xe9es dans les 7 jours. Si vous laissez votre compte en l'\xe9tat, vous pourrez \xe0 tout moment souscrire un abonnement et y acc\xe9der \xe0 nouveau. Cependant, si vous ne souscrivez pas d'abonnement, votre compte sera supprim\xe9 d\xe9finitivement au bout d'un an.
+
+L'\xe9quipe %(site_name)s""" % {'site': Site.objects.get_current(),
+                                'site_name': Site.objects.get_current().name,
+                                'days': 1,
+                                'subscribe_url': reverse('subscribe')})
+
+        self.assertEquals(mail.outbox[3].subject, u"Votre abonnement \xe0 %(site)s expire dans %(days)d jours" % {'site': Site.objects.get_current().name,
+                                                                                                                         'days': 7})
+        self.assertEquals(mail.outbox[3].to, ['%s %s <%s>' % (user9.first_name, user9.last_name, user9.email)])
+        self.assertEquals(mail.outbox[3].body, u"""Votre abonnement expire dans %(days)d jours.
+
+Pass\xe9 ce d\xe9lai, vous ne pourrez plus acc\xe9der \xe0 l'application \xe0 moins de vous abonner en vous rendant sur https://%(site)s%(subscribe_url)s.
+
+Si vous ne souhaitez plus utiliser l'application, vous pouvez vous d\xe9sinscrire sur cette m\xeame page, vos donn\xe9es seront alors supprim\xe9es dans les 7 jours. Si vous laissez votre compte en l'\xe9tat, vous pourrez \xe0 tout moment souscrire un abonnement et y acc\xe9der \xe0 nouveau. Cependant, si vous ne souscrivez pas d'abonnement, votre compte sera supprim\xe9 d\xe9finitivement au bout d'un an.
+
+L'\xe9quipe %(site_name)s""" % {'site': Site.objects.get_current(),
+                                'site_name': Site.objects.get_current().name,
+                                'days': 7,
+                                'subscribe_url': reverse('subscribe')})
+
+        self.assertEquals(mail.outbox[5].subject, u"Votre abonnement \xe0 %(site)s expire dans %(days)d jour" % {'site': Site.objects.get_current().name,
+                                                                                                                         'days': 1})
+        self.assertEquals(mail.outbox[5].to, ['%s %s <%s>' % (user12.first_name, user12.last_name, user12.email)])
+        self.assertEquals(mail.outbox[5].body, u"""Votre abonnement expire dans %(days)d jour.
+
+Pass\xe9 ce d\xe9lai, vous ne pourrez plus acc\xe9der \xe0 l'application \xe0 moins de vous abonner en vous rendant sur https://%(site)s%(subscribe_url)s.
+
+Si vous ne souhaitez plus utiliser l'application, vous pouvez vous d\xe9sinscrire sur cette m\xeame page, vos donn\xe9es seront alors supprim\xe9es dans les 7 jours. Si vous laissez votre compte en l'\xe9tat, vous pourrez \xe0 tout moment souscrire un abonnement et y acc\xe9der \xe0 nouveau. Cependant, si vous ne souscrivez pas d'abonnement, votre compte sera supprim\xe9 d\xe9finitivement au bout d'un an.
+
+L'\xe9quipe %(site_name)s""" % {'site': Site.objects.get_current(),
+                                'site_name': Site.objects.get_current().name,
+                                'days': 1,
+                                'subscribe_url': reverse('subscribe')})
+
+        self.assertEquals(mail.outbox[4].subject, u"Votre abonnement \xe0 %(site)s expire dans %(days)d jour" % {'site': Site.objects.get_current().name,
+                                                                                                                         'days': 1})
+        self.assertEquals(mail.outbox[4].to, ['%s %s <%s>' % (user121.first_name, user121.last_name, user121.email)])
+        self.assertEquals(mail.outbox[4].body, u"""Votre abonnement expire dans %(days)d jour.
+
+Pass\xe9 ce d\xe9lai, vous ne pourrez plus acc\xe9der \xe0 l'application \xe0 moins de vous abonner en vous rendant sur https://%(site)s%(subscribe_url)s.
+
+Si vous ne souhaitez plus utiliser l'application, vous pouvez vous d\xe9sinscrire sur cette m\xeame page, vos donn\xe9es seront alors supprim\xe9es dans les 7 jours. Si vous laissez votre compte en l'\xe9tat, vous pourrez \xe0 tout moment souscrire un abonnement et y acc\xe9der \xe0 nouveau. Cependant, si vous ne souscrivez pas d'abonnement, votre compte sera supprim\xe9 d\xe9finitivement au bout d'un an.
+
+L'\xe9quipe %(site_name)s""" % {'site': Site.objects.get_current(),
+                                'site_name': Site.objects.get_current().name,
+                                'days': 1,
+                                'subscribe_url': reverse('subscribe')})
+
 class UnregisterTest(TestCase):
     fixtures = ['test_users']
 
@@ -522,6 +791,7 @@ class SubscriptionUserSelectTest(TestCase):
         intented_user = {'owner__email':u'user1@example.com',
                           'owner__first_name':u'User 1',
                           'owner__last_name':u'User 1'}
+        self.assertEquals(len(users), 1)
         self.assertEquals(users[0], intented_user)
 
     def testPaidUser(self):
