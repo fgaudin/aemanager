@@ -51,6 +51,11 @@ Keep using this service until <strong>{{ next_expiration_date }}</strong> for <s
 {% endblocktrans %}
 </div>
 
+<div id="tos-subscribe">
+    <iframe src="{% url tos %}" id="tos-iframe" name="tos" scrolling="auto"></iframe>
+    <p>{% trans "By subscribing, you agree to the Terms of Sale and Service." %}</p>
+</div>
+
 <div id="paypal-button">
 <form action="{{ paypal_url }}/cgi-bin/webscr" method="post">
 <input type="hidden" name="cmd" value="_s-xclick">

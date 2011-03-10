@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-10 20:40+0100\n"
+"POT-Creation-Date: 2011-03-10 20:55+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1743,7 +1743,12 @@ msgstr ""
 "strong> pour <strong>seulement %(price)s€/mois</strong> en cliquant sur le "
 "bouton ci-dessous :\n"
 
-#: templates/core/subscribe.html:66
+#: templates/core/subscribe.html:56
+msgid "By subscribing, you agree to the Terms of Sale and Service."
+msgstr ""
+"En vous abonnant, vous acceptez les Conditions Générales de Vente et d'Utilisation."
+
+#: templates/core/subscribe.html:71
 #, python-format
 msgid ""
 "\n"

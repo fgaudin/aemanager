@@ -484,6 +484,16 @@ body.login {
     font-style: italic;
 }
 
+#tos-subscribe {
+    text-align:center;
+	margin: 10px 0px;
+}
+
+#tos-subscribe p {
+    margin-top: 10px;
+	text-align:center;
+}
+
 #tos-iframe {
     margin-left:10px;
     width:90%;
