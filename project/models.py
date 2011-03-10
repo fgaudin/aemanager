@@ -247,11 +247,11 @@ class Proposal(OwnedObject):
             canvas.setFont('Times-Roman', 10)
             PAGE_WIDTH = defaultPageSize[0]
             footer_text = "%s %s - SIRET : %s - %s, %s %s" % (user.first_name,
-                                                                  user.last_name,
-                                                                  user.get_profile().company_id,
-                                                                  user.get_profile().address.street,
-                                                                  user.get_profile().address.zipcode,
-                                                                  user.get_profile().address.city)
+                                                              user.last_name,
+                                                              user.get_profile().company_id,
+                                                              user.get_profile().address.street,
+                                                              user.get_profile().address.zipcode,
+                                                              user.get_profile().address.city)
             if user.get_profile().address.country:
                 footer_text = footer_text + ", %s" % (user.get_profile().address.country)
 
@@ -412,7 +412,8 @@ class Proposal(OwnedObject):
         proposal_amount = self.amount
         proposal_amount = proposal_amount.quantize(Decimal(1)) if proposal_amount == proposal_amount.to_integral() else proposal_amount.normalize()
 
-        data = [[[Paragraph(_("Proposal valid through : %s") % (localize(self.expiration_date) or ''), styleN)],
+        data = [[[Paragraph(_("Proposal valid through : %s") % (localize(self.expiration_date) or ''), styleN),
+                  Paragraph(_("Payment delay : %s") % (self.get_payment_delay()), styleN)],
                 '',
                 [Paragraph(_("TOTAL excl. VAT : %(amount)s %(currency)s") % {'amount': localize(proposal_amount), 'currency' : "€".decode('utf-8')}, styleTotal),
                  Spacer(1, 0.25 * inch),
