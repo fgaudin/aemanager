@@ -200,6 +200,7 @@
             "freeing_tax_payment": false,
             "user": 1,
             "activity": 1,
+			"professional_category": 1,
             "creation_date": "2011-01-01",
             "company_name": ""
         }
@@ -215,6 +216,7 @@
             "freeing_tax_payment": false,
             "user": 2,
             "activity": 4,
+			"professional_category": 3,
             "creation_date": "2010-01-01",
             "company_name": ""
         }

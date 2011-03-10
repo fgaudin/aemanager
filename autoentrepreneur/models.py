@@ -70,7 +70,7 @@ class SubscriptionManager(models.Manager):
                            owner__is_active=True,
                            state=SUBSCRIPTION_STATE_PAID).values('owner__email',
                                                                  'owner__first_name',
-                                                                 'owner__last_name').distinct()
+                                                                 'owner__last_name').distinct().order_by('owner__email')
 
     def get_users_with_trial_subscription_expiring_in(self, days=7):
         return self.all().values('owner').annotate(sub_count=Count('id'),
@@ -79,7 +79,7 @@ class SubscriptionManager(models.Manager):
                                                                                        'owner__first_name',
                                                                                        'owner__last_name').filter(sub_count=1,
                                                                                                                   date=datetime.date.today() + datetime.timedelta(days),
-                                                                                                                  state=SUBSCRIPTION_STATE_TRIAL).distinct()
+                                                                                                                  state=SUBSCRIPTION_STATE_TRIAL).distinct().order_by('owner__email')
 
 class Subscription(OwnedObject):
     state = models.IntegerField(choices=SUBSCRIPTION_STATE, verbose_name=_('State'), db_index=True)
@@ -111,12 +111,26 @@ TAX_RATE_WITHOUT_FREEING = {AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC: [3, 6, 9
                             AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC: [5.3, 9.2, 13.8, 18.3]
                             }
 
+AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_TRADER = 1
+AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_CRAFTSMAN = 2
+AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_LIBERAL = 3
+AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY = ((AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_TRADER, _('Trader')),
+                                          (AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_CRAFTSMAN, _('Craftsman')),
+                                          (AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_LIBERAL, _('Liberal profession')))
+
+AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_CRAFTSMAN_ALSACE = 4
+PROFESSIONAL_FORMATION_TAX_RATE = {AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_TRADER: 0.1,
+                                   AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_CRAFTSMAN: 0.3,
+                                   AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_CRAFTSMAN_ALSACE: 0.17,
+                                   AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_LIBERAL: 0.2}
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
     company_name = models.CharField(max_length=255, blank=True, default='', verbose_name=_('Company name'))
     company_id = models.CharField(max_length=50, blank=True, default='', verbose_name=_('Company id')) # SIRET for France
     address = models.ForeignKey(Address, verbose_name=_('Address'))
     activity = models.IntegerField(choices=AUTOENTREPRENEUR_ACTIVITY, blank=True, null=True, verbose_name=_('Activity'))
+    professional_category = models.IntegerField(choices=AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY, blank=True, null=True, verbose_name=_('Professional category'))
     creation_date = models.DateField(blank=True, null=True, verbose_name=_('Creation date'), help_text=_('format: mm/dd/yyyy'))
     creation_help = models.BooleanField(verbose_name=_('Creation help')) # accre
     freeing_tax_payment = models.BooleanField(verbose_name=_('Freeing tax payment')) # versement liberatoire
@@ -160,6 +174,7 @@ class UserProfile(models.Model):
             and self.address.zipcode \
             and self.address.city \
             and self.activity \
+            and self.professional_category \
             and self.creation_date \
             and self.payment_option:
 
@@ -292,6 +307,20 @@ class UserProfile(models.Model):
 
         return begin_date, end_date
 
+    def get_professional_training_tax_rate(self):
+        tax_rate = 0
+        if self.professional_category == AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_TRADER:
+            tax_rate = PROFESSIONAL_FORMATION_TAX_RATE[AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_TRADER]
+        elif self.professional_category == AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_CRAFTSMAN:
+            if len(self.address.zipcode) == 5 and self.address.zipcode[:2] in ['67', '68']:
+                tax_rate = PROFESSIONAL_FORMATION_TAX_RATE[AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_CRAFTSMAN_ALSACE]
+            else:
+                tax_rate = PROFESSIONAL_FORMATION_TAX_RATE[AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_CRAFTSMAN]
+        elif self.professional_category == AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_LIBERAL:
+            tax_rate = PROFESSIONAL_FORMATION_TAX_RATE[AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_LIBERAL]
+
+        return tax_rate
+
     def get_tax_rate(self, reference_date=None):
         tax_rate = 0
         if not self.activity:
@@ -334,6 +363,9 @@ class UserProfile(models.Model):
                 tax_rate = TAX_RATE_WITH_FREEING[self.activity][3]
             else:
                 tax_rate = TAX_RATE_WITHOUT_FREEING[self.activity][3]
+
+        if today.year >= 2011:
+            tax_rate = tax_rate + self.get_professional_training_tax_rate()
 
         return tax_rate
 

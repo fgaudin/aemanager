@@ -45,6 +45,7 @@
             "freeing_tax_payment": false,
             "user": 1,
             "activity": 4,
+            "professional_category": 3,
             "creation_date": "2010-07-01",
             "company_name": ""
         }
