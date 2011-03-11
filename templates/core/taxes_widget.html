@@ -34,6 +34,9 @@ jQuery(document).ready(function(){
     <div>{% trans "Paid sales" %} : {{ taxes.paid_sales_for_period }}</div>
     <div>{% trans "Rate" %} : {{ taxes.tax_rate }}%</div>
     <div>{% trans "Amount to pay" %} : {% blocktrans with taxes.amount_to_pay|floatformat:"-2" as amount_to_pay and taxes.tax_due_date as tax_due_date %}{{ amount_to_pay }} before {{ tax_due_date }}{% endblocktrans %}</div>
+	<h3>{% trans "Estimations based on invoice payment dates" %}</h3>
+	<div>{% trans "Estimated paid sales" %} : {{ taxes.estimated_paid_sales_for_period }}</div>
+	<div>{% trans "Estimated amount to pay" %} : {{ taxes.estimated_amount_to_pay|floatformat:"-2" }}</div>
 </div>
 
 <div id="next_period">
@@ -41,4 +44,7 @@ jQuery(document).ready(function(){
     <div>{% trans "Paid sales" %} : {{ next_taxes.paid_sales_for_period }}</div>
     <div>{% trans "Rate" %} : {{ next_taxes.tax_rate }}%</div>
     <div>{% trans "Amount to pay" %} : {% blocktrans with next_taxes.amount_to_pay|floatformat:"-2" as amount_to_pay and next_taxes.tax_due_date as tax_due_date %}{{ amount_to_pay }} before {{ tax_due_date }}{% endblocktrans %}</div>
+	<h3>{% trans "Estimations based on invoice payment dates" %}</h3>
+	<div>{% trans "Estimated paid sales" %} : {{ next_taxes.estimated_paid_sales_for_period }}</div>
+	<div>{% trans "Estimated amount to pay" %} : {{ next_taxes.estimated_amount_to_pay|floatformat:"-2" }}</div>
 </div>

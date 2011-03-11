@@ -103,6 +103,17 @@ class InvoiceManager(models.Manager):
                                  paid_date__lte=end_date).aggregate(sales=Sum('amount'))
         return amount_sum['sales'] or 0
 
+    def get_waiting_sales_for_period(self, owner, end_date, begin_date=None):
+        if not end_date:
+            return 0
+        amount_sum = self.filter(state=INVOICE_STATE_SENT,
+                                 owner=owner,
+                                 payment_date__lte=end_date)
+        if begin_date:
+            amount_sum = amount_sum.filter(payment_date__gte=begin_date)
+        amount_sum = amount_sum.aggregate(waiting=Sum('amount'))
+        return amount_sum['waiting'] or 0
+
     def get_first_invoice_paid_date(self, owner):
         return self.filter(owner=owner).aggregate(min_date=Min('paid_date'))['min_date']
 
