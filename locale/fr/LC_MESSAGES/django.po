@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-11 20:05+0100\n"
+"POT-Creation-Date: 2011-03-11 22:55+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,30 +28,42 @@ msgstr "Français"
 
 #: accounts/forms.py:7 accounts/models.py:36 accounts/models.py:147
 #: accounts/views.py:178 accounts/views.py:252 project/models.py:165
-#: project/models.py:519 templates/expense/list.html:222
+#: project/models.py:524 templates/expense/list.html:222
 #: templates/invoice/detail.html:25 templates/invoice/list.html:27
 #: templates/project/detail.html:32 templates/project/detail.html.py:60
 #: templates/proposal/detail.html:96
 msgid "Amount"
 msgstr "Montant"
 
-#: accounts/forms.py:18 accounts/models.py:155
+#: accounts/forms.py:20 accounts/models.py:155
 msgid "Penalty rate"
 msgstr "Taux de pénalité"
 
-#: accounts/forms.py:40
+#: accounts/forms.py:23
+#, python-format
+msgid ""
+"at least three times the <a href=\"%(french_rate)s\">legal rate</a> or by "
+"default <a href=\"%(ecb_rate)s\">rate applied by the European Central Bank</"
+"a> to its most recent refinancing operation plus 10 points"
+msgstr ""
+"au moins trois fois le <a href=\"%(french_rate)s\">taux d'intérêt légal</a> "
+"ou par défaut le <a href=\"%(ecb_rate)s\">taux d'intérêt appliqué par la "
+"Banque Centrale Européenne</a> à son opération de refinancement la plus "
+"récente majoré de 10 points"
+
+#: accounts/forms.py:46
 msgid "This field is required since invoice state is set to \"paid\"."
 msgstr "Ce champ est obligatoire car la facture est à l'état \"payée\"."
 
-#: accounts/forms.py:48 accounts/models.py:324 project/forms.py:63
-#: project/models.py:361 project/models.py:517
+#: accounts/forms.py:54 accounts/models.py:324 project/forms.py:63
+#: project/models.py:366 project/models.py:522
 #: templates/invoice/detail.html:72 templates/proposal/detail.html:65
 #: templates/proposal/detail_ajax.html:33
 msgid "Quantity"
 msgstr "Quantité"
 
-#: accounts/forms.py:49 accounts/models.py:324 project/forms.py:64
-#: project/models.py:361 project/models.py:518
+#: accounts/forms.py:55 accounts/models.py:324 project/forms.py:64
+#: project/models.py:366 project/models.py:523
 #: templates/invoice/detail.html:73 templates/proposal/detail.html:66
 #: templates/proposal/detail_ajax.html:34
 msgid "Unit price"
@@ -190,7 +202,7 @@ msgstr "facture_%(invoice_id)d.pdf"
 msgid "Invoice #%(invoice_id)d"
 msgstr "Facture #%(invoice_id)d"
 
-#: accounts/models.py:308 project/models.py:345
+#: accounts/models.py:308 project/models.py:350
 #, python-format
 msgid "Date : %s"
 msgstr "Date : %s"
@@ -200,13 +212,13 @@ msgstr "Date : %s"
 msgid "INVOICE #%d"
 msgstr "FACTURE N°%d"
 
-#: accounts/models.py:324 project/models.py:361 project/models.py:515
+#: accounts/models.py:324 project/models.py:366 project/models.py:520
 #: templates/invoice/detail.html:68 templates/proposal/detail.html:63
 #: templates/proposal/detail_ajax.html:31
 msgid "Label"
 msgstr "Libellé"
 
-#: accounts/models.py:324 project/models.py:361
+#: accounts/models.py:324 project/models.py:366
 #: templates/core/sales_widget.html:38
 msgid "Total"
 msgstr "Total"
@@ -231,12 +243,12 @@ msgstr "Taux de pénalité : %s"
 msgid "Discount conditions : %s"
 msgstr "Conditions d'escompte : %s"
 
-#: accounts/models.py:384 project/models.py:418
+#: accounts/models.py:384 project/models.py:423
 #, python-format
 msgid "TOTAL excl. VAT : %(amount)s %(currency)s"
 msgstr "TOTAL HT : %(amount)s %(currency)s"
 
-#: accounts/models.py:389 project/models.py:423
+#: accounts/models.py:389 project/models.py:428
 #, python-format
 msgid "Execution dates : %(begin_date)s to %(end_date)s"
 msgstr "Date d'exécution : %(begin_date)s au %(end_date)s"
@@ -557,7 +569,7 @@ msgstr "Fermé"
 msgid "User"
 msgstr "Utilisateur"
 
-#: bugtracker/models.py:29 project/models.py:516
+#: bugtracker/models.py:29 project/models.py:521
 #: templates/invoice/detail.html:71 templates/issue/list.html:19
 #: templates/message/list.html:20 templates/proposal/detail.html:64
 #: templates/proposal/detail_ajax.html:32
@@ -1084,83 +1096,83 @@ msgstr "Titre"
 msgid "Content"
 msgstr "Contenu"
 
-#: project/models.py:36 project/models.py:62 project/models.py:438
-#: project/models.py:466
+#: project/models.py:36 project/models.py:62 project/models.py:443
+#: project/models.py:471
 msgid "customer"
 msgstr "client"
 
-#: project/models.py:37 project/models.py:63 project/models.py:439
-#: project/models.py:467
+#: project/models.py:37 project/models.py:63 project/models.py:444
+#: project/models.py:472
 msgid "customer_legal_form"
 msgstr "forme_juridique_client"
 
-#: project/models.py:38 project/models.py:64 project/models.py:440
-#: project/models.py:468
+#: project/models.py:38 project/models.py:64 project/models.py:445
+#: project/models.py:473
 msgid "customer_street"
 msgstr "rue_client"
 
-#: project/models.py:39 project/models.py:65 project/models.py:441
-#: project/models.py:469
+#: project/models.py:39 project/models.py:65 project/models.py:446
+#: project/models.py:474
 msgid "customer_zipcode"
 msgstr "cp_client"
 
-#: project/models.py:40 project/models.py:66 project/models.py:442
-#: project/models.py:470
+#: project/models.py:40 project/models.py:66 project/models.py:447
+#: project/models.py:475
 msgid "customer_city"
 msgstr "ville_client"
 
-#: project/models.py:41 project/models.py:67 project/models.py:443
-#: project/models.py:471
+#: project/models.py:41 project/models.py:67 project/models.py:448
+#: project/models.py:476
 msgid "customer_country"
 msgstr "pays_client"
 
-#: project/models.py:42 project/models.py:68 project/models.py:444
-#: project/models.py:472
+#: project/models.py:42 project/models.py:68 project/models.py:449
+#: project/models.py:477
 msgid "customer_company_id"
 msgstr "siret_client"
 
-#: project/models.py:43 project/models.py:69 project/models.py:445
-#: project/models.py:473
+#: project/models.py:43 project/models.py:69 project/models.py:450
+#: project/models.py:478
 msgid "customer_representative"
 msgstr "représentant_client"
 
-#: project/models.py:44 project/models.py:70 project/models.py:446
-#: project/models.py:474
+#: project/models.py:44 project/models.py:70 project/models.py:451
+#: project/models.py:479
 msgid "customer_representative_function"
 msgstr "fonction_représentant_client"
 
-#: project/models.py:45 project/models.py:71 project/models.py:447
-#: project/models.py:475
+#: project/models.py:45 project/models.py:71 project/models.py:452
+#: project/models.py:480
 msgid "firstname"
 msgstr "prénom"
 
-#: project/models.py:46 project/models.py:72 project/models.py:448
-#: project/models.py:476
+#: project/models.py:46 project/models.py:72 project/models.py:453
+#: project/models.py:481
 msgid "lastname"
 msgstr "nom"
 
-#: project/models.py:47 project/models.py:73 project/models.py:449
-#: project/models.py:477
+#: project/models.py:47 project/models.py:73 project/models.py:454
+#: project/models.py:482
 msgid "street"
 msgstr "rue"
 
-#: project/models.py:48 project/models.py:74 project/models.py:450
-#: project/models.py:478
+#: project/models.py:48 project/models.py:74 project/models.py:455
+#: project/models.py:483
 msgid "zipcode"
 msgstr "cp"
 
-#: project/models.py:49 project/models.py:75 project/models.py:451
-#: project/models.py:479
+#: project/models.py:49 project/models.py:75 project/models.py:456
+#: project/models.py:484
 msgid "city"
 msgstr "ville"
 
-#: project/models.py:50 project/models.py:76 project/models.py:452
-#: project/models.py:480
+#: project/models.py:50 project/models.py:76 project/models.py:457
+#: project/models.py:485
 msgid "country"
 msgstr "pays"
 
-#: project/models.py:51 project/models.py:77 project/models.py:453
-#: project/models.py:481
+#: project/models.py:51 project/models.py:77 project/models.py:458
+#: project/models.py:486
 msgid "company_id"
 msgstr "siret"
 
@@ -1293,34 +1305,34 @@ msgstr "devis_%(id)d.pdf"
 msgid "Proposal %(reference)s"
 msgstr "Devis %(reference)s"
 
-#: project/models.py:355
+#: project/models.py:360
 #, python-format
 msgid "PROPOSAL %s"
 msgstr "DEVIS %s"
 
-#: project/models.py:415
+#: project/models.py:420
 #, python-format
 msgid "Proposal valid through : %s"
 msgstr "Devis valable jusqu'au : %s"
 
-#: project/models.py:416
+#: project/models.py:421
 #, python-format
 msgid "Payment delay : %s"
 msgstr "Délai de paiement : %s"
 
-#: project/models.py:436 project/models.py:464
+#: project/models.py:441 project/models.py:469
 msgid "reference"
 msgstr "référence"
 
-#: project/models.py:437 project/models.py:465
+#: project/models.py:442 project/models.py:470
 msgid "payment_delay"
 msgstr "délai_paiement"
 
-#: project/models.py:511
+#: project/models.py:516
 msgid "Service"
 msgstr "Service"
 
-#: project/models.py:512
+#: project/models.py:517
 msgid "Product"
 msgstr "Produit"
 

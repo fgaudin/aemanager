@@ -15,7 +15,13 @@ class ExpenseForm(ModelForm):
         self.fields['date'].widget.attrs['class'] = 'date'
 
 class InvoiceForm(ModelForm):
-    penalty_rate = forms.DecimalField(max_digits=4, decimal_places=2, label=_('Penalty rate'), localize=True, required=False)
+    penalty_rate = forms.DecimalField(max_digits=4,
+                                      decimal_places=2,
+                                      label=_('Penalty rate'),
+                                      localize=True,
+                                      required=False,
+                                      help_text=_('at least three times the <a href="%(french_rate)s">legal rate</a> or by default <a href="%(ecb_rate)s">rate applied by the European Central Bank</a> to its most recent refinancing operation plus 10 points') % {'french_rate': 'http://www.minefe.gouv.fr/directions_services/dgtpe/taux/taux_legal.php',
+                                                                                                                                                                                                                                                                              'ecb_rate': 'http://fr.global-rates.com/taux-de-interets/banques-centrales/banque-centrale-europeenne/taux-de-bce.aspx'})
 
     class Meta:
         model = Invoice
