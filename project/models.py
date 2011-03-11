@@ -249,7 +249,7 @@ class Proposal(OwnedObject):
             footer_text = "%s %s - SIRET : %s - %s, %s %s" % (user.first_name,
                                                               user.last_name,
                                                               user.get_profile().company_id,
-                                                              user.get_profile().address.street,
+                                                              user.get_profile().address.street.replace("\n", ", ").replace("\r", ""),
                                                               user.get_profile().address.zipcode,
                                                               user.get_profile().address.city)
             if user.get_profile().address.country:
@@ -303,9 +303,20 @@ class Proposal(OwnedObject):
         %s %s<br/>
         SIRET : %s<br/>
         %s<br/>
-        %s %s<br/>
-        %s
+        %s %s
         """
+        user_header_content = user_header_content % (user.first_name,
+                                                     user.last_name,
+                                                     user.get_profile().company_id,
+                                                     user.get_profile().address.street.replace("\n", "<br/>"),
+                                                     user.get_profile().address.zipcode,
+                                                     user.get_profile().address.city)
+        if user.get_profile().address.country:
+            user_header_content = "%s<br/>%s" % (user_header_content, user.get_profile().address.country)
+        if user.get_profile().phonenumber:
+            user_header_content = "%s<br/>%s" % (user_header_content, user.get_profile().phonenumber)
+        if user.get_profile().professional_email:
+            user_header_content = "%s<br/>%s" % (user_header_content, user.get_profile().professional_email)
 
         customer_header_content = """
         %s<br/>
@@ -314,13 +325,7 @@ class Proposal(OwnedObject):
         %s<br/>
         """
 
-        data.append([Paragraph(user_header_content % (user.first_name,
-                                                      user.last_name,
-                                                      user.get_profile().company_id,
-                                                      user.get_profile().address.street.replace("\n", "<br/>"),
-                                                      user.get_profile().address.zipcode,
-                                                      user.get_profile().address.city,
-                                                      user.get_profile().address.country or ''), styleH),
+        data.append([Paragraph(user_header_content, styleH),
                     '',
                     Paragraph(customer_header_content % (self.project.customer.name,
                                                          self.project.customer.address.street.replace("\n", "<br/>"),
@@ -328,14 +333,14 @@ class Proposal(OwnedObject):
                                                          self.project.customer.address.city,
                                                          self.project.customer.address.country or ''), styleH)])
 
-        t1 = Table(data, [3.5 * inch, 0.3 * inch, 3.5 * inch], [1.6 * inch])
+        t1 = Table(data, [3.5 * inch, 0.3 * inch, 3.5 * inch], [1.9 * inch])
         t1.setStyle(TableStyle([('BOX', (0, 0), (0, 0), 0.25, colors.black),
                                 ('BOX', (2, 0), (2, 0), 0.25, colors.black),
                                 ('VALIGN', (0, 0), (-1, -1), 'TOP'), ]))
 
         story.append(t1)
 
-        spacer1 = Spacer(doc.width, 0.4 * inch)
+        spacer1 = Spacer(doc.width, 0.25 * inch)
         story.append(spacer1)
 
         data = []
@@ -349,7 +354,7 @@ class Proposal(OwnedObject):
 
         story.append(t2)
 
-        spacer2 = Spacer(doc.width, 0.4 * inch)
+        spacer2 = Spacer(doc.width, 0.25 * inch)
         story.append(spacer2)
 
         story.append(Paragraph(_("PROPOSAL %s") % (self.reference), styleTitle))

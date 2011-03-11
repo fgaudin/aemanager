@@ -208,7 +208,7 @@ class Invoice(OwnedObject):
             footer_text = "%s %s - SIRET : %s - %s, %s %s" % (user.first_name,
                                                                   user.last_name,
                                                                   user.get_profile().company_id,
-                                                                  user.get_profile().address.street,
+                                                                  user.get_profile().address.street.replace("\n", ", ").replace("\r", ""),
                                                                   user.get_profile().address.zipcode,
                                                                   user.get_profile().address.city)
             if user.get_profile().address.country:

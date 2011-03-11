@@ -126,6 +126,8 @@ PROFESSIONAL_FORMATION_TAX_RATE = {AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_TRADER
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
+    phonenumber = models.CharField(max_length=20, blank=True, default='', verbose_name=_('Phone number'), help_text=_('will appear on your proposals if set'))
+    professional_email = models.EmailField(blank=True, default='', verbose_name=_('Professional email'), help_text=_('will appear on your proposals if set'))
     company_name = models.CharField(max_length=255, blank=True, default='', verbose_name=_('Company name'))
     company_id = models.CharField(max_length=50, blank=True, default='', verbose_name=_('Company id')) # SIRET for France
     address = models.ForeignKey(Address, verbose_name=_('Address'))

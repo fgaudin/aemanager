@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-10 22:00+0100\n"
+"POT-Creation-Date: 2011-03-11 20:05+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -81,7 +81,7 @@ msgstr "Date"
 #: accounts/models.py:33 accounts/models.py:148 accounts/models.py:149
 #: accounts/models.py:151 accounts/models.py:152 accounts/models.py:153
 #: accounts/models.py:154 autoentrepreneur/forms.py:12
-#: autoentrepreneur/models.py:86 autoentrepreneur/models.py:128
+#: autoentrepreneur/models.py:86 autoentrepreneur/models.py:136
 #: project/models.py:29 project/models.py:166 project/models.py:167
 #: project/models.py:169 project/models.py:170
 msgid "format: mm/dd/yyyy"
@@ -370,37 +370,37 @@ msgstr ""
 "Votre abonnement a expiré. Vous devez vous réabonner pour continuer à "
 "utiliser %(site_name)s"
 
-#: autoentrepreneur/forms.py:8 autoentrepreneur/models.py:123
+#: autoentrepreneur/forms.py:8 autoentrepreneur/models.py:131
 msgid "Company name"
 msgstr "Nom de la société"
 
-#: autoentrepreneur/forms.py:9 autoentrepreneur/models.py:124
+#: autoentrepreneur/forms.py:9 autoentrepreneur/models.py:132
 #: contact/forms.py:23 contact/models.py:36
 msgid "Company id"
 msgstr "SIRET"
 
 #: autoentrepreneur/forms.py:10 autoentrepreneur/models.py:29
-#: autoentrepreneur/models.py:126
+#: autoentrepreneur/models.py:134
 msgid "Activity"
 msgstr "Activité"
 
-#: autoentrepreneur/forms.py:11 autoentrepreneur/models.py:127
+#: autoentrepreneur/forms.py:11 autoentrepreneur/models.py:135
 msgid "Professional category"
 msgstr "Catégorie professionnelle"
 
-#: autoentrepreneur/forms.py:12 autoentrepreneur/models.py:128
+#: autoentrepreneur/forms.py:12 autoentrepreneur/models.py:136
 msgid "Creation date"
 msgstr "Date de création"
 
-#: autoentrepreneur/forms.py:13 autoentrepreneur/models.py:129
+#: autoentrepreneur/forms.py:13 autoentrepreneur/models.py:137
 msgid "Creation help"
 msgstr "ACCRE"
 
-#: autoentrepreneur/forms.py:14 autoentrepreneur/models.py:130
+#: autoentrepreneur/forms.py:14 autoentrepreneur/models.py:138
 msgid "Freeing tax payment"
 msgstr "Prélèvement libératoire sur l'impôt"
 
-#: autoentrepreneur/forms.py:15 autoentrepreneur/models.py:131
+#: autoentrepreneur/forms.py:15 autoentrepreneur/models.py:139
 msgid "Payment option"
 msgstr "Option de paiement"
 
@@ -479,20 +479,33 @@ msgstr "Artisan"
 msgid "Liberal profession"
 msgstr "Profession libérale"
 
-#: autoentrepreneur/models.py:125 contact/models.py:42
+#: autoentrepreneur/models.py:129 contact/forms.py:37
+#: templates/contact/search.html:21
+msgid "Phone number"
+msgstr "Téléphone"
+
+#: autoentrepreneur/models.py:129 autoentrepreneur/models.py:130
+msgid "will appear on your proposals if set"
+msgstr "apparaîtra sur vos devis si renseigné"
+
+#: autoentrepreneur/models.py:130
+msgid "Professional email"
+msgstr "Email professionnel"
+
+#: autoentrepreneur/models.py:133 contact/models.py:42
 msgid "Address"
 msgstr "Adresse"
 
-#: autoentrepreneur/models.py:132
+#: autoentrepreneur/models.py:140
 msgid "Unregister date"
 msgstr "Date de désinscription"
 
-#: autoentrepreneur/models.py:146 autoentrepreneur/tests.py:641
+#: autoentrepreneur/models.py:154 autoentrepreneur/tests.py:651
 #, python-format
 msgid "You've just unregistered from %(site)s"
 msgstr "Vous venez de vous désinscrire de %(site)s"
 
-#: autoentrepreneur/models.py:147
+#: autoentrepreneur/models.py:155
 #, python-format
 msgid ""
 "You have left the site and your data will been deleted in "
@@ -509,7 +522,7 @@ msgstr ""
 "Notre service évolue en permanence et s'il ne correspond pas à vos besoins "
 "aujourd'hui, vous pouvez revenir le tester plus tard."
 
-#: autoentrepreneur/models.py:153
+#: autoentrepreneur/models.py:161
 #: templates/registration/activation_email.txt:3
 #: templates/registration/password_reset_email.html:13
 #, python-format
@@ -755,10 +768,6 @@ msgstr "Nom"
 msgid "Email"
 msgstr "Email"
 
-#: contact/forms.py:37 templates/contact/search.html:21
-msgid "Phone number"
-msgstr "Téléphone"
-
 #: contact/models.py:21
 msgid "Country"
 msgstr "Pays"
@@ -886,11 +895,11 @@ msgstr ""
 msgid "A user with that username already exists."
 msgstr "Un utilisateur avec ce nom existe déjà."
 
-#: core/tests.py:66 core/views.py:306
+#: core/tests.py:62 core/views.py:306
 msgid "Wrong password"
 msgstr "Mot de passe erroné"
 
-#: core/tests.py:81 core/views.py:304
+#: core/tests.py:77 core/views.py:304
 msgid "Your password has been modified successfully"
 msgstr "Votre mot de passe a été sauvegardé avec succès"
 
