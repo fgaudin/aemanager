@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-12 00:09+0100\n"
+"POT-Creation-Date: 2011-03-12 13:45+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1458,8 +1458,8 @@ msgstr "CGVU"
 
 #: templates/base.html:49
 #, python-format
-msgid "powered by <a href=\"%(aemanager_url)s\">aemanager</a>"
-msgstr "propulsé par <a href=\"%(aemanager_url)s\">aemanager</a>"
+msgid "powered by <a href=\"%(aemanager_url)s\">aemanager %(version)s</a>"
+msgstr "propulsé par <a href=\"%(aemanager_url)s\">aemanager %(version)s</a>"
 
 #: templates/csrf.html:5
 msgid ""
