@@ -8,3 +8,4 @@ templates/tos.html
 settings.py
 media/img/logo.png
 application.wsgi
+apache.conf

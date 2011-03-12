@@ -1,0 +1,38 @@
+<VirtualHost ip:80>
+    ServerName domain.tld
+    ServerAlias domain.tld
+    redirect / https://domain.tld/
+</VirtualHost>
+
+<VirtualHost ip:443>
+    ServerName domain.tld
+
+    ErrorLog /path/to/apache_vhost/error.log
+    CustomLog /path/to/apache_vhost/access.log combined
+    LogLevel info
+
+    SSLEngine On
+    SSLCertificateFile    /path/to/certificate.crt
+    SSLCertificateKeyFile /path/to/private.key
+    SSLCACertificateFile /path/to/certication_authority.pem
+    SSLVerifyClient None
+
+    WSGIDaemonProcess domain.tld user=source_user group=www-data threads=25 display-name=%{GROUP}
+    WSGIProcessGroup domain.tld
+    WSGIScriptAlias / /path/to/aemanager/application.wsgi
+
+    Alias /media /path/to/virtualenv/lib/python2.6/site-packages/Django-1.2.5-py2.6.egg/django/contrib/admin/media
+    <Location /media>
+      SetHandler None
+      Order allow,deny
+      Allow from all
+    </Location> 
+
+    Alias /static /path/to/aemanager/media
+    <Location /static>
+      SetHandler None
+      Order allow,deny
+      Allow from all
+    </Location> 
+
+</VirtualHost>
