@@ -70,8 +70,11 @@ PHONENUMBER_TYPE = ((PHONENUMBER_TYPE_HOME, _('Home')),
 class PhoneNumber(OwnedObject):
     type = models.IntegerField(choices=PHONENUMBER_TYPE)
     number = models.CharField(max_length=20)
-    default = models.BooleanField()
+    default = models.BooleanField(verbose_name=_('Default'))
     contact = models.ForeignKey(Contact)
+
+    class Meta:
+        ordering = ['-default', 'type']
 
     def __unicode__(self):
         return ('%s : %s' % (self.get_type_display(), self.number))

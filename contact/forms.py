@@ -31,6 +31,10 @@ class PhoneNumberForm(ModelForm):
         model = PhoneNumber
         exclude = ['owner']
 
+    def __init__(self, *args, **kwargs):
+        super(PhoneNumberForm, self).__init__(*args, **kwargs)
+        self.fields['default'].widget.attrs['class'] = 'default-phonenumber'
+
 class ContactSearchForm(forms.Form):
     name = forms.CharField(label=_('Name'), required=False)
     email = forms.CharField(label=_('Email'), required=False)

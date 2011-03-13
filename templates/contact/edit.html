@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block extrahead %}
-<script src="{% load adminmedia %}{% admin_media_prefix %}js/jquery.min.js" type="text/javascript"></script>
+<script src="{{ MEDIA_URL }}js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
 jQuery(document).ready(function(){
     show_person_fields = function(){
@@ -45,6 +45,56 @@ jQuery(document).ready(function(){
         }
         return true;
     });
+
+    var activate_delete = function(){
+        jQuery('.delete-button').click(function(e){
+            e.preventDefault();
+            if (jQuery(e.currentTarget).parent('.inline-formset').children().first('input').val()) {
+                jQuery(e.currentTarget).parent('.inline-formset').hide();
+                jQuery(e.currentTarget).next('.delete-checkbox').children('input').attr('checked', true);
+            } else {
+                jQuery('#id_phonenumber_set-TOTAL_FORMS').val(parseInt(jQuery('#id_phonenumber_set-TOTAL_FORMS').val(), 10) - 1);
+                jQuery(e.currentTarget).parent('.inline-formset').remove();
+                var i = 0;
+                jQuery('.phonenumber-row').each(function(){
+                    jQuery('input, select',this).each(function(){
+                        jQuery(this).attr('name',jQuery(this).attr('name').replace(/(phonenumber_rows-)[0-9]+/,'$1' + i));
+                        jQuery(this).attr('id',jQuery(this).attr('id').replace(/(phonenumber_rows-)[0-9]+/,'$1' + i));
+                    });
+                    i = i + 1;
+                });
+            }
+        });
+    };
+
+    var activate_default = function(e){
+        jQuery('.default-phonenumber').attr('checked', false);
+        jQuery(e.currentTarget).attr('checked',true);
+    };
+
+    jQuery('#add-button').click(function(e){
+        e.preventDefault();
+        new_row = jQuery(e.currentTarget).parent('.inline-formset').prev('.phonenumber-row').clone();
+        jQuery(e.currentTarget).parent('.inline-formset').before(new_row);
+        jQuery('input',new_row).val('');
+        jQuery('input',new_row).attr('checked', false);
+        jQuery('option',new_row).attr('selected', false);
+        jQuery("option[value='']",new_row).attr('selected', true);
+        var row_count = jQuery('#id_phonenumber_set-TOTAL_FORMS').val();
+        jQuery('input, select, checkbox',new_row).each(function(){
+            jQuery(this).attr('name',jQuery(this).attr('name').replace(/(phonenumber_set-)[0-9]+/,'$1' + row_count));
+            jQuery(this).attr('id',jQuery(this).attr('id').replace(/(phonenumber_set-)[0-9]+/,'$1' + row_count));
+        });
+
+        jQuery(new_row).show();
+        jQuery('#id_phonenumber_set-TOTAL_FORMS').val(parseInt(jQuery('#id_phonenumber_set-TOTAL_FORMS').val(), 10) + 1);
+        activate_delete();
+        jQuery('.default-phonenumber',new_row).click(activate_default);
+    });
+
+    jQuery('.delete-checkbox').hide()
+    activate_delete();
+    jQuery('.default-phonenumber').click(activate_default);
 });
 </script>
 {% endblock %}
@@ -90,10 +140,18 @@ jQuery(document).ready(function(){
     <div><label>{% trans "Phone numbers" %} :</label></div>
     {{ phonenumberformset.management_form }}
     {% for form in phonenumberformset.forms %}
-        <div class="inline-formset">
-            {{ form.ownedobject_ptr }}{{ form.contact }}{{ form.type }} {{ form.number }} {{ form.default.label }} : {{ form.default }} {{ form.DELETE.label }} : {{ form.DELETE }}
+        <div class="inline-formset phonenumber-row">
+            {{ form.ownedobject_ptr }}
+            {{ form.contact }}
+            {{ form.type }}
+            {{ form.number }}
+            {{ form.default.label }} : {{ form.default }}
+            <a href="#" class="delete-button"><img src="{{ MEDIA_URL }}img/icon_deletelink.gif" /></a><span class="delete-checkbox">{{ form.DELETE }}</span>
         </div>
     {% endfor %}
+       <div class="inline-formset">
+            <a href="#" id="add-button"><img src="{{ MEDIA_URL }}img/icon_addlink.gif" /> {% trans "Add" %}</a>
+        </div>
     </div>
     {% with contactForm.email as field %}
     {% include "field.html" %}

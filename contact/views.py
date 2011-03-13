@@ -70,6 +70,9 @@ def contact_create_or_edit(request, id=None):
                     phonenumber.contact = contact
                     phonenumber.save(user=user)
 
+            for deleted_phonenumberrowform in phonenumberformset.deleted_forms:
+                deleted_phonenumberrowform.cleaned_data['ownedobject_ptr'].delete()
+
             messages.success(request, _('The contact has been saved successfully'))
             return redirect(reverse('contact_detail', kwargs={'id': contact.id}))
         else:
