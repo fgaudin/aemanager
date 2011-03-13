@@ -113,6 +113,9 @@ jQuery(document).ready(function(){
     {% with contactForm.contacts as field %}
     {% include "field.html" %}
     {% endwith %}
+    {% with contactForm.comment as field %}
+    {% include "field.html" %}
+    {% endwith %}
     </fieldset>
 
     <div class="submit-row">

@@ -40,6 +40,7 @@ class Contact(OwnedObject):
     email = models.EmailField(blank=True, default='', verbose_name=_('Email'))
     contacts = models.ManyToManyField("self", blank=True, null=True, verbose_name=_('Related contacts'))
     address = models.ForeignKey(Address, verbose_name=_('Address'))
+    comment = models.TextField(blank=True, default='', verbose_name=_('Comment'))
 
     def __unicode__(self):
         name = self.name

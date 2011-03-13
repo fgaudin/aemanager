@@ -49,6 +49,9 @@
     {% with contact.address as object %}{% with "country" as name %}
     {% include "detail_field.html" %}
     {% endwith %}{% endwith %}
+    {% with contact as object %}{% with "comment" as name %}
+    {% include "detail_multiline_field.html" %}
+    {% endwith %}{% endwith %}
 </fieldset>
 
 <div class="context-menu"><a href="{% url contract_add contact_id=contact.id %}">{% trans "Add a master aggreement" %}</a></div>
