@@ -26,6 +26,26 @@ download source on https://bitbucket.org/ubernostrum/django-registration/src
 $ source ~/venv/django1.2/bin/activate
 $ python setup.py install # in registration directory
 
+Handling file upload
+--------------------
+File upload is managed by django (set FILE_UPLOAD_DIR in settings)
+However, files serving is done by apache using to apache mod_xsendfile to deals
+with access control.
+
+First install apache2-prefork-dev with you package manager
+then download mod_xsendfile.c from https://tn123.org/mod_xsendfile/
+compile and install it :
+
+$ sudo apxs2 -cia mod_xsendfile.c
+
+also add or uncomment in /etc/apache2/envvars
+
+. /etc/default/locale
+
+before export LANG statement to support filenames with non ascii characters
+
+and restart apache
+
 Aemanager
 ---------
 Clone the git repository :

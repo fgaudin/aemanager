@@ -32,7 +32,7 @@ jQuery(document).ready(function(){
 
 
 {% block content %}
-<form action="" method="post" id="contract-edit-form">
+<form action="" method="post" id="contract-edit-form" enctype="multipart/form-data">
     {% csrf_token %}
     <fieldset class="module aligned">
     {% for hidden in contractForm.hidden_fields %}
@@ -50,6 +50,16 @@ jQuery(document).ready(function(){
     {% endwith %}
     {% with contractForm.title as field %}
     {% include "field.html" %}
+    {% endwith %}
+	{% with contractForm.contract_file as field %}
+    <div class="form-row">
+    {{ field.errors }}
+      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{% trans "Upload a contract" %}{% if field.field.required %}*{% endif %} :</label> {{ field }}
+      {% if field.field.help_text %}
+        <p class="help">{{ field.field.help_text|safe }}</p>
+      {% endif %}
+      </div>
+    </div>
     {% endwith %}
     <div class="big-textarea">
     {% with contractForm.content as field %}

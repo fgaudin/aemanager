@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load modeltags %}
 {% load htmltags %}
+{% load filetags %}
 
 {% block context_menu %}
 <div><a href="{% url contract_edit contract.id %}">{% trans "Edit" %}</a></div>
@@ -16,6 +17,12 @@
     </div>
     {% with contract as object %}{% with "update_date" as name %}
     {% include "detail_field.html" %}
+    {% endwith %}{% endwith %}
+	{% with contract as object %}{% with "contract_file" as name %}
+    <div class="detail-row">
+      <div><label>{{ object|verbose_name:name }} :</label>{% if object.contract_file %} <a href="{% url contract_uploaded_contract_download contract.id %}">{{ object.contract_file.name|basename|default:'' }}</a>{% endif %}
+      </div>
+    </div>
     {% endwith %}{% endwith %}
     <div class="detail-row">
       <div><label>{% trans "Contract" %} :</label><a href="{% url contract_download contract.id %}">{% trans "download pdf file" %}</a></div>

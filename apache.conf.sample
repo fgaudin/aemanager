@@ -17,6 +17,9 @@
     SSLCACertificateFile /path/to/certication_authority.pem
     SSLVerifyClient None
 
+    XSendFile On
+    XSendFilePath /path/to/uploaded_files/
+
     WSGIDaemonProcess domain.tld user=source_user group=www-data threads=25 display-name=%{GROUP}
     WSGIProcessGroup domain.tld
     WSGIScriptAlias / /path/to/aemanager/application.wsgi

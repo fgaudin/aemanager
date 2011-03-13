@@ -151,7 +151,7 @@ jQuery(document).ready(function(){
 {% endblock %}
 
 {% block content %}
-<form action="" method="post" id="proposal-edit-form">
+<form action="" method="post" id="proposal-edit-form" enctype="multipart/form-data">
     {% csrf_token %}
     <fieldset class="module aligned">
     {% for hidden in proposalForm.hidden_fields %}
@@ -200,6 +200,16 @@ jQuery(document).ready(function(){
             <a href="#" id="add-button"><img src="{{ MEDIA_URL }}img/icon_addlink.gif" /> {% trans "Add" %}</a>
         </div>
     </div>
+	{% with proposalForm.contract_file as field %}
+    <div class="form-row">
+	{{ field.errors }}
+	  <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{% trans "Upload a contract" %}{% if field.field.required %}*{% endif %} :</label> {{ field }}
+	  {% if field.field.help_text %}
+	    <p class="help">{{ field.field.help_text|safe }}</p>
+	  {% endif %}
+	  </div>
+	</div>
+    {% endwith %}
     {% with proposalForm.contract_model as field %}
     <div class="form-row">
     {{ field.errors }}

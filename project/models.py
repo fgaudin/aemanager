@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import datetime
+import unicodedata
 from custom_canvas import NumberedCanvas
 from reportlab.platypus import Paragraph, Frame, Spacer, BaseDocTemplate, PageTemplate
 from reportlab.lib.styles import ParagraphStyle
@@ -21,11 +21,18 @@ from django.db.models.aggregates import Sum
 from core.templatetags.htmltags import to_html
 from django.conf import settings
 import ho.pisa as pisa
+from django.core.files.storage import FileSystemStorage
+
+store = FileSystemStorage(location=settings.FILE_UPLOAD_DIR)
+
+def contract_upload_to_handler(instance, filename):
+        return "%s/contract/%s" % (instance.owner.username, unicodedata.normalize('NFKD', filename).encode('ascii', 'ignore'))
 
 class Contract(OwnedObject):
     customer = models.ForeignKey(Contact, verbose_name=_('Customer'), related_name="contracts")
     title = models.CharField(max_length=255, verbose_name=_('Title'))
-    content = models.TextField(verbose_name=_('Content'))
+    contract_file = models.FileField(upload_to=contract_upload_to_handler, null=True, blank=True, storage=store, verbose_name=_('Uploaded contract'))
+    content = models.TextField(verbose_name=_('Content'), null=True, blank=True)
     update_date = models.DateField(verbose_name=_('Update date'), help_text=_('format: mm/dd/yyyy'))
 
     def __unicode__(self):
@@ -158,6 +165,9 @@ class ProposalManager(models.Manager):
                                                   owner=owner).exclude(proposal__project__state__gte=PROJECT_STATE_FINISHED).aggregate(quantity=Sum('quantity'))
         return quantity_sum['quantity'] or 0
 
+def proposal_upload_to_handler(instance, filename):
+        return "%s/proposal/%s" % (instance.owner.username, unicodedata.normalize('NFKD', filename).encode('ascii', 'ignore'))
+
 class Proposal(OwnedObject):
     project = models.ForeignKey(Project)
     reference = models.CharField(max_length=20, blank=True, null=True, verbose_name=_('Reference'))
@@ -171,6 +181,7 @@ class Proposal(OwnedObject):
     payment_delay = models.IntegerField(choices=PAYMENT_DELAY, default=PAYMENT_DELAY_30_DAYS, verbose_name=_('Payment delay'), help_text=_("Can't be more than 60 days or 45 days end of month."))
     payment_delay_other = models.IntegerField(blank=True, null=True)
     payment_delay_type_other = models.IntegerField(choices=PAYMENT_DELAY_TYPE_OTHER, blank=True, null=True)
+    contract_file = models.FileField(upload_to=proposal_upload_to_handler, null=True, blank=True, storage=store, verbose_name=_('Uploaded contract'))
 
     objects = ProposalManager()
 

@@ -3,6 +3,7 @@
 {% load modeltags %}
 {% load arithmetictags %}
 {% load htmltags %}
+{% load filetags %}
 
 {% block title %}{% url project_detail proposal.project.id as project_url %}{% blocktrans with proposal.project as project and project_url as project_url %}Proposal for <a href="{{ project_url }}">{{ project }}</a>{% endblocktrans %}{% endblock %}
 
@@ -113,6 +114,12 @@
 <br />
 
 <fieldset class="module aligned">
+	{% with proposal as object %}{% with "contract_file" as name %}
+    <div class="detail-row">
+      <div><label>{{ object|verbose_name:name }} :</label>{% if object.contract_file %} <a href="{% url proposal_uploaded_contract_download proposal.id %}">{{ object.contract_file.name|basename|default:'' }}</a>{% endif %}
+      </div>
+    </div>
+    {% endwith %}{% endwith %}
     <div class="detail-row">
       <div><label>{% trans "Contract" %} :</label><a href="{% url proposal_contract_download proposal.id %}">{% trans "download pdf file" %}</a></div>
     </div>

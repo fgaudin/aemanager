@@ -1,5 +1,6 @@
 # Django settings for aemanager project.
 import os
+import logging
 
 BASE_PATH = os.path.dirname(__file__)
 
@@ -94,6 +95,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.media",
     "django.contrib.messages.context_processors.messages",
     "core.context_processors.parent_site",
+    "core.context_processors.version",
 )
 
 ROOT_URLCONF = 'aemanager.urls'
@@ -129,8 +131,8 @@ INSTALLED_APPS = (
 AUTH_PROFILE_MODULE = 'autoentrepreneur.UserProfile'
 LOGIN_URL = '/user/login/'
 LOGOUT_URL = '/user/logout/'
-REGISTRATION_OPEN = True
 LOGIN_REDIRECT_URL = '/'
+REGISTRATION_OPEN = True
 ACCOUNT_ACTIVATION_DAYS = 7
 ACCOUNT_UNREGISTER_DAYS = 7
 CSRF_FAILURE_VIEW = 'core.views.csrf_failure'
@@ -174,3 +176,5 @@ if DEBUG_TOOLBAR:
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 logging.disable(logging.DEBUG)
+
+FILE_UPLOAD_DIR = '/path/to/uploaded_files/'

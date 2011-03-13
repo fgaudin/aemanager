@@ -19,17 +19,11 @@ from django.http import HttpResponse
 from django.utils import simplejson
 from accounts.models import Invoice
 from core.decorators import settings_required
-from django.utils.formats import localize
-from custom_canvas import NumberedCanvas
 from autoentrepreneur.decorators import subscription_required
 import datetime
-from reportlab.platypus import Paragraph, Frame, Spacer, BaseDocTemplate, PageTemplate
-from reportlab.lib.styles import ParagraphStyle
-from reportlab.rl_config import defaultPageSize
-from reportlab.lib.units import inch
-from reportlab.lib.enums import TA_CENTER
-from reportlab.platypus import Table, TableStyle
-from reportlab.lib import colors
+from django.utils.encoding import smart_str
+import os
+from django.conf import settings
 
 @settings_required
 @subscription_required
@@ -57,7 +51,7 @@ def contract_create_or_edit(request, id=None, contact_id=None):
 
     contracts = Contract.objects.filter(owner=request.user).exclude(content='')
     if request.method == 'POST':
-        contractForm = ContractForm(request.POST, instance=contract, prefix="contract")
+        contractForm = ContractForm(request.POST, request.FILES, instance=contract, prefix="contract")
         contractForm.fields['contract_model'].queryset = contracts
 
         if contractForm.is_valid():
@@ -118,6 +112,18 @@ def contract_download(request, id):
     response['Content-Disposition'] = 'attachment; filename=%s' % (filename)
 
     contract.to_pdf(request.user, response)
+    return response
+
+@settings_required
+@subscription_required
+def contract_uploaded_contract_download(request, id):
+    contract = get_object_or_404(Contract, pk=id, owner=request.user)
+
+    response = HttpResponse(mimetype='application/force-download')
+    response['Content-Disposition'] = 'attachment;filename="%s"'\
+                                    % smart_str(contract.contract_file.name)
+    response["X-Sendfile"] = "%s%s" % (settings.FILE_UPLOAD_DIR, contract.contract_file.name)
+    response['Content-length'] = contract.contract_file.size
     return response
 
 @settings_required
@@ -333,6 +339,7 @@ def project_delete(request, id):
 @subscription_required
 @commit_on_success
 def proposal_create_or_edit(request, id=None, project_id=None):
+    user = request.user
     if id:
         title = _('Edit a proposal')
         proposal = get_object_or_404(Proposal, pk=id, owner=request.user)
@@ -351,16 +358,16 @@ def proposal_create_or_edit(request, id=None, project_id=None):
     proposals = Proposal.objects.filter(owner=request.user).exclude(contract_content='')
 
     if request.method == 'POST':
-        proposalForm = ProposalForm(request.POST, instance=proposal, prefix="proposal")
+        proposalForm = ProposalForm(request.POST, request.FILES, instance=proposal, prefix="proposal")
         proposalForm.fields['contract_model'].queryset = proposals
         proposalrowformset = ProposalRowFormSet(request.POST, instance=proposal)
         if proposalForm.is_valid() and proposalrowformset.is_valid():
             try:
-                user = request.user
                 proposal = proposalForm.save(commit=False)
                 proposal.project = project
                 proposal.update_date = datetime.datetime.now()
                 proposal.save(user=user)
+
                 proposalForm.save_m2m()
                 for proposalrowform in proposalrowformset.forms:
                     if proposalrowform.cleaned_data:
@@ -474,6 +481,18 @@ def proposal_contract_download(request, id):
     response['Content-Disposition'] = 'attachment; filename=%s' % (filename)
 
     proposal.contract_to_pdf(request.user, response)
+    return response
+
+@settings_required
+@subscription_required
+def proposal_uploaded_contract_download(request, id):
+    proposal = get_object_or_404(Proposal, pk=id, owner=request.user)
+
+    response = HttpResponse(mimetype='application/force-download')
+    response['Content-Disposition'] = 'attachment;filename="%s"'\
+                                    % smart_str(proposal.contract_file.name)
+    response["X-Sendfile"] = settings.FILE_UPLOAD_DIR + proposal.contract_file.name
+    response['Content-length'] = proposal.contract_file.size
     return response
 
 @settings_required
