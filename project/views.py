@@ -43,10 +43,12 @@ def contract_create_or_edit(request, id=None, contact_id=None):
     if id:
         title = _('Edit a master aggreement')
         contract = get_object_or_404(Contract, pk=id, owner=request.user)
+        old_file = contract.contract_file
         customer = contract.customer
     else:
         title = _('Add a master aggreement')
         contract = None
+        old_file = None
         customer = get_object_or_404(Contact, pk=contact_id, owner=request.user)
 
     contracts = Contract.objects.filter(owner=request.user).exclude(content='')
@@ -55,6 +57,13 @@ def contract_create_or_edit(request, id=None, contact_id=None):
         contractForm.fields['contract_model'].queryset = contracts
 
         if contractForm.is_valid():
+            if request.FILES:
+                try:
+                    if old_file:
+                        if os.path.exists(old_file.path):
+                            os.remove(old_file.path)
+                except:
+                    pass
             user = request.user
             contract = contractForm.save(commit=False)
             contract.update_date = datetime.datetime.now()
@@ -343,10 +352,12 @@ def proposal_create_or_edit(request, id=None, project_id=None):
     if id:
         title = _('Edit a proposal')
         proposal = get_object_or_404(Proposal, pk=id, owner=request.user)
+        old_file = proposal.contract_file
         project = proposal.project
     else:
         title = _('Add a proposal')
         proposal = None
+        old_file = None
         project = get_object_or_404(Project, pk=project_id, owner=request.user)
 
     ProposalRowFormSet = inlineformset_factory(Proposal,
@@ -362,6 +373,13 @@ def proposal_create_or_edit(request, id=None, project_id=None):
         proposalForm.fields['contract_model'].queryset = proposals
         proposalrowformset = ProposalRowFormSet(request.POST, instance=proposal)
         if proposalForm.is_valid() and proposalrowformset.is_valid():
+            if request.FILES:
+                try:
+                    if old_file:
+                        if os.path.exists(old_file.path):
+                            os.remove(old_file.path)
+                except:
+                    pass
             try:
                 proposal = proposalForm.save(commit=False)
                 proposal.project = project

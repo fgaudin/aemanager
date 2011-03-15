@@ -287,7 +287,7 @@ def settings_edit(request):
                         if os.path.exists(old_image.path):
                             os.remove(old_image.path)
                 except:
-                    raise
+                    pass
             userform.save()
             profile = profileform.save()
             address = addressform.save(commit=False)
