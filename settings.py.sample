@@ -178,3 +178,4 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s',
 logging.disable(logging.DEBUG)
 
 FILE_UPLOAD_DIR = '/path/to/uploaded_files/'
+FILE_MAX_SIZE = '1 Mo' # just to display in help text. Must match LimitRequestBody in Apache

@@ -31,7 +31,7 @@ def contract_upload_to_handler(instance, filename):
 class Contract(OwnedObject):
     customer = models.ForeignKey(Contact, verbose_name=_('Customer'), related_name="contracts")
     title = models.CharField(max_length=255, verbose_name=_('Title'))
-    contract_file = models.FileField(upload_to=contract_upload_to_handler, null=True, blank=True, storage=store, verbose_name=_('Uploaded contract'))
+    contract_file = models.FileField(upload_to=contract_upload_to_handler, null=True, blank=True, storage=store, verbose_name=_('Uploaded contract'), help_text=_('max. %(FILE_MAX_SIZE)s') % {'FILE_MAX_SIZE': settings.FILE_MAX_SIZE})
     content = models.TextField(verbose_name=_('Content'), null=True, blank=True)
     update_date = models.DateField(verbose_name=_('Update date'), help_text=_('format: mm/dd/yyyy'))
 
@@ -181,7 +181,7 @@ class Proposal(OwnedObject):
     payment_delay = models.IntegerField(choices=PAYMENT_DELAY, default=PAYMENT_DELAY_30_DAYS, verbose_name=_('Payment delay'), help_text=_("Can't be more than 60 days or 45 days end of month."))
     payment_delay_other = models.IntegerField(blank=True, null=True)
     payment_delay_type_other = models.IntegerField(choices=PAYMENT_DELAY_TYPE_OTHER, blank=True, null=True)
-    contract_file = models.FileField(upload_to=proposal_upload_to_handler, null=True, blank=True, storage=store, verbose_name=_('Uploaded contract'))
+    contract_file = models.FileField(upload_to=proposal_upload_to_handler, null=True, blank=True, storage=store, verbose_name=_('Uploaded contract'), help_text=_('max. %(FILE_MAX_SIZE)s') % {'FILE_MAX_SIZE': settings.FILE_MAX_SIZE})
 
     objects = ProposalManager()
 
