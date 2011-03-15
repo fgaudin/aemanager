@@ -7,7 +7,7 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.rl_config import defaultPageSize
 from reportlab.lib.units import inch
 from reportlab.lib.enums import TA_CENTER
-from reportlab.platypus import Table, TableStyle
+from reportlab.platypus import Table, TableStyle, Image
 from reportlab.lib import colors
 
 from decimal import Decimal
@@ -336,7 +336,12 @@ class Proposal(OwnedObject):
         %s<br/>
         """
 
-        data.append([Paragraph(user_header_content, styleH),
+        if user.get_profile().logo_file:
+            user_header = Image("%s%s" % (settings.FILE_UPLOAD_DIR, user.get_profile().logo_file))
+        else:
+            user_header = Paragraph(user_header_content, styleH)
+
+        data.append([user_header,
                     '',
                     Paragraph(customer_header_content % (self.project.customer.name,
                                                          self.project.customer.address.street.replace("\n", "<br/>"),
@@ -345,9 +350,16 @@ class Proposal(OwnedObject):
                                                          self.project.customer.address.country or ''), styleH)])
 
         t1 = Table(data, [3.5 * inch, 0.3 * inch, 3.5 * inch], [1.9 * inch])
-        t1.setStyle(TableStyle([('BOX', (0, 0), (0, 0), 0.25, colors.black),
-                                ('BOX', (2, 0), (2, 0), 0.25, colors.black),
-                                ('VALIGN', (0, 0), (-1, -1), 'TOP'), ]))
+
+        table_style = [('BOX', (0, 0), (0, 0), 0.25, colors.black),
+                       ('BOX', (2, 0), (2, 0), 0.25, colors.black),
+                       ('VALIGN', (0, 0), (-1, -1), 'TOP'), ]
+
+        if user.get_profile().logo_file:
+            table_style.append(('TOPPADDING', (0, 0), (0, 0), 0))
+            table_style.append(('LEFTPADDING', (0, 0), (0, 0), 0))
+
+        t1.setStyle(TableStyle(table_style))
 
         story.append(t1)
 

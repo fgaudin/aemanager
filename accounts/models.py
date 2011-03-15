@@ -8,7 +8,7 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.rl_config import defaultPageSize
 from reportlab.lib.units import inch
 from reportlab.lib.enums import TA_CENTER
-from reportlab.platypus import Table, TableStyle
+from reportlab.platypus import Table, TableStyle, Image
 from reportlab.lib import colors
 from django.db import models
 from core.models import OwnedObject
@@ -19,6 +19,7 @@ from project.models import Row, Proposal, update_row_amount, \
     ROW_CATEGORY_SERVICE, ROW_CATEGORY, PROPOSAL_STATE_ACCEPTED, ProposalRow
 from django.db.models.aggregates import Sum, Min, Max
 from django.db.models.signals import post_save, pre_save, post_delete
+from django.conf import settings
 
 PAYMENT_TYPE_CASH = 1
 PAYMENT_TYPE_BANK_CARD = 2
@@ -275,7 +276,13 @@ class Invoice(OwnedObject):
         %s<br/>
         %s %s<br/>
         %s
-        """
+        """ % (user.first_name,
+               user.last_name,
+               user.get_profile().company_id,
+               user.get_profile().address.street.replace("\n", "<br/>"),
+               user.get_profile().address.zipcode,
+               user.get_profile().address.city,
+               user.get_profile().address.country or '')
 
         customer_header_content = """
         %s<br/>
@@ -286,13 +293,12 @@ class Invoice(OwnedObject):
         %s<br/>
         """
 
-        data.append([Paragraph(user_header_content % (user.first_name,
-                                                      user.last_name,
-                                                      user.get_profile().company_id,
-                                                      user.get_profile().address.street.replace("\n", "<br/>"),
-                                                      user.get_profile().address.zipcode,
-                                                      user.get_profile().address.city,
-                                                      user.get_profile().address.country or ''), styleH),
+        if user.get_profile().logo_file:
+            user_header = Image("%s%s" % (settings.FILE_UPLOAD_DIR, user.get_profile().logo_file))
+        else:
+            user_header = Paragraph(user_header_content, styleH)
+
+        data.append([user_header,
                     '',
                     Paragraph(customer_header_content % (self.customer.name,
                                                          self.customer.legal_form,
@@ -302,14 +308,19 @@ class Invoice(OwnedObject):
                                                          self.customer.address.city,
                                                          self.customer.address.country or ''), styleH)])
 
-        t1 = Table(data, [3.5 * inch, 0.3 * inch, 3.5 * inch], [1.6 * inch])
-        t1.setStyle(TableStyle([('BOX', (0, 0), (0, 0), 0.25, colors.black),
-                                ('BOX', (2, 0), (2, 0), 0.25, colors.black),
-                                ('VALIGN', (0, 0), (-1, -1), 'TOP'), ]))
+        t1 = Table(data, [3.5 * inch, 0.3 * inch, 3.5 * inch], [1.9 * inch])
+        table_style = [('BOX', (0, 0), (0, 0), 0.25, colors.black),
+                       ('BOX', (2, 0), (2, 0), 0.25, colors.black),
+                       ('VALIGN', (0, 0), (-1, -1), 'TOP'), ]
+        if user.get_profile().logo_file:
+            table_style.append(('TOPPADDING', (0, 0), (0, 0), 0))
+            table_style.append(('LEFTPADDING', (0, 0), (0, 0), 0))
+
+        t1.setStyle(TableStyle(table_style))
 
         story.append(t1)
 
-        spacer1 = Spacer(doc.width, 0.4 * inch)
+        spacer1 = Spacer(doc.width, 0.25 * inch)
         story.append(spacer1)
 
         data = []
@@ -323,7 +334,7 @@ class Invoice(OwnedObject):
 
         story.append(t2)
 
-        spacer2 = Spacer(doc.width, 0.4 * inch)
+        spacer2 = Spacer(doc.width, 0.25 * inch)
         story.append(spacer2)
 
         story.append(Paragraph(_("INVOICE #%d") % (self.invoice_id), styleTitle))

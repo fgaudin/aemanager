@@ -11,12 +11,28 @@ jQuery(document).ready(function(){
     jQuery.include('{{ MEDIA_URL }}js/datepicker_i18n','jquery.ui.datepicker-'+"{{ LANGUAGE_CODE }}".substr(0,2)+'.js');
 
     jQuery('.date').datepicker(jQuery.datepicker.regional["{{ LANGUAGE_CODE }}".substr(0,2)]);
+
+    jQuery('#delete-logo').click(function(e){
+        e.preventDefault();
+        if (window.confirm('{% trans "Are you sure to want to delete your customer header ?" %}')) {
+            jQuery.post("{% url logo_delete %}",
+                        {"csrfmiddlewaretoken": '{{ csrf_token }}'},
+                        function(data){
+                            if(data.error == 'ok') {
+                                jQuery('#logo').remove();
+                            } else {
+                                alert('{% trans "An error occured while deleting your custom header" %}')
+                            }
+                        },
+                        "json");
+        }
+    });
 });
 </script>
 {% endblock %}
 
 {% block content %}
-<form action="" method="post">
+<form action="" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <fieldset class="module aligned">
     {% with user as object %}{% with "username" as name %}
@@ -32,7 +48,119 @@ jQuery(document).ready(function(){
     {% include "form.html" %}
     {% endwith %}
     {% with profileform as form %}
-    {% include "form.html" %}
+    {% for hidden in form.hidden_fields %}
+    {{ hidden }}
+    {% endfor %}
+    {% with form.phonenumber as field %}
+    <div class="form-row">
+    {{ field.errors }}
+      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label> {{ field }}
+      {% if field.field.help_text %}
+        <p class="help">{{ field.field.help_text|safe }}</p>
+      {% endif %}
+      </div>
+    </div>
+    {% endwith %}
+    {% with form.professional_email as field %}
+    <div class="form-row">
+    {{ field.errors }}
+      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label> {{ field }}
+      {% if field.field.help_text %}
+        <p class="help">{{ field.field.help_text|safe }}</p>
+      {% endif %}
+      </div>
+    </div>
+    {% endwith %}
+    {% with form.company_name as field %}
+    <div class="form-row">
+    {{ field.errors }}
+      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label> {{ field }}
+      {% if field.field.help_text %}
+        <p class="help">{{ field.field.help_text|safe }}</p>
+      {% endif %}
+      </div>
+    </div>
+    {% endwith %}
+    {% with form.company_id as field %}
+    <div class="form-row">
+    {{ field.errors }}
+      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label> {{ field }}
+      {% if field.field.help_text %}
+        <p class="help">{{ field.field.help_text|safe }}</p>
+      {% endif %}
+      </div>
+    </div>
+    {% endwith %}
+    {% with form.activity as field %}
+    <div class="form-row">
+    {{ field.errors }}
+      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label> {{ field }}
+      {% if field.field.help_text %}
+        <p class="help">{{ field.field.help_text|safe }}</p>
+      {% endif %}
+      </div>
+    </div>
+    {% endwith %}
+    {% with form.professional_category as field %}
+    <div class="form-row">
+    {{ field.errors }}
+      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label> {{ field }}
+      {% if field.field.help_text %}
+        <p class="help">{{ field.field.help_text|safe }}</p>
+      {% endif %}
+      </div>
+    </div>
+    {% endwith %}
+    {% with form.creation_date as field %}
+    <div class="form-row">
+    {{ field.errors }}
+      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label> {{ field }}
+      {% if field.field.help_text %}
+        <p class="help">{{ field.field.help_text|safe }}</p>
+      {% endif %}
+      </div>
+    </div>
+    {% endwith %}
+    {% with form.creation_help as field %}
+    <div class="form-row">
+    {{ field.errors }}
+      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label> {{ field }}
+      {% if field.field.help_text %}
+        <p class="help">{{ field.field.help_text|safe }}</p>
+      {% endif %}
+      </div>
+    </div>
+    {% endwith %}
+    {% with form.freeing_tax_payment as field %}
+    <div class="form-row">
+    {{ field.errors }}
+      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label> {{ field }}
+      {% if field.field.help_text %}
+        <p class="help">{{ field.field.help_text|safe }}</p>
+      {% endif %}
+      </div>
+    </div>
+    {% endwith %}
+    {% with form.payment_option as field %}
+    <div class="form-row">
+    {{ field.errors }}
+      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label> {{ field }}
+      {% if field.field.help_text %}
+        <p class="help">{{ field.field.help_text|safe }}</p>
+      {% endif %}
+      </div>
+    </div>
+    {% endwith %}
+    {% with form.logo_file as field %}
+    <div class="form-row">
+    {{ field.errors }}
+      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label> <div class="multiline-value">{{ field }}{% if logo %}<div id="logo"><img src="{% url logo_overview %}"/> <a href="#" id="delete-logo"><img src="{{ MEDIA_URL }}img/icon_deletelink.gif" /></a></div>{% endif %}</div>
+      {% if field.field.help_text %}
+        <p class="help">{{ field.field.help_text|safe }}</p>
+      {% endif %}
+      </div>
+    </div>
+    {% endwith %}
     {% endwith %}
     </fieldset>
 

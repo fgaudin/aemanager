@@ -6,6 +6,14 @@ urlpatterns = patterns('core.views',
         view='settings_edit',
         name='settings_edit'),
     url(
+        regex=r'^logo_overview/$',
+        view='logo_overview',
+        name='logo_overview'),
+    url(
+        regex=r'^logo_delete/$',
+        view='logo_delete',
+        name='logo_delete'),
+    url(
         regex=r'^change_password/$',
         view='change_password',
         name='change_password'),

@@ -17,7 +17,13 @@ $ source ~/venv/django1.2/bin/activate
 
 Django and other stuff
 ------
-easy_install django psycopg2 django-extensions werkzeug south reportlab pypdf html5lib pisa
+Install with your package manager :
+
+libjpeg libjpeg-dev libfreetype6 libfreetype6-dev
+
+then do
+
+easy_install django psycopg2 django-extensions werkzeug south reportlab pypdf html5lib pisa pil
 
 For django-registration :
 

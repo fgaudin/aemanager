@@ -27,7 +27,7 @@ from django.core.mail import mail_admins
 from announcement.models import Announcement
 from contact.models import Contact, CONTACT_TYPE_COMPANY, Address
 from django.contrib.sites.models import Site
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 from django.core.mail.message import EmailMessage
 from django.template import loader
 from django.contrib.admin.views.decorators import staff_member_required
@@ -36,6 +36,8 @@ import datetime
 import urllib, urllib2
 from django.conf import settings
 from registration.models import RegistrationProfile
+from django.utils.encoding import smart_str
+import os
 
 @settings_required
 @subscription_required
@@ -270,14 +272,22 @@ def index(request):
 def settings_edit(request):
     user = request.user
     profile = user.get_profile()
+    old_image = profile.logo_file
     address = profile.address
 
     if request.method == 'POST':
         userform = UserForm(request.POST, prefix="user", instance=user)
-        profileform = UserProfileForm(request.POST, prefix="profile", instance=profile)
+        profileform = UserProfileForm(request.POST, request.FILES, prefix="profile", instance=profile)
         addressform = AddressForm(request.POST, prefix="address", instance=address)
 
         if userform.is_valid() and profileform.is_valid() and addressform.is_valid():
+            if request.FILES:
+                try:
+                    if old_image:
+                        if os.path.exists(old_image.path):
+                            os.remove(old_image.path)
+                except:
+                    raise
             userform.save()
             profile = profileform.save()
             address = addressform.save(commit=False)
@@ -298,8 +308,42 @@ def settings_edit(request):
                                'title': _('Settings'),
                                'userform': userform,
                                'profileform': profileform,
-                               'addressform': addressform},
+                               'addressform': addressform,
+                               'logo': user.get_profile().logo_file},
                               context_instance=RequestContext(request))
+
+@login_required
+@commit_on_success
+def logo_overview(request):
+    file = request.user.get_profile().logo_file
+    if not file:
+        return HttpResponseNotFound()
+
+    response = HttpResponse(mimetype='application/force-download')
+    response['Content-Disposition'] = 'attachment;filename="%s"'\
+                                    % smart_str(file.name)
+    response["X-Sendfile"] = settings.FILE_UPLOAD_DIR + file.name
+    response['Content-length'] = file.size
+    return response
+
+@login_required
+@commit_on_success
+def logo_delete(request):
+    response = {'error': 'ko'}
+    if request.POST:
+        profile = request.user.get_profile()
+        try:
+            if profile.logo_file:
+                if os.path.exists(profile.logo_file.path):
+                    os.remove(profile.logo_file.path)
+                profile.logo_file = ""
+                profile.save()
+            response['error'] = 'ok'
+        except:
+            pass
+
+    return HttpResponse(simplejson.dumps(response),
+                        mimetype='application/javascript')
 
 @login_required
 @commit_on_success

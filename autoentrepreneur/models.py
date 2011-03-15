@@ -13,6 +13,8 @@ from django.contrib.sites.models import Site
 import datetime
 from django.conf import settings
 from registration.signals import user_registered
+from django.core.files.storage import FileSystemStorage
+import unicodedata
 
 AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC = 1
 AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC = 2
@@ -124,6 +126,11 @@ PROFESSIONAL_FORMATION_TAX_RATE = {AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_TRADER
                                    AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_CRAFTSMAN_ALSACE: 0.17,
                                    AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_LIBERAL: 0.2}
 
+store = FileSystemStorage(location=settings.FILE_UPLOAD_DIR)
+
+def logo_upload_to_handler(instance, filename):
+        return "%s/logo/%s" % (instance.user.username, unicodedata.normalize('NFKD', filename).encode('ascii', 'ignore'))
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
     phonenumber = models.CharField(max_length=20, blank=True, default='', verbose_name=_('Phone number'), help_text=_('will appear on your proposals if set'))
@@ -138,6 +145,7 @@ class UserProfile(models.Model):
     freeing_tax_payment = models.BooleanField(verbose_name=_('Freeing tax payment')) # versement liberatoire
     payment_option = models.IntegerField(choices=AUTOENTREPRENEUR_PAYMENT_OPTION, blank=True, null=True, verbose_name=_('Payment option'))
     unregister_datetime = models.DateTimeField(verbose_name=_('Unregister date'), null=True, blank=True)
+    logo_file = models.FileField(upload_to=logo_upload_to_handler, null=True, blank=True, storage=store, verbose_name=_('Custom header'), help_text=_('will appear in place of your personnal informations on proposals and invoices. Maximum width and height: 252x137'))
 
     def __unicode__(self):
         return self.user.__unicode__()
