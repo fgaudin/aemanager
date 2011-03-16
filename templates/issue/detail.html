@@ -5,11 +5,11 @@
 {% block context_menu %}
 {% if issue.is_open %}<div><a href="{% url issue_list %}">{% trans "Back to list" %}</a></div>{% endif %}
 {% if issue.is_closed %}<div><a href="{% url closed_issue_list %}">{% trans "Back to list" %}</a></div>{% endif %}
-{% if issue.owner == user %}
-<div><a href="{% url issue_edit issue.id %}">{% trans "Edit" %}</a></div>
+{% if issue.owner == user or user.is_superuser %}
+{% if issue.owner == user %}<div><a href="{% url issue_edit issue.id %}">{% trans "Edit" %}</a></div>{% endif %}
 {% if issue.is_open %}<div><a href="{% url issue_close issue.id %}">{% trans "Close" %}</a></div>{% endif %}
 {% if issue.is_closed %}<div><a href="{% url issue_reopen issue.id %}">{% trans "Reopen" %}</a></div>{% endif %}
-<div><a href="{% url issue_delete issue.id %}">{% trans "Delete" %}</a></div>
+{% if issue.owner == user %}<div><a href="{% url issue_delete issue.id %}">{% trans "Delete" %}</a></div>{% endif %}
 {% endif %}
 {% endblock %}
 

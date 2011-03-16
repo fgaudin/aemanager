@@ -83,6 +83,21 @@ class IssuePermissionTest(TestCase):
                                     {'message': 'Closed'})
         self.assertEquals(response.status_code, 404)
 
+    def testPostCloseIssueByAdmin(self):
+        user = User.objects.get(pk=1)
+        user.is_superuser = True
+        user.save()
+        i1 = Issue.objects.create(owner_id=2,
+                                  category=ISSUE_CATEGORY_BUG,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_OPEN)
+        response = self.client.post(reverse('issue_close', kwargs={'id': i1.id}),
+                                    {'message': 'Closed'})
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals(Issue.objects.get(pk=i1.id).state, ISSUE_STATE_CLOSED)
+
     def testGetReopenIssue(self):
         i1 = Issue.objects.create(owner_id=2,
                                   category=ISSUE_CATEGORY_BUG,
@@ -104,6 +119,22 @@ class IssuePermissionTest(TestCase):
         response = self.client.post(reverse('issue_reopen', kwargs={'id': i1.id}),
                                     {'message': 'Reopen'})
         self.assertEquals(response.status_code, 404)
+
+    def testPostReopenIssueByAdmin(self):
+        user = User.objects.get(pk=1)
+        user.is_superuser = True
+        user.save()
+        i1 = Issue.objects.create(owner_id=2,
+                                  category=ISSUE_CATEGORY_BUG,
+                                  subject='test subject',
+                                  message='test message',
+                                  update_date=datetime.datetime.now(),
+                                  state=ISSUE_STATE_CLOSED)
+
+        response = self.client.post(reverse('issue_reopen', kwargs={'id': i1.id}),
+                                    {'message': 'Reopen'})
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals(Issue.objects.get(pk=i1.id).state, ISSUE_STATE_OPEN)
 
     def testCommentIssue(self):
         """

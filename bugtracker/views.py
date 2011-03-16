@@ -99,10 +99,15 @@ def issue_create_or_edit(request, id=None):
 @settings_required
 @commit_on_success
 def issue_close(request, id):
-    issue = get_object_or_404(Issue,
-                              pk=id,
-                              owner=request.user,
-                              category__in=[ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE])
+    if not request.user.is_superuser:
+        issue = get_object_or_404(Issue,
+                                  pk=id,
+                                  owner=request.user,
+                                  category__in=[ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE])
+    else:
+        issue = get_object_or_404(Issue,
+                                  pk=id,
+                                  category__in=[ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE])
 
     if request.method == 'POST':
         commentForm = CommentForm(request.POST)
@@ -113,7 +118,6 @@ def issue_close(request, id):
             comment.owner = request.user
             comment.save()
             issue.state = ISSUE_STATE_CLOSED
-            issue.owner = request.user
             issue.save()
             Vote.objects.filter(issue=issue).delete()
             messages.success(request, _('The issue has been closed successfully'))
@@ -130,10 +134,15 @@ def issue_close(request, id):
 @settings_required
 @commit_on_success
 def issue_reopen(request, id):
-    issue = get_object_or_404(Issue,
-                              pk=id,
-                              owner=request.user,
-                              category__in=[ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE])
+    if not request.user.is_superuser:
+        issue = get_object_or_404(Issue,
+                                  pk=id,
+                                  owner=request.user,
+                                  category__in=[ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE])
+    else:
+        issue = get_object_or_404(Issue,
+                                  pk=id,
+                                  category__in=[ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE])
 
     if request.method == 'POST':
         commentForm = CommentForm(request.POST)
@@ -144,7 +153,6 @@ def issue_reopen(request, id):
             comment.owner = request.user
             comment.save()
             issue.state = ISSUE_STATE_OPEN
-            issue.owner = request.user
             issue.save()
             domain = Site.objects.get_current().domain
             mail_subject = _('An issue has been reopened')
