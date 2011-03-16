@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-15 23:02+0100\n"
+"POT-Creation-Date: 2011-03-16 23:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -50,14 +50,14 @@ msgstr ""
 msgid "This field is required since invoice state is set to \"paid\"."
 msgstr ""
 
-#: accounts/forms.py:54 accounts/models.py:346 project/forms.py:63
+#: accounts/forms.py:54 accounts/models.py:350 project/forms.py:63
 #: project/models.py:389 project/models.py:545
 #: templates/invoice/detail.html:72 templates/proposal/detail.html:66
 #: templates/proposal/detail_ajax.html:33
 msgid "Quantity"
 msgstr ""
 
-#: accounts/forms.py:55 accounts/models.py:346 project/forms.py:64
+#: accounts/forms.py:55 accounts/models.py:350 project/forms.py:64
 #: project/models.py:389 project/models.py:546
 #: templates/invoice/detail.html:73 templates/proposal/detail.html:67
 #: templates/proposal/detail_ajax.html:34
@@ -196,67 +196,77 @@ msgstr ""
 msgid "Invoice #%(invoice_id)d"
 msgstr ""
 
-#: accounts/models.py:330 project/models.py:373
+#: accounts/models.py:334 project/models.py:373
 #, python-format
 msgid "Date : %s"
 msgstr ""
 
-#: accounts/models.py:340
+#: accounts/models.py:344
 #, python-format
 msgid "INVOICE #%d"
 msgstr ""
 
-#: accounts/models.py:346 project/models.py:389 project/models.py:543
+#: accounts/models.py:350 project/models.py:389 project/models.py:543
 #: templates/invoice/detail.html:68 templates/proposal/detail.html:64
 #: templates/proposal/detail_ajax.html:31
 msgid "Label"
 msgstr ""
 
-#: accounts/models.py:346 project/models.py:389
+#: accounts/models.py:350 project/models.py:389
 #: templates/core/sales_widget.html:38
 msgid "Total"
 msgstr ""
 
-#: accounts/models.py:401
+#: accounts/models.py:405
 #, python-format
 msgid "Payment date : %s"
 msgstr ""
 
-#: accounts/models.py:402
+#: accounts/models.py:406
 #, python-format
 msgid "Penalty begins on : %s"
 msgstr ""
 
-#: accounts/models.py:403
+#: accounts/models.py:407
 #, python-format
 msgid "Penalty rate : %s"
 msgstr ""
 
-#: accounts/models.py:404
+#: accounts/models.py:408
 #, python-format
 msgid "Discount conditions : %s"
 msgstr ""
 
-#: accounts/models.py:406 project/models.py:446
+#: accounts/models.py:411
+#, python-format
+msgid "IBAN/BBAN : %s"
+msgstr ""
+
+#: accounts/models.py:413
+#, python-format
+msgid "BIC/SWIFT : %s"
+msgstr ""
+
+#: accounts/models.py:417 project/models.py:446
 #, python-format
 msgid "TOTAL excl. VAT : %(amount)s %(currency)s"
 msgstr ""
 
-#: accounts/models.py:411 project/models.py:451
+#: accounts/models.py:422 project/models.py:451
 #, python-format
 msgid "Execution dates : %(begin_date)s to %(end_date)s"
 msgstr ""
 
-#: accounts/models.py:427 templates/invoice/detail.html:69
+#: accounts/models.py:438 templates/invoice/detail.html:69
 #: templates/invoice/edit.html:21 templates/invoice/edit.html.py:66
 msgid "Proposal"
 msgstr ""
 
-#: accounts/models.py:428
+#: accounts/models.py:439
 msgid "Balance payments for the proposal"
 msgstr ""
 
-#: accounts/models.py:428
+#: accounts/models.py:439
 msgid ""
 "\"Balancing payments for the proposal\" means there will be no future "
 "invoices for the selected proposal. Thus the amount remaining to invoice for "
@@ -506,21 +516,33 @@ msgid "Unregister date"
 msgstr ""
 
 #: autoentrepreneur/models.py:148
+msgid "IBAN/BBAN"
+msgstr ""
+
+#: autoentrepreneur/models.py:148 autoentrepreneur/models.py:149
+msgid "will appear on your invoices if set"
+msgstr ""
+
+#: autoentrepreneur/models.py:149
+msgid "BIC/SWIFT"
+msgstr ""
+
+#: autoentrepreneur/models.py:150
 msgid "Custom header"
 msgstr ""
 
-#: autoentrepreneur/models.py:148
+#: autoentrepreneur/models.py:150
 msgid ""
 "will appear in place of your personnal informations on proposals and "
 "invoices. Maximum width and height: 252x137"
 msgstr ""
 
-#: autoentrepreneur/models.py:162 autoentrepreneur/tests.py:651
+#: autoentrepreneur/models.py:164 autoentrepreneur/tests.py:651
 #, python-format
 msgid "You've just unregistered from %(site)s"
 msgstr ""
 
-#: autoentrepreneur/models.py:163
+#: autoentrepreneur/models.py:165
 #, python-format
 msgid ""
 "You have left the site and your data will been deleted in "
@@ -531,7 +553,7 @@ msgid ""
 "today, please come back to test later."
 msgstr ""
 
-#: autoentrepreneur/models.py:169
+#: autoentrepreneur/models.py:171
 #: templates/registration/activation_email.txt:3
 #: templates/registration/password_reset_email.html:13
 #, python-format
@@ -583,7 +605,7 @@ msgstr ""
 msgid "Subject"
 msgstr ""
 
-#: bugtracker/models.py:31 bugtracker/models.py:60 bugtracker/views.py:199
+#: bugtracker/models.py:31 bugtracker/models.py:60 bugtracker/views.py:207
 #: core/forms.py:62 newsletter/models.py:15 templates/issue/detail.html:61
 #: templates/message/detail.html:42
 msgid "Message"
@@ -596,46 +618,46 @@ msgstr ""
 msgid "Update date"
 msgstr ""
 
-#: bugtracker/models.py:61 bugtracker/models.py:75 bugtracker/views.py:177
+#: bugtracker/models.py:61 bugtracker/models.py:75 bugtracker/views.py:185
 msgid "Issue"
 msgstr ""
 
-#: bugtracker/tests.py:449 bugtracker/views.py:66
+#: bugtracker/tests.py:480 bugtracker/views.py:66
 msgid "An issue has been opened"
 msgstr ""
 
-#: bugtracker/tests.py:484 bugtracker/views.py:62
+#: bugtracker/tests.py:515 bugtracker/views.py:62
 msgid "An issue has been updated"
 msgstr ""
 
-#: bugtracker/tests.py:559 bugtracker/views.py:150
+#: bugtracker/tests.py:590 bugtracker/views.py:158
 msgid "An issue has been reopened"
 msgstr ""
 
-#: bugtracker/tests.py:575 bugtracker/tests.py:613 bugtracker/tests.py:655
-#: bugtracker/views.py:243
+#: bugtracker/tests.py:606 bugtracker/tests.py:644 bugtracker/tests.py:686
+#: bugtracker/views.py:251
 msgid "A comment has been added"
 msgstr ""
 
-#: bugtracker/tests.py:615 bugtracker/tests.py:616 bugtracker/tests.py:657
-#: bugtracker/tests.py:658 bugtracker/views.py:262
+#: bugtracker/tests.py:646 bugtracker/tests.py:647 bugtracker/tests.py:688
+#: bugtracker/tests.py:689 bugtracker/views.py:270
 #, python-format
 msgid "A new comment has been added on issue #%(id)d"
 msgstr ""
 
-#: bugtracker/tests.py:694 bugtracker/views.py:236
+#: bugtracker/tests.py:725 bugtracker/views.py:244
 msgid "A comment has been updated"
 msgstr ""
 
-#: bugtracker/tests.py:808 bugtracker/views.py:84
+#: bugtracker/tests.py:839 bugtracker/views.py:84
 msgid "A new message has been posted"
 msgstr ""
 
-#: bugtracker/tests.py:824 bugtracker/views.py:320
+#: bugtracker/tests.py:855 bugtracker/views.py:328
 msgid "An answer has been posted"
 msgstr ""
 
-#: bugtracker/tests.py:846 bugtracker/views.py:315
+#: bugtracker/tests.py:877 bugtracker/views.py:323
 #, python-format
 msgid "You have received an answer on %(site_name)s"
 msgstr ""
@@ -660,7 +682,7 @@ msgstr ""
 msgid "The issue has been saved successfully"
 msgstr ""
 
-#: bugtracker/views.py:79 bugtracker/views.py:151 bugtracker/views.py:256
+#: bugtracker/views.py:79 bugtracker/views.py:159 bugtracker/views.py:264
 #, python-format
 msgid "%(issue_subject)s : %(issue_url)s"
 msgstr ""
@@ -669,53 +691,53 @@ msgstr ""
 msgid "The message has been saved successfully"
 msgstr ""
 
-#: bugtracker/views.py:85 bugtracker/views.py:321
+#: bugtracker/views.py:85 bugtracker/views.py:329
 #, python-format
 msgid "%(message_subject)s : %(message_url)s"
 msgstr ""
 
-#: bugtracker/views.py:119
+#: bugtracker/views.py:123
 msgid "The issue has been closed successfully"
 msgstr ""
 
-#: bugtracker/views.py:126
+#: bugtracker/views.py:130
 msgid "Close an issue"
 msgstr ""
 
-#: bugtracker/views.py:154
+#: bugtracker/views.py:162
 msgid "The issue has been reopened successfully"
 msgstr ""
 
-#: bugtracker/views.py:161
+#: bugtracker/views.py:169
 msgid "Reopen an issue"
 msgstr ""
 
-#: bugtracker/views.py:215
+#: bugtracker/views.py:223
 msgid "The issue has been deleted successfully"
 msgstr ""
 
-#: bugtracker/views.py:222
+#: bugtracker/views.py:230
 msgid "Delete an issue"
 msgstr ""
 
-#: bugtracker/views.py:230
+#: bugtracker/views.py:238
 msgid "Edit a comment"
 msgstr ""
 
-#: bugtracker/views.py:238 bugtracker/views.py:291
+#: bugtracker/views.py:246 bugtracker/views.py:299
 msgid "Send a comment"
 msgstr ""
 
-#: bugtracker/views.py:263
+#: bugtracker/views.py:271
 #, python-format
 msgid "%(user)s wrote:"
 msgstr ""
 
-#: bugtracker/views.py:277 bugtracker/views.py:324
+#: bugtracker/views.py:285 bugtracker/views.py:332
 msgid "Your comment has been saved successfully"
 msgstr ""
 
-#: bugtracker/views.py:316
+#: bugtracker/views.py:324
 #, python-format
 msgid ""
 "%(message_url)s\n"
@@ -723,27 +745,27 @@ msgid ""
 "%(message)s"
 msgstr ""
 
-#: bugtracker/views.py:347
+#: bugtracker/views.py:355
 msgid "The comment has been deleted successfully"
 msgstr ""
 
-#: bugtracker/views.py:354
+#: bugtracker/views.py:362
 msgid "Delete a comment"
 msgstr ""
 
-#: bugtracker/views.py:369
+#: bugtracker/views.py:377
 msgid "Your vote has been saved successfully"
 msgstr ""
 
-#: bugtracker/views.py:371
+#: bugtracker/views.py:379
 msgid "You can't vote anymore"
 msgstr ""
 
-#: bugtracker/views.py:373
+#: bugtracker/views.py:381
 msgid "No votes for closed issues"
 msgstr ""
 
-#: bugtracker/views.py:386
+#: bugtracker/views.py:394
 msgid "Your vote has been removed successfully"
 msgstr ""
 
@@ -1571,7 +1593,7 @@ msgid "No master aggreements"
 msgstr ""
 
 #: templates/contact/edit.html:180 templates/contract/edit.html:80
-#: templates/core/settings_edit.html:168 templates/invoice/edit.html:146
+#: templates/core/settings_edit.html:104 templates/invoice/edit.html:146
 #: templates/newsletter/email_users.html:13 templates/project/edit.html:23
 #: templates/proposal/edit.html:240
 msgid "Save"

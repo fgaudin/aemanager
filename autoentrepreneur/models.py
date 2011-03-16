@@ -145,6 +145,8 @@ class UserProfile(models.Model):
     freeing_tax_payment = models.BooleanField(verbose_name=_('Freeing tax payment')) # versement liberatoire
     payment_option = models.IntegerField(choices=AUTOENTREPRENEUR_PAYMENT_OPTION, blank=True, null=True, verbose_name=_('Payment option'))
     unregister_datetime = models.DateTimeField(verbose_name=_('Unregister date'), null=True, blank=True)
+    iban_bban = models.CharField(max_length=34, blank=True, default='', verbose_name=_('IBAN/BBAN'), help_text=_('will appear on your invoices if set'))
+    bic = models.CharField(max_length=11, blank=True, default='', verbose_name=_('BIC/SWIFT'), help_text=_('will appear on your invoices if set'))
     logo_file = models.FileField(upload_to=logo_upload_to_handler, null=True, blank=True, storage=store, verbose_name=_('Custom header'), help_text=_('will appear in place of your personnal informations on proposals and invoices. Maximum width and height: 252x137'))
 
     def __unicode__(self):

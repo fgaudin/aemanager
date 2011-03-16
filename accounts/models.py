@@ -261,6 +261,10 @@ class Invoice(OwnedObject):
         styleN.fontSize = 12
         styleN.leading = 14
 
+        styleNSmall = ParagraphStyle({})
+        styleNSmall.fontSize = 8
+        styleNSmall.leading = 14
+
         styleF = ParagraphStyle({})
         styleF.fontSize = 10
         styleF.alignment = TA_CENTER
@@ -394,14 +398,21 @@ class Invoice(OwnedObject):
 
         story.append(row_table)
 
-        spacer4 = Spacer(doc.width, 0.55 * inch)
+        spacer4 = Spacer(doc.width, 0.35 * inch)
         story.append(spacer4)
         invoice_amount = self.amount
         invoice_amount = invoice_amount.quantize(Decimal(1)) if invoice_amount == invoice_amount.to_integral() else invoice_amount.normalize()
-        data = [[[Paragraph(_("Payment date : %s") % (localize(self.payment_date)), styleN),
-                  Paragraph(_("Penalty begins on : %s") % (localize(self.penalty_date) or ''), styleN),
-                  Paragraph(_("Penalty rate : %s") % (localize(self.penalty_rate) or ''), styleN),
-                  Paragraph(_("Discount conditions : %s") % (self.discount_conditions or ''), styleN)],
+        left_block = [Paragraph(_("Payment date : %s") % (localize(self.payment_date)), styleN),
+                      Paragraph(_("Penalty begins on : %s") % (localize(self.penalty_date) or ''), styleN),
+                      Paragraph(_("Penalty rate : %s") % (localize(self.penalty_rate) or ''), styleN),
+                      Paragraph(_("Discount conditions : %s") % (self.discount_conditions or ''), styleN)]
+        if self.owner.get_profile().iban_bban:
+            left_block.append(Spacer(doc.width, 0.2 * inch))
+            left_block.append(Paragraph(_("IBAN/BBAN : %s") % (self.owner.get_profile().iban_bban), styleNSmall))
+            if self.owner.get_profile().bic:
+                left_block.append(Paragraph(_("BIC/SWIFT : %s") % (self.owner.get_profile().bic), styleNSmall))
+
+        data = [[left_block,
                 '',
                 [Paragraph(_("TOTAL excl. VAT : %(amount)s %(currency)s") % {'amount': localize(invoice_amount), 'currency' : "€".decode('utf-8')}, styleTotal),
                  Spacer(1, 0.25 * inch),

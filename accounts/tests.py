@@ -759,6 +759,10 @@ class InvoiceTest(TestCase):
         """
         Tests non-regression on pdf
         """
+        profile = User.objects.get(pk=1).get_profile()
+        profile.iban_bban = 'FR76 1234 1234 1234 1234 1234 123'
+        profile.bic = 'CCBPFRABCDE'
+        profile.save()
         i = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
                                    invoice_id=1,
                                    state=INVOICE_STATE_EDITED,
@@ -791,7 +795,7 @@ class InvoiceTest(TestCase):
         content = response.content.split("\n")
         invariant_content = content[0:66] + content[67:110] + content[111:-1]
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
-                          "3cbc8764176c7deeba058df740730ebd")
+                          "f67080e9e105b6291fe62d75c58c60a2")
 
     def testInvoiceBookDownloadPdf(self):
         """

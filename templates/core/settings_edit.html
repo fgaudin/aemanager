@@ -52,104 +52,40 @@ jQuery(document).ready(function(){
     {{ hidden }}
     {% endfor %}
     {% with form.phonenumber as field %}
-    <div class="form-row">
-    {{ field.errors }}
-      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label> {{ field }}
-      {% if field.field.help_text %}
-        <p class="help">{{ field.field.help_text|safe }}</p>
-      {% endif %}
-      </div>
-    </div>
+    {% include "field.html" %}
     {% endwith %}
     {% with form.professional_email as field %}
-    <div class="form-row">
-    {{ field.errors }}
-      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label> {{ field }}
-      {% if field.field.help_text %}
-        <p class="help">{{ field.field.help_text|safe }}</p>
-      {% endif %}
-      </div>
-    </div>
+    {% include "field.html" %}
     {% endwith %}
     {% with form.company_name as field %}
-    <div class="form-row">
-    {{ field.errors }}
-      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label> {{ field }}
-      {% if field.field.help_text %}
-        <p class="help">{{ field.field.help_text|safe }}</p>
-      {% endif %}
-      </div>
-    </div>
+    {% include "field.html" %}
     {% endwith %}
     {% with form.company_id as field %}
-    <div class="form-row">
-    {{ field.errors }}
-      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label> {{ field }}
-      {% if field.field.help_text %}
-        <p class="help">{{ field.field.help_text|safe }}</p>
-      {% endif %}
-      </div>
-    </div>
+    {% include "field.html" %}
     {% endwith %}
     {% with form.activity as field %}
-    <div class="form-row">
-    {{ field.errors }}
-      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label> {{ field }}
-      {% if field.field.help_text %}
-        <p class="help">{{ field.field.help_text|safe }}</p>
-      {% endif %}
-      </div>
-    </div>
+    {% include "field.html" %}
     {% endwith %}
     {% with form.professional_category as field %}
-    <div class="form-row">
-    {{ field.errors }}
-      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label> {{ field }}
-      {% if field.field.help_text %}
-        <p class="help">{{ field.field.help_text|safe }}</p>
-      {% endif %}
-      </div>
-    </div>
+    {% include "field.html" %}
     {% endwith %}
     {% with form.creation_date as field %}
-    <div class="form-row">
-    {{ field.errors }}
-      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label> {{ field }}
-      {% if field.field.help_text %}
-        <p class="help">{{ field.field.help_text|safe }}</p>
-      {% endif %}
-      </div>
-    </div>
+    {% include "field.html" %}
     {% endwith %}
     {% with form.creation_help as field %}
-    <div class="form-row">
-    {{ field.errors }}
-      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label> {{ field }}
-      {% if field.field.help_text %}
-        <p class="help">{{ field.field.help_text|safe }}</p>
-      {% endif %}
-      </div>
-    </div>
+    {% include "field.html" %}
     {% endwith %}
     {% with form.freeing_tax_payment as field %}
-    <div class="form-row">
-    {{ field.errors }}
-      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label> {{ field }}
-      {% if field.field.help_text %}
-        <p class="help">{{ field.field.help_text|safe }}</p>
-      {% endif %}
-      </div>
-    </div>
+    {% include "field.html" %}
     {% endwith %}
     {% with form.payment_option as field %}
-    <div class="form-row">
-    {{ field.errors }}
-      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label> {{ field }}
-      {% if field.field.help_text %}
-        <p class="help">{{ field.field.help_text|safe }}</p>
-      {% endif %}
-      </div>
-    </div>
+    {% include "field.html" %}
+    {% endwith %}
+    {% with form.iban_bban as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with form.bic as field %}
+    {% include "field.html" %}
     {% endwith %}
     {% with form.logo_file as field %}
     <div class="form-row">
