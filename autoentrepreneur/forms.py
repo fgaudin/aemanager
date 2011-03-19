@@ -7,7 +7,7 @@ from django.core.files.images import get_image_dimensions
 
 class UserProfileForm(ModelForm):
     company_name = forms.CharField(required=False, max_length=255, label=_('Company name'))
-    company_id = forms.CharField(max_length=50, label=_('Company id')) # SIRET for France
+    company_id = forms.CharField(max_length=50, label=_('Company id'), help_text=_('enter "Pending registration" if you have not yet received your company id')) # SIRET for France
     activity = forms.ChoiceField(choices=AUTOENTREPRENEUR_ACTIVITY, label=_('Activity'))
     professional_category = forms.ChoiceField(choices=AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY, label=_('Professional category'))
     creation_date = forms.DateField(label=_('Creation date'), help_text=_('format: mm/dd/yyyy'))

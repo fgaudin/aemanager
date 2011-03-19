@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-16 23:34+0100\n"
+"POT-Creation-Date: 2011-03-19 17:31+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -384,6 +384,11 @@ msgstr ""
 #: autoentrepreneur/forms.py:10 autoentrepreneur/models.py:139
 #: contact/forms.py:23 contact/models.py:36
 msgid "Company id"
+msgstr ""
+
+#: autoentrepreneur/forms.py:10
+msgid ""
+"enter \"Pending registration\" if you have not yet received your company id"
 msgstr ""
 
 #: autoentrepreneur/forms.py:11 autoentrepreneur/models.py:31
