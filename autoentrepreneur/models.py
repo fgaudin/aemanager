@@ -83,6 +83,12 @@ class SubscriptionManager(models.Manager):
                                                                                                                   date=datetime.date.today() + datetime.timedelta(days),
                                                                                                                   state=SUBSCRIPTION_STATE_TRIAL).distinct().order_by('owner__email')
 
+    def get_users_with_subscription_expired_for(self, days):
+        return self.filter(owner__is_active=True).exclude(state=SUBSCRIPTION_STATE_FREE)\
+                   .values_list('owner', flat=True)\
+                   .annotate(max_date=Max('expiration_date'))\
+                   .filter(max_date__lte=datetime.date.today() - datetime.timedelta(days)).distinct()
+
 class Subscription(OwnedObject):
     state = models.IntegerField(choices=SUBSCRIPTION_STATE, verbose_name=_('State'), db_index=True)
     expiration_date = models.DateField(verbose_name=_('Expiration date'), help_text=_('format: mm/dd/yyyy'), db_index=True)

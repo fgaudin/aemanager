@@ -725,6 +725,38 @@ class UnregisterTest(TestCase):
 
         self.assertEquals(User.objects.filter(pk=1).count(), 0)
 
+    def testDeleteExpiredUsers(self):
+        subscription = Subscription.objects.get(owner=1)
+
+        # check it doesn't delete expired free account
+        subscription.expiration_date = datetime.date.today() - datetime.timedelta(settings.ACCOUNT_EXPIRED_DAYS + 1)
+        subscription.save()
+
+        call_command('delete_expired_users')
+        self.assertEquals(User.objects.count(), 2)
+
+        # check it doesn't delete accounts not expired
+        subscription.expiration_date = datetime.date.today() + datetime.timedelta(1)
+        subscription.state = SUBSCRIPTION_STATE_PAID
+        subscription.save()
+
+        call_command('delete_expired_users')
+        self.assertEquals(User.objects.count(), 2)
+
+        # check it doesn't delete accounts expired for less than ACCOUNT_EXPIRED_DAYS
+        subscription.expiration_date = datetime.date.today() - datetime.timedelta(settings.ACCOUNT_EXPIRED_DAYS - 1)
+        subscription.save()
+
+        call_command('delete_expired_users')
+        self.assertEquals(User.objects.count(), 2)
+
+        # check it deletes accounts expired for more than ACCOUNT_EXPIRED_DAYS
+        subscription.expiration_date = datetime.date.today() - datetime.timedelta(settings.ACCOUNT_EXPIRED_DAYS)
+        subscription.save()
+
+        call_command('delete_expired_users')
+        self.assertEquals(User.objects.count(), 1)
+
 class SubscriptionUserSelectTest(TestCase):
 
     def setUp(self):
