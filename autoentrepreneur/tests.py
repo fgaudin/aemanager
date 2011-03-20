@@ -28,6 +28,7 @@ from autoentrepreneur.models import AUTOENTREPRENEUR_PAYMENT_OPTION_QUATERLY, \
 import datetimestub
 import autoentrepreneur
 from django.contrib.auth import authenticate
+from registration.models import RegistrationProfile
 
 class SubscriptionTest(TestCase):
     fixtures = ['test_users']
@@ -678,6 +679,51 @@ class UnregisterTest(TestCase):
         self.assertEquals(Subscription.objects.filter(owner__id=1).count(), 0)
         self.assertEquals(User.objects.filter(pk=1).count(), 0)
         self.assertEquals(UserProfile.objects.filter(pk=1).count(), 0)
+
+    def testBug188cleanupregistration(self):
+        """
+        Cleanup registration provided by registration app is buggy
+        and delete registered inactive users while it should not
+        """
+        registration_profile = RegistrationProfile.objects.create(user_id=1,
+                                                                  activation_key=RegistrationProfile.ACTIVATED)
+
+        response = self.client.post(reverse('unregister'),
+                                    {'unregister': 'ok'})
+        self.assertEquals(response.status_code, 302)
+
+        call_command('cleanupregistration')
+
+        self.assertEquals(User.objects.filter(pk=1).count(), 0)
+
+    def testBug188cleanup_expired_registration(self):
+        """
+        Cleanup expired registration replace
+        and delete registered inactive users while it should not
+        """
+        registration_profile = RegistrationProfile.objects.create(user_id=1,
+                                                                  activation_key=RegistrationProfile.ACTIVATED)
+
+        response = self.client.post(reverse('unregister'),
+                                    {'unregister': 'ok'})
+        self.assertEquals(response.status_code, 302)
+
+        call_command('cleanup_expired_registration')
+
+        self.assertEquals(User.objects.filter(pk=1).count(), 1)
+
+        registration_profile.activation_key = '1234'
+        registration_profile.save()
+        user = registration_profile.user
+        user.date_joined = datetime.date.today() - datetime.timedelta(settings.ACCOUNT_ACTIVATION_DAYS)
+        user.save()
+        profile = user.get_profile()
+        profile.unregister_datetime = None
+        profile.save()
+
+        call_command('cleanup_expired_registration')
+
+        self.assertEquals(User.objects.filter(pk=1).count(), 0)
 
 class SubscriptionUserSelectTest(TestCase):
 
