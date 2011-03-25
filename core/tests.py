@@ -1,9 +1,12 @@
 from django.utils.translation import ugettext
-from project.models import  Proposal
+from project.models import  Proposal, PROPOSAL_STATE_DRAFT, \
+    PROPOSAL_STATE_ACCEPTED, ROW_CATEGORY_SERVICE
 import datetimestub
 import autoentrepreneur
 import accounts
+import core.views
 from autoentrepreneur.models import AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_LIBERAL
+import datetime
 accounts.models.datetime = datetimestub.DatetimeStub()
 from django.test import TestCase
 from core.models import OwnedObject
@@ -11,7 +14,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.core.urlresolvers import reverse
 from accounts.models import Invoice, INVOICE_STATE_EDITED, \
-    PAYMENT_TYPE_CHECK, INVOICE_STATE_PAID
+    PAYMENT_TYPE_CHECK, INVOICE_STATE_PAID, InvoiceRow
 
 class PermissionTest(TestCase):
     def test_save_owned_object(self):
@@ -298,6 +301,396 @@ class DashboardProductActivityTest(TestCase):
         response = self.client.get(reverse('index'))
         self.assertEqual(response.context['sales']['limit'], 81500)
         self.assertEqual(response.context['sales']['service_limit'], 32600)
+
+class OverrunTest(TestCase):
+    fixtures = ['test_users', 'test_contacts', 'test_projects']
+
+    def setUp(self):
+        core.views.datetime = datetimestub.DatetimeStub()
+        autoentrepreneur.models.datetime = datetimestub.DatetimeStub()
+
+        self.client.login(username='test', password='test')
+        self.proposal = Proposal.objects.create(project_id=30,
+                                                update_date=datetime.date.today(),
+                                                state=PROPOSAL_STATE_ACCEPTED,
+                                                begin_date=datetime.date(2010, 8, 1),
+                                                end_date=datetime.date(2010, 8, 15),
+                                                contract_content='Content of contract',
+                                                amount=1000,
+                                                owner_id=1)
+
+    def tearDown(self):
+        core.views.datetime = datetime
+        datetimestub.DatetimeStub.date.mock_year = 2010
+        datetimestub.DatetimeStub.date.mock_month = 10
+        datetimestub.DatetimeStub.date.mock_day = 25
+
+    def testNoMessageWhenNoOverrun(self):
+        response = self.client.get(reverse('index'))
+        self.assertNotContains(response, 'leave')
+
+    def testWarningWhenProposalsOverrunFirstLimit(self):
+        self.proposal.amount = 32200
+        self.proposal.save()
+        response = self.client.get(reverse('index'))
+        self.assertContains(response, 'Attention, you will leave the Auto-entrepreneur status at the end of the next year if all your proposals and invoices are paid before the end of the year.')
+        self.assertNotContains(response, 'You have to declare VAT from the first month of overrun.')
+        self.assertNotContains(response, 'Attention, you will lose tax rates associated with creation help for overrunning sales if all your proposals and invoices are paid before the end of the year.')
+        self.assertNotContains(response, 'Attention, you will lose freeing tax payment if all your proposals and invoices are paid before the end of the year.')
+
+    def testWarningWhenProposalsOverrunSecondLimit(self):
+        self.proposal.amount = 34200
+        self.proposal.save()
+        response = self.client.get(reverse('index'))
+        self.assertContains(response, 'Attention, you will leave the Auto-entrepreneur status at the end of the current year if all your proposals and invoices are paid before the end of the year.')
+        self.assertContains(response, 'You have to declare VAT from the first month of overrun.')
+        self.assertNotContains(response, 'Attention, you will lose tax rates associated with creation help for overrunning sales if all your proposals and invoices are paid before the end of the year.')
+
+    def testWarningFreeingTaxPaymentWhenProposalsOverrunFirstLimit(self):
+        profile = User.objects.get(pk=1).get_profile()
+        profile.freeing_tax_payment = True
+        profile.save()
+        self.proposal.amount = 32200
+        self.proposal.save()
+        response = self.client.get(reverse('index'))
+        self.assertContains(response, 'Attention, you will lose freeing tax payment if all your proposals and invoices are paid before the end of the year.')
+
+    def testWarningCreationHelpWhenProposalsOverrunFirstLimit(self):
+        profile = User.objects.get(pk=1).get_profile()
+        profile.creation_help = True
+        profile.save()
+        self.proposal.amount = 32200
+        self.proposal.save()
+        response = self.client.get(reverse('index'))
+        self.assertContains(response, 'Attention, you will lose tax rates associated with creation help for overrunning sales if all your proposals and invoices are paid before the end of the year.')
+
+    def testWarningCreationHelpWhenProposalsOverrunSecondLimit(self):
+        profile = User.objects.get(pk=1).get_profile()
+        profile.creation_help = True
+        profile.save()
+        self.proposal.amount = 34200
+        self.proposal.save()
+        response = self.client.get(reverse('index'))
+        self.assertContains(response, 'Attention, you will lose tax rates associated with creation help for overrunning sales if all your proposals and invoices are paid before the end of the year.')
+
+    def testWarningWhenInvoicesOverrunFirstLimit(self):
+        self.proposal.amount = 32200
+        self.proposal.save()
+        i = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                   invoice_id=1,
+                                   state=INVOICE_STATE_PAID,
+                                   amount='32200',
+                                   edition_date=datetime.date(2010, 8, 31),
+                                   payment_date=datetime.date(2010, 9, 30),
+                                   paid_date=datetime.date(2010, 9, 30),
+                                   payment_type=PAYMENT_TYPE_CHECK,
+                                   execution_begin_date=datetime.date(2010, 8, 1),
+                                   execution_end_date=datetime.date(2010, 8, 7),
+                                   penalty_date=datetime.date(2010, 10, 8),
+                                   penalty_rate='1.5',
+                                   discount_conditions='Nothing',
+                                   owner_id=1)
+        i_row = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=10,
+                                          unit_price='3220',
+                                          balance_payments=False,
+                                          owner_id=1)
+
+        response = self.client.get(reverse('index'))
+        self.assertContains(response, 'You will leave the Auto-entrepreneur status at the end of the next year.')
+
+    def testWarningCreationHelpWhenInvoicesOverrunFirstLimit(self):
+        profile = User.objects.get(pk=1).get_profile()
+        profile.creation_help = True
+        profile.save()
+        self.proposal.amount = 32200
+        self.proposal.save()
+        i = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                   invoice_id=1,
+                                   state=INVOICE_STATE_PAID,
+                                   amount='32200',
+                                   edition_date=datetime.date(2010, 8, 31),
+                                   payment_date=datetime.date(2010, 9, 30),
+                                   paid_date=datetime.date(2010, 9, 30),
+                                   payment_type=PAYMENT_TYPE_CHECK,
+                                   execution_begin_date=datetime.date(2010, 8, 1),
+                                   execution_end_date=datetime.date(2010, 8, 7),
+                                   penalty_date=datetime.date(2010, 10, 8),
+                                   penalty_rate='1.5',
+                                   discount_conditions='Nothing',
+                                   owner_id=1)
+        i_row = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=10,
+                                          unit_price='3220',
+                                          balance_payments=False,
+                                          owner_id=1)
+
+        response = self.client.get(reverse('index'))
+        self.assertContains(response, 'You lose tax rates associated with creation help for overrunning sales.')
+
+    def testWarningFreeingTaxPaymentWhenInvoicesOverrunFirstLimit(self):
+        profile = User.objects.get(pk=1).get_profile()
+        profile.freeing_tax_payment = True
+        profile.save()
+        self.proposal.amount = 32200
+        self.proposal.save()
+        i = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                   invoice_id=1,
+                                   state=INVOICE_STATE_PAID,
+                                   amount='32200',
+                                   edition_date=datetime.date(2010, 8, 31),
+                                   payment_date=datetime.date(2010, 9, 30),
+                                   paid_date=datetime.date(2010, 9, 30),
+                                   payment_type=PAYMENT_TYPE_CHECK,
+                                   execution_begin_date=datetime.date(2010, 8, 1),
+                                   execution_end_date=datetime.date(2010, 8, 7),
+                                   penalty_date=datetime.date(2010, 10, 8),
+                                   penalty_rate='1.5',
+                                   discount_conditions='Nothing',
+                                   owner_id=1)
+        i_row = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=10,
+                                          unit_price='3220',
+                                          balance_payments=False,
+                                          owner_id=1)
+
+        response = self.client.get(reverse('index'))
+        self.assertContains(response, 'You lose freeing tax payment.')
+
+    def testWarningWhenInvoicesOverrunSecondLimit(self):
+        self.proposal.amount = 34200
+        self.proposal.save()
+        i = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                   invoice_id=1,
+                                   state=INVOICE_STATE_PAID,
+                                   amount='34200',
+                                   edition_date=datetime.date(2010, 8, 31),
+                                   payment_date=datetime.date(2010, 9, 30),
+                                   paid_date=datetime.date(2010, 9, 30),
+                                   payment_type=PAYMENT_TYPE_CHECK,
+                                   execution_begin_date=datetime.date(2010, 8, 1),
+                                   execution_end_date=datetime.date(2010, 8, 7),
+                                   penalty_date=datetime.date(2010, 10, 8),
+                                   penalty_rate='1.5',
+                                   discount_conditions='Nothing',
+                                   owner_id=1)
+        i_row = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=10,
+                                          unit_price='3420',
+                                          balance_payments=False,
+                                          owner_id=1)
+
+        response = self.client.get(reverse('index'))
+        self.assertContains(response, 'You will leave the Auto-entrepreneur status at the end of the current year.')
+        self.assertContains(response, 'You have to declare VAT from the first month of overrun.')
+
+    def testWarningWhenInvoicesOverrunFirstLimitPreviousYear(self):
+        profile = User.objects.get(pk=1).get_profile()
+        profile.freeing_tax_payment = True
+        profile.creation_help = True
+        profile.save()
+        self.proposal.amount = 32200
+        self.proposal.save()
+        i = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                   invoice_id=1,
+                                   state=INVOICE_STATE_PAID,
+                                   amount='32200',
+                                   edition_date=datetime.date(2010, 8, 31),
+                                   payment_date=datetime.date(2010, 9, 30),
+                                   paid_date=datetime.date(2010, 9, 30),
+                                   payment_type=PAYMENT_TYPE_CHECK,
+                                   execution_begin_date=datetime.date(2010, 8, 1),
+                                   execution_end_date=datetime.date(2010, 8, 7),
+                                   penalty_date=datetime.date(2010, 10, 8),
+                                   penalty_rate='1.5',
+                                   discount_conditions='Nothing',
+                                   owner_id=1)
+        i_row = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=10,
+                                          unit_price='3220',
+                                          balance_payments=False,
+                                          owner_id=1)
+
+        datetimestub.DatetimeStub.date.mock_year = 2011
+        datetimestub.DatetimeStub.date.mock_month = 2
+        datetimestub.DatetimeStub.date.mock_day = 10
+
+        response = self.client.get(reverse('index'))
+        self.assertContains(response, 'You will leave the Auto-entrepreneur status at the end of the current year.')
+        self.assertContains(response, 'You lose tax rates associated with creation help for overrunning sales.')
+        self.assertContains(response, 'You lose freeing tax payment.')
+
+    def testTaxAmountOnFirstOverrun(self):
+        profile = User.objects.get(pk=1).get_profile()
+        profile.freeing_tax_payment = True
+        profile.creation_help = True
+        profile.save()
+        self.proposal.amount = 32200
+        self.proposal.save()
+        i = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                   invoice_id=1,
+                                   state=INVOICE_STATE_PAID,
+                                   amount='32200',
+                                   edition_date=datetime.date(2010, 8, 31),
+                                   payment_date=datetime.date(2010, 9, 30),
+                                   paid_date=datetime.date(2010, 9, 30),
+                                   payment_type=PAYMENT_TYPE_CHECK,
+                                   execution_begin_date=datetime.date(2010, 8, 1),
+                                   execution_end_date=datetime.date(2010, 8, 7),
+                                   penalty_date=datetime.date(2010, 10, 8),
+                                   penalty_rate='1.5',
+                                   discount_conditions='Nothing',
+                                   owner_id=1)
+        i_row = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=10,
+                                          unit_price='3220',
+                                          balance_payments=False,
+                                          owner_id=1)
+
+        response = self.client.get(reverse('index'))
+        self.assertEquals(response.context['taxes']['tax_rate'], 5.3)
+        self.assertEquals(response.context['taxes']['paid_sales_for_period'], 32200)
+        self.assertEquals(response.context['taxes']['amount_to_pay'], 1706.6)
+        self.assertEquals(response.context['taxes']['extra_taxes'], 13)
+        self.assertEquals(response.context['taxes']['total_amount_to_pay'], 1719.6)
+
+    def testTaxAmountOnNextPeriodAfterOverrun(self):
+        profile = User.objects.get(pk=1).get_profile()
+        profile.freeing_tax_payment = True
+        profile.creation_help = True
+        profile.save()
+        self.proposal.amount = 32200
+        self.proposal.save()
+        i = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                   invoice_id=1,
+                                   state=INVOICE_STATE_PAID,
+                                   amount='32200',
+                                   edition_date=datetime.date(2010, 4, 30),
+                                   payment_date=datetime.date(2010, 4, 30),
+                                   paid_date=datetime.date(2010, 4, 30),
+                                   payment_type=PAYMENT_TYPE_CHECK,
+                                   execution_begin_date=datetime.date(2010, 8, 1),
+                                   execution_end_date=datetime.date(2010, 8, 7),
+                                   penalty_date=datetime.date(2010, 10, 8),
+                                   penalty_rate='1.5',
+                                   discount_conditions='Nothing',
+                                   owner_id=1)
+        i_row = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=10,
+                                          unit_price='3220',
+                                          balance_payments=False,
+                                          owner_id=1)
+
+        i = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                   invoice_id=2,
+                                   state=INVOICE_STATE_PAID,
+                                   amount='300',
+                                   edition_date=datetime.date(2010, 9, 30),
+                                   payment_date=datetime.date(2010, 9, 30),
+                                   paid_date=datetime.date(2010, 9, 30),
+                                   payment_type=PAYMENT_TYPE_CHECK,
+                                   execution_begin_date=datetime.date(2010, 8, 1),
+                                   execution_end_date=datetime.date(2010, 8, 7),
+                                   penalty_date=datetime.date(2010, 10, 8),
+                                   penalty_rate='1.5',
+                                   discount_conditions='Nothing',
+                                   owner_id=1)
+        i_row = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=10,
+                                          unit_price='30',
+                                          balance_payments=False,
+                                          owner_id=1)
+
+        response = self.client.get(reverse('index'))
+        self.assertEquals(response.context['taxes']['tax_rate'], 18.3)
+        self.assertEquals(response.context['taxes']['paid_sales_for_period'], 300)
+        self.assertEquals(response.context['taxes']['amount_to_pay'], 54.9)
+
+    def testTaxAmountOnSecondYearAfterOverrun(self):
+        datetimestub.DatetimeStub.date.mock_year = 2011
+        datetimestub.DatetimeStub.date.mock_month = 2
+        datetimestub.DatetimeStub.date.mock_day = 10
+
+        profile = User.objects.get(pk=1).get_profile()
+        profile.freeing_tax_payment = True
+        profile.creation_help = True
+        profile.save()
+        self.proposal.amount = 32200
+        self.proposal.save()
+        i = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                   invoice_id=1,
+                                   state=INVOICE_STATE_PAID,
+                                   amount='32200',
+                                   edition_date=datetime.date(2010, 4, 30),
+                                   payment_date=datetime.date(2010, 4, 30),
+                                   paid_date=datetime.date(2010, 4, 30),
+                                   payment_type=PAYMENT_TYPE_CHECK,
+                                   execution_begin_date=datetime.date(2010, 8, 1),
+                                   execution_end_date=datetime.date(2010, 8, 7),
+                                   penalty_date=datetime.date(2010, 10, 8),
+                                   penalty_rate='1.5',
+                                   discount_conditions='Nothing',
+                                   owner_id=1)
+        i_row = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=10,
+                                          unit_price='3220',
+                                          balance_payments=False,
+                                          owner_id=1)
+
+        i = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                   invoice_id=2,
+                                   state=INVOICE_STATE_PAID,
+                                   amount='300',
+                                   edition_date=datetime.date(2011, 2, 2),
+                                   payment_date=datetime.date(2011, 2, 2),
+                                   paid_date=datetime.date(2011, 2, 2),
+                                   payment_type=PAYMENT_TYPE_CHECK,
+                                   execution_begin_date=datetime.date(2010, 8, 1),
+                                   execution_end_date=datetime.date(2010, 8, 7),
+                                   penalty_date=datetime.date(2010, 10, 8),
+                                   penalty_rate='1.5',
+                                   discount_conditions='Nothing',
+                                   owner_id=1)
+        i_row = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=10,
+                                          unit_price='30',
+                                          balance_payments=False,
+                                          owner_id=1)
+
+        response = self.client.get(reverse('index'))
+        self.assertEquals(response.context['taxes']['tax_rate'], 18.5)
+        self.assertEquals(response.context['taxes']['paid_sales_for_period'], 300)
+        self.assertEquals(response.context['taxes']['amount_to_pay'], 55.5)
 
 class RegisterTest(TestCase):
     def testGetRegisterPage(self):

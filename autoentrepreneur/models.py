@@ -15,6 +15,7 @@ from django.conf import settings
 from registration.signals import user_registered
 from django.core.files.storage import FileSystemStorage
 import unicodedata
+from accounts.models import Invoice
 
 AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC = 1
 AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC = 2
@@ -252,6 +253,19 @@ class UserProfile(models.Model):
                 limit = int(round(float(limit) * worked_days.days / days_in_year.days))
         return limit
 
+    def get_sales_limit2(self, year=None):
+        today = datetime.date.today()
+        limit = 0
+        if not year:
+            year = today.year
+        if self.activity:
+            limit = SalesLimit.objects.get(year=year, activity=self.activity).limit2
+            if self.creation_date and self.creation_date.year == year:
+                worked_days = datetime.date(year + 1, 1, 1) - self.creation_date
+                days_in_year = datetime.date(year + 1, 1, 1) - datetime.date(year, 1, 1)
+                limit = int(round(float(limit) * worked_days.days / days_in_year.days))
+        return limit
+
     def get_service_sales_limit(self, year=None):
         today = datetime.date.today()
         service_limit = 0
@@ -339,13 +353,36 @@ class UserProfile(models.Model):
 
         return tax_rate
 
-    def get_tax_rate(self, reference_date=None):
+    def get_tax_rate(self, reference_date=None, period_is_only_overrun=False):
         tax_rate = 0
         if not self.activity:
             return tax_rate
         today = reference_date or datetime.date.today()
 
-        if self.creation_help:
+        freeing_tax_payment = self.freeing_tax_payment
+
+        one_year_back = datetime.date(today.year - 1, today.month, today.day)
+        first_year = True
+        if one_year_back.year >= self.creation_date.year:
+            first_year = False
+
+        paid_previous_year = 0
+        limit_previous_year = 0
+        if not first_year:
+            paid_previous_year = Invoice.objects.get_paid_sales(owner=self.user,
+                                                                year=one_year_back.year)
+            limit_previous_year = self.get_sales_limit(year=one_year_back.year)
+
+        if not first_year and paid_previous_year > limit_previous_year:
+            freeing_tax_payment = False
+
+        paid = Invoice.objects.get_paid_sales(owner=self.user)
+        limit = self.get_sales_limit()
+
+        if paid > limit:
+            freeing_tax_payment = False
+
+        if not period_is_only_overrun and self.creation_help:
             year = self.creation_date.year + 1
             month = self.get_quarter(self.creation_date)[0] * 3 - 1
             first_period_end_date = datetime.date(year, month, 1) - datetime.timedelta(1)
@@ -356,28 +393,28 @@ class UserProfile(models.Model):
                                                    first_period_end_date.month,
                                                    first_period_end_date.day)
             if today <= first_period_end_date:
-                if self.freeing_tax_payment:
+                if freeing_tax_payment:
                     tax_rate = TAX_RATE_WITH_FREEING[self.activity][0]
                 else:
                     tax_rate = TAX_RATE_WITHOUT_FREEING[self.activity][0]
             elif today <= second_period_end_date:
-                if self.freeing_tax_payment:
+                if freeing_tax_payment:
                     tax_rate = TAX_RATE_WITH_FREEING[self.activity][1]
                 else:
                     tax_rate = TAX_RATE_WITHOUT_FREEING[self.activity][1]
             elif today <= third_period_end_date:
-                if self.freeing_tax_payment:
+                if freeing_tax_payment:
                     tax_rate = TAX_RATE_WITH_FREEING[self.activity][2]
                 else:
                     tax_rate = TAX_RATE_WITHOUT_FREEING[self.activity][2]
 
             else:
-                if self.freeing_tax_payment:
+                if freeing_tax_payment:
                     tax_rate = TAX_RATE_WITH_FREEING[self.activity][3]
                 else:
                     tax_rate = TAX_RATE_WITHOUT_FREEING[self.activity][3]
         else:
-            if self.freeing_tax_payment:
+            if freeing_tax_payment:
                 tax_rate = TAX_RATE_WITH_FREEING[self.activity][3]
             else:
                 tax_rate = TAX_RATE_WITHOUT_FREEING[self.activity][3]
@@ -397,6 +434,22 @@ class UserProfile(models.Model):
                                      (end_date.month + 2) % 12 or 12,
                                      1) - datetime.timedelta(1)
         return pay_date
+
+    def get_extra_taxes(self, paid, amount_paid_for_tax):
+        extra_taxes = 0
+        today = datetime.date.today()
+        limit = self.get_sales_limit()
+
+        if paid > limit:
+            overrun = paid - limit
+            if amount_paid_for_tax > overrun:
+                tax_rate = TAX_RATE_WITHOUT_FREEING[self.activity][3]
+                if today.year >= 2011:
+                    tax_rate = tax_rate + self.get_professional_training_tax_rate()
+                tax_rate = tax_rate - self.get_tax_rate()
+                extra_taxes = float(overrun) * float(tax_rate) / 100
+
+        return extra_taxes
 
 def user_post_save(sender, instance, created, **kwargs):
     if created and not kwargs.get('raw', False):

@@ -74,6 +74,7 @@ def index(request):
     service_limit = 0
     service_paid_previous_year = 0
     service_limit_previous_year = 0
+    service_remaining = 0
 
     paid = Invoice.objects.get_paid_sales(owner=user)
 
@@ -82,17 +83,51 @@ def index(request):
     waiting = Invoice.objects.get_waiting_payments(owner=user)
     to_be_invoiced = Invoice.objects.get_to_be_invoiced(owner=user)
     limit = profile.get_sales_limit()
+    remaining = limit - paid - waiting - to_be_invoiced
+    sales_limit = profile.get_sales_limit()
+    sales_limit2 = profile.get_sales_limit2()
 
     if user.get_profile().activity == AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC:
         service_waiting = Invoice.objects.get_waiting_service_payments(owner=user)
         service_to_be_invoiced = Invoice.objects.get_service_to_be_invoiced(owner=user)
         service_limit = profile.get_service_sales_limit()
         service_paid = Invoice.objects.get_paid_service_sales(owner=user)
+        service_remaining = service_limit - service_paid - service_waiting - service_to_be_invoiced
     if not first_year:
         limit_previous_year = profile.get_sales_limit(year=one_year_back.year)
         if user.get_profile().activity == AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC:
             service_limit_previous_year = profile.get_service_sales_limit(year=one_year_back.year)
             service_paid_previous_year = Invoice.objects.get_paid_service_sales(owner=user, year=one_year_back.year)
+
+    if not first_year and paid_previous_year > limit_previous_year:
+        messages.warning(request, _('You will leave the Auto-entrepreneur status at the end of the current year.'))
+        if profile.creation_help:
+            messages.warning(request, _('You lose tax rates associated with creation help for overrunning sales.'))
+        if profile.freeing_tax_payment:
+            messages.warning(request, _('You lose freeing tax payment.'))
+    else:
+        if paid > sales_limit:
+            if paid > sales_limit2:
+                messages.warning(request, _('You will leave the Auto-entrepreneur status at the end of the current year.'))
+            else:
+                messages.warning(request, _('You will leave the Auto-entrepreneur status at the end of the next year.'))
+            if profile.creation_help:
+                messages.warning(request, _('You lose tax rates associated with creation help for overrunning sales.'))
+            if profile.freeing_tax_payment:
+                messages.warning(request, _('You lose freeing tax payment.'))
+        elif remaining < 0:
+            if remaining < (sales_limit - sales_limit2):
+                messages.warning(request, _('Attention, you will leave the Auto-entrepreneur status at the end of the current year if all your proposals and invoices are paid before the end of the year.'))
+            else:
+                messages.warning(request, _('Attention, you will leave the Auto-entrepreneur status at the end of the next year if all your proposals and invoices are paid before the end of the year.'))
+            if profile.creation_help:
+                messages.warning(request, _('Attention, you will lose tax rates associated with creation help for overrunning sales if all your proposals and invoices are paid before the end of the year.'))
+            if profile.freeing_tax_payment:
+                messages.warning(request, _('Attention, you will lose freeing tax payment if all your proposals and invoices are paid before the end of the year.'))
+
+    if remaining < (sales_limit - sales_limit2):
+        messages.warning(request, _('You have to declare VAT from the first month of overrun.'))
+
     late_invoices = Invoice.objects.get_late_invoices(owner=user)
     invoices_to_send = Invoice.objects.get_invoices_to_send(owner=user)
     potential = Proposal.objects.get_potential_sales(owner=user)
@@ -101,8 +136,12 @@ def index(request):
     begin_date, end_date = profile.get_period_for_tax()
     amount_paid_for_tax = Invoice.objects.get_paid_sales_for_period(user, begin_date, end_date)
     waiting_amount_for_tax = Invoice.objects.get_waiting_sales_for_period(user, end_date)
-    tax_rate = profile.get_tax_rate()
+    only_overrun = False
+    if amount_paid_for_tax <= paid - sales_limit or (not first_year and paid_previous_year > limit_previous_year):
+        only_overrun = True
+    tax_rate = profile.get_tax_rate(period_is_only_overrun=only_overrun)
     amount_to_pay = float(amount_paid_for_tax) * float(tax_rate) / 100
+    extra_taxes = profile.get_extra_taxes(paid, amount_paid_for_tax)
     estimated_amount_for_tax = amount_paid_for_tax + waiting_amount_for_tax
     estimated_amount_to_pay = float(estimated_amount_for_tax) * float(tax_rate) / 100
 
@@ -112,7 +151,7 @@ def index(request):
     next_pay_date = profile.get_pay_date(next_end_date)
     next_amount_paid_for_tax = Invoice.objects.get_paid_sales_for_period(user, next_begin_date, next_end_date)
     next_waiting_amount_for_tax = Invoice.objects.get_waiting_sales_for_period(user, next_end_date, next_begin_date)
-    next_tax_rate = profile.get_tax_rate(next_begin_date)
+    next_tax_rate = profile.get_tax_rate(next_begin_date, period_is_only_overrun=(only_overrun or extra_taxes))
     next_amount_to_pay = float(next_amount_paid_for_tax) * float(next_tax_rate) / 100
     next_estimated_amount_for_tax = next_amount_paid_for_tax + next_waiting_amount_for_tax
     next_estimated_amount_to_pay = float(next_estimated_amount_for_tax) * float(next_tax_rate) / 100
@@ -196,8 +235,8 @@ def index(request):
              'service_total': service_paid + service_waiting + service_to_be_invoiced,
              'limit': limit,
              'service_limit': service_limit,
-             'remaining': limit - paid - waiting - to_be_invoiced,
-             'service_remaining': service_limit - service_paid - service_waiting - service_to_be_invoiced}
+             'remaining': remaining,
+             'service_remaining': service_remaining}
 
     sales_previous_year = None
     if not first_year:
@@ -232,7 +271,9 @@ def index(request):
              'tax_rate': tax_rate,
              'amount_to_pay': amount_to_pay,
              'estimated_amount_to_pay': estimated_amount_to_pay,
-             'tax_due_date': pay_date}
+             'tax_due_date': pay_date,
+             'extra_taxes': extra_taxes,
+             'total_amount_to_pay': amount_to_pay + extra_taxes}
 
     next_taxes = {'period_begin': next_begin_date,
                   'period_end': next_end_date,

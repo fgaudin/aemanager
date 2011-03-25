@@ -4,7 +4,7 @@ from autoentrepreneur.models import Subscription, SUBSCRIPTION_STATE_NOT_PAID, \
     SUBSCRIPTION_STATE_TRIAL, SUBSCRIPTION_STATE_PAID, SUBSCRIPTION_STATE_FREE, \
     UserProfile, AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_TRADER, \
     AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_CRAFTSMAN, \
-    AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_LIBERAL
+    AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_LIBERAL, SalesLimit
 from django.db.utils import IntegrityError
 from contact.models import Contact, Address, CONTACT_TYPE_COMPANY
 from project.models import Project, PROJECT_STATE_PROSPECT, Proposal, \
@@ -1304,6 +1304,16 @@ class TaxTest(TestCase):
         profile.creation_help = True
         profile.save()
 
+        # inserting fake sales limit for test
+        SalesLimit.objects.create(year=2007, activity=AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC, limit=80000, limit2=88000)
+        SalesLimit.objects.create(year=2007, activity=AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC, limit=32000, limit2=34000)
+        SalesLimit.objects.create(year=2007, activity=AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC, limit=32000, limit2=34000)
+        SalesLimit.objects.create(year=2007, activity=AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC, limit=32000, limit2=34000)
+        SalesLimit.objects.create(year=2008, activity=AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC, limit=80000, limit2=88000)
+        SalesLimit.objects.create(year=2008, activity=AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC, limit=32000, limit2=34000)
+        SalesLimit.objects.create(year=2008, activity=AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC, limit=32000, limit2=34000)
+        SalesLimit.objects.create(year=2008, activity=AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC, limit=32000, limit2=34000)
+
         autoentrepreneur.models.datetime.date.mock_year = 2007
         autoentrepreneur.models.datetime.date.mock_month = 1
         autoentrepreneur.models.datetime.date.mock_day = 1
@@ -1454,6 +1464,16 @@ class TaxTest(TestCase):
         profile.freeing_tax_payment = True
         profile.creation_help = True
         profile.save()
+
+        # inserting fake sales limit for test
+        SalesLimit.objects.create(year=2007, activity=AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC, limit=80000, limit2=88000)
+        SalesLimit.objects.create(year=2007, activity=AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC, limit=32000, limit2=34000)
+        SalesLimit.objects.create(year=2007, activity=AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC, limit=32000, limit2=34000)
+        SalesLimit.objects.create(year=2007, activity=AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC, limit=32000, limit2=34000)
+        SalesLimit.objects.create(year=2008, activity=AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC, limit=80000, limit2=88000)
+        SalesLimit.objects.create(year=2008, activity=AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC, limit=32000, limit2=34000)
+        SalesLimit.objects.create(year=2008, activity=AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC, limit=32000, limit2=34000)
+        SalesLimit.objects.create(year=2008, activity=AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC, limit=32000, limit2=34000)
 
         autoentrepreneur.models.datetime.date.mock_year = 2007
         autoentrepreneur.models.datetime.date.mock_month = 1

@@ -10,3 +10,5 @@ media/img/logo.png
 application.wsgi
 apache.conf
 uploaded_files
+htmlcov
+.coverage

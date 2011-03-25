@@ -438,6 +438,9 @@ class InvoiceRow(Row):
     proposal = models.ForeignKey(Proposal, related_name="invoice_rows", verbose_name=_('Proposal'))
     balance_payments = models.BooleanField(verbose_name=_('Balance payments for the proposal'), help_text=_('"Balancing payments for the proposal" means there will be no future invoices for the selected proposal. Thus the amount remaining to invoice for this proposal will fall to zero and its state will be set to "balanced" when all invoices are paid.'))
 
+    class Meta:
+        ordering = ['id']
+
     def save(self, force_insert=False, force_update=False, using=None, user=None):
         super(InvoiceRow, self).save(force_insert, force_update, using, user)
 
