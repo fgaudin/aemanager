@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+import uuid
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
@@ -136,7 +137,7 @@ PROFESSIONAL_FORMATION_TAX_RATE = {AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_TRADER
 store = FileSystemStorage(location=settings.FILE_UPLOAD_DIR)
 
 def logo_upload_to_handler(instance, filename):
-        return "%s/logo/%s" % (instance.user.username, unicodedata.normalize('NFKD', filename).encode('ascii', 'ignore'))
+        return "%s/logo/%s" % (instance.user.get_profile().uuid, unicodedata.normalize('NFKD', filename).encode('ascii', 'ignore'))
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
@@ -155,6 +156,7 @@ class UserProfile(models.Model):
     iban_bban = models.CharField(max_length=34, blank=True, default='', verbose_name=_('IBAN/BBAN'), help_text=_('will appear on your invoices if set'))
     bic = models.CharField(max_length=11, blank=True, default='', verbose_name=_('BIC/SWIFT'), help_text=_('will appear on your invoices if set'))
     logo_file = models.FileField(upload_to=logo_upload_to_handler, null=True, blank=True, storage=store, verbose_name=_('Custom header'), help_text=_('will appear in place of your personnal informations on proposals and invoices. Maximum width and height: 252x137'))
+    uuid = models.CharField(max_length=36, unique=True, default=uuid.uuid4)
 
     def __unicode__(self):
         return self.user.__unicode__()

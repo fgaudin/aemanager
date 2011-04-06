@@ -4,7 +4,7 @@ from bugtracker.models import Issue, Comment
 class IssueForm(forms.ModelForm):
     class Meta:
         model = Issue
-        exclude = ['owner', 'update_date', 'state']
+        exclude = ['owner', 'uuid', 'update_date', 'state']
 
     def __init__(self, *args, **kwargs):
         super(IssueForm, self).__init__(*args, **kwargs)
@@ -13,4 +13,4 @@ class IssueForm(forms.ModelForm):
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
-        exclude = ['owner', 'update_date', 'issue']
+        exclude = ['owner', 'uuid', 'update_date', 'issue']

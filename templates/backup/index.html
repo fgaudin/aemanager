@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+{% if backup_request %}
+<div class="search-list">
+    <table>
+        <thead>
+            <tr>
+                <th>{% trans "Operation" %}</th>
+                <th>{% trans "Creation date" %}</th>
+                <th>{% trans "State" %}</th>
+                <th>{% trans "Since" %}</th>
+                {% if backup_request.error_message %}
+                <th>{% trans "Error" %}</th>
+                {% endif %}
+                {% if backup_request.is_done %}
+                <th>{% trans "Backup file" %}</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+           <tr class="row1">
+                <td>{% trans "Backup" %}</td>
+                <td>{{ backup_request.creation_datetime }}</td>
+                <td>{{ backup_request.get_state_display }}</td>
+                <td>{{ backup_request.last_state_datetime }}</td>
+                {% if backup_request.error_message %}
+                <td>{{ backup_request.error_message %}</td>
+                {% endif %}
+                {% if backup_request.is_done %}
+                <td><a href="{% url backup_download %}">{{ backup_request.get_backup_filename }}</a></td>
+                {% endif %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div>{% trans "No backup actions" %}</div>
+{% endif %}
+{% if not action_pending %}
+<form action="" method="post" id="backup-form">
+    <div>{% trans "You can make a backup to load your data in another instance of Aemanager, use data in an other software or just keep your data not only on our server." %}</div>
+    {% csrf_token %}
+    {% with backup_form as form %}
+    {% include "form.html" %}
+    {% endwith %}
+<div class="submit-row">
+    <input class="default" type="submit" name="action_btn" value="{% trans "Backup" %}" />
+</div>
+</form>
+{% endif %}
+<h1>{% trans "Restore" %}</h1>
+{% if restore_request %}
+<div class="search-list">
+    <table>
+        <thead>
+            <tr>
+                <th>{% trans "Operation" %}</th>
+                <th>{% trans "Creation date" %}</th>
+                <th>{% trans "State" %}</th>
+                <th>{% trans "Since" %}</th>
+                <th>{% trans "Action" %}</th>
+                {% if restore_request.error_message %}
+                <th>{% trans "Error" %}</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+           <tr class="row1">
+                <td>{% trans "Restore" %}</td>
+                <td>{{ restore_request.creation_datetime }}</td>
+                <td>{{ restore_request.get_state_display }}</td>
+                <td>{{ restore_request.last_state_datetime }}</td>
+                <td>{{ restore_request.get_action_display }}</td>
+                {% if restore_request.error_message %}
+                <td>{{ restore_request.error_message }}</td>
+                {% endif %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div>{% trans "No restore actions" %}</div>
+{% endif %}
+{% if not action_pending %}
+<form action="" method="post" id="restore-form" enctype="multipart/form-data">
+    <div>{% trans "You can restore a backup." %}</div>
+    {% csrf_token %}
+    <fieldset class="module aligned">
+    {% with restore_form as form %}
+    {% include "form.html" %}
+    {% endwith %}
+    </fieldset>
+<div class="submit-row">
+    <input class="default" type="submit" name="action_btn" value="{% trans "Restore" %}" />
+</div>
+</form>
+{% endif %}
+{% endblock %}

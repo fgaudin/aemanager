@@ -131,6 +131,7 @@ def contract_uploaded_contract_download(request, id):
     response = HttpResponse(mimetype='application/force-download')
     response['Content-Disposition'] = 'attachment;filename="%s"'\
                                     % smart_str(contract.contract_file.name)
+
     response["X-Sendfile"] = "%s%s" % (settings.FILE_UPLOAD_DIR, contract.contract_file.name)
     response['Content-length'] = contract.contract_file.size
     return response
@@ -408,6 +409,7 @@ def proposal_create_or_edit(request, id=None, project_id=None):
                 rollback()
                 messages.error(request, _("Proposal amount can't be less than sum of invoices"))
         else:
+            import pdb;pdb.set_trace()
             messages.error(request, _('Data provided are invalid'))
     else:
         proposalForm = ProposalForm(instance=proposal, prefix="proposal")

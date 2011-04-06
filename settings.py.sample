@@ -121,6 +121,7 @@ INSTALLED_APPS = (
     'accounts',
     'announcement',
     'autoentrepreneur',
+    'backup',
     'bugtracker',
     'contact',
     'core',
@@ -180,3 +181,6 @@ logging.disable(logging.DEBUG)
 
 FILE_UPLOAD_DIR = '/path/to/uploaded_files/'
 FILE_MAX_SIZE = '1 Mo' # just to display in help text. Must match LimitRequestBody in Apache
+
+CONCURRENT_BACKUP_REQUEST = 5
+CONCURRENT_RESTORE_REQUEST = 5

@@ -37,6 +37,7 @@ urlpatterns = patterns('',
     url(r'^issues/', include('bugtracker.urls')),
     url(r'^user/', include('registration_urls')),
     url(r'^newsletter/', include('newsletter.urls')),
+    url(r'^backup/', include('backup.urls')),
 
 )
 

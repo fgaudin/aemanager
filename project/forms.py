@@ -14,12 +14,12 @@ class ContractForm(ModelForm):
 
     class Meta:
         model = Contract
-        exclude = ['owner', 'update_date', 'customer']
+        exclude = ['owner', 'uuid', 'update_date', 'customer']
 
 class ProjectForm(ModelForm):
     class Meta:
         model = Project
-        exclude = ['owner']
+        exclude = ['owner', 'uuid']
 
 PROJECT_STATE_SEARCH = (('', '-------------'),) + PROJECT_STATE[:PROJECT_STATE_STARTED]
 
@@ -35,7 +35,7 @@ class ProposalForm(ModelForm):
 
     class Meta:
         model = Proposal
-        exclude = ['owner', 'project', 'update_date', 'amount']
+        exclude = ['owner', 'uuid', 'project', 'update_date', 'amount']
 
     def __init__(self, *args, **kwargs):
         super(ProposalForm, self).__init__(*args, **kwargs)
@@ -65,7 +65,7 @@ class ProposalRowForm(ModelForm):
 
     class Meta:
         model = ProposalRow
-        exclude = ['owner']
+        exclude = ['owner', 'uuid']
 
     def __init__(self, *args, **kwargs):
         super(ProposalRowForm, self).__init__(*args, **kwargs)

@@ -1,0 +1,837 @@
+[
+    {
+        "pk": 4,
+        "model": "auth.user",
+        "fields": {
+            "username": "test1",
+            "first_name": "pr\u00e9nom",
+            "last_name": "nom",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2011-04-07 22:27:57",
+            "groups": [],
+            "user_permissions": [],
+            "password": "sha1$80d2d$421c391559569365e60c4fe798ae3653bf2d11a0",
+            "email": "francois.makina@gmail.com",
+            "date_joined": "2011-04-07 22:27:26"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "auth.user",
+        "fields": {
+            "username": "test2",
+            "first_name": "Durand",
+            "last_name": "Georges",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2011-04-07 22:43:55",
+            "groups": [],
+            "user_permissions": [],
+            "password": "sha1$f6d6d$52f7abd89955490707f3d01c914c94cd85f4749a",
+            "email": "alf@alfbox.net",
+            "date_joined": "2011-04-07 22:43:39"
+        }
+    },
+    {
+        "pk": 1028,
+        "model": "contact.phonenumber",
+        "fields": {
+            "default": false,
+            "contact": 1026,
+            "type": 3,
+            "number": "0606060606"
+        }
+    },
+    {
+        "pk": 1047,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 5,
+            "uuid": "720193da-2e10-4b2f-b13e-976a27d89aa0"
+        }
+    },
+    {
+        "pk": 1046,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 5,
+            "uuid": "b5c5490c-3f7b-4f12-9865-c7095b1b5103"
+        }
+    },
+    {
+        "pk": 1048,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 5,
+            "uuid": "51f5421b-b17f-4f4b-afb7-efb6667c57b2"
+        }
+    },
+    {
+        "pk": 1049,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 5,
+            "uuid": "fa73c0f1-1abc-4b60-a6a6-42b7dea8e989"
+        }
+    },
+    {
+        "pk": 1052,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 5,
+            "uuid": "33594b25-0887-4bf8-9967-66c963bc9366"
+        }
+    },
+    {
+        "pk": 1053,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 5,
+            "uuid": "1ec49152-51c6-4e77-8dbb-d42223abe322"
+        }
+    },
+    {
+        "pk": 1051,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 5,
+            "uuid": "aae638cd-3b54-4179-9355-06a38c90cc77"
+        }
+    },
+    {
+        "pk": 1050,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 5,
+            "uuid": "aded59eb-2b63-447f-8a94-37fc05b584ef"
+        }
+    },
+    {
+        "pk": 1055,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 5,
+            "uuid": "980ff3e9-5fe0-430c-9cf0-a9dc49b2b98a"
+        }
+    },
+    {
+        "pk": 1056,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 5,
+            "uuid": "94c6909f-237a-4106-bea9-2e4a3efbb4d9"
+        }
+    },
+    {
+        "pk": 1054,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 5,
+            "uuid": "1e3ef3db-7037-497b-a71f-e3ac573e7e98"
+        }
+    },
+    {
+        "pk": 1057,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 5,
+            "uuid": "1ebf65af-6278-4b7b-809f-0849d8faf675"
+        }
+    },
+    {
+        "pk": 1039,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 4,
+            "uuid": "d60f36b2-b6dc-4751-818f-79c71d784324"
+        }
+    },
+    {
+        "pk": 1040,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 4,
+            "uuid": "0ecc200d-b3dd-4183-9159-27f33194ed56"
+        }
+    },
+    {
+        "pk": 1024,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 4,
+            "uuid": "38ace142-5a9e-4d0a-a0d9-31dd88dde8ba"
+        }
+    },
+    {
+        "pk": 1023,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 4,
+            "uuid": "69aeb75a-be7f-479d-8528-01e433bfbd52"
+        }
+    },
+    {
+        "pk": 1025,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 4,
+            "uuid": "410fdb21-2f16-451e-bad9-1205c47a15a6"
+        }
+    },
+    {
+        "pk": 1026,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 4,
+            "uuid": "b433886f-3505-43f9-8274-4193a6c9758c"
+        }
+    },
+    {
+        "pk": 1027,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 4,
+            "uuid": "039e91a3-4026-40e9-96f3-7956f0178849"
+        }
+    },
+    {
+        "pk": 1028,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 4,
+            "uuid": "3a822f4d-c847-4712-89a6-b76c6d7e362d"
+        }
+    },
+    {
+        "pk": 1029,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 4,
+            "uuid": "b67208c4-8c34-47b8-86ab-80a19f6921e9"
+        }
+    },
+    {
+        "pk": 1031,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 4,
+            "uuid": "059f6a5f-006c-4e0d-b823-0c46ca6deb9a"
+        }
+    },
+    {
+        "pk": 1032,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 4,
+            "uuid": "035b9257-14b3-43dc-b863-9556c9cbf408"
+        }
+    },
+    {
+        "pk": 1033,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 4,
+            "uuid": "f19b51c4-1671-4ba8-be50-cd00d426d4cb"
+        }
+    },
+    {
+        "pk": 1034,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 4,
+            "uuid": "ffa681e0-cfb5-43df-8c6b-4a1315d6377d"
+        }
+    },
+    {
+        "pk": 1030,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 4,
+            "uuid": "5b886d75-6dca-4ab1-9845-8428637b5193"
+        }
+    },
+    {
+        "pk": 1035,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 4,
+            "uuid": "f8573d75-1c24-4bbf-b0c7-c2bf58b9a488"
+        }
+    },
+    {
+        "pk": 1036,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 4,
+            "uuid": "9fcf176f-3b4c-4abc-b4f0-cc1aa4519568"
+        }
+    },
+    {
+        "pk": 1042,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 4,
+            "uuid": "c806581a-ee67-44a3-b29f-e4dfeed2d78f"
+        }
+    },
+    {
+        "pk": 1043,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 4,
+            "uuid": "429d4bba-8a06-4291-93f1-b80e03d31324"
+        }
+    },
+    {
+        "pk": 1041,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 4,
+            "uuid": "3e64e58c-4244-4f98-aa48-13185b92ee8d"
+        }
+    },
+    {
+        "pk": 1038,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 4,
+            "uuid": "2e6bed41-43e5-41b1-8c7f-60353e7727a2"
+        }
+    },
+    {
+        "pk": 1037,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 4,
+            "uuid": "8d331021-c12b-40e7-875c-be98ad49ddf2"
+        }
+    },
+    {
+        "pk": 1044,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 4,
+            "uuid": "6cb4cf52-1f65-47af-8aaf-03291d025792"
+        }
+    },
+    {
+        "pk": 1045,
+        "model": "core.ownedobject",
+        "fields": {
+            "owner": 4,
+            "uuid": "74c0e273-56eb-48f1-b6a5-5a62937e2ee3"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "registration.registrationprofile",
+        "fields": {
+            "activation_key": "ALREADY_ACTIVATED",
+            "user": 4
+        }
+    },
+    {
+        "pk": 4,
+        "model": "registration.registrationprofile",
+        "fields": {
+            "activation_key": "ALREADY_ACTIVATED",
+            "user": 5
+        }
+    },
+    {
+        "pk": 1057,
+        "model": "accounts.expense",
+        "fields": {
+            "description": "Expense other",
+            "reference": "zzz",
+            "supplier": "Michenaud.com",
+            "amount": "20.00",
+            "payment_type": 1,
+            "date": "2011-04-01"
+        }
+    },
+    {
+        "pk": 1044,
+        "model": "accounts.expense",
+        "fields": {
+            "description": "expense 1",
+            "reference": "xxx",
+            "supplier": "Amazon",
+            "amount": "100.00",
+            "payment_type": 2,
+            "date": "2011-04-07"
+        }
+    },
+    {
+        "pk": 1045,
+        "model": "accounts.expense",
+        "fields": {
+            "description": "expense 2",
+            "reference": "yyy",
+            "supplier": "Materiel.net",
+            "amount": "200.00",
+            "payment_type": 3,
+            "date": "2011-04-07"
+        }
+    },
+    {
+        "pk": 1054,
+        "model": "accounts.invoice",
+        "fields": {
+            "customer": 1049,
+            "payment_date": "2011-04-05",
+            "execution_end_date": "2011-04-02",
+            "penalty_rate": null,
+            "invoice_id": 1,
+            "amount": "800.00",
+            "penalty_date": null,
+            "state": 1,
+            "execution_begin_date": "2011-04-01",
+            "paid_date": null,
+            "payment_type": 2,
+            "discount_conditions": "",
+            "edition_date": "2011-04-07"
+        }
+    },
+    {
+        "pk": 1041,
+        "model": "accounts.invoice",
+        "fields": {
+            "customer": 1026,
+            "payment_date": "2011-04-01",
+            "execution_end_date": "2011-03-01",
+            "penalty_rate": "1.95",
+            "invoice_id": 1,
+            "amount": "180.00",
+            "penalty_date": "2011-04-07",
+            "state": 3,
+            "execution_begin_date": "2011-02-01",
+            "paid_date": "2011-04-07",
+            "payment_type": 3,
+            "discount_conditions": "n\u00e9ant",
+            "edition_date": "2011-04-07"
+        }
+    },
+    {
+        "pk": 1042,
+        "model": "accounts.invoicerow",
+        "fields": {
+            "category": 1,
+            "balance_payments": true,
+            "unit_price": "30.00",
+            "label": "line 1",
+            "amount": "60.00",
+            "invoice": 1041,
+            "proposal": 1038,
+            "quantity": "2.0"
+        }
+    },
+    {
+        "pk": 1043,
+        "model": "accounts.invoicerow",
+        "fields": {
+            "category": 2,
+            "balance_payments": true,
+            "unit_price": "40.00",
+            "label": "line 2",
+            "amount": "120.00",
+            "invoice": 1041,
+            "proposal": 1038,
+            "quantity": "3.0"
+        }
+    },
+    {
+        "pk": 1055,
+        "model": "accounts.invoicerow",
+        "fields": {
+            "category": 1,
+            "balance_payments": true,
+            "unit_price": "20.00",
+            "label": "test 1",
+            "amount": "200.00",
+            "invoice": 1054,
+            "proposal": 1051,
+            "quantity": "10.0"
+        }
+    },
+    {
+        "pk": 1056,
+        "model": "accounts.invoicerow",
+        "fields": {
+            "category": 1,
+            "balance_payments": true,
+            "unit_price": "30.00",
+            "label": "test 2",
+            "amount": "600.00",
+            "invoice": 1054,
+            "proposal": 1051,
+            "quantity": "20.0"
+        }
+    },
+    {
+        "pk": 1024,
+        "model": "autoentrepreneur.subscription",
+        "fields": {
+            "expiration_date": "2011-06-06",
+            "state": 3,
+            "error_message": null,
+            "transaction_id": "TRIAL-201147-4"
+        }
+    },
+    {
+        "pk": 1047,
+        "model": "autoentrepreneur.subscription",
+        "fields": {
+            "expiration_date": "2011-06-06",
+            "state": 3,
+            "error_message": null,
+            "transaction_id": "TRIAL-201147-5"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "autoentrepreneur.userprofile",
+        "fields": {
+            "iban_bban": "1234",
+            "payment_option": 2,
+            "creation_help": true,
+            "unregister_datetime": null,
+            "professional_email": "test@test.com",
+            "activity": 4,
+            "company_id": "12345",
+            "creation_date": "2010-12-01",
+            "freeing_tax_payment": true,
+            "logo_file": "4bb803fd-7d94-440a-acbf-a0844c06ab3b/logo/test.png",
+            "phonenumber": "0101010101",
+            "user": 4,
+            "address": 1023,
+            "professional_category": 3,
+            "bic": "2345",
+            "company_name": "My company",
+            "uuid": "4bb803fd-7d94-440a-acbf-a0844c06ab3b"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "autoentrepreneur.userprofile",
+        "fields": {
+            "iban_bban": "",
+            "payment_option": 2,
+            "creation_help": false,
+            "unregister_datetime": null,
+            "professional_email": "",
+            "activity": 2,
+            "company_id": "1900000",
+            "creation_date": "2011-01-04",
+            "freeing_tax_payment": false,
+            "logo_file": "",
+            "phonenumber": "",
+            "user": 5,
+            "address": 1046,
+            "professional_category": 2,
+            "bic": "",
+            "company_name": "",
+            "uuid": "73d1fd08-5388-4d4a-a29d-4cfea92b422d"
+        }
+    },
+    {
+        "pk": 1046,
+        "model": "contact.address",
+        "fields": {
+            "city": "Caen",
+            "street": "street",
+            "zipcode": "14000",
+            "country": null
+        }
+    },
+    {
+        "pk": 1048,
+        "model": "contact.address",
+        "fields": {
+            "city": "La roche sur yon",
+            "street": "test",
+            "zipcode": "85000",
+            "country": null
+        }
+    },
+    {
+        "pk": 1023,
+        "model": "contact.address",
+        "fields": {
+            "city": "Nantes",
+            "street": "rue",
+            "zipcode": "44000",
+            "country": null
+        }
+    },
+    {
+        "pk": 1025,
+        "model": "contact.address",
+        "fields": {
+            "city": "Paris",
+            "street": "rue customer",
+            "zipcode": "75000",
+            "country": null
+        }
+    },
+    {
+        "pk": 1031,
+        "model": "contact.address",
+        "fields": {
+            "city": "Paris",
+            "street": "rue customer 2",
+            "zipcode": "75001",
+            "country": 67
+        }
+    },
+    {
+        "pk": 1035,
+        "model": "contact.address",
+        "fields": {
+            "city": "Bordeaux",
+            "street": "test",
+            "zipcode": "33000",
+            "country": null
+        }
+    },
+    {
+        "pk": 1049,
+        "model": "contact.contact",
+        "fields": {
+            "function": "",
+            "comment": "",
+            "name": "Customer other",
+            "firstname": "",
+            "contact_type": 2,
+            "contacts": [],
+            "company_id": "12345",
+            "legal_form": "SARL",
+            "representative_function": "",
+            "representative": "",
+            "address": 1048,
+            "email": ""
+        }
+    },
+    {
+        "pk": 1026,
+        "model": "contact.contact",
+        "fields": {
+            "function": "",
+            "comment": "no comment",
+            "name": "customer 1",
+            "firstname": "",
+            "contact_type": 2,
+            "contacts": [
+                1036
+            ],
+            "company_id": "9876",
+            "legal_form": "SA",
+            "representative_function": "CTO",
+            "representative": "boss",
+            "address": 1025,
+            "email": "customer1@test.com"
+        }
+    },
+    {
+        "pk": 1032,
+        "model": "contact.contact",
+        "fields": {
+            "function": "Boss",
+            "comment": "comment",
+            "name": "Customer 2",
+            "firstname": "Georges",
+            "contact_type": 1,
+            "contacts": [],
+            "company_id": "",
+            "legal_form": "",
+            "representative_function": "",
+            "representative": "",
+            "address": 1031,
+            "email": "customer2@test.com"
+        }
+    },
+    {
+        "pk": 1036,
+        "model": "contact.contact",
+        "fields": {
+            "function": "Dev",
+            "comment": "",
+            "name": "Dupont",
+            "firstname": "Nicolas",
+            "contact_type": 1,
+            "contacts": [
+                1026
+            ],
+            "company_id": "",
+            "legal_form": "",
+            "representative_function": "",
+            "representative": "",
+            "address": 1035,
+            "email": ""
+        }
+    },
+    {
+        "pk": 1027,
+        "model": "contact.phonenumber",
+        "fields": {
+            "default": true,
+            "contact": 1026,
+            "type": 1,
+            "number": "0202020202"
+        }
+    },
+    {
+        "pk": 1033,
+        "model": "contact.phonenumber",
+        "fields": {
+            "default": false,
+            "contact": 1032,
+            "type": 1,
+            "number": "0303030303"
+        }
+    },
+    {
+        "pk": 1029,
+        "model": "project.contract",
+        "fields": {
+            "customer": 1026,
+            "content": "lorem ipsum blabla  ",
+            "update_date": "2011-04-07",
+            "contract_file": "4bb803fd-7d94-440a-acbf-a0844c06ab3b/contract/contract.pdf",
+            "title": "Contract 1"
+        }
+    },
+    {
+        "pk": 1034,
+        "model": "project.contract",
+        "fields": {
+            "customer": 1032,
+            "content": "lorem ipsum blabla  ",
+            "update_date": "2011-04-07",
+            "contract_file": "4bb803fd-7d94-440a-acbf-a0844c06ab3b/contract/contract_2.pdf",
+            "title": "Contract 3"
+        }
+    },
+    {
+        "pk": 1030,
+        "model": "project.contract",
+        "fields": {
+            "customer": 1026,
+            "content": "lorem ipsum blabla  ",
+            "update_date": "2011-04-07",
+            "contract_file": "4bb803fd-7d94-440a-acbf-a0844c06ab3b/contract/contract_1.pdf",
+            "title": "Contract 2"
+        }
+    },
+    {
+        "pk": 1050,
+        "model": "project.project",
+        "fields": {
+            "customer": 1049,
+            "state": 3,
+            "name": "Project other"
+        }
+    },
+    {
+        "pk": 1037,
+        "model": "project.project",
+        "fields": {
+            "customer": 1026,
+            "state": 4,
+            "name": "Project 1"
+        }
+    },
+    {
+        "pk": 1038,
+        "model": "project.proposal",
+        "fields": {
+            "contract_content": "lorem ipsum  ",
+            "begin_date": "2011-02-01",
+            "reference": "ref1",
+            "end_date": "2011-03-01",
+            "update_date": "2011-04-07",
+            "expiration_date": "2011-02-01",
+            "amount": "180.00",
+            "project": 1037,
+            "payment_delay_other": null,
+            "state": 4,
+            "contract_file": "4bb803fd-7d94-440a-acbf-a0844c06ab3b/proposal/proposal.pdf",
+            "payment_delay": 2,
+            "payment_delay_type_other": null
+        }
+    },
+    {
+        "pk": 1051,
+        "model": "project.proposal",
+        "fields": {
+            "contract_content": "test  ",
+            "begin_date": "2011-04-01",
+            "reference": "ref other",
+            "end_date": "2011-04-02",
+            "update_date": "2011-04-07",
+            "expiration_date": "2011-04-01",
+            "amount": "800.00",
+            "project": 1050,
+            "payment_delay_other": null,
+            "state": 3,
+            "contract_file": "test2/proposal/contract.pdf",
+            "payment_delay": 3,
+            "payment_delay_type_other": null
+        }
+    },
+    {
+        "pk": 1052,
+        "model": "project.proposalrow",
+        "fields": {
+            "category": 1,
+            "ownedobject_ptr": 1052,
+            "unit_price": "20.00",
+            "label": "test 1",
+            "amount": "200.00",
+            "proposal": 1051,
+            "quantity": "10.0"
+        }
+    },
+    {
+        "pk": 1053,
+        "model": "project.proposalrow",
+        "fields": {
+            "category": 1,
+            "ownedobject_ptr": 1053,
+            "unit_price": "30.00",
+            "label": "test 2",
+            "amount": "600.00",
+            "proposal": 1051,
+            "quantity": "20.0"
+        }
+    },
+    {
+        "pk": 1039,
+        "model": "project.proposalrow",
+        "fields": {
+            "category": 1,
+            "ownedobject_ptr": 1039,
+            "unit_price": "30.00",
+            "label": "line 1",
+            "amount": "60.00",
+            "proposal": 1038,
+            "quantity": "2.0"
+        }
+    },
+    {
+        "pk": 1040,
+        "model": "project.proposalrow",
+        "fields": {
+            "category": 2,
+            "ownedobject_ptr": 1040,
+            "unit_price": "40.00",
+            "label": "line 2",
+            "amount": "120.00",
+            "proposal": 1038,
+            "quantity": "3.0"
+        }
+    }
+]

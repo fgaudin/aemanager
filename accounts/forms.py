@@ -8,7 +8,7 @@ class ExpenseForm(ModelForm):
 
     class Meta:
         model = Expense
-        exclude = ['owner']
+        exclude = ['owner', 'uuid']
 
     def __init__(self, *args, **kwargs):
         super(ExpenseForm, self).__init__(*args, **kwargs)
@@ -25,7 +25,7 @@ class InvoiceForm(ModelForm):
 
     class Meta:
         model = Invoice
-        exclude = ['owner', 'proposal', 'amount']
+        exclude = ['owner', 'uuid', 'proposal', 'amount']
 
     def __init__(self, *args, **kwargs):
         super(InvoiceForm, self).__init__(*args, **kwargs)
@@ -56,7 +56,7 @@ class InvoiceRowForm(ModelForm):
 
     class Meta:
         model = InvoiceRow
-        exclude = ['owner']
+        exclude = ['owner', 'uuid']
 
     def __init__(self, *args, **kwargs):
         super(InvoiceRowForm, self).__init__(*args, **kwargs)

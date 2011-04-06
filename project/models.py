@@ -26,7 +26,7 @@ from django.core.files.storage import FileSystemStorage
 store = FileSystemStorage(location=settings.FILE_UPLOAD_DIR)
 
 def contract_upload_to_handler(instance, filename):
-        return "%s/contract/%s" % (instance.owner.username, unicodedata.normalize('NFKD', filename).encode('ascii', 'ignore'))
+        return "%s/contract/%s" % (instance.owner.get_profile().uuid, unicodedata.normalize('NFKD', filename).encode('ascii', 'ignore'))
 
 class Contract(OwnedObject):
     customer = models.ForeignKey(Contact, verbose_name=_('Customer'), related_name="contracts")
@@ -166,7 +166,7 @@ class ProposalManager(models.Manager):
         return quantity_sum['quantity'] or 0
 
 def proposal_upload_to_handler(instance, filename):
-        return "%s/proposal/%s" % (instance.owner.username, unicodedata.normalize('NFKD', filename).encode('ascii', 'ignore'))
+        return "%s/proposal/%s" % (instance.owner.get_profile().uuid, unicodedata.normalize('NFKD', filename).encode('ascii', 'ignore'))
 
 class Proposal(OwnedObject):
     project = models.ForeignKey(Project)

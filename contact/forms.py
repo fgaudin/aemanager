@@ -12,7 +12,7 @@ class AddressForm(ModelForm):
 
     class Meta:
         model = Address
-        exclude = ['owner']
+        exclude = ['owner', 'uuid']
 
 class ContactForm(ModelForm):
     contact_type = forms.ChoiceField(label=_('Type'),
@@ -24,12 +24,12 @@ class ContactForm(ModelForm):
 
     class Meta:
         model = Contact
-        exclude = ['owner', 'address']
+        exclude = ['owner', 'uuid', 'address']
 
 class PhoneNumberForm(ModelForm):
     class Meta:
         model = PhoneNumber
-        exclude = ['owner']
+        exclude = ['owner', 'uuid']
 
     def __init__(self, *args, **kwargs):
         super(PhoneNumberForm, self).__init__(*args, **kwargs)

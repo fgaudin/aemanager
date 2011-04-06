@@ -1,2 +1,2 @@
 DATE_FORMAT = 'd/m/Y'
-DATETIME_FORMAT = 'd/m/Y H:m'
+DATETIME_FORMAT = 'd/m/Y H:i'

@@ -90,6 +90,9 @@
                         <li>
                             <a href="{% url message_list %}">{% trans "My messages" %}{% if user.get_profile.unread_message_count %} ({{ user.get_profile.unread_message_count }}){% endif %}</a>
                         </li>
+                        <li>
+                            <a href="{% url backup %}">{% trans "Backup/Restore" %}</a>
+                        </li>
                         {% else %}
                         <li>
                             <a href="{% url message_list %}">{% trans "Messages" %}</a>
