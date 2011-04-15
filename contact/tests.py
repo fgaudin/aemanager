@@ -108,3 +108,24 @@ class ContactTest(TestCase):
                                      'address-zipcode': '75000',
                                      'address-city': 'Paris'})
         self.assertEquals(response.status_code, 302)
+
+    def testBug192(self):
+        """
+        delete address when deleting a contact
+        """
+        address1 = Address.objects.create(street="3 rue de la paix",
+                                          zipcode="75000",
+                                          city="Paris",
+                                          country=None,
+                                          owner_id=1)
+        contact1 = Contact.objects.create(contact_type=CONTACT_TYPE_PERSON,
+                                          name="contact1",
+                                          firstname="first name",
+                                          email="test1@test.com",
+                                          address=address1,
+                                          owner_id=1)
+
+        response = self.client.post(reverse("contact_delete", kwargs={'id': contact1.id}),
+                                    {'delete': 'Delete'})
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals(Address.objects.filter(pk=address1.id).count(), 0)

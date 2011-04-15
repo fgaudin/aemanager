@@ -162,7 +162,9 @@ def contact_delete(request, id):
 
     if request.method == 'POST':
         if request.POST.get('delete'):
+            address = contact.address
             contact.delete()
+            address.delete()
             messages.success(request, _('The contact has been deleted successfully'))
             return redirect(reverse('contact_search'))
         else:
