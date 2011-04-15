@@ -49,7 +49,8 @@ class ContractPermissionTest(TestCase):
     def testContractDelete(self):
         response = self.client.get(reverse('contract_delete', kwargs={'id': self.contract2.id}))
         self.assertEquals(response.status_code, 404)
-        response = self.client.post(reverse('contract_delete', kwargs={'id': self.contract2.id}))
+        response = self.client.post(reverse('contract_delete', kwargs={'id': self.contract2.id}),
+                                    {'delete': 'Ok'})
         self.assertEquals(response.status_code, 404)
 
     def testContractDownload(self):
@@ -400,7 +401,8 @@ class ProposalPermissionTest(TestCase):
     def testProposalDelete(self):
         response = self.client.get(reverse('proposal_delete', kwargs={'id': self.proposal2.id}))
         self.assertEquals(response.status_code, 404)
-        response = self.client.post(reverse('proposal_delete', kwargs={'id': self.proposal2.id}))
+        response = self.client.post(reverse('proposal_delete', kwargs={'id': self.proposal2.id}),
+                                    {'delete': 'Ok'})
         self.assertEquals(response.status_code, 404)
 
     def testProposalChangeState(self):

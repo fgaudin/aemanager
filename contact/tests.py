@@ -41,7 +41,8 @@ class ContactPermissionTest(TestCase):
     def testContactDelete(self):
         response = self.client.get(reverse("contact_delete", kwargs={'id': self.contact2.id}))
         self.assertEquals(response.status_code, 404)
-        response = self.client.post(reverse("contact_delete", kwargs={'id': self.contact2.id}))
+        response = self.client.post(reverse("contact_delete", kwargs={'id': self.contact2.id}),
+                                    {'delete': 'Ok'})
         self.assertEquals(response.status_code, 404)
 
     def testContactAdd(self):
@@ -126,6 +127,6 @@ class ContactTest(TestCase):
                                           owner_id=1)
 
         response = self.client.post(reverse("contact_delete", kwargs={'id': contact1.id}),
-                                    {'delete': 'Delete'})
+                                    {'delete': 'Ok'})
         self.assertEquals(response.status_code, 302)
         self.assertEquals(Address.objects.filter(pk=address1.id).count(), 0)

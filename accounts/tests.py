@@ -196,7 +196,8 @@ class InvoicePermissionTest(TestCase):
     def testInvoiceDelete(self):
         response = self.client.get(reverse('invoice_delete', kwargs={'id': self.invoice2.id}))
         self.assertEqual(response.status_code, 404)
-        response = self.client.post(reverse('invoice_delete', kwargs={'id': self.invoice2.id}))
+        response = self.client.post(reverse('invoice_delete', kwargs={'id': self.invoice2.id}),
+                                    {'delete': 'Ok'})
         self.assertEqual(response.status_code, 404)
 
     def testInvoiceDownload(self):
