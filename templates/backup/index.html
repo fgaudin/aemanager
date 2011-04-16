@@ -36,7 +36,7 @@
     </table>
 </div>
 {% else %}
-<div>{% trans "No backup actions" %}</div>
+<div>{% trans "No backup actions" %}<br/><br/></div>
 {% endif %}
 {% if not action_pending %}
 <form action="" method="post" id="backup-form">
@@ -81,7 +81,7 @@
     </table>
 </div>
 {% else %}
-<div>{% trans "No restore actions" %}</div>
+<div>{% trans "No restore actions" %}<br/><br/></div>
 {% endif %}
 {% if not action_pending %}
 <form action="" method="post" id="restore-form" enctype="multipart/form-data">
