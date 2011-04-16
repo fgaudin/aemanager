@@ -17,6 +17,8 @@ from autoentrepreneur.models import Subscription
 from django.test.testcases import TransactionTestCase
 from core.models import OwnedObject
 from django.core.exceptions import SuspiciousOperation
+from django.core import mail
+from django.utils.translation import ugettext
 
 class BackupTest(TransactionTestCase):
     fixtures = ['backup_data']
@@ -319,6 +321,8 @@ class BackupTest(TransactionTestCase):
         self.assertEquals(RestoreRequest.objects.get(user=self.user1).error_message, 'Reference to a missing object')
         self.assertEquals(Project.objects.filter(owner=self.user1).count(), 1)
         self.assertEquals(Project.objects.get(owner=self.user1).customer.uuid, 'b433886f-3505-43f9-8274-4193a6c9758c')
+        self.assertEquals(len(mail.outbox), 1)
+        self.assertEquals(mail.outbox[0].subject, ugettext("%sRestore failed") % (settings.EMAIL_SUBJECT_PREFIX))
 
     def test_uuid_from_other_create_new_object(self):
         backup_file = '%s/backup/fixtures/backup_from_other_user.tar.gz' % (settings.BASE_PATH)

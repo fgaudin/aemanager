@@ -22,6 +22,7 @@ from django.db.models.fields.related import ForeignKey, OneToOneField
 import os
 import errno
 from django.core.serializers.xml_serializer import getInnerText
+from django.core.mail import mail_admins
 
 BACKUP_RESTORE_STATE_PENDING = 1
 BACKUP_RESTORE_STATE_IN_PROGRESS = 2
@@ -112,6 +113,10 @@ class BackupRequest(models.Model):
         except Exception as e:
             self.state = BACKUP_RESTORE_STATE_ERROR
             self.error_message = unicode(e)
+            mail_subject = _('Backup failed')
+            mail_message = _('Backup for %(user)s failed with message : %(message)s') % {'user': self.user,
+                                                                                         'message': e}
+            mail_admins(mail_subject, mail_message, fail_silently=(not settings.DEBUG))
 
         shutil.rmtree(self.backup_dir, True)
         self.last_state_datetime = datetime.datetime.now()
@@ -254,6 +259,10 @@ class RestoreRequest(models.Model):
             transaction.leave_transaction_management()
             self.state = BACKUP_RESTORE_STATE_ERROR
             self.error_message = e.__unicode__()
+            mail_subject = _('Restore failed')
+            mail_message = _('Restore for %(user)s failed with message : %(message)s') % {'user': self.user,
+                                                                                         'message': e}
+            mail_admins(mail_subject, mail_message, fail_silently=(not settings.DEBUG))
 
         self.save()
 
