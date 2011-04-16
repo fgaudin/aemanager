@@ -1,0 +1,44 @@
+{% load i18n %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Changelog - Ma Petite Auto-Entreprise, gestion de votre activité d'auto-entrepreneur</title>
+    <style media="all" type="text/css">@import "{% load adminmedia %}{% admin_media_prefix %}css/base.css";</style>
+    <style media="all" type="text/css">@import "{% load adminmedia %}{% admin_media_prefix %}css/forms.css";</style>
+    <style media="all" type="text/css">@import "{{ MEDIA_URL }}css/style.css";</style>
+    <!--[if lt IE 7]>
+      <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ie6.css" media="screen"/>
+    <![endif]-->
+  </head>
+
+  <body style="margin:10px">
+    <h1>Version 1.1</h1>
+    <ul>
+        <li>Correction des accents sur les devis et factures en pdf</li>
+        <li>Sauvegarde et restauration des données d'un utilisateur</li>
+        <li>Gestion des cotisations en cas de dépassement et affichage de messages d'avertissement</li>
+        <li>Ajout d'un message d'aide sur le champ SIRET sur le profil</li>
+        <li>Ajout du IBAN/RIB et BIC sur le profil et sur les factures</li>
+        <li>Possibilité de remplacer l'en-tête des devis et factures par une image</li>
+        <li>Possibilité d'ajouter plusieurs numéros de téléphone à la fois sur un contact</li>
+        <li>Ajout d'un champ "commentaire" sur les contacts</li>
+        <li>Possibilité d'uploader un fichier sur les contrats cadres et les devis</li>
+        <li>Ajout de la version de Aemanager dans le pied de page</li>
+        <li>Ajout de l'estimation des cotisations en fonction des dates de paiements attendus</li>
+        <li>Ajout d'un message d'aide sur le champ "taux de pénalité"</li>
+        <li>Ajout du numéro de téléphone et email professionnels sur le profil et sur les devis</li>
+        <li>Prise en compte de la cotisation à la formation professionnelle</li>
+        <li>Affichage des CGVU sur la page d'abonnement</li>
+        <li>Ajout du délai de paiement sur les devis</li>
+        <li>Envoi d'un mail lorsque l'abonnement va expirer et affichage d'un message d'avertissement</li>
+        <li>Suppression de la forme juridique et du SIRET du client sur les devis</li>
+        <li>Ajout de messages d'information plus visibles sur le tableau de bord</li>
+        <li>Ajout de la devise sur le détail des devis et factures</li>
+        <li>Correction de l'affichage des décimales sur les devis et factures</li>
+        <li>Export du registre des achats</li>
+        <li>Renommage des menus factures/dépenses</li>
+    </ul>
+  </body>
+</html>
