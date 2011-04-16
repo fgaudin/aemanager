@@ -1,3 +1,4 @@
+import shutil
 from django.core.management.base import BaseCommand
 from bugtracker.models import Issue, Comment, Vote
 from django.conf import settings
@@ -13,9 +14,13 @@ class Command(BaseCommand):
         i = 0
         for user in expired_users:
             i = i + 1
+            user = User.objects.get(pk=user)
+            shutil.rmtree('%s%s' % (settings.FILE_UPLOAD_DIR,
+                                    user.get_profile().uuid),
+                                    True)
             Issue.objects.filter(owner=user).update(owner=None)
             Comment.objects.filter(owner=user).update(owner=None)
             Vote.objects.filter(owner=user).delete()
-            User.objects.get(pk=user).delete()
+            user.delete()
 
         print "%i expired user(s) deleted" % (i)

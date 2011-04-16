@@ -3,6 +3,7 @@ from bugtracker.models import Issue, Comment, Vote
 from django.conf import settings
 from autoentrepreneur.models import UserProfile
 import datetime
+import shutil
 
 class Command(BaseCommand):
     help = 'Delete unregistered users'
@@ -14,6 +15,9 @@ class Command(BaseCommand):
         i = 0
         for profile in unregistered_profiles:
             i = i + 1
+            shutil.rmtree('%s%s' % (settings.FILE_UPLOAD_DIR,
+                                    profile.uuid),
+                                    True)
             Issue.objects.filter(owner=profile.user).update(owner=None)
             Comment.objects.filter(owner=profile.user).update(owner=None)
             Vote.objects.filter(owner=profile.user).delete()

@@ -29,6 +29,8 @@ import datetimestub
 import autoentrepreneur
 from django.contrib.auth import authenticate
 from registration.models import RegistrationProfile
+from backup.models import mkdir_p
+import os
 
 class SubscriptionTest(TestCase):
     fixtures = ['test_users']
@@ -641,6 +643,10 @@ class UnregisterTest(TestCase):
         vote = Vote.objects.create(issue=issue,
                                    owner_id=1)
 
+        mkdir_p('%s%s' % (settings.FILE_UPLOAD_DIR, UserProfile.objects.get(pk=1).uuid))
+        user_uuid = UserProfile.objects.get(pk=1).uuid
+        self.assertTrue(os.path.exists('%s%s' % (settings.FILE_UPLOAD_DIR, user_uuid)))
+
         response = self.client.get(reverse('unregister'))
         self.assertEquals(response.status_code, 200)
 
@@ -679,6 +685,7 @@ class UnregisterTest(TestCase):
         self.assertEquals(Subscription.objects.filter(owner__id=1).count(), 0)
         self.assertEquals(User.objects.filter(pk=1).count(), 0)
         self.assertEquals(UserProfile.objects.filter(pk=1).count(), 0)
+        self.assertFalse(os.path.exists('%s%s' % (settings.FILE_UPLOAD_DIR, user_uuid)))
 
     def testBug188cleanupregistration(self):
         """
@@ -727,6 +734,9 @@ class UnregisterTest(TestCase):
 
     def testDeleteExpiredUsers(self):
         subscription = Subscription.objects.get(owner=1)
+        mkdir_p('%s%s' % (settings.FILE_UPLOAD_DIR, UserProfile.objects.get(pk=1).uuid))
+        user_uuid = UserProfile.objects.get(pk=1).uuid
+        self.assertTrue(os.path.exists('%s%s' % (settings.FILE_UPLOAD_DIR, user_uuid)))
 
         # check it doesn't delete expired free account
         subscription.expiration_date = datetime.date.today() - datetime.timedelta(settings.ACCOUNT_EXPIRED_DAYS + 1)
@@ -756,6 +766,7 @@ class UnregisterTest(TestCase):
 
         call_command('delete_expired_users')
         self.assertEquals(User.objects.count(), 1)
+        self.assertFalse(os.path.exists('%s%s' % (settings.FILE_UPLOAD_DIR, user_uuid)))
 
 class SubscriptionUserSelectTest(TestCase):
 
