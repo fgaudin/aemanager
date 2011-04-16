@@ -367,7 +367,7 @@ class Proposal(OwnedObject):
         story.append(spacer1)
 
         data = []
-        msg = u"Dispense d'immatriculation au registre du commerce et des societes (RCS) et au repertoire des metiers (RM)"
+        msg = u"Dispensé d'immatriculation au registre du commerce et des sociétés (RCS) et au répertoire des métiers (RM)"
         data.append([Paragraph(msg, styleN),
                     '',
                     Paragraph(_("Date : %s") % (localize(self.update_date)), styleH2)])
