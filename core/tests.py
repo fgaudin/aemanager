@@ -232,10 +232,10 @@ class DashboardTest(TestCase):
         self.assertEquals(response.context['taxes']['period_begin'], datetimestub.DatetimeStub.date(2010, 7, 1))
         self.assertEquals(response.context['taxes']['period_end'], datetimestub.DatetimeStub.date(2010, 12, 31))
         self.assertEquals(float(response.context['taxes']['paid_sales_for_period']), 5000.0)
-        self.assertEquals(float(response.context['taxes']['estimated_paid_sales_for_period']), 6500.0)
+        self.assertEquals(float(response.context['taxes']['estimated_paid_sales_for_period']), 7250.0)
         self.assertEquals(float(response.context['taxes']['tax_rate']), 18.3)
         self.assertEquals(float(response.context['taxes']['amount_to_pay']), 915.0)
-        self.assertEquals(float(response.context['taxes']['estimated_amount_to_pay']), 1189.5)
+        self.assertEquals(float(response.context['taxes']['estimated_amount_to_pay']), 1326.75)
         self.assertEquals(response.context['taxes']['tax_due_date'], datetimestub.DatetimeStub.date(2011, 1, 31))
 
     def testTaxWithProfessionnalFormation(self):

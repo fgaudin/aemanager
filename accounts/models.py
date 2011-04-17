@@ -107,7 +107,7 @@ class InvoiceManager(models.Manager):
     def get_waiting_sales_for_period(self, owner, end_date, begin_date=None):
         if not end_date:
             return 0
-        amount_sum = self.filter(state=INVOICE_STATE_SENT,
+        amount_sum = self.filter(state__lte=INVOICE_STATE_SENT,
                                  owner=owner,
                                  payment_date__lte=end_date)
         if begin_date:
