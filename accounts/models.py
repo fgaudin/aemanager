@@ -187,11 +187,11 @@ class Invoice(OwnedObject):
         return True
 
     def getNature(self):
-        natures = self.invoice_rows.values('category').distinct()
+        natures = self.invoice_rows.values_list('category', flat=True).order_by('category').distinct()
         result = []
         natures_dict = dict(ROW_CATEGORY)
         for nature in natures:
-            result.append(unicode(natures_dict[nature['category']]))
+            result.append(unicode(natures_dict[nature]))
 
         return " & ".join(result)
 
