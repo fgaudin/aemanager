@@ -6,3 +6,6 @@ def parent_site(request):
 
 def version(request=None):
     return {'version': '1.1'}
+
+def google_api_key(request):
+    return {'GOOGLE_API_KEY': settings.GOOGLE_API_KEY}

@@ -96,6 +96,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.messages.context_processors.messages",
     "core.context_processors.parent_site",
     "core.context_processors.version",
+    "core.context_processors.google_api_key",
 )
 
 ROOT_URLCONF = 'aemanager.urls'
@@ -184,3 +185,5 @@ FILE_MAX_SIZE = '1 Mo' # just to display in help text. Must match LimitRequestBo
 
 CONCURRENT_BACKUP_REQUEST = 5
 CONCURRENT_RESTORE_REQUEST = 5
+
+GOOGLE_API_KEY = '' # http://code.google.com/intl/fr-FR/apis/loader/signup.html
