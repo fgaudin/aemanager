@@ -321,7 +321,7 @@ def invoice_create_or_edit(request, id=None, customer_id=None, proposal_id=None)
                 invoice.save(user=user)
                 invoiceForm.save_m2m()
                 for invoicerowform in invoicerowformset.forms:
-                    if invoicerowform.cleaned_data:
+                    if invoicerowform not in invoicerowformset.deleted_forms and invoicerowform.cleaned_data:
                         invoicerow = invoicerowform.save(commit=False)
                         invoicerow.invoice = invoice
                         invoicerow.save(user=user)
@@ -331,7 +331,7 @@ def invoice_create_or_edit(request, id=None, customer_id=None, proposal_id=None)
                             invoicerow.proposal.save()
 
                 for deleted_invoicerowform in invoicerowformset.deleted_forms:
-                    deleted_invoicerowform.cleaned_data['ownedobject_ptr'].delete()
+                    deleted_invoicerowform.instance.delete()
 
                 invoice.check_amounts()
 
