@@ -409,7 +409,6 @@ def proposal_create_or_edit(request, id=None, project_id=None):
                 rollback()
                 messages.error(request, _("Proposal amount can't be less than sum of invoices"))
         else:
-            import pdb;pdb.set_trace()
             messages.error(request, _('Data provided are invalid'))
     else:
         proposalForm = ProposalForm(instance=proposal, prefix="proposal")
