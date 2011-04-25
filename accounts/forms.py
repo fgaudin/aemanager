@@ -1,5 +1,6 @@
 from django.forms import ModelForm
-from accounts.models import Expense, Invoice, InvoiceRow, INVOICE_STATE_PAID
+from accounts.models import Expense, Invoice, InvoiceRow, INVOICE_STATE_PAID, \
+    MAX_INVOICE_ID
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
@@ -15,6 +16,9 @@ class ExpenseForm(ModelForm):
         self.fields['date'].widget.attrs['class'] = 'date'
 
 class InvoiceForm(ModelForm):
+    invoice_id = forms.IntegerField(max_value=MAX_INVOICE_ID,
+                                    label=_('Invoice id'),
+                                    help_text=_('An integer less than or equal to %d. Must be sequential.') % (MAX_INVOICE_ID))
     penalty_rate = forms.DecimalField(max_digits=4,
                                       decimal_places=2,
                                       label=_('Penalty rate'),

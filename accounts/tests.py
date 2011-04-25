@@ -1163,6 +1163,35 @@ class InvoiceTest(TestCase):
 
         self.assertEqual(response.status_code, 302)
 
+    def testBug206(self):
+        response = self.client.post(reverse('invoice_add', kwargs={'customer_id': self.proposal.project.customer.id}),
+                                    {
+                                     u'invoice_rows-0-ownedobject_ptr': [u''],
+                                     u'invoice-state': [u'1'],
+                                     u'invoice-penalty_date': [u''],
+                                     u'invoice-execution_begin_date': [u''],
+                                     u'invoice_rows-MAX_NUM_FORMS': [u''],
+                                     u'invoice-payment_date': [u'2011-05-25'],
+                                     u'invoice_rows-0-proposal': [u''],
+                                     u'invoice-payment_type': [u'2'],
+                                     u'invoice_rows-0-quantity': [u''],
+                                     u'invoice-discount_conditions': [u''],
+                                     u'invoice-paid_date': [u''],
+                                     u'invoice-edition_date': [u'2011-04-25'],
+                                     u'invoice-execution_end_date': [u''],
+                                     u'invoice_rows-INITIAL_FORMS': [u'0'],
+                                     u'invoice_rows-TOTAL_FORMS': [u'1'],
+                                     u'invoice_rows-0-label': [u''],
+                                     u'invoice_rows-0-unit_price': [u''],
+                                     u'invoice_rows-0-category': [u''],
+                                     u'invoice-invoice_id': [u'20110425001'],
+                                     u'action': [u'Sauvegarder'],
+                                     u'invoice-penalty_rate': [u'']
+                                     })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('invoice_id' in response.context['invoiceForm'].errors)
+
 class InvoiceBug106Test(TransactionTestCase):
     fixtures = ['test_users', 'test_contacts', 'test_projects']
 

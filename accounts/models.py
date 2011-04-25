@@ -20,6 +20,7 @@ from project.models import Row, Proposal, update_row_amount, \
 from django.db.models.aggregates import Sum, Min, Max
 from django.db.models.signals import post_save, pre_save, post_delete
 from django.conf import settings
+from django.core.validators import MaxValueValidator
 
 PAYMENT_TYPE_CASH = 1
 PAYMENT_TYPE_BANK_CARD = 2
@@ -43,6 +44,11 @@ class InvoiceAmountError(Exception):
 
 class InvoiceIdNotUniqueError(Exception):
     pass
+
+class InvalidInvoiceIdError(Exception):
+    pass
+
+MAX_INVOICE_ID = 999999999
 
 INVOICE_STATE_EDITED = 1
 INVOICE_STATE_SENT = 2
@@ -175,6 +181,14 @@ class Invoice(OwnedObject):
     def __unicode__(self):
         return "<a href=\"%s\">%s</a>" % (reverse('invoice_detail', kwargs={'id' : self.id}), ugettext("invoice #%d") % (self.invoice_id))
 
+    def isInvoiceIdValid(self):
+        validator = MaxValueValidator(MAX_INVOICE_ID)
+        try:
+            validator(self.invoice_id)
+        except:
+            return False
+        return True
+
     def isInvoiceIdUnique(self, owner):
         invoices = Invoice.objects.filter(owner=owner,
                                           invoice_id=self.invoice_id)
@@ -195,8 +209,9 @@ class Invoice(OwnedObject):
 
         return " & ".join(result)
 
-
     def save(self, force_insert=False, force_update=False, using=None, user=None):
+        if not self.isInvoiceIdValid():
+            raise InvalidInvoiceIdError(ugettext('Invoice id must be less than or equal to %d') % (MAX_INVOICE_ID))
         if not self.isInvoiceIdUnique(user):
             raise InvoiceIdNotUniqueError(ugettext("Invoice id must be unique"))
         super(Invoice, self).save(force_insert, force_update, using, user)
@@ -218,11 +233,11 @@ class Invoice(OwnedObject):
             canvas.setFont('Times-Roman', 10)
             PAGE_WIDTH = defaultPageSize[0]
             footer_text = "%s %s - SIRET : %s - %s, %s %s" % (user.first_name,
-                                                                  user.last_name,
-                                                                  user.get_profile().company_id,
-                                                                  user.get_profile().address.street.replace("\n", ", ").replace("\r", ""),
-                                                                  user.get_profile().address.zipcode,
-                                                                  user.get_profile().address.city)
+                                                              user.last_name,
+                                                              user.get_profile().company_id,
+                                                              user.get_profile().address.street.replace("\n", ", ").replace("\r", ""),
+                                                              user.get_profile().address.zipcode,
+                                                              user.get_profile().address.city)
             if user.get_profile().address.country:
                 footer_text = footer_text + ", %s" % (user.get_profile().address.country)
 
