@@ -65,6 +65,7 @@ jQuery(document).ready(function(){
         e.preventDefault();
         new_row = jQuery(e.currentTarget).parent('.inline-formset').prev('.proposal-row').clone();
         jQuery(e.currentTarget).parent('.inline-formset').before(new_row);
+        jQuery('ul.errorlist', new_row).remove();
         jQuery('input',new_row).val('');
         jQuery('input',new_row).attr('checked', false);
         jQuery('option',new_row).attr('selected', false);
