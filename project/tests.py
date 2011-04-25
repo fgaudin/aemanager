@@ -822,6 +822,63 @@ class ProposalTest(TestCase):
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
                           "583f1f9a28e9dd4103a3eff9b96da7c3")
 
+    def testBug201(self):
+        p = Proposal.objects.create(project_id=30,
+                                    update_date=datetime.date(2011, 2, 5),
+                                    state=PROPOSAL_STATE_DRAFT,
+                                    begin_date=datetime.date(2010, 8, 1),
+                                    end_date=datetime.date(2010, 8, 15),
+                                    contract_content='Content of contract',
+                                    amount=2005,
+                                    reference='XXX',
+                                    expiration_date=datetime.date(2010, 8, 2),
+                                    owner_id=1)
+
+        p_row = ProposalRow.objects.create(proposal_id=p.id,
+                                           label='Day of work',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           quantity=20,
+                                           unit_price='200.5',
+                                           owner_id=1)
+
+        post_data = {u'proposal_rows-MAX_NUM_FORMS': [u''],
+                     u'proposal_rows-INITIAL_FORMS': [u'1'],
+                     u'proposal_rows-TOTAL_FORMS': [u'3'],
+                     u'proposal-state': [u'1'],
+                     u'proposal_rows-0-unit_price': [u'100'],
+                     u'proposal_rows-0-category': '',
+                     u'proposal_rows-0-quantity': [u'1'],
+                     u'proposal_rows-0-ownedobject_ptr': p_row.id,
+                     u'proposal_rows-0-DELETE': 'on',
+                     u'proposal_rows-0-label': [u'row 1'],
+                     u'proposal_rows-1-ownedobject_ptr': [u''],
+                     u'proposal_rows-1-quantity': [u'1'],
+                     u'proposal_rows-1-unit_price': [u'100'],
+                     u'proposal_rows-1-label': [u'row 2'],
+                     u'proposal_rows-1-category': [u'2'],
+                     u'proposal_rows-2-category': [u'2'],
+                     u'proposal_rows-2-quantity': [u'1'],
+                     u'proposal_rows-2-unit_price': [u'200'],
+                     u'proposal_rows-2-ownedobject_ptr': [u''],
+                     u'proposal_rows-2-label': [u'row 3'],
+                     u'proposal_rows-3-ownedobject_ptr': [u''],
+                     u'proposal_rows-3-quantity': [u'1'],
+                     u'proposal_rows-3-label': [u'row 4'],
+                     u'proposal_rows-3-category': [u'2'],
+                     u'proposal_rows-3-unit_price': [u'400'],
+                     u'proposal-contract_model': [u''],
+                     u'proposal-reference': [u''],
+                     u'proposal-begin_date': [u''],
+                     u'proposal-end_date': [u''],
+                     u'proposal-expiration_date': [u''],
+                     u'action': [u'Sauvegarder'],
+                     u'proposal-contract_content': [u'&nbsp;'],
+                     u'proposal-payment_delay': PAYMENT_DELAY_30_DAYS}
+
+        response = self.client.post(reverse('proposal_edit', kwargs={'id': p.id}),
+                                    post_data)
+        self.assertEquals(response.status_code, 302)
+
 class Bug31Test(TestCase):
     fixtures = ['test_dashboard_product_sales']
 

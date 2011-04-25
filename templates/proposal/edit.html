@@ -43,7 +43,7 @@ jQuery(document).ready(function(){
     var activate_delete = function(){
         jQuery('.delete-button').click(function(e){
             e.preventDefault();
-            if (jQuery(e.currentTarget).parent('.inline-formset').children().first('input').val()) {
+            if (jQuery(e.currentTarget).parent('.inline-formset').children('input[type="hidden"]').first().val()) {
                 jQuery(e.currentTarget).parent('.inline-formset').hide();
                 jQuery(e.currentTarget).next('.delete-checkbox').children('input').attr('checked', true);
             } else {
@@ -200,15 +200,15 @@ jQuery(document).ready(function(){
             <a href="#" id="add-button"><img src="{{ MEDIA_URL }}img/icon_addlink.gif" /> {% trans "Add" %}</a>
         </div>
     </div>
-	{% with proposalForm.contract_file as field %}
+    {% with proposalForm.contract_file as field %}
     <div class="form-row">
-	{{ field.errors }}
-	  <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{% trans "Upload a contract" %}{% if field.field.required %}*{% endif %} :</label> {{ field }}
-	  {% if field.field.help_text %}
-	    <p class="help">{{ field.field.help_text|safe }}</p>
-	  {% endif %}
-	  </div>
-	</div>
+    {{ field.errors }}
+      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{% trans "Upload a contract" %}{% if field.field.required %}*{% endif %} :</label> {{ field }}
+      {% if field.field.help_text %}
+        <p class="help">{{ field.field.help_text|safe }}</p>
+      {% endif %}
+      </div>
+    </div>
     {% endwith %}
     {% with proposalForm.contract_model as field %}
     <div class="form-row">

@@ -389,13 +389,13 @@ def proposal_create_or_edit(request, id=None, project_id=None):
 
                 proposalForm.save_m2m()
                 for proposalrowform in proposalrowformset.forms:
-                    if proposalrowform.cleaned_data:
+                    if proposalrowform not in proposalrowformset.deleted_forms and proposalrowform.cleaned_data:
                         proposalrow = proposalrowform.save(commit=False)
                         proposalrow.proposal = proposal
                         proposalrow.save(user=user)
 
                 for deleted_proposalrowform in proposalrowformset.deleted_forms:
-                    deleted_proposalrowform.cleaned_data['ownedobject_ptr'].delete()
+                    deleted_proposalrowform.instance.delete()
 
                 proposal.update_amount()
 
