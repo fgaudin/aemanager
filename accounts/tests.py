@@ -14,6 +14,7 @@ from project.models import Proposal, PROPOSAL_STATE_DRAFT, ROW_CATEGORY_SERVICE,
 from accounts.models import INVOICE_STATE_EDITED, Invoice, InvoiceRow, \
     INVOICE_STATE_SENT, InvoiceRowAmountError, PAYMENT_TYPE_CHECK, \
     PAYMENT_TYPE_CASH, Expense, INVOICE_STATE_PAID
+from contact.models import Country
 
 class ExpensePermissionTest(TestCase):
     fixtures = ['test_users']
@@ -1191,6 +1192,45 @@ class InvoiceTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTrue('invoice_id' in response.context['invoiceForm'].errors)
+
+    def testBug207(self):
+        """
+        Tests that non ascii characters in user's country works
+        """
+        profile = User.objects.get(pk=1).get_profile()
+        profile.iban_bban = 'FR76 1234 1234 1234 1234 1234 123'
+        profile.bic = 'CCBPFRABCDE'
+        profile.save()
+        address = profile.address
+        address.country = Country.objects.get(country_code2='AX')
+        address.save()
+
+        i = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                   invoice_id=1,
+                                   state=INVOICE_STATE_EDITED,
+                                   amount='1000',
+                                   edition_date=datetime.date(2010, 8, 31),
+                                   payment_date=datetime.date(2010, 9, 30),
+                                   paid_date=None,
+                                   payment_type=PAYMENT_TYPE_CHECK,
+                                   execution_begin_date=datetime.date(2010, 8, 1),
+                                   execution_end_date=datetime.date(2010, 8, 7),
+                                   penalty_date=datetime.date(2010, 10, 8),
+                                   penalty_rate='1.5',
+                                   discount_conditions='Nothing',
+                                   owner_id=1)
+
+        i_row = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=10,
+                                          unit_price='100',
+                                          balance_payments=False,
+                                          owner_id=1)
+
+        response = self.client.get(reverse('invoice_download', kwargs={'id': i.id}))
+        self.assertEqual(response.status_code, 200)
 
 class InvoiceBug106Test(TransactionTestCase):
     fixtures = ['test_users', 'test_contacts', 'test_projects']

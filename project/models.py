@@ -264,7 +264,7 @@ class Proposal(OwnedObject):
                                                               user.get_profile().address.zipcode,
                                                               user.get_profile().address.city)
             if user.get_profile().address.country:
-                footer_text = footer_text + ", %s" % (user.get_profile().address.country)
+                footer_text = footer_text + u", %s" % (user.get_profile().address.country)
 
             canvas.drawCentredString(PAGE_WIDTH / 2.0, 0.5 * inch, footer_text)
             canvas.restoreState()

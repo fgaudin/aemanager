@@ -8,9 +8,10 @@ from project.models import Project, PROJECT_STATE_PROSPECT, \
     ProposalAmountError, Contract, PAYMENT_DELAY_30_DAYS
 from accounts.models import Invoice, InvoiceRow, INVOICE_STATE_EDITED, \
     PAYMENT_TYPE_CHECK
-from contact.models import Contact, Address
+from contact.models import Contact, Address, Country
 import datetime
 import hashlib
+from django.contrib.auth.models import User
 
 class ContractPermissionTest(TestCase):
     fixtures = ['test_users', 'test_contacts']
@@ -878,6 +879,34 @@ class ProposalTest(TestCase):
         response = self.client.post(reverse('proposal_edit', kwargs={'id': p.id}),
                                     post_data)
         self.assertEquals(response.status_code, 302)
+
+    def testBug207(self):
+        """
+        Bug with non ascii characters in country name
+        """
+        address = User.objects.get(pk=1).get_profile().address
+        address.country = Country.objects.get(country_code2='AX')
+        address.save()
+        p = Proposal.objects.create(project_id=30,
+                                    update_date=datetime.date(2011, 2, 5),
+                                    state=PROPOSAL_STATE_DRAFT,
+                                    begin_date=datetime.date(2010, 8, 1),
+                                    end_date=datetime.date(2010, 8, 15),
+                                    contract_content='Content of contract',
+                                    amount=2005,
+                                    reference='XXX',
+                                    expiration_date=datetime.date(2010, 8, 2),
+                                    owner_id=1)
+
+        p_row = ProposalRow.objects.create(proposal_id=p.id,
+                                           label='Day of work',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           quantity=20,
+                                           unit_price='200.5',
+                                           owner_id=1)
+
+        response = self.client.get(reverse('proposal_download', kwargs={'id': p.id}))
+        self.assertEqual(response.status_code, 200)
 
 class Bug31Test(TestCase):
     fixtures = ['test_dashboard_product_sales']
