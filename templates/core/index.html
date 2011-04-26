@@ -34,7 +34,7 @@ jQuery(document).ready(function(){
                 onAfter: function(){
                     var cloned_element = jQuery(element).clone()
                     jQuery(cloned_element).insertAfter('.announcement:last');
-                    jQuery(cloned_element).hide(function(){
+                    jQuery(cloned_element).hide('slow', function(){
                         setTimeout(function(){remove_prev_element(element)},3000);
                     });
             }});
