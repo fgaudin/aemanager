@@ -365,14 +365,15 @@ class Invoice(OwnedObject):
         data = [[ugettext('Label'), ugettext('Quantity'), ugettext('Unit price'), ugettext('Total')]]
         rows = self.invoice_rows.all()
         extra_rows = 0
-        label_width = 4.0 * inch
+        label_width = 4.5 * inch
         for row in rows:
-            para = Paragraph(row.label, styleLabel)
+            label = row.label
+            if row.proposal.reference:
+                label = "%s - [%s]" % (label.decode('utf-8'), row.proposal.reference)
+            para = Paragraph(label, styleLabel)
             para.width = label_width
             splitted_para = para.breakLines(label_width)
             label = " ".join(splitted_para.lines[0][1])
-            if row.proposal.reference:
-                label = "%s - [%s]" % (label.decode('utf-8'), row.proposal.reference)
             quantity = row.quantity
             quantity = quantity.quantize(Decimal(1)) if quantity == quantity.to_integral() else quantity.normalize()
             unit_price = row.unit_price
