@@ -406,7 +406,7 @@ class IssueTest(TestCase):
                                   update_date=datetime.datetime.now(),
                                   state=ISSUE_STATE_OPEN)
 
-        i3 = Issue.objects.create(owner_id=1,
+        i4 = Issue.objects.create(owner_id=1,
                                   category=ISSUE_CATEGORY_BUG,
                                   subject='test',
                                   message='test',
@@ -436,7 +436,7 @@ class IssueTest(TestCase):
                                   update_date=datetime.datetime.now(),
                                   state=ISSUE_STATE_CLOSED)
 
-        i3 = Issue.objects.create(owner_id=1,
+        i4 = Issue.objects.create(owner_id=1,
                                   category=ISSUE_CATEGORY_BUG,
                                   subject='test',
                                   message='test',
@@ -446,6 +446,115 @@ class IssueTest(TestCase):
         response = self.client.get(reverse('closed_issue_list'))
         self.assertEquals(response.status_code, 200)
         self.assertEquals(set(response.context['issues']), set([i1, i2]))
+
+    def testOrderingIssueList(self):
+        now = datetime.datetime.now()
+        i1 = Issue.objects.create(owner_id=1,
+                                  category=ISSUE_CATEGORY_BUG,
+                                  subject='A',
+                                  message='test',
+                                  update_date=now - datetime.timedelta(3),
+                                  last_comment_date=now - datetime.timedelta(3),
+                                  state=ISSUE_STATE_OPEN)
+        i2 = Issue.objects.create(owner_id=2,
+                                  category=ISSUE_CATEGORY_FEATURE,
+                                  subject='B',
+                                  message='test',
+                                  update_date=now - datetime.timedelta(1),
+                                  last_comment_date=now - datetime.timedelta(1),
+                                  state=ISSUE_STATE_OPEN)
+        i3 = Issue.objects.create(owner_id=1,
+                                  category=ISSUE_CATEGORY_FEATURE,
+                                  subject='C',
+                                  message='test',
+                                  update_date=now - datetime.timedelta(2),
+                                  last_comment_date=now - datetime.timedelta(2),
+                                  state=ISSUE_STATE_OPEN)
+
+        i4 = Issue.objects.create(owner_id=2,
+                                  category=ISSUE_CATEGORY_BUG,
+                                  subject='D',
+                                  message='test',
+                                  update_date=now - datetime.timedelta(4),
+                                  last_comment_date=now - datetime.timedelta(4),
+                                  state=ISSUE_STATE_OPEN)
+
+        c1 = Comment.objects.create(owner_id=2,
+                                    message='comment',
+                                    update_date=now - datetime.timedelta(seconds=200),
+                                    issue=i1)
+        c3 = Comment.objects.create(owner_id=2,
+                                    message='comment',
+                                    update_date=now - datetime.timedelta(seconds=300),
+                                    issue=i3)
+        c3 = Comment.objects.create(owner_id=2,
+                                    message='comment',
+                                    update_date=now - datetime.timedelta(seconds=300),
+                                    issue=i3)
+        c4 = Comment.objects.create(owner_id=1,
+                                    message='comment',
+                                    update_date=now - datetime.timedelta(seconds=400),
+                                    issue=i4)
+        c4 = Comment.objects.create(owner_id=1,
+                                    message='comment',
+                                    update_date=now - datetime.timedelta(seconds=400),
+                                    issue=i4)
+        c4 = Comment.objects.create(owner_id=1,
+                                    message='comment',
+                                    update_date=now - datetime.timedelta(seconds=400),
+                                    issue=i4)
+
+        Vote.objects.create(owner_id=1,
+                            issue_id=i1.id)
+        Vote.objects.create(owner_id=2,
+                            issue_id=i1.id)
+        Vote.objects.create(owner_id=1,
+                            issue_id=i1.id)
+        Vote.objects.create(owner_id=1,
+                            issue_id=i2.id)
+        Vote.objects.create(owner_id=2,
+                            issue_id=i2.id)
+        Vote.objects.create(owner_id=1,
+                            issue_id=i3.id)
+        Vote.objects.create(owner_id=2,
+                            issue_id=i3.id)
+        Vote.objects.create(owner_id=1,
+                            issue_id=i3.id)
+        Vote.objects.create(owner_id=2,
+                            issue_id=i3.id)
+
+        response = self.client.get(reverse('issue_list'))
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(list(response.context['issues']), [i1, i3, i4, i2])
+
+        response = self.client.get(reverse('issue_list'),
+                                   {'o': 'subject'})
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(list(response.context['issues']), [i1, i2, i3, i4])
+
+        response = self.client.get(reverse('issue_list'),
+                                   {'o': 'subject',
+                                    'ot': 'desc'})
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(list(response.context['issues']), [i4, i3, i2, i1])
+
+        response = self.client.get(reverse('issue_list'),
+                                   {'o': 'author',
+                                    'ot': 'desc'})
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(list(response.context['issues']), [i1, i3, i2, i4])
+
+        response = self.client.get(reverse('issue_list'),
+                                   {'o': 'comments',
+                                    'ot': 'asc'})
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(list(response.context['issues']), [i2, i1, i3, i4])
+
+        response = self.client.get(reverse('issue_list'),
+                                   {'o': 'votes',
+                                    'ot': 'asc'})
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(list(response.context['issues']), [i4, i2, i1, i3])
 
     def testIssueDetail(self):
         i1 = Issue.objects.create(owner_id=1,

@@ -3,6 +3,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from django.utils.text import truncate_html_words
 from django.conf import settings
+from django.db.models.signals import post_save
+import datetime
 
 ISSUE_CATEGORY_BUG = 1
 ISSUE_CATEGORY_FEATURE = 2
@@ -31,6 +33,7 @@ class Issue(models.Model):
     message = models.TextField(verbose_name=_('Message'))
     update_date = models.DateTimeField(verbose_name=_('Update date'))
     state = models.IntegerField(verbose_name=_('State'), choices=ISSUE_STATE, default=ISSUE_STATE_OPEN, db_index=True)
+    last_comment_date = models.DateTimeField(verbose_name=_('Last comment'), default=datetime.datetime.now)
 
     objects = IssueManager()
 
@@ -66,6 +69,13 @@ class Comment(models.Model):
 
     def __unicode__(self):
         return '%s' % (truncate_html_words(self.message, 5))
+
+def comment_post_save(sender, instance, created, **kwargs):
+    issue = instance.issue
+    issue.last_comment_date = instance.update_date
+    issue.save()
+
+post_save.connect(comment_post_save, sender=Comment)
 
 class VoteManager(models.Manager):
     def votes_remaining(self, user):

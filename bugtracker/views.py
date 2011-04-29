@@ -18,12 +18,42 @@ import datetime
 
 @settings_required
 def issue_list(request):
-    issues = Issue.objects.filter(state=ISSUE_STATE_OPEN, category__in=[ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE]).annotate(votes=Count('vote')).order_by('-votes')
+    o = request.GET.get('o', 'last_comment_date')
+    if o not in ('subject', 'author', 'update_date', 'last_comment_date', 'category', 'comments', 'votes'):
+        o = 'last_comment_date'
+    if o == 'author':
+        order = 'owner__last_name'
+    else:
+        order = o
+
+    ot = request.GET.get('ot')
+    if ot not in ('asc', 'desc'):
+        if request.GET.get('o'):
+            ot = 'asc'
+        else:
+            ot = 'desc'
+
+    if ot == 'desc':
+        direction = '-'
+    else:
+        direction = ''
+
+    issues = Issue.objects.filter(state=ISSUE_STATE_OPEN,
+                                  category__in=[ISSUE_CATEGORY_BUG,
+                                                ISSUE_CATEGORY_FEATURE])\
+                          .annotate(votes=Count('vote',
+                                                distinct=True),
+                                    comments=Count('comment',
+                                                   distinct=True))\
+                          .order_by(direction + order)
+
     return render_to_response('issue/list.html',
                               {'active': 'settings',
                                'title': _('Issue reporting'),
                                'issues': issues,
-                               'state': 'open'},
+                               'state': 'open',
+                               'o': o,
+                               'ot': ot},
                               context_instance=RequestContext(request))
 
 @settings_required
@@ -41,12 +71,40 @@ def message_list(request):
 
 @settings_required
 def closed_issue_list(request):
-    issues = Issue.objects.filter(state=ISSUE_STATE_CLOSED, category__in=[ISSUE_CATEGORY_BUG, ISSUE_CATEGORY_FEATURE]).annotate(votes=Count('vote')).order_by('-votes')
+    o = request.GET.get('o', 'last_comment_date')
+    if o not in ('subject', 'author', 'update_date', 'last_comment_date', 'category', 'comments'):
+        o = 'last_comment_date'
+    if o == 'author':
+        order = 'owner__last_name'
+    else:
+        order = o
+
+    ot = request.GET.get('ot')
+    if ot not in ('asc', 'desc'):
+        if request.GET.get('o'):
+            ot = 'asc'
+        else:
+            ot = 'desc'
+
+    if ot == 'desc':
+        direction = '-'
+    else:
+        direction = ''
+
+    issues = Issue.objects.filter(state=ISSUE_STATE_CLOSED,
+                                  category__in=[ISSUE_CATEGORY_BUG,
+                                                ISSUE_CATEGORY_FEATURE])\
+                          .annotate(comments=Count('comment',
+                                                   distinct=True))\
+                          .order_by(direction + order)
+
     return render_to_response('issue/list.html',
                               {'active': 'settings',
                                'title': _('Issue reporting'),
                                'issues': issues,
-                               'state': 'closed'},
+                               'state': 'closed',
+                               'o': o,
+                               'ot': ot},
                               context_instance=RequestContext(request))
 
 

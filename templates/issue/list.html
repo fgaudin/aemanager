@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load modeltags %}
 
 {% block context_menu %}
 <div><a href="{% url issue_add %}">{% trans "Send an issue" %}</a></div>
@@ -13,23 +14,25 @@
     <table>
         <thead>
             <tr>
-                <th>{% trans "Subject" %}</th>
-                <th>{% trans "Author" %}</th>
-                <th>{% trans "Update date" %}</th>
-                <th>{% trans "Category" %}</th>
-                <th>{% trans "Comments" %}</th>
-                {% if state == "open" %}<th>{% trans "Votes" %}</th>{% endif %}
+                <th><a href="?o=subject&ot={% if o == "subject" and ot == "asc"%}desc{% else %}asc{% endif %}">{% trans "Subject" %}</a></th>
+                <th><a href="?o=author&ot={% if o == "author" and ot == "asc"%}desc{% else %}asc{% endif %}">{% trans "Author" %}</a></th>
+                <th><a href="?o=update_date&ot={% if o == "update_date" and ot == "desc"%}asc{% else %}desc{% endif %}">{% trans "Update date" %}</a></th>
+                <th><a href="?o=last_comment_date&ot={% if o == "last_comment_date" and ot == "desc"%}asc{% else %}desc{% endif %}">{% trans "Last comment" %}</a></th>
+                <th><a href="?o=category&ot={% if o == "category" and ot == "asc"%}desc{% else %}asc{% endif %}">{% trans "Category" %}</a></th>
+                <th><a href="?o=comments&ot={% if o == "comments" and ot == "desc"%}asc{% else %}desc{% endif %}">{% trans "Comments" %}</a></th>
+                {% if state == "open" %}<th><a href="?o=votes&ot={% if o == "votes" and ot == "desc"%}asc{% else %}desc{% endif %}">{% trans "Votes" %}</a></th>{% endif %}
             </tr>
         </thead>
         <tbody>
         {% for issue in issues %}
            <tr class="{% cycle 'row2' 'row1' %} row">
                 <td><a href="{% url issue_detail id=issue.id %}">{{ issue.subject }}</a></td>
-                <td><a href="{% url issue_detail id=issue.id %}">{% if issue.owner %}{{ issue.owner.first_name }} {{ issue.owner.last_name.0 }}.{% else %}<span class="user-deleted">{% trans "User deleted" %}</span>{% endif %}</a></td>
+                <td><a href="{% url issue_detail id=issue.id %}">{{ issue.owner|display_name }}</a></td>
                 <td><a href="{% url issue_detail id=issue.id %}">{{ issue.update_date }}</a></td>
+                <td><a href="{% url issue_detail id=issue.id %}">{{ issue.last_comment_date }}</a></td>
                 <td><a href="{% url issue_detail id=issue.id %}">{{ issue.get_category_display }}</a></td>
-                <td><a href="{% url issue_detail id=issue.id %}">{{ issue.comment_set.count }}</a></td>
-                {% if state == "open" %}<td><a href="{% url issue_detail id=issue.id %}">{{ issue.vote_count }}</a></td>{% endif %}
+                <td><a href="{% url issue_detail id=issue.id %}">{{ issue.comments }}</a></td>
+                {% if state == "open" %}<td><a href="{% url issue_detail id=issue.id %}">{{ issue.votes }}</a></td>{% endif %}
             </tr>
         {% endfor %}
         </tbody>
