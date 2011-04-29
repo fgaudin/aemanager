@@ -36,7 +36,7 @@
                 <td><a href="{% url contact_detail invoice.customer.id %}">{{ invoice.customer }}</a></td>
                 <td><a href="{% url contact_detail invoice.customer.id %}">{{ invoice.getNature }}</a></td>
                 <td><a href="{% url invoice_detail invoice.id %}">{{ invoice.get_state_display }}</a></td>
-                <td><a href="{% url invoice_detail invoice.id %}">{{ invoice.get_payment_type_display }}</a></td>
+                <td><a href="{% url invoice_detail invoice.id %}">{{ invoice.get_payment_type_display|default:'' }}</a></td>
                 <td><a href="{% url invoice_detail invoice.id %}">{{ invoice.amount }}</a></td>
             </tr>
         {% endfor %}

@@ -33,7 +33,7 @@
     {% endwith %}{% endwith %}
     <div class="detail-row">
       <div>
-      <label>{{ invoice|verbose_name:"payment_type" }} :</label> {{ invoice.get_payment_type_display }}
+      <label>{{ invoice|verbose_name:"payment_type" }} :</label> {{ invoice.get_payment_type_display|default:'' }}
       </div>
     </div>
     {% with invoice as object %}{% with "paid_date" as name %}

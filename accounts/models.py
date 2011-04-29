@@ -165,7 +165,7 @@ class Invoice(OwnedObject):
     amount = models.DecimalField(blank=True, max_digits=12, decimal_places=2, default=0, verbose_name=_("Amount"))
     edition_date = models.DateField(verbose_name=_("Edition date"), help_text=_('format: mm/dd/yyyy'), db_index=True)
     payment_date = models.DateField(verbose_name=_("Payment date"), help_text=_('format: mm/dd/yyyy'), db_index=True)
-    payment_type = models.IntegerField(choices=PAYMENT_TYPE, verbose_name=_('Payment type'))
+    payment_type = models.IntegerField(choices=PAYMENT_TYPE, blank=True, null=True, verbose_name=_('Payment type'))
     paid_date = models.DateField(blank=True, null=True, verbose_name=_("Paid date"), help_text=_('format: mm/dd/yyyy'), db_index=True)
     execution_begin_date = models.DateField(blank=True, null=True, verbose_name=_("Execution begin date"), help_text=_('format: mm/dd/yyyy'))
     execution_end_date = models.DateField(blank=True, null=True, verbose_name=_("Execution end date"), help_text=_('format: mm/dd/yyyy'))

@@ -870,6 +870,111 @@ class InvoiceTest(TestCase):
         self.assertEquals(proposal.state, PROPOSAL_STATE_BALANCED)
         self.assertEquals(proposal.get_remaining_to_invoice(), 0)
 
+    def testPaymentTypeIsMandatoryWhenPaid(self):
+        """
+        Tests that payment type is not mandatory except when state is set to
+        paid
+        """
+        i = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                   invoice_id=1,
+                                   state=INVOICE_STATE_EDITED,
+                                   amount='1000',
+                                   edition_date=datetime.date(2010, 8, 31),
+                                   payment_date=datetime.date(2010, 9, 30),
+                                   paid_date=None,
+                                   payment_type=None,
+                                   execution_begin_date=datetime.date(2010, 8, 1),
+                                   execution_end_date=datetime.date(2010, 8, 7),
+                                   penalty_date=datetime.date(2010, 10, 8),
+                                   penalty_rate='1.5',
+                                   discount_conditions='Nothing',
+                                   owner_id=1)
+
+        i_row = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=10,
+                                          unit_price='100',
+                                          balance_payments=False,
+                                          owner_id=1)
+
+        response = self.client.post(reverse('invoice_edit', kwargs={'id': i.id}),
+                                    {'invoice-invoice_id': 1,
+                                     'invoice-state': INVOICE_STATE_SENT,
+                                     'invoice-amount': 1500,
+                                     'invoice-edition_date': '2010-8-30',
+                                     'invoice-payment_date': '2010-9-29',
+                                     'invoice-paid_date': '',
+                                     'invoice-payment_type': '',
+                                     'invoice-execution_begin_date': '2010-8-2',
+                                     'invoice-execution_end_date': '2010-8-8',
+                                     'invoice-penalty_date': '2010-10-9',
+                                     'invoice-penalty_rate': 2,
+                                     'invoice-discount_conditions':'-50%',
+                                     'invoice_rows-TOTAL_FORMS': 1,
+                                     'invoice_rows-INITIAL_FORMS': 1,
+                                     'invoice_rows-0-proposal': self.proposal.id,
+                                     'invoice_rows-0-ownedobject_ptr': i_row.id,
+                                     'invoice_rows-0-label': 'My product',
+                                     'invoice_rows-0-balance_payments': True,
+                                     'invoice_rows-0-category': ROW_CATEGORY_PRODUCT,
+                                     'invoice_rows-0-quantity': 5,
+                                     'invoice_rows-0-unit_price': 300 })
+
+        self.assertEqual(response.status_code, 302)
+
+        response = self.client.post(reverse('invoice_edit', kwargs={'id': i.id}),
+                                    {'invoice-invoice_id': 1,
+                                     'invoice-state': INVOICE_STATE_PAID,
+                                     'invoice-amount': 1500,
+                                     'invoice-edition_date': '2010-8-30',
+                                     'invoice-payment_date': '2010-9-29',
+                                     'invoice-paid_date': '2010-9-29',
+                                     'invoice-payment_type': '',
+                                     'invoice-execution_begin_date': '2010-8-2',
+                                     'invoice-execution_end_date': '2010-8-8',
+                                     'invoice-penalty_date': '2010-10-9',
+                                     'invoice-penalty_rate': 2,
+                                     'invoice-discount_conditions':'-50%',
+                                     'invoice_rows-TOTAL_FORMS': 1,
+                                     'invoice_rows-INITIAL_FORMS': 1,
+                                     'invoice_rows-0-proposal': self.proposal.id,
+                                     'invoice_rows-0-ownedobject_ptr': i_row.id,
+                                     'invoice_rows-0-label': 'My product',
+                                     'invoice_rows-0-balance_payments': True,
+                                     'invoice_rows-0-category': ROW_CATEGORY_PRODUCT,
+                                     'invoice_rows-0-quantity': 5,
+                                     'invoice_rows-0-unit_price': 300 })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('payment_type' in response.context['invoiceForm'].errors)
+
+        response = self.client.post(reverse('invoice_edit', kwargs={'id': i.id}),
+                                    {'invoice-invoice_id': 1,
+                                     'invoice-state': INVOICE_STATE_PAID,
+                                     'invoice-amount': 1500,
+                                     'invoice-edition_date': '2010-8-30',
+                                     'invoice-payment_date': '2010-9-29',
+                                     'invoice-paid_date': '2010-9-29',
+                                     'invoice-payment_type': PAYMENT_TYPE_CASH,
+                                     'invoice-execution_begin_date': '2010-8-2',
+                                     'invoice-execution_end_date': '2010-8-8',
+                                     'invoice-penalty_date': '2010-10-9',
+                                     'invoice-penalty_rate': 2,
+                                     'invoice-discount_conditions':'-50%',
+                                     'invoice_rows-TOTAL_FORMS': 1,
+                                     'invoice_rows-INITIAL_FORMS': 1,
+                                     'invoice_rows-0-proposal': self.proposal.id,
+                                     'invoice_rows-0-ownedobject_ptr': i_row.id,
+                                     'invoice_rows-0-label': 'My product',
+                                     'invoice_rows-0-balance_payments': True,
+                                     'invoice_rows-0-category': ROW_CATEGORY_PRODUCT,
+                                     'invoice_rows-0-quantity': 5,
+                                     'invoice_rows-0-unit_price': 300 })
+
+        self.assertEqual(response.status_code, 302)
+
     def testBug72(self):
         """
         Removing invoice rows do not update invoice amount

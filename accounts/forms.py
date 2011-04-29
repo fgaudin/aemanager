@@ -52,6 +52,13 @@ class InvoiceForm(ModelForm):
 
             del cleaned_data["paid_date"]
 
+        payment_type = cleaned_data.get('payment_type')
+        if state == INVOICE_STATE_PAID and not payment_type:
+            msg = _('This field is required since invoice state is set to "paid".')
+            self._errors["payment_type"] = self.error_class([msg])
+
+            del cleaned_data["payment_type"]
+
         return cleaned_data
 
 class InvoiceRowForm(ModelForm):
