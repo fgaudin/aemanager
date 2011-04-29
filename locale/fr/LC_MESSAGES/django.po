@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-30 00:19+0200\n"
+"POT-Creation-Date: 2011-04-30 01:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -641,7 +641,7 @@ msgid "Delete all your data and restore this backup"
 msgstr "Supprimer toutes vos données et restaurer la sauvegarde"
 
 #: backup/models.py:210 templates/backup/index.html:63
-#: templates/expense/list.html:223 templates/issue/detail.html:62
+#: templates/expense/list.html:223 templates/issue/detail.html:71
 #: templates/newsletter/email_users.html:26
 msgid "Action"
 msgstr "Action"
@@ -724,7 +724,7 @@ msgstr "Ouvert"
 msgid "Closed"
 msgstr "Fermé"
 
-#: bugtracker/models.py:30 bugtracker/models.py:62 bugtracker/models.py:86
+#: bugtracker/models.py:30 bugtracker/models.py:68 bugtracker/models.py:92
 msgid "User"
 msgstr "Utilisateur"
 
@@ -745,14 +745,14 @@ msgstr "Seuls les bugs et les demandes de fonctionnalités sont publics"
 msgid "Subject"
 msgstr "Sujet"
 
-#: bugtracker/models.py:33 bugtracker/models.py:63 bugtracker/views.py:265
-#: core/forms.py:63 newsletter/models.py:15 templates/issue/detail.html:61
+#: bugtracker/models.py:33 bugtracker/models.py:69 bugtracker/views.py:265
+#: core/forms.py:63 newsletter/models.py:15 templates/issue/detail.html:70
 #: templates/message/detail.html:42
 msgid "Message"
 msgstr "Message"
 
-#: bugtracker/models.py:34 bugtracker/models.py:65 newsletter/models.py:16
-#: project/models.py:36 project/models.py:179 templates/issue/detail.html:60
+#: bugtracker/models.py:34 bugtracker/models.py:71 newsletter/models.py:16
+#: project/models.py:36 project/models.py:179 templates/issue/detail.html:69
 #: templates/issue/list.html:19 templates/message/detail.html:41
 #: templates/message/list.html:19 templates/newsletter/email_users.html:24
 msgid "Update date"
@@ -762,7 +762,11 @@ msgstr "Date de modification"
 msgid "Last comment"
 msgstr "Dernier commentaire"
 
-#: bugtracker/models.py:64 bugtracker/models.py:85 bugtracker/views.py:243
+#: bugtracker/models.py:37 templates/issue/detail.html:54
+msgid "External reference"
+msgstr "Référence externe"
+
+#: bugtracker/models.py:70 bugtracker/models.py:91 bugtracker/views.py:243
 msgid "Issue"
 msgstr "Problème"
 
@@ -979,7 +983,7 @@ msgstr "Fonction du représentant"
 msgid "Related contacts"
 msgstr "Contacts liés"
 
-#: contact/models.py:43 templates/issue/detail.html:81
+#: contact/models.py:43 templates/issue/detail.html:90
 #: templates/message/detail.html:60
 msgid "Comment"
 msgstr "Commentaire"
@@ -1836,7 +1840,7 @@ msgid "You can restore a backup."
 msgstr "Vous pouvez restaurer une sauvegarde"
 
 #: templates/comment/edit.html:13 templates/core/contact_us.html:19
-#: templates/issue/detail.html:90 templates/issue/edit.html:13
+#: templates/issue/detail.html:99 templates/issue/edit.html:13
 #: templates/message/detail.html:69
 msgid "Send"
 msgstr "Envoyer"
@@ -2182,12 +2186,12 @@ msgid "Are you sure to want to delete this row"
 msgstr "Êtes-vous sûr de vouloir supprimer cette ligne"
 
 #: templates/expense/list.html:177 templates/expense/list.html.py:247
-#: templates/issue/detail.html:71
+#: templates/issue/detail.html:80
 msgid "edit"
 msgstr "éditer"
 
 #: templates/expense/list.html:177 templates/expense/list.html.py:247
-#: templates/issue/detail.html:71 templates/newsletter/email_users.html:36
+#: templates/issue/detail.html:80 templates/newsletter/email_users.html:36
 msgid "delete"
 msgstr "supprimer"
 
@@ -2265,7 +2269,7 @@ msgstr "Fermer"
 msgid "Reopen"
 msgstr "Réouvrir"
 
-#: templates/issue/detail.html:26 templates/issue/detail.html.py:59
+#: templates/issue/detail.html:26 templates/issue/detail.html.py:68
 #: templates/issue/list.html:18 templates/message/detail.html:14
 #: templates/message/detail.html.py:40 templates/message/list.html:17
 msgid "Author"
@@ -2280,12 +2284,12 @@ msgstr "Votes"
 msgid "%(votes_remaining)s votes remaining"
 msgstr "%(votes_remaining)s votes restant"
 
-#: templates/issue/detail.html:53 templates/issue/list.html:22
+#: templates/issue/detail.html:62 templates/issue/list.html:22
 #: templates/message/detail.html:34 templates/message/list.html:21
 msgid "Comments"
 msgstr "Commentaires"
 
-#: templates/issue/detail.html:78 templates/message/detail.html:57
+#: templates/issue/detail.html:87 templates/message/detail.html:57
 msgid "No comments"
 msgstr "Aucun commentaire"
 
@@ -2297,7 +2301,11 @@ msgstr "Voir les problèmes ouverts"
 msgid "View closed issues"
 msgstr "Voir les problèmes fermés"
 
-#: templates/issue/list.html:42
+#: templates/issue/list.html:24
+msgid "Ref"
+msgstr "Ref"
+
+#: templates/issue/list.html:44
 msgid "No issues"
 msgstr "Aucun problème"
 

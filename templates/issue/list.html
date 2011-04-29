@@ -21,6 +21,7 @@
                 <th><a href="?o=category&ot={% if o == "category" and ot == "asc"%}desc{% else %}asc{% endif %}">{% trans "Category" %}</a></th>
                 <th><a href="?o=comments&ot={% if o == "comments" and ot == "desc"%}asc{% else %}desc{% endif %}">{% trans "Comments" %}</a></th>
                 {% if state == "open" %}<th><a href="?o=votes&ot={% if o == "votes" and ot == "desc"%}asc{% else %}desc{% endif %}">{% trans "Votes" %}</a></th>{% endif %}
+                {% if user.is_superuser %}<th>{% trans "Ref" %}</th>{% endif %}
             </tr>
         </thead>
         <tbody>
@@ -33,6 +34,7 @@
                 <td><a href="{% url issue_detail id=issue.id %}">{{ issue.get_category_display }}</a></td>
                 <td><a href="{% url issue_detail id=issue.id %}">{{ issue.comments }}</a></td>
                 {% if state == "open" %}<td><a href="{% url issue_detail id=issue.id %}">{{ issue.votes }}</a></td>{% endif %}
+                {% if user.is_superuser %}<td>{% if issue.external_reference %}<a href="{{ issue.external_url }}">{{ issue.external_reference }}</a>{% endif %}</td>{% endif %}
             </tr>
         {% endfor %}
         </tbody>

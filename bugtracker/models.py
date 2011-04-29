@@ -34,6 +34,7 @@ class Issue(models.Model):
     update_date = models.DateTimeField(verbose_name=_('Update date'))
     state = models.IntegerField(verbose_name=_('State'), choices=ISSUE_STATE, default=ISSUE_STATE_OPEN, db_index=True)
     last_comment_date = models.DateTimeField(verbose_name=_('Last comment'), default=datetime.datetime.now)
+    external_reference = models.IntegerField(blank=True, null=True, verbose_name=_('External reference'))
 
     objects = IssueManager()
 
@@ -57,6 +58,11 @@ class Issue(models.Model):
         emails = emails + list(self.comment_set.exclude(owner=None).values_list('owner__email',
                                                                                 flat=True).order_by().distinct())
         return list(set(emails))
+
+    def external_url(self):
+        if self.external_reference:
+            return settings.EXTERNAL_BUG_TRACKER_URL % (self.external_reference)
+        return ''
 
 class Comment(models.Model):
     owner = models.ForeignKey(User, verbose_name=_('User'), null=True)

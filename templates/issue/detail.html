@@ -47,6 +47,15 @@
     {% with "message" as name %}
     {% include "detail_multiline_field.html" %}
     {% endwith %}
+    {% if user.is_superuser %}
+    {% if issue.external_reference %}
+    <div class="detail-row">
+      <div>
+      <label>{% trans "External reference" %} :</label> <a href="{{ object.external_url }}">{{ object.external_reference }}</a>
+      </div>
+    </div>
+    {% endif %}
+    {% endif %}
     {% endwith %}
 </fieldset>
 
