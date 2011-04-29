@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-30 00:09+0200\n"
+"POT-Creation-Date: 2011-04-30 00:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -710,14 +710,14 @@ msgstr ""
 msgid "Only bugs and features are public"
 msgstr ""
 
-#: bugtracker/models.py:32 core/forms.py:61 newsletter/models.py:14
+#: bugtracker/models.py:32 core/forms.py:62 newsletter/models.py:14
 #: templates/issue/list.html:17 templates/message/list.html:15
 #: templates/newsletter/email_users.html:23
 msgid "Subject"
 msgstr ""
 
 #: bugtracker/models.py:33 bugtracker/models.py:63 bugtracker/views.py:265
-#: core/forms.py:62 newsletter/models.py:15 templates/issue/detail.html:61
+#: core/forms.py:63 newsletter/models.py:15 templates/issue/detail.html:61
 #: templates/message/detail.html:42
 msgid "Message"
 msgstr ""
@@ -900,13 +900,13 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: contact/forms.py:39 contact/models.py:33 core/forms.py:59
+#: contact/forms.py:39 contact/models.py:33 core/forms.py:60
 #: project/forms.py:27 project/models.py:110 templates/contact/search.html:19
 #: templates/project/list.html:19
 msgid "Name"
 msgstr ""
 
-#: contact/forms.py:40 contact/models.py:40 core/forms.py:55 core/forms.py:60
+#: contact/forms.py:40 contact/models.py:40 core/forms.py:56 core/forms.py:61
 #: templates/contact/search.html:20
 msgid "Email"
 msgstr ""
@@ -1040,7 +1040,11 @@ msgstr ""
 msgid "This value must contain only letters, numbers and underscores."
 msgstr ""
 
-#: core/forms.py:51
+#: core/forms.py:43
+msgid "must be valid to activate your account"
+msgstr ""
+
+#: core/forms.py:52
 msgid "A user with that username already exists."
 msgstr ""
 

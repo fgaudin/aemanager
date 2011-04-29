@@ -40,6 +40,7 @@ class RegistrationFormUniqueEmailAndTos(RegistrationFormUniqueEmail):
         self.fields['username'].help_text = _('only letters, numbers and underscores are accepted')
         # only to override a missing translation in django-registration
         self.fields['username'].error_messages['invalid'] = _("This value must contain only letters, numbers and underscores.")
+        self.fields['email'].help_text = _('must be valid to activate your account')
 
     def clean_username(self):
         """
