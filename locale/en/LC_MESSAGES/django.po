@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-29 21:15+0200\n"
+"POT-Creation-Date: 2011-04-30 00:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,7 +28,7 @@ msgstr ""
 #: accounts/forms.py:8 accounts/models.py:38 accounts/models.py:165
 #: accounts/views.py:178 accounts/views.py:252 project/models.py:175
 #: project/models.py:547 templates/expense/list.html:220
-#: templates/invoice/detail.html:25 templates/invoice/list.html:27
+#: templates/invoice/detail.html:25 templates/invoice/list.html:28
 #: templates/project/detail.html:32 templates/project/detail.html.py:60
 #: templates/proposal/detail.html:97
 msgid "Amount"
@@ -55,18 +55,18 @@ msgid ""
 "a> to its most recent refinancing operation plus 10 points"
 msgstr ""
 
-#: accounts/forms.py:50
+#: accounts/forms.py:50 accounts/forms.py:57
 msgid "This field is required since invoice state is set to \"paid\"."
 msgstr ""
 
-#: accounts/forms.py:58 accounts/models.py:365 project/forms.py:63
+#: accounts/forms.py:65 accounts/models.py:365 project/forms.py:63
 #: project/models.py:389 project/models.py:545
 #: templates/invoice/detail.html:72 templates/proposal/detail.html:66
 #: templates/proposal/detail_ajax.html:33
 msgid "Quantity"
 msgstr ""
 
-#: accounts/forms.py:59 accounts/models.py:365 project/forms.py:64
+#: accounts/forms.py:66 accounts/models.py:365 project/forms.py:64
 #: project/models.py:389 project/models.py:546
 #: templates/invoice/detail.html:73 templates/proposal/detail.html:67
 #: templates/proposal/detail_ajax.html:34
@@ -142,7 +142,7 @@ msgid "Customer"
 msgstr ""
 
 #: accounts/models.py:164 autoentrepreneur/models.py:95
-#: bugtracker/models.py:34 project/forms.py:29 project/models.py:112
+#: bugtracker/models.py:35 project/forms.py:29 project/models.py:112
 #: project/models.py:174 templates/backup/index.html:12
 #: templates/backup/index.html.py:61 templates/core/subscribe.html:9
 #: templates/core/subscribe.html.py:30 templates/invoice/list.html:25
@@ -671,113 +671,113 @@ msgstr ""
 msgid "Backup"
 msgstr ""
 
-#: bugtracker/models.py:12
+#: bugtracker/models.py:13
 msgid "Bug"
 msgstr ""
 
-#: bugtracker/models.py:13
+#: bugtracker/models.py:14
 msgid "Feature request"
 msgstr ""
 
-#: bugtracker/models.py:14
+#: bugtracker/models.py:15
 msgid "Subscription"
 msgstr ""
 
-#: bugtracker/models.py:15
+#: bugtracker/models.py:16
 msgid "Message / question"
 msgstr ""
 
-#: bugtracker/models.py:19
+#: bugtracker/models.py:20
 msgid "Open"
 msgstr ""
 
-#: bugtracker/models.py:20
+#: bugtracker/models.py:21
 msgid "Closed"
 msgstr ""
 
-#: bugtracker/models.py:29 bugtracker/models.py:61 bugtracker/models.py:85
+#: bugtracker/models.py:30 bugtracker/models.py:62 bugtracker/models.py:86
 msgid "User"
 msgstr ""
 
-#: bugtracker/models.py:30 project/models.py:544
-#: templates/invoice/detail.html:71 templates/issue/list.html:20
+#: bugtracker/models.py:31 project/models.py:544
+#: templates/invoice/detail.html:71 templates/issue/list.html:21
 #: templates/message/list.html:20 templates/proposal/detail.html:65
 #: templates/proposal/detail_ajax.html:32
 msgid "Category"
 msgstr ""
 
-#: bugtracker/models.py:30
+#: bugtracker/models.py:31
 msgid "Only bugs and features are public"
 msgstr ""
 
-#: bugtracker/models.py:31 core/forms.py:61 newsletter/models.py:14
-#: templates/issue/list.html:16 templates/message/list.html:15
+#: bugtracker/models.py:32 core/forms.py:61 newsletter/models.py:14
+#: templates/issue/list.html:17 templates/message/list.html:15
 #: templates/newsletter/email_users.html:23
 msgid "Subject"
 msgstr ""
 
-#: bugtracker/models.py:32 bugtracker/models.py:62 bugtracker/views.py:237
+#: bugtracker/models.py:33 bugtracker/models.py:63 bugtracker/views.py:265
 #: core/forms.py:62 newsletter/models.py:15 templates/issue/detail.html:61
 #: templates/message/detail.html:42
 msgid "Message"
 msgstr ""
 
-#: bugtracker/models.py:33 bugtracker/models.py:64 newsletter/models.py:16
+#: bugtracker/models.py:34 bugtracker/models.py:65 newsletter/models.py:16
 #: project/models.py:36 project/models.py:179 templates/issue/detail.html:60
-#: templates/issue/list.html:18 templates/message/detail.html:41
+#: templates/issue/list.html:19 templates/message/detail.html:41
 #: templates/message/list.html:19 templates/newsletter/email_users.html:24
 msgid "Update date"
 msgstr ""
 
-#: bugtracker/models.py:35 templates/issue/list.html:19
+#: bugtracker/models.py:36 templates/issue/list.html:20
 msgid "Last comment"
 msgstr ""
 
-#: bugtracker/models.py:63 bugtracker/models.py:84 bugtracker/views.py:215
+#: bugtracker/models.py:64 bugtracker/models.py:85 bugtracker/views.py:243
 msgid "Issue"
 msgstr ""
 
-#: bugtracker/tests.py:480 bugtracker/views.py:96
+#: bugtracker/tests.py:589 bugtracker/views.py:124
 msgid "An issue has been opened"
 msgstr ""
 
-#: bugtracker/tests.py:515 bugtracker/views.py:92
+#: bugtracker/tests.py:624 bugtracker/views.py:120
 msgid "An issue has been updated"
 msgstr ""
 
-#: bugtracker/tests.py:590 bugtracker/views.py:188
+#: bugtracker/tests.py:699 bugtracker/views.py:216
 msgid "An issue has been reopened"
 msgstr ""
 
-#: bugtracker/tests.py:606 bugtracker/tests.py:644 bugtracker/tests.py:686
-#: bugtracker/views.py:281
+#: bugtracker/tests.py:715 bugtracker/tests.py:753 bugtracker/tests.py:795
+#: bugtracker/views.py:309
 msgid "A comment has been added"
 msgstr ""
 
-#: bugtracker/tests.py:646 bugtracker/tests.py:647 bugtracker/tests.py:688
-#: bugtracker/tests.py:689 bugtracker/views.py:300
+#: bugtracker/tests.py:755 bugtracker/tests.py:756 bugtracker/tests.py:797
+#: bugtracker/tests.py:798 bugtracker/views.py:328
 #, python-format
 msgid "A new comment has been added on issue #%(id)d"
 msgstr ""
 
-#: bugtracker/tests.py:725 bugtracker/views.py:274
+#: bugtracker/tests.py:834 bugtracker/views.py:302
 msgid "A comment has been updated"
 msgstr ""
 
-#: bugtracker/tests.py:839 bugtracker/views.py:114
+#: bugtracker/tests.py:948 bugtracker/views.py:142
 msgid "A new message has been posted"
 msgstr ""
 
-#: bugtracker/tests.py:855 bugtracker/views.py:358
+#: bugtracker/tests.py:964 bugtracker/views.py:386
 msgid "An answer has been posted"
 msgstr ""
 
-#: bugtracker/tests.py:877 bugtracker/views.py:353
+#: bugtracker/tests.py:986 bugtracker/views.py:381
 #, python-format
 msgid "You have received an answer on %(site_name)s"
 msgstr ""
 
-#: bugtracker/views.py:52 bugtracker/views.py:77
+#: bugtracker/views.py:52 bugtracker/views.py:103
 msgid "Issue reporting"
 msgstr ""
 
@@ -785,74 +785,74 @@ msgstr ""
 msgid "Messages"
 msgstr ""
 
-#: bugtracker/views.py:87
+#: bugtracker/views.py:115
 msgid "Edit an issue"
 msgstr ""
 
-#: bugtracker/views.py:94 templates/issue/list.html:5
+#: bugtracker/views.py:122 templates/issue/list.html:6
 msgid "Send an issue"
 msgstr ""
 
-#: bugtracker/views.py:107
+#: bugtracker/views.py:135
 msgid "The issue has been saved successfully"
 msgstr ""
 
-#: bugtracker/views.py:109 bugtracker/views.py:189 bugtracker/views.py:294
+#: bugtracker/views.py:137 bugtracker/views.py:217 bugtracker/views.py:322
 #, python-format
 msgid "%(issue_subject)s : %(issue_url)s"
 msgstr ""
 
-#: bugtracker/views.py:112
+#: bugtracker/views.py:140
 msgid "The message has been saved successfully"
 msgstr ""
 
-#: bugtracker/views.py:115 bugtracker/views.py:359
+#: bugtracker/views.py:143 bugtracker/views.py:387
 #, python-format
 msgid "%(message_subject)s : %(message_url)s"
 msgstr ""
 
-#: bugtracker/views.py:153
+#: bugtracker/views.py:181
 msgid "The issue has been closed successfully"
 msgstr ""
 
-#: bugtracker/views.py:160
+#: bugtracker/views.py:188
 msgid "Close an issue"
 msgstr ""
 
-#: bugtracker/views.py:192
+#: bugtracker/views.py:220
 msgid "The issue has been reopened successfully"
 msgstr ""
 
-#: bugtracker/views.py:199
+#: bugtracker/views.py:227
 msgid "Reopen an issue"
 msgstr ""
 
-#: bugtracker/views.py:253
+#: bugtracker/views.py:281
 msgid "The issue has been deleted successfully"
 msgstr ""
 
-#: bugtracker/views.py:260
+#: bugtracker/views.py:288
 msgid "Delete an issue"
 msgstr ""
 
-#: bugtracker/views.py:268
+#: bugtracker/views.py:296
 msgid "Edit a comment"
 msgstr ""
 
-#: bugtracker/views.py:276 bugtracker/views.py:329
+#: bugtracker/views.py:304 bugtracker/views.py:357
 msgid "Send a comment"
 msgstr ""
 
-#: bugtracker/views.py:301
+#: bugtracker/views.py:329
 #, python-format
 msgid "%(user)s wrote:"
 msgstr ""
 
-#: bugtracker/views.py:315 bugtracker/views.py:362
+#: bugtracker/views.py:343 bugtracker/views.py:390
 msgid "Your comment has been saved successfully"
 msgstr ""
 
-#: bugtracker/views.py:354
+#: bugtracker/views.py:382
 #, python-format
 msgid ""
 "%(message_url)s\n"
@@ -860,27 +860,27 @@ msgid ""
 "%(message)s"
 msgstr ""
 
-#: bugtracker/views.py:385
+#: bugtracker/views.py:413
 msgid "The comment has been deleted successfully"
 msgstr ""
 
-#: bugtracker/views.py:392
+#: bugtracker/views.py:420
 msgid "Delete a comment"
 msgstr ""
 
-#: bugtracker/views.py:407
+#: bugtracker/views.py:435
 msgid "Your vote has been saved successfully"
 msgstr ""
 
-#: bugtracker/views.py:409
+#: bugtracker/views.py:437
 msgid "You can't vote anymore"
 msgstr ""
 
-#: bugtracker/views.py:411
+#: bugtracker/views.py:439
 msgid "No votes for closed issues"
 msgstr ""
 
-#: bugtracker/views.py:424
+#: bugtracker/views.py:452
 msgid "Your vote has been removed successfully"
 msgstr ""
 
@@ -1202,7 +1202,7 @@ msgstr ""
 msgid "Administrator"
 msgstr ""
 
-#: core/templatetags/modeltags.py:39 templates/issue/list.html:29
+#: core/templatetags/modeltags.py:39
 msgid "User deleted"
 msgstr ""
 
@@ -2134,7 +2134,15 @@ msgstr ""
 msgid "Export invoice book"
 msgstr ""
 
-#: templates/invoice/list.html:47 templates/project/detail.html:75
+#: templates/invoice/list.html:27
+msgid "Download"
+msgstr ""
+
+#: templates/invoice/list.html:41
+msgid "download"
+msgstr ""
+
+#: templates/invoice/list.html:49 templates/project/detail.html:75
 #: templates/proposal/detail.html:112
 msgid "No invoices"
 msgstr ""
@@ -2153,12 +2161,12 @@ msgid "Reopen"
 msgstr ""
 
 #: templates/issue/detail.html:26 templates/issue/detail.html.py:59
-#: templates/issue/list.html:17 templates/message/detail.html:14
+#: templates/issue/list.html:18 templates/message/detail.html:14
 #: templates/message/detail.html.py:40 templates/message/list.html:17
 msgid "Author"
 msgstr ""
 
-#: templates/issue/detail.html:40 templates/issue/list.html:22
+#: templates/issue/detail.html:40 templates/issue/list.html:23
 msgid "Votes"
 msgstr ""
 
@@ -2167,7 +2175,7 @@ msgstr ""
 msgid "%(votes_remaining)s votes remaining"
 msgstr ""
 
-#: templates/issue/detail.html:53 templates/issue/list.html:21
+#: templates/issue/detail.html:53 templates/issue/list.html:22
 #: templates/message/detail.html:34 templates/message/list.html:21
 msgid "Comments"
 msgstr ""
@@ -2176,15 +2184,15 @@ msgstr ""
 msgid "No comments"
 msgstr ""
 
-#: templates/issue/list.html:6
+#: templates/issue/list.html:7
 msgid "View open issues"
 msgstr ""
 
-#: templates/issue/list.html:7
+#: templates/issue/list.html:8
 msgid "View closed issues"
 msgstr ""
 
-#: templates/issue/list.html:41
+#: templates/issue/list.html:42
 msgid "No issues"
 msgstr ""
 

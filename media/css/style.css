@@ -486,12 +486,12 @@ body.login {
 
 #tos-subscribe {
     text-align:center;
-	margin: 10px 0px;
+    margin: 10px 0px;
 }
 
 #tos-subscribe p {
     margin-top: 10px;
-	text-align:center;
+    text-align:center;
 }
 
 #tos-iframe {
@@ -543,4 +543,8 @@ body.login {
 
 #id_proposal-payment_delay_other {
     width:20px;
+}
+
+.amount {
+    text-align: right;
 }

@@ -24,6 +24,7 @@
                 <th>{% trans "Nature" %}</th>
                 <th>{% trans "State" %}</th>
                 <th>{% trans "Payment type" %}</th>
+                <th>{% trans "Download" %}</th>
                 <th>{% trans "Amount" %}</th>
             </tr>
         </thead>
@@ -37,7 +38,8 @@
                 <td><a href="{% url contact_detail invoice.customer.id %}">{{ invoice.getNature }}</a></td>
                 <td><a href="{% url invoice_detail invoice.id %}">{{ invoice.get_state_display }}</a></td>
                 <td><a href="{% url invoice_detail invoice.id %}">{{ invoice.get_payment_type_display|default:'' }}</a></td>
-                <td><a href="{% url invoice_detail invoice.id %}">{{ invoice.amount }}</a></td>
+                <td><a href="{% url invoice_download invoice.id %}">{% trans "download" %}</a></td>
+                <td class="amount"><a href="{% url invoice_detail invoice.id %}">{{ invoice.amount }}</a></td>
             </tr>
         {% endfor %}
         </tbody>
