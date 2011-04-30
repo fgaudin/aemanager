@@ -38,14 +38,28 @@ jQuery(document).ready(function(){
     // create editor
     jQuery('#id_proposal-contract_content').elrte(opts);
 
-    var activate_delete = function(){
-        jQuery('.delete-button').click(function(e){
-            e.preventDefault();
-            if (jQuery(e.currentTarget).parent('.inline-formset').children('input[type="hidden"]').first().val()) {
-                jQuery(e.currentTarget).parent('.inline-formset').hide();
-                jQuery(e.currentTarget).next('.delete-checkbox').children('input').attr('checked', true);
+    jQuery('.form-row').delegate('.delete-button', 'click', function(e){
+        e.preventDefault();
+        if (jQuery(e.currentTarget).parent('.inline-formset').children('input[type="hidden"]').first().val()) {
+            // bound row
+            jQuery(e.currentTarget).parent('.inline-formset').hide();
+            jQuery(e.currentTarget).next('.delete-checkbox').children('input').attr('checked', true);
+        } else {
+            if (jQuery('.proposal-row').length == 1) {
+                // last (empty) row
+                var row = jQuery(e.currentTarget).parent('.inline-formset');
+                jQuery(row).hide();
+                jQuery('ul.errorlist', row).remove();
+                jQuery('input:text',row).focusin();
+                jQuery('input',row).val('');
+                jQuery('input:text',row).focusout();
+                jQuery('input',row).attr('checked', false);
+                jQuery('option',row).attr('selected', false);
+                jQuery("option[value='']",row).attr('selected', true);
             } else {
-                jQuery('#id_proposal_rows-TOTAL_FORMS').val(parseInt(jQuery('#id_proposal_rows-TOTAL_FORMS').val(), 10) - 1);
+                // can be removed, other rows for model
+                var row_count = parseInt(jQuery('#id_proposal_rows-TOTAL_FORMS').val(), 10);
+                jQuery('#id_proposal_rows-TOTAL_FORMS').val(row_count - 1);
                 jQuery(e.currentTarget).parent('.inline-formset').remove();
                 var i = 0;
                 jQuery('.proposal-row').each(function(){
@@ -56,33 +70,37 @@ jQuery(document).ready(function(){
                     i = i + 1;
                 });
             }
-        });
-    };
+        }
+    });
 
     jQuery('#add-button').click(function(e){
         e.preventDefault();
-        new_row = jQuery(e.currentTarget).parent('.inline-formset').prev('.proposal-row').clone();
-        jQuery(e.currentTarget).parent('.inline-formset').before(new_row);
-        jQuery('ul.errorlist', new_row).remove();
-        jQuery('input',new_row).val('');
-        jQuery('input',new_row).attr('checked', false);
-        jQuery('option',new_row).attr('selected', false);
-        jQuery("option[value='']",new_row).attr('selected', true);
-        var row_count = jQuery('#id_proposal_rows-TOTAL_FORMS').val();
-        jQuery('input, select',new_row).each(function(){
-            jQuery(this).attr('name',jQuery(this).attr('name').replace(/(proposal_rows-)[0-9]+/,'$1' + row_count));
-            jQuery(this).attr('id',jQuery(this).attr('id').replace(/(proposal_rows-)[0-9]+/,'$1' + row_count));
-        });
+        if (jQuery('#id_proposal_rows-TOTAL_FORMS').val() == 1
+          && jQuery('.proposal-row:hidden').length
+          && !jQuery('.proposal-row:hidden').children('input[type="hidden"]').first().val()) {
+            jQuery('.proposal-row:hidden').show();
+        } else {
+            new_row = jQuery(e.currentTarget).parent('.inline-formset').prev('.proposal-row').clone();
+            jQuery(e.currentTarget).parent('.inline-formset').before(new_row);
+            jQuery('ul.errorlist', new_row).remove();
+            jQuery('input',new_row).val('');
+            jQuery('input',new_row).attr('checked', false);
+            jQuery('option',new_row).attr('selected', false);
+            jQuery("option[value='']",new_row).attr('selected', true);
+            var row_count = jQuery('#id_proposal_rows-TOTAL_FORMS').val();
+            jQuery('input, select',new_row).each(function(){
+                jQuery(this).attr('name',jQuery(this).attr('name').replace(/(proposal_rows-)[0-9]+/,'$1' + row_count));
+                jQuery(this).attr('id',jQuery(this).attr('id').replace(/(proposal_rows-)[0-9]+/,'$1' + row_count));
+            });
 
-        jQuery('input:text', new_row).labelInside();
+            jQuery('input:text', new_row).labelInside();
 
-        jQuery(new_row).show();
-        jQuery('#id_proposal_rows-TOTAL_FORMS').val(parseInt(jQuery('#id_proposal_rows-TOTAL_FORMS').val(), 10) + 1);
-        activate_delete();
+            jQuery(new_row).show();
+            jQuery('#id_proposal_rows-TOTAL_FORMS').val(parseInt(jQuery('#id_proposal_rows-TOTAL_FORMS').val(), 10) + 1);
+        }
     });
 
     jQuery('.delete-checkbox').hide()
-    activate_delete();
 
     // manage payment delay
     var compute_payment_date = function(){
