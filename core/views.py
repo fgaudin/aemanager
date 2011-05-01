@@ -151,7 +151,7 @@ def index(request):
     next_pay_date = profile.get_pay_date(next_end_date)
     next_amount_paid_for_tax = Invoice.objects.get_paid_sales_for_period(user, next_begin_date, next_end_date)
     next_waiting_amount_for_tax = Invoice.objects.get_waiting_sales_for_period(user, next_end_date, next_begin_date)
-    next_tax_rate = profile.get_tax_rate(next_begin_date, period_is_only_overrun=(only_overrun or extra_taxes))
+    next_tax_rate = profile.get_tax_rate(pay_date + datetime.timedelta(1), period_is_only_overrun=(only_overrun or extra_taxes))
     next_amount_to_pay = float(next_amount_paid_for_tax) * float(next_tax_rate) / 100
     next_estimated_amount_for_tax = next_amount_paid_for_tax + next_waiting_amount_for_tax
     next_estimated_amount_to_pay = float(next_estimated_amount_for_tax) * float(next_tax_rate) / 100

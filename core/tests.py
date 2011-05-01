@@ -193,6 +193,9 @@ class DashboardTest(TestCase):
         self.assertEquals(response.context['sales']['limit'], 32600)
         self.assertEquals(response.context['sales_previous_year']['paid'], 5000)
         self.assertEquals(response.context['sales_previous_year']['remaining'], 16182 - 5000)
+        autoentrepreneur.models.datetime.date.mock_year = 2010
+        autoentrepreneur.models.datetime.date.mock_month = 10
+        autoentrepreneur.models.datetime.date.mock_day = 25
 
     def testProspect(self):
         response = self.client.get(reverse('index'))
@@ -253,6 +256,25 @@ class DashboardTest(TestCase):
         self.assertEquals(response.context['taxes']['paid_sales_for_period'], 1500)
         self.assertEquals(response.context['taxes']['tax_rate'], 18.3 + 0.2)
         self.assertEquals(response.context['taxes']['amount_to_pay'], 277.5)
+        autoentrepreneur.models.datetime.date.mock_year = 2010
+        autoentrepreneur.models.datetime.date.mock_month = 10
+        autoentrepreneur.models.datetime.date.mock_day = 25
+
+    def testBug220(self):
+        autoentrepreneur.models.datetime.date.mock_year = 2011
+        autoentrepreneur.models.datetime.date.mock_month = 4
+        autoentrepreneur.models.datetime.date.mock_day = 30
+
+        profile = User.objects.get(pk=1).get_profile()
+        profile.creation_help = True
+        profile.freeing_tax_payment = True
+        profile.creation_date = datetime.date(2010, 4, 16)
+        profile.save()
+
+        response = self.client.get(reverse('index'))
+        self.assertEquals(response.context['taxes']['tax_rate'], 7.7)
+        self.assertEquals(response.context['next_taxes']['tax_rate'], 11.6)
+
         autoentrepreneur.models.datetime.date.mock_year = 2010
         autoentrepreneur.models.datetime.date.mock_month = 10
         autoentrepreneur.models.datetime.date.mock_day = 25
