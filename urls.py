@@ -42,6 +42,7 @@ urlpatterns = patterns('',
     url(r'^user/', include('registration_urls')),
     url(r'^newsletter/', include('newsletter.urls')),
     url(r'^backup/', include('backup.urls')),
+    url(r'^faq/', include('faq.urls')),
 
 )
 

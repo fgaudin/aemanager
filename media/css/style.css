@@ -229,6 +229,16 @@ a .menu-right {
     padding: 0 15px;
     text-align: justify;
 }
+
+.content a:link, .content a:visited {
+    color:#5B80B2;
+    text-decoration:none;
+}
+
+.content li {
+    font: 14px "Futura Medium", "Myriad Pro", "Gill Sans", Helvetica, Verdana, Arial, sans-serif;
+}
+
 .content-bottom {
     width: 960px;
     background: transparent url(../img/menu/content_bottom.png) no-repeat;
@@ -309,11 +319,6 @@ form .aligned p, form .aligned ul {
 
 .expired {
     color: red;
-}
-
-.content a:link, .content a:visited {
-    color:#5B80B2;
-    text-decoration:none;
 }
 
 .detail-row  {
@@ -547,4 +552,29 @@ body.login {
 
 .amount {
     text-align: right;
+}
+
+/* FAQ */
+#faq ul {
+    margin: 0;
+    padding: 0;
+}
+
+#faq ul li {
+    margin: 5px 0;
+    padding: 0;
+    list-style-position: outside;
+}
+
+.question-answer {
+    margin: 10px 0;
+}
+
+.question-answer a, .question-answer a:hover {
+    color: #333;
+}
+
+.question {
+    margin-bottom: 5px;
+    font-weight: bold;
 }

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div id="faq">
+    <a name="top"></a>
+    <ol>
+    {% for category in categories %}
+    <li><a href="#category-{{ category.id }}">{{ category }}</a></li>
+    {% endfor %}
+    </ol>
+
+    <ol>
+    {% for category in categories %}
+        <li>
+        <a name="category-{{ category.id }}"><h3>{{ category.label }}</h3></a>
+        </li>
+        <ul>
+        {% for question in category.questions.all %}
+        <li><a href="#question-{{ question.id }}">{{ question }}</a></li>
+        {% endfor %}
+        </ul>
+
+        {% for question in category.questions.all %}
+        <div class="question-answer">
+            <div class="question"><a name="question-{{ question.id }}">{{ question }}</a></div>
+            <div class="answer">{{ question.answer }}</div>
+        </div>
+        <a href="#category-{{ category.id }}">{% trans "back to category" %}</a>
+        -
+        <a href="#top">{% trans "back to top" %}</a>
+        {% endfor %}
+    {% endfor %}
+    </ol>
+</div>
+{% endblock %}

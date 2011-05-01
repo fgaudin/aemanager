@@ -69,7 +69,7 @@
                 </div>
             </li>
             {% endif %}
-            <li class="last{% if active == "account" %} active{% endif %}">
+            <li class="{% if active == "account" %}active{% endif %}">
                 <a href="{% url settings_edit %}">
                     <span class="menu-left"></span>
                     <span class="menu-mid">{% trans "My account" %}</span>
@@ -104,6 +104,24 @@
                             <a href="{% url admin:index %}">{% trans "Admin" %}</a>
                         </li>
                         {% endif %}
+                    </ul>
+                    <div class="btm-bg"></div>
+                </div>
+            </li>
+            <li class="last{% if active == "help" %} active{% endif %}">
+                <a href="{% url issue_list %}">
+                    <span class="menu-left"></span>
+                    <span class="menu-mid">{% trans "Help" %}</span>
+                    <span class="menu-right"></span>
+                </a>
+                <div class="sub">
+                    <ul>
+                        <li>
+                            <a href="{% url issue_list %}">{% trans "Bug reports" %}</a>
+                            </li>
+                        <li>
+                            <a href="{% url faq_list %}">{% trans "FAQ" %}</a>
+                        </li>
                     </ul>
                     <div class="btm-bg"></div>
                 </div>
