@@ -369,7 +369,7 @@ class Invoice(OwnedObject):
         for row in rows:
             label = row.label
             if row.proposal.reference:
-                label = "%s - [%s]" % (label.decode('utf-8'), row.proposal.reference)
+                label = u"%s - [%s]" % (label, row.proposal.reference)
             para = Paragraph(label, styleLabel)
             para.width = label_width
             splitted_para = para.breakLines(label_width)

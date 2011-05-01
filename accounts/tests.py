@@ -211,6 +211,7 @@ class InvoiceTest(TestCase):
     def setUp(self):
         self.client.login(username='test', password='test')
         self.proposal = Proposal.objects.create(project_id=30,
+                                                reference='crt1234',
                                                 update_date=datetime.date.today(),
                                                 state=PROPOSAL_STATE_ACCEPTED,
                                                 begin_date=datetime.date(2010, 8, 1),
@@ -797,7 +798,7 @@ class InvoiceTest(TestCase):
         content = response.content.split("\n")
         invariant_content = content[0:66] + content[67:110] + content[111:-1]
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
-                          "ff8cfd8a5c6805d86a9a52e925ebfcce")
+                          "51ab402a56612fac9112dc63c0e72884")
 
     def testInvoiceBookDownloadPdf(self):
         """
@@ -1109,6 +1110,12 @@ class InvoiceTest(TestCase):
                                           unit_price='100',
                                           balance_payments=False,
                                           owner_id=1)
+
+        response = self.client.get(reverse('invoice_download', kwargs={'id': i.id}))
+        self.assertEqual(response.status_code, 200)
+
+        self.proposal.reference = ''
+        self.proposal.save()
 
         response = self.client.get(reverse('invoice_download', kwargs={'id': i.id}))
         self.assertEqual(response.status_code, 200)
