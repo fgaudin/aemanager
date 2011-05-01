@@ -13,7 +13,7 @@ from reportlab.lib import colors
 from django.db import models
 from core.models import OwnedObject
 from django.utils.translation import ugettext_lazy as _, ugettext
-from contact.models import Contact
+from contact.models import Contact, CONTACT_TYPE_COMPANY
 from django.core.urlresolvers import reverse
 from project.models import Row, Proposal, update_row_amount, \
     ROW_CATEGORY_SERVICE, ROW_CATEGORY, PROPOSAL_STATE_ACCEPTED, ProposalRow
@@ -291,22 +291,20 @@ class Invoice(OwnedObject):
         data = []
         user_header_content = """
         %s %s<br/>
-        SIRET : %s<br/>
         %s<br/>
         %s %s<br/>
-        %s
+        %s<br/>
+        SIRET : %s<br/>
         """ % (user.first_name,
                user.last_name,
-               user.get_profile().company_id,
                user.get_profile().address.street.replace("\n", "<br/>"),
                user.get_profile().address.zipcode,
                user.get_profile().address.city,
-               user.get_profile().address.country or '')
+               user.get_profile().address.country or '',
+               user.get_profile().company_id)
 
         customer_header_content = """
         %s<br/>
-        %s<br/>
-        SIRET : %s<br/>
         %s<br/>
         %s %s<br/>
         %s<br/>
@@ -317,15 +315,22 @@ class Invoice(OwnedObject):
         else:
             user_header = Paragraph(user_header_content, styleH)
 
+        customer_header = customer_header_content % (self.customer.name,
+                                                     self.customer.address.street.replace("\n", "<br/>"),
+                                                     self.customer.address.zipcode,
+                                                     self.customer.address.city,
+                                                     self.customer.address.country or '')
+
+        if self.customer.contact_type == CONTACT_TYPE_COMPANY \
+            and self.customer.company_id:
+            customer_header = "%sSIRET : %s<br/>" % (customer_header,
+                                                     self.customer.company_id)
+
+        customer_header = Paragraph(customer_header, styleH)
+
         data.append([user_header,
                     '',
-                    Paragraph(customer_header_content % (self.customer.name,
-                                                         self.customer.legal_form,
-                                                         self.customer.company_id,
-                                                         self.customer.address.street.replace("\n", "<br/>"),
-                                                         self.customer.address.zipcode,
-                                                         self.customer.address.city,
-                                                         self.customer.address.country or ''), styleH)])
+                    customer_header])
 
         t1 = Table(data, [3.5 * inch, 0.3 * inch, 3.5 * inch], [1.9 * inch])
         table_style = [('BOX', (0, 0), (0, 0), 0.25, colors.black),

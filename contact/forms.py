@@ -20,7 +20,6 @@ class ContactForm(ModelForm):
                                      required=True,
                                      widget=forms.RadioSelect(),
                                      initial=CONTACT_TYPE_PERSON)
-    company_id = forms.CharField(max_length=50, required=True, label=_('Company id')) # SIRET for France
 
     class Meta:
         model = Contact

@@ -53,9 +53,7 @@ def contact_create_or_edit(request, id=None):
         contactForm.fields['contacts'].queryset = contacts
         addressForm = AddressForm(request.POST, instance=address, prefix="address")
         phonenumberformset = PhoneNumberFormSet(request.POST, instance=contact)
-        # company id is not required if contact is a person
-        if int(request.POST.get('contact-contact_type', 0)) == CONTACT_TYPE_PERSON:
-            contactForm.fields['company_id'].required = False
+
         if contactForm.is_valid() and addressForm.is_valid() and phonenumberformset.is_valid():
             user = request.user
             address = addressForm.save(commit=False)

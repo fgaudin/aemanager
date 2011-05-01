@@ -83,33 +83,6 @@ class ContactTest(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertContains(response, "first name")
 
-    def testBug95(self):
-        """
-        Company id is mandatory for company contact
-        """
-        response = self.client.post(reverse('contact_add'),
-                                    {'contact-name': 'Customer',
-                                     'contact-contact_type': '2',
-                                     'contact-company_id':'',
-                                     'phonenumber_set-TOTAL_FORMS': '1',
-                                     'phonenumber_set-INITIAL_FORMS': '0',
-                                     'address-street': '1 rue de la paix',
-                                     'address-zipcode': '75000',
-                                     'address-city': 'Paris'})
-        self.assertEquals(response.status_code, 200)
-        self.assertEquals(len(response.context['contactForm'].errors), 1)
-
-        response = self.client.post(reverse('contact_add'),
-                                    {'contact-name': 'Customer',
-                                     'contact-contact_type': '1',
-                                     'contact-company_id':'',
-                                     'phonenumber_set-TOTAL_FORMS': '1',
-                                     'phonenumber_set-INITIAL_FORMS': '0',
-                                     'address-street': '1 rue de la paix',
-                                     'address-zipcode': '75000',
-                                     'address-city': 'Paris'})
-        self.assertEquals(response.status_code, 302)
-
     def testBug192(self):
         """
         delete address when deleting a contact
@@ -130,3 +103,18 @@ class ContactTest(TestCase):
                                     {'delete': 'Ok'})
         self.assertEquals(response.status_code, 302)
         self.assertEquals(Address.objects.filter(pk=address1.id).count(), 0)
+
+    def testBug216(self):
+        """
+        Company id is NOT mandatory for company contact
+        """
+        response = self.client.post(reverse('contact_add'),
+                                    {'contact-name': 'Customer',
+                                     'contact-contact_type': '2',
+                                     'contact-company_id':'',
+                                     'phonenumber_set-TOTAL_FORMS': '1',
+                                     'phonenumber_set-INITIAL_FORMS': '0',
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75000',
+                                     'address-city': 'Paris'})
+        self.assertEquals(response.status_code, 302)

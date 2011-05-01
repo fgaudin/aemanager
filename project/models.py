@@ -312,22 +312,23 @@ class Proposal(OwnedObject):
         data = []
         user_header_content = """
         %s %s<br/>
-        SIRET : %s<br/>
         %s<br/>
-        %s %s
+        %s %s<br/>
+        %s<br/>
+        SIRET : %s<br/>
         """
         user_header_content = user_header_content % (user.first_name,
                                                      user.last_name,
-                                                     user.get_profile().company_id,
                                                      user.get_profile().address.street.replace("\n", "<br/>"),
                                                      user.get_profile().address.zipcode,
-                                                     user.get_profile().address.city)
-        if user.get_profile().address.country:
-            user_header_content = "%s<br/>%s" % (user_header_content, user.get_profile().address.country)
+                                                     user.get_profile().address.city,
+                                                     user.get_profile().address.country or '',
+                                                     user.get_profile().company_id)
+
         if user.get_profile().phonenumber:
-            user_header_content = "%s<br/>%s" % (user_header_content, user.get_profile().phonenumber)
+            user_header_content = "%s%s<br/>" % (user_header_content, user.get_profile().phonenumber)
         if user.get_profile().professional_email:
-            user_header_content = "%s<br/>%s" % (user_header_content, user.get_profile().professional_email)
+            user_header_content = "%s%s<br/>" % (user_header_content, user.get_profile().professional_email)
 
         customer_header_content = """
         %s<br/>
