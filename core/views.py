@@ -16,7 +16,7 @@ from accounts.models import Expense, Invoice, INVOICE_STATE_PAID, \
 from core.decorators import settings_required
 from autoentrepreneur.models import AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC, \
     Subscription, SUBSCRIPTION_STATE_NOT_PAID, SUBSCRIPTION_STATE_PAID, \
-    SUBSCRIPTION_STATE_TRIAL
+    SUBSCRIPTION_STATE_TRIAL, UserProfile
 from project.models import Proposal, Project, PROJECT_STATE_FINISHED, \
     PROPOSAL_STATE_BALANCED, ROW_CATEGORY_SERVICE, ProposalRow
 from django.views.decorators.csrf import csrf_exempt
@@ -38,6 +38,7 @@ from django.conf import settings
 from registration.models import RegistrationProfile
 from django.utils.encoding import smart_str
 import os
+from django.db.models.aggregates import Sum
 
 @settings_required
 @subscription_required
@@ -668,4 +669,67 @@ def contact_us(request):
         form = ContactUsForm()
     return render_to_response('core/contact_us.html',
                               {'form': form},
+                              context_instance=RequestContext(request))
+
+@staff_member_required
+def admin_dashboard(request):
+    users = []
+    users.append({'label': _('Total users'),
+                  'value': User.objects.exclude(is_superuser=True).count()})
+    users.append({'label': _('Unconfirmed users'),
+                  'value': RegistrationProfile.objects.exclude(activation_key=RegistrationProfile.ACTIVATED).count()})
+    users.append({'label': _('Waiting for deletion'),
+                  'value': UserProfile.objects.exclude(unregister_datetime=None).count()})
+    users.append({'label': _('Expired users'),
+                  'value': Subscription.objects.get_users_with_expired_subscription().count()})
+    users.append({'label': _('Active users'),
+                  'value': users[0]['value'] - users[1]['value'] - users[2]['value'] - users[3]['value']})
+    users.append({'label': _('Subscribed users'),
+                  'value': Subscription.objects.get_users_with_paid_subscription().count()})
+
+    activity = []
+    activity.append({'label': _('Connections today'),
+                     'value': User.objects.filter(last_login__gte=datetime.date.today()).count()})
+    activity.append({'label': _('Connections in past 7 days'),
+                     'value': User.objects.filter(last_login__gte=datetime.date.today() - datetime.timedelta(7)).count()})
+    activity.append({'label': _('Connections in past 30 days'),
+                     'value': User.objects.filter(last_login__gte=datetime.date.today() - datetime.timedelta(30)).count()})
+    activity.append({'label': _('Registrations today'),
+                     'value': User.objects.filter(date_joined__gte=datetime.date.today()).count()})
+    activity.append({'label': _('Registrations in past 7 days'),
+                     'value': User.objects.filter(date_joined__gte=datetime.date.today() - datetime.timedelta(7)).count()})
+    activity.append({'label': _('Registrations in past 30 days'),
+                     'value': User.objects.filter(date_joined__gte=datetime.date.today() - datetime.timedelta(30)).count()})
+
+    forecast = []
+    forecast.append({'label': _('Trial users expiring in 1 day'),
+                     'value': Subscription.objects.get_users_with_trial_subscription_expiring_in(1).count()})
+    forecast.append({'label': _('Trial users expiring in %i days') % (2),
+                     'value': Subscription.objects.get_users_with_trial_subscription_expiring_in(2).count()})
+    forecast.append({'label': _('Trial users expiring in %i days') % (3),
+                     'value': Subscription.objects.get_users_with_trial_subscription_expiring_in(3).count()})
+    forecast.append({'label': _('Subscribed users expiring in 1 day'),
+                     'value': Subscription.objects.get_users_with_paid_subscription_expiring_in(1).count()})
+    forecast.append({'label': _('Subscribed users expiring in %i day') % (2),
+                     'value': Subscription.objects.get_users_with_paid_subscription_expiring_in(2).count()})
+    forecast.append({'label': _('Subscribed users expiring in %i day') % (3),
+                     'value': Subscription.objects.get_users_with_paid_subscription_expiring_in(3).count()})
+
+    data = []
+    data.append({'label':_('Proposals'),
+                 'value': Proposal.objects.count()})
+    data.append({'label':_('Users having proposals'),
+                 'value': Proposal.objects.values('owner').distinct().order_by().count()})
+    data.append({'label':_('Invoices'),
+                 'value': Invoice.objects.count()})
+    data.append({'label':_('Users having invoices'),
+                 'value': Invoice.objects.values('owner').distinct().order_by().count()})
+
+    context = {'users': users,
+               'activity': activity,
+               'forecast': forecast,
+               'data': data}
+
+    return render_to_response('core/admin_dashboard.html',
+                              context,
                               context_instance=RequestContext(request))

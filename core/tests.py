@@ -5,8 +5,10 @@ import datetimestub
 import autoentrepreneur
 import accounts
 import core.views
-from autoentrepreneur.models import AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_LIBERAL
+from autoentrepreneur.models import AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_LIBERAL, \
+    Subscription, SUBSCRIPTION_STATE_PAID, SUBSCRIPTION_STATE_FREE
 import datetime
+from registration.models import RegistrationProfile
 accounts.models.datetime = datetimestub.DatetimeStub()
 from django.test import TestCase
 from core.models import OwnedObject
@@ -786,3 +788,90 @@ class RegisterTest(TestCase):
                                      'password2':'test2'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['form'].non_field_errors(), ["The two password fields didn't match."])
+
+class AdminDashboardPermissionTest(TestCase):
+    fixtures = ['test_users']
+
+    def setUp(self):
+        self.client.login(username='test', password='test')
+
+    def testPermission(self):
+        response = self.client.get(reverse('admin_dashboard'))
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.context['title'], 'Log in')
+
+class AdminDashboardTest(TestCase):
+    fixtures = ['test_users']
+
+    def setUp(self):
+        self.user1 = User.objects.get(username='test')
+        self.user1.is_superuser = True
+        self.user1.is_staff = True
+        self.user1.save()
+        self.client.login(username='test', password='test')
+
+    def testUsers(self):
+        sub1 = Subscription.objects.get(owner=self.user1)
+        sub1.state = SUBSCRIPTION_STATE_FREE
+        sub1.save()
+
+        user2 = User.objects.get(username='test2')
+        sub2 = Subscription.objects.get(owner=user2)
+        sub2.expiration_date = datetime.date.today() + datetime.timedelta(10)
+        sub2.save()
+
+        user3 = User.objects.create_user('test3', 'test3@example.com', 'test')
+        user4 = User.objects.create_user('test4', 'test4@example.com', 'test')
+        user5 = User.objects.create_user('test5', 'test5@example.com', 'test')
+        user6 = User.objects.create_user('test6', 'test6@example.com', 'test')
+        user7 = User.objects.create_user('test7', 'test7@example.com', 'test')
+        user8 = User.objects.create_user('test8', 'test8@example.com', 'test')
+        user9 = User.objects.create_user('test9', 'test9@example.com', 'test')
+        user10 = User.objects.create_user('test10', 'test10@example.com', 'test')
+        user11 = User.objects.create_user('test11', 'test11@example.com', 'test')
+
+        user3.is_active = False
+        user3.save()
+        registration = RegistrationProfile()
+        registration.user = user3
+        registration.activation_key = '1234'
+        registration.save()
+
+        user4.is_active = False
+        user4.save()
+        profile = user4.get_profile()
+        profile.unregister_datetime = datetime.datetime.now()
+        profile.save()
+
+        user5.is_active = False
+        user5.save()
+        profile = user5.get_profile()
+        profile.unregister_datetime = datetime.datetime.now()
+        profile.save()
+
+        sub6 = Subscription.objects.get(owner=user6)
+        sub6.expiration_date = datetime.date.today() - datetime.timedelta(1)
+        sub6.save()
+        sub7 = Subscription.objects.get(owner=user7)
+        sub7.expiration_date = datetime.date.today() - datetime.timedelta(1)
+        sub7.save()
+        sub8 = Subscription.objects.get(owner=user8)
+        sub8.expiration_date = datetime.date.today() - datetime.timedelta(1)
+        sub8.save()
+
+        sub9 = Subscription()
+        sub9.owner = user9
+        sub9.state = SUBSCRIPTION_STATE_PAID
+        sub9.expiration_date = datetime.date.today() + datetime.timedelta(1)
+        sub9.save()
+
+        response = self.client.get(reverse('admin_dashboard'))
+        self.assertEquals(response.status_code, 200)
+
+        users = response.context['users']
+        self.assertEquals(users[0]['value'], 10) # total users
+        self.assertEquals(users[1]['value'], 1) # unconfirmed users
+        self.assertEquals(users[2]['value'], 2) # waiting for deletion
+        self.assertEquals(users[3]['value'], 3) # expired users
+        self.assertEquals(users[4]['value'], 4) # active users
+        self.assertEquals(users[5]['value'], 1) # subscribed users

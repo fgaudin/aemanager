@@ -68,6 +68,31 @@
                     <div class="btm-bg"></div>
                 </div>
             </li>
+            {% else %}
+            <li class="{% if active == "admin" %}active{% endif %}">
+                <a href="{% url admin_dashboard %}">
+                    <span class="menu-left"></span>
+                    <span class="menu-mid">{% trans "Admin" %}</span>
+                    <span class="menu-right"></span>
+                </a>
+                <div class="sub">
+                    <ul>
+                        <li>
+                            <a href="{% url admin_dashboard %}">{% trans "Admin dashboard" %}</a>
+                        </li>
+                        <li>
+                            <a href="{% url message_list %}">{% trans "Messages" %}</a>
+                        </li>
+                        <li>
+                            <a href="{% url email_users %}">{% trans "Email users" %}</a>
+                        </li>
+                        <li>
+                            <a href="{% url admin:index %}">{% trans "Admin" %}</a>
+                        </li>
+                    </ul>
+                    <div class="btm-bg"></div>
+                </div>
+            </li>
             {% endif %}
             <li class="{% if active == "account" %}active{% endif %}">
                 <a href="{% url settings_edit %}">
@@ -92,16 +117,6 @@
                         </li>
                         <li>
                             <a href="{% url backup %}">{% trans "Backup/Restore" %}</a>
-                        </li>
-                        {% else %}
-                        <li>
-                            <a href="{% url message_list %}">{% trans "Messages" %}</a>
-                        </li>
-                        <li>
-                            <a href="{% url email_users %}">{% trans "Email users" %}</a>
-                        </li>
-                        <li>
-                            <a href="{% url admin:index %}">{% trans "Admin" %}</a>
                         </li>
                         {% endif %}
                     </ul>

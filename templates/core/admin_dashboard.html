@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Admin dashboard" %}{% endblock %}
+
+{% block content %}
+
+<div class="w_left">
+  <div id="users" class="widget">
+    <h2>{% trans "Users" %}</h2>
+    <ul>
+      {% for line in users %}
+      <li>{{ line.label }} : {{ line.value }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div id="activity" class="widget">
+    <h2>{% trans "Activity" %}</h2>
+    <ul>
+      {% for line in activity %}
+      <li>{{ line.label }} : {{ line.value }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+<div class="w_right">
+  <div id="forecast" class="widget">
+    <h2>{% trans "Forecast" %}</h2>
+    <ul>
+      {% for line in forecast %}
+      <li>{{ line.label }} : {{ line.value }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div id="data" class="widget">
+    <h2>{% trans "Data" %}</h2>
+    <ul>
+      {% for line in data %}
+      <li>{{ line.label }} : {{ line.value }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

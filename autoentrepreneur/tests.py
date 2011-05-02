@@ -907,15 +907,15 @@ class SubscriptionUserSelectTest(TestCase):
 
     def testExpiredUser(self):
         users = Subscription.objects.get_users_with_expired_subscription()
-        intented_user1 = {'owner__email':u'user4@example.com',
+        intended_user1 = {'owner__email':u'user4@example.com',
                           'owner__first_name':u'User 4',
                           'owner__last_name':u'User 4'}
-        intented_user2 = {'owner__email':u'user5@example.com',
+        intended_user2 = {'owner__email':u'user5@example.com',
                           'owner__first_name':u'User 5',
                           'owner__last_name':u'User 5'}
         self.assertEquals(len(users), 2)
-        self.assertTrue(intented_user1 in users)
-        self.assertTrue(intented_user2 in users)
+        self.assertTrue(intended_user1 in users)
+        self.assertTrue(intended_user2 in users)
 
     def test137(self):
         """

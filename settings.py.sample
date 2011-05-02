@@ -126,6 +126,7 @@ INSTALLED_APPS = (
     'bugtracker',
     'contact',
     'core',
+    'faq',
     'newsletter',
     'project',
 )

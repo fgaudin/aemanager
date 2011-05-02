@@ -33,4 +33,8 @@ urlpatterns = patterns('core.views',
         regex=r'^unregister/$',
         view='unregister',
         name='unregister'),
+    url(
+        regex=r'^admin_dashboard/$',
+        view='admin_dashboard',
+        name='admin_dashboard'),
 )
