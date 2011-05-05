@@ -10,15 +10,17 @@ from django.core.urlresolvers import reverse
 import os
 from django.conf import settings
 from django.core.management import call_command
-from project.models import Proposal, Project
-from accounts.models import Invoice
+from project.models import Proposal, Project, PROPOSAL_STATE_ACCEPTED
+from accounts.models import Invoice, INVOICE_STATE_PAID, PAYMENT_TYPE_CHECK, \
+    PAYMENT_TYPE_BANK_CARD
 from contact.models import Contact, CONTACT_TYPE_COMPANY, Address
 from autoentrepreneur.models import Subscription
-from django.test.testcases import TransactionTestCase
+from django.test.testcases import TransactionTestCase, TestCase
 from core.models import OwnedObject
 from django.core.exceptions import SuspiciousOperation
 from django.core import mail
 from django.utils.translation import ugettext
+import datetime
 
 class BackupTest(TransactionTestCase):
     fixtures = ['backup_data']
@@ -513,3 +515,94 @@ class BackupTest(TransactionTestCase):
         new_backup_digest = new_backup_file_md5.hexdigest()
 
         self.assertEquals(backup_digest, new_backup_digest)
+
+class CsvExportTest(TestCase):
+    fixtures = ['test_users', 'test_contacts', 'test_projects']
+
+    def setUp(self):
+        self.client.login(username='test', password='test')
+        self.proposal1 = Proposal.objects.create(project_id=30,
+                                                reference='crt1234',
+                                                update_date=datetime.date.today(),
+                                                state=PROPOSAL_STATE_ACCEPTED,
+                                                begin_date=datetime.date(2010, 8, 1),
+                                                end_date=datetime.date(2010, 8, 15),
+                                                contract_content='Content of contract',
+                                                amount=2005,
+                                                owner_id=1)
+
+        self.invoice1_1 = Invoice.objects.create(customer_id=self.proposal1.project.customer_id,
+                                                 invoice_id=1,
+                                                 state=INVOICE_STATE_PAID,
+                                                 amount='100',
+                                                 edition_date=datetime.date(2010, 8, 31),
+                                                 payment_date=datetime.date(2010, 9, 30),
+                                                 paid_date=None,
+                                                 payment_type=PAYMENT_TYPE_CHECK,
+                                                 execution_begin_date=datetime.date(2010, 8, 1),
+                                                 execution_end_date=datetime.date(2010, 8, 7),
+                                                 penalty_date=datetime.date(2010, 10, 8),
+                                                 penalty_rate='1.5',
+                                                 discount_conditions='Nothing',
+                                                 owner_id=1)
+
+        self.proposal2 = Proposal.objects.create(project_id=30,
+                                                 reference='crt1234',
+                                                 update_date=datetime.date.today(),
+                                                 state=PROPOSAL_STATE_ACCEPTED,
+                                                 begin_date=datetime.date(2010, 8, 1),
+                                                 end_date=datetime.date(2010, 8, 15),
+                                                 contract_content='Content of contract',
+                                                 amount=2005,
+                                                 owner_id=2)
+
+        self.invoice2_1 = Invoice.objects.create(customer_id=self.proposal2.project.customer_id,
+                                                 invoice_id=2,
+                                                 state=INVOICE_STATE_PAID,
+                                                 amount='200',
+                                                 edition_date=datetime.date(2010, 4, 5),
+                                                 payment_date=datetime.date(2010, 5, 10),
+                                                 paid_date=None,
+                                                 payment_type=PAYMENT_TYPE_BANK_CARD,
+                                                 execution_begin_date=datetime.date(2010, 3, 2),
+                                                 execution_end_date=datetime.date(2010, 3, 9),
+                                                 penalty_date=datetime.date(2010, 9, 8),
+                                                 penalty_rate='2.5',
+                                                 discount_conditions='20%',
+                                                 owner_id=2)
+
+    def testExport(self):
+        response = self.client.get(reverse('csv_export'))
+        expected_response = "Reference,Customer,Address,State,Amount,Edition date,Payment date,Payment type,Paid date,Execution begin date,Execution end date,Penalty date,Penalty rate,Discount conditions\r\n1,Contact 1,\",  , None\",Paid,100.00,2010-08-31,2010-09-30,Check,None,2010-08-01,2010-08-07,2010-10-08,1.50,Nothing\r\n"
+        self.assertEquals(response.content, expected_response)
+
+    def testExportDate(self):
+        invoice1_2 = Invoice.objects.create(customer_id=self.proposal1.project.customer_id,
+                                            invoice_id=2,
+                                            state=INVOICE_STATE_PAID,
+                                            amount='200',
+                                            edition_date=datetime.date(2010, 1, 31),
+                                            payment_date=datetime.date(2010, 2, 28),
+                                            paid_date=None,
+                                            payment_type=PAYMENT_TYPE_CHECK,
+                                            execution_begin_date=datetime.date(2010, 1, 1),
+                                            execution_end_date=datetime.date(2010, 1, 7),
+                                            penalty_date=datetime.date(2010, 3, 8),
+                                            penalty_rate='1.5',
+                                            discount_conditions='Nothing',
+                                            owner_id=1)
+
+        response = self.client.get(reverse('csv_export'),
+                                   {'begin_date': datetime.date(2010, 1, 1)})
+        expected_response = "Reference,Customer,Address,State,Amount,Edition date,Payment date,Payment type,Paid date,Execution begin date,Execution end date,Penalty date,Penalty rate,Discount conditions\r\n1,Contact 1,\",  , None\",Paid,100.00,2010-08-31,2010-09-30,Check,None,2010-08-01,2010-08-07,2010-10-08,1.50,Nothing\r\n2,Contact 1,\",  , None\",Paid,200.00,2010-01-31,2010-02-28,Check,None,2010-01-01,2010-01-07,2010-03-08,1.50,Nothing\r\n"
+        self.assertEquals(response.content, expected_response)
+
+        response = self.client.get(reverse('csv_export'),
+                                   {'begin_date': datetime.date(2010, 2, 1)})
+        expected_response = "Reference,Customer,Address,State,Amount,Edition date,Payment date,Payment type,Paid date,Execution begin date,Execution end date,Penalty date,Penalty rate,Discount conditions\r\n1,Contact 1,\",  , None\",Paid,100.00,2010-08-31,2010-09-30,Check,None,2010-08-01,2010-08-07,2010-10-08,1.50,Nothing\r\n"
+        self.assertEquals(response.content, expected_response)
+
+        response = self.client.get(reverse('csv_export'),
+                                   {'end_date': datetime.date(2010, 2, 1)})
+        expected_response = "Reference,Customer,Address,State,Amount,Edition date,Payment date,Payment type,Paid date,Execution begin date,Execution end date,Penalty date,Penalty rate,Discount conditions\r\n2,Contact 1,\",  , None\",Paid,200.00,2010-01-31,2010-02-28,Check,None,2010-01-01,2010-01-07,2010-03-08,1.50,Nothing\r\n"
+        self.assertEquals(response.content, expected_response)

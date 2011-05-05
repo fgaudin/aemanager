@@ -1,6 +1,18 @@
 {% extends "base.html" %}
 {% load i18n %}
 
+{% block extrahead %}
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/smoothness/jquery-ui-1.8.10.custom.css" media="screen"/>
+<script src="{{ MEDIA_URL }}js/core.js" type="text/javascript" charset="utf-8"></script>
+
+<script type="text/javascript">
+jQuery(document).ready(function(){
+    jQuery.include('{{ MEDIA_URL }}js/datepicker_i18n','jquery.ui.datepicker-'+"{{ LANGUAGE_CODE }}".substr(0,2)+'.js');
+    jQuery('.date').datepicker(jQuery.datepicker.regional["{{ LANGUAGE_CODE }}".substr(0,2)]);
+});
+</script>
+{% endblock %}
+
 {% block content %}
 {% if backup_request %}
 <div class="search-list">
@@ -97,4 +109,20 @@
 </div>
 </form>
 {% endif %}
+
+<h1>{% trans "CSV export" %}</h1>
+<div class="search-list">
+    <form action="{% url csv_export %}" method="get">
+    <div>{% trans "You may download your invoices in CSV format for further treatments. CSV files are not backups and you won't be able to restore them." %}</div>
+    {% csrf_token %}
+    <fieldset class="module aligned">
+    {% with csv_form as form %}
+    {% include "form.html" %}
+    {% endwith %}
+    </fieldset>
+    <div class="submit-row">
+        <input class="default" type="submit" name="action_btn" value="{% trans "Export" %}" />
+    </div>
+    </form>
+</div>
 {% endblock %}

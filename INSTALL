@@ -27,10 +27,17 @@ easy_install django psycopg2 django-extensions werkzeug south reportlab pypdf ht
 
 For django-registration :
 
-download source on https://bitbucket.org/ubernostrum/django-registration/src
+download source from https://bitbucket.org/ubernostrum/django-registration/src
 
 $ source ~/venv/django1.2/bin/activate
 $ python setup.py install # in registration directory
+
+For csv export :
+
+download source from https://github.com/jdunck/python-unicodecsv
+
+$ source ~/venv/django1.2/bin/activate
+$ python setup.py install # in unicodecsv directory
 
 Handling file upload
 --------------------

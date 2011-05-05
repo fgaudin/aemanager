@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-02 23:43+0200\n"
+"POT-Creation-Date: 2011-05-05 21:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,8 +27,8 @@ msgid "French"
 msgstr "Français"
 
 #: accounts/forms.py:8 accounts/models.py:38 accounts/models.py:165
-#: accounts/views.py:178 accounts/views.py:252 project/models.py:175
-#: project/models.py:548 templates/expense/list.html:220
+#: accounts/views.py:178 accounts/views.py:252 backup/views.py:127
+#: project/models.py:175 project/models.py:548 templates/expense/list.html:220
 #: templates/invoice/detail.html:25 templates/invoice/list.html:28
 #: templates/project/detail.html:32 templates/project/detail.html.py:60
 #: templates/proposal/detail.html:97
@@ -44,7 +44,7 @@ msgstr "Numéro de facture"
 msgid "An integer less than or equal to %d. Must be sequential."
 msgstr "Un entier inférieur ou égal à %d. Doit être séquentiel."
 
-#: accounts/forms.py:24 accounts/models.py:173
+#: accounts/forms.py:24 accounts/models.py:173 backup/views.py:130
 msgid "Penalty rate"
 msgstr "Taux de pénalité"
 
@@ -102,14 +102,14 @@ msgstr "Date"
 #: accounts/models.py:35 accounts/models.py:166 accounts/models.py:167
 #: accounts/models.py:169 accounts/models.py:170 accounts/models.py:171
 #: accounts/models.py:172 autoentrepreneur/forms.py:13
-#: autoentrepreneur/models.py:101 autoentrepreneur/models.py:156
+#: autoentrepreneur/models.py:103 autoentrepreneur/models.py:158
 #: project/models.py:36 project/models.py:176 project/models.py:177
 #: project/models.py:179 project/models.py:180
 msgid "format: mm/dd/yyyy"
 msgstr "format : jj/mm/aaaa"
 
-#: accounts/models.py:36 project/models.py:173 templates/expense/list.html:218
-#: templates/project/detail.html:29
+#: accounts/models.py:36 backup/views.py:127 project/models.py:173
+#: templates/expense/list.html:218 templates/project/detail.html:29
 msgid "Reference"
 msgstr "Référence"
 
@@ -118,7 +118,7 @@ msgid "Supplier"
 msgstr "Fournisseur"
 
 #: accounts/models.py:39 accounts/models.py:168 accounts/views.py:178
-#: accounts/views.py:252 templates/expense/list.html:221
+#: accounts/views.py:252 backup/views.py:128 templates/expense/list.html:221
 #: templates/invoice/list.html:26
 msgid "Payment type"
 msgstr "Type de paiement"
@@ -140,47 +140,47 @@ msgstr "Envoyé"
 msgid "Paid"
 msgstr "Payée"
 
-#: accounts/models.py:162 accounts/views.py:252 project/forms.py:28
-#: project/models.py:32 project/models.py:111 templates/invoice/list.html:23
-#: templates/project/list.html:20
+#: accounts/models.py:162 accounts/views.py:252 backup/views.py:127
+#: project/forms.py:28 project/models.py:32 project/models.py:111
+#: templates/invoice/list.html:23 templates/project/list.html:20
 msgid "Customer"
 msgstr "Client"
 
-#: accounts/models.py:164 autoentrepreneur/models.py:100
+#: accounts/models.py:164 autoentrepreneur/models.py:102 backup/views.py:127
 #: bugtracker/models.py:35 project/forms.py:29 project/models.py:112
-#: project/models.py:174 templates/backup/index.html:12
-#: templates/backup/index.html.py:61 templates/core/subscribe.html:9
+#: project/models.py:174 templates/backup/index.html:24
+#: templates/backup/index.html.py:73 templates/core/subscribe.html:9
 #: templates/core/subscribe.html.py:30 templates/invoice/list.html:25
 #: templates/project/detail.html:31 templates/project/detail.html.py:59
 #: templates/project/list.html:21 templates/proposal/detail.html:96
 msgid "State"
 msgstr "État"
 
-#: accounts/models.py:166 templates/invoice/list.html:21
+#: accounts/models.py:166 backup/views.py:128 templates/invoice/list.html:21
 msgid "Edition date"
 msgstr "Date d'édition"
 
-#: accounts/models.py:167
+#: accounts/models.py:167 backup/views.py:128
 msgid "Payment date"
 msgstr "Date de paiement"
 
-#: accounts/models.py:169 templates/invoice/list.html:22
+#: accounts/models.py:169 backup/views.py:129 templates/invoice/list.html:22
 msgid "Paid date"
 msgstr "Date de réception du paiement"
 
-#: accounts/models.py:170
+#: accounts/models.py:170 backup/views.py:129
 msgid "Execution begin date"
 msgstr "Date de début d'exécution"
 
-#: accounts/models.py:171
+#: accounts/models.py:171 backup/views.py:129
 msgid "Execution end date"
 msgstr "Date de fin d'exécution"
 
-#: accounts/models.py:172
+#: accounts/models.py:172 backup/views.py:130
 msgid "Penalty date"
 msgstr "Date des pénalités"
 
-#: accounts/models.py:174
+#: accounts/models.py:174 backup/views.py:130
 msgid "Discount conditions"
 msgstr "Conditions d'escompte"
 
@@ -404,11 +404,11 @@ msgstr ""
 "Votre abonnement a expiré. Vous devez vous réabonner pour continuer à "
 "utiliser %(site_name)s"
 
-#: autoentrepreneur/forms.py:9 autoentrepreneur/models.py:151
+#: autoentrepreneur/forms.py:9 autoentrepreneur/models.py:153
 msgid "Company name"
 msgstr "Nom de la société"
 
-#: autoentrepreneur/forms.py:10 autoentrepreneur/models.py:152
+#: autoentrepreneur/forms.py:10 autoentrepreneur/models.py:154
 #: contact/models.py:36
 msgid "Company id"
 msgstr "SIRET"
@@ -421,28 +421,28 @@ msgstr ""
 "votre SIRET"
 
 #: autoentrepreneur/forms.py:11 autoentrepreneur/models.py:33
-#: autoentrepreneur/models.py:154 templates/core/admin_dashboard.html:17
+#: autoentrepreneur/models.py:156 templates/core/admin_dashboard.html:17
 msgid "Activity"
 msgstr "Activité"
 
-#: autoentrepreneur/forms.py:12 autoentrepreneur/models.py:155
+#: autoentrepreneur/forms.py:12 autoentrepreneur/models.py:157
 msgid "Professional category"
 msgstr "Catégorie professionnelle"
 
-#: autoentrepreneur/forms.py:13 autoentrepreneur/models.py:156
-#: templates/backup/index.html:11 templates/backup/index.html.py:60
+#: autoentrepreneur/forms.py:13 autoentrepreneur/models.py:158
+#: templates/backup/index.html:23 templates/backup/index.html.py:72
 msgid "Creation date"
 msgstr "Date de création"
 
-#: autoentrepreneur/forms.py:14 autoentrepreneur/models.py:157
+#: autoentrepreneur/forms.py:14 autoentrepreneur/models.py:159
 msgid "Creation help"
 msgstr "ACCRE"
 
-#: autoentrepreneur/forms.py:15 autoentrepreneur/models.py:158
+#: autoentrepreneur/forms.py:15 autoentrepreneur/models.py:160
 msgid "Freeing tax payment"
 msgstr "Prélèvement libératoire sur l'impôt"
 
-#: autoentrepreneur/forms.py:16 autoentrepreneur/models.py:159
+#: autoentrepreneur/forms.py:16 autoentrepreneur/models.py:161
 msgid "Payment option"
 msgstr "Option de paiement"
 
@@ -495,78 +495,78 @@ msgstr "Période d'essai"
 msgid "Free"
 msgstr "Gratuit"
 
-#: autoentrepreneur/models.py:101 project/models.py:180
+#: autoentrepreneur/models.py:103 project/models.py:180
 #: templates/core/subscribe.html:10 templates/core/subscribe.html.py:31
 msgid "Expiration date"
 msgstr "Date de validité"
 
-#: autoentrepreneur/models.py:102 templates/core/subscribe.html:11
+#: autoentrepreneur/models.py:104 templates/core/subscribe.html:11
 #: templates/core/subscribe.html.py:32
 msgid "Transaction id"
 msgstr "Identifiant de transaction"
 
-#: autoentrepreneur/models.py:103
+#: autoentrepreneur/models.py:105
 msgid "Error message"
 msgstr "Message d'erreur"
 
-#: autoentrepreneur/models.py:114
+#: autoentrepreneur/models.py:116
 msgid "Quaterly"
 msgstr "Trimestriel"
 
-#: autoentrepreneur/models.py:115
+#: autoentrepreneur/models.py:117
 msgid "Monthly"
 msgstr "Mensuel"
 
-#: autoentrepreneur/models.py:132
+#: autoentrepreneur/models.py:134
 msgid "Trader"
 msgstr "Commerçant"
 
-#: autoentrepreneur/models.py:133
+#: autoentrepreneur/models.py:135
 msgid "Craftsman"
 msgstr "Artisan"
 
-#: autoentrepreneur/models.py:134
+#: autoentrepreneur/models.py:136
 msgid "Liberal profession"
 msgstr "Profession libérale"
 
-#: autoentrepreneur/models.py:149 contact/forms.py:40
+#: autoentrepreneur/models.py:151 contact/forms.py:40
 #: templates/contact/search.html:21
 msgid "Phone number"
 msgstr "Téléphone"
 
-#: autoentrepreneur/models.py:149 autoentrepreneur/models.py:150
+#: autoentrepreneur/models.py:151 autoentrepreneur/models.py:152
 msgid "will appear on your proposals if set"
 msgstr "apparaîtra sur vos devis si renseigné"
 
-#: autoentrepreneur/models.py:150
+#: autoentrepreneur/models.py:152
 msgid "Professional email"
 msgstr "Email professionnel"
 
-#: autoentrepreneur/models.py:153 contact/models.py:42
+#: autoentrepreneur/models.py:155 backup/views.py:127 contact/models.py:42
 msgid "Address"
 msgstr "Adresse"
 
-#: autoentrepreneur/models.py:160
+#: autoentrepreneur/models.py:162
 msgid "Unregister date"
 msgstr "Date de désinscription"
 
-#: autoentrepreneur/models.py:161
+#: autoentrepreneur/models.py:163
 msgid "IBAN/BBAN"
 msgstr "IBAN/RIB"
 
-#: autoentrepreneur/models.py:161 autoentrepreneur/models.py:162
+#: autoentrepreneur/models.py:163 autoentrepreneur/models.py:164
 msgid "will appear on your invoices if set"
 msgstr "apparaîtra sur vos factures si renseigné"
 
-#: autoentrepreneur/models.py:162
+#: autoentrepreneur/models.py:164
 msgid "BIC/SWIFT"
 msgstr "BIC/SWIFT"
 
-#: autoentrepreneur/models.py:163
+#: autoentrepreneur/models.py:165
 msgid "Custom header"
 msgstr "En-tête personnalisé"
 
-#: autoentrepreneur/models.py:163
+#: autoentrepreneur/models.py:165
 msgid ""
 "will appear in place of your personnal informations on proposals and "
 "invoices. Maximum width and height: 252x137"
@@ -574,12 +574,12 @@ msgstr ""
 "apparaîtra à la place de vos informations personnelles sur les devis et "
 "factures. Largeur/Hauteur maximales : 252x137"
 
-#: autoentrepreneur/models.py:178 autoentrepreneur/tests.py:658
+#: autoentrepreneur/models.py:180 autoentrepreneur/tests.py:658
 #, python-format
 msgid "You've just unregistered from %(site)s"
 msgstr "Vous venez de vous désinscrire de %(site)s"
 
-#: autoentrepreneur/models.py:179
+#: autoentrepreneur/models.py:181
 #, python-format
 msgid ""
 "You have left the site and your data will been deleted in "
@@ -596,12 +596,28 @@ msgstr ""
 "Notre service évolue en permanence et s'il ne correspond pas à vos besoins "
 "aujourd'hui, vous pouvez revenir le tester plus tard."
 
-#: autoentrepreneur/models.py:185
+#: autoentrepreneur/models.py:187
 #: templates/registration/activation_email.txt:3
 #: templates/registration/password_reset_email.html:13
 #, python-format
 msgid "The %(site_name)s team"
 msgstr "L'équipe %(site_name)s"
+
+#: backup/forms.py:20
+msgid "From date"
+msgstr "Du"
+
+#: backup/forms.py:20
+msgid "Optional. If not set, export from the first invoice"
+msgstr "Optionnel. Si non présent, exporte depuis la première facture"
+
+#: backup/forms.py:21
+msgid "To date"
+msgstr "Au"
+
+#: backup/forms.py:21
+msgid "Optional. If not set, export until now"
+msgstr "Optionnel. Si non présent, exporte jusqu'à maintenant"
 
 #: backup/models.py:31
 msgid "Pending"
@@ -615,8 +631,8 @@ msgstr "En cours"
 msgid "Done"
 msgstr "Terminé"
 
-#: backup/models.py:34 core/views.py:631 templates/backup/index.html:15
-#: templates/backup/index.html.py:65
+#: backup/models.py:34 core/views.py:631 templates/backup/index.html:27
+#: templates/backup/index.html.py:77
 msgid "Error"
 msgstr "Erreur"
 
@@ -641,13 +657,13 @@ msgstr "Ajouter les entrées manquantes et mettre à jour les existantes"
 msgid "Delete all your data and restore this backup"
 msgstr "Supprimer toutes vos données et restaurer la sauvegarde"
 
-#: backup/models.py:210 templates/backup/index.html:63
+#: backup/models.py:210 templates/backup/index.html:75
 #: templates/expense/list.html:223 templates/issue/detail.html:71
 #: templates/newsletter/email_users.html:26
 msgid "Action"
 msgstr "Action"
 
-#: backup/models.py:218 templates/backup/index.html:18
+#: backup/models.py:218 templates/backup/index.html:30
 msgid "Backup file"
 msgstr "Fichier de sauvegarde"
 
@@ -670,11 +686,11 @@ msgstr "La restauration pour %(user)s a échoué avec le message : %(message)s"
 msgid "%sRestore failed"
 msgstr "%sRestauration échouée"
 
-#: backup/views.py:48 backup/views.py:71
+#: backup/views.py:51 backup/views.py:74
 msgid "A backup or restore is already scheduled"
 msgstr "Une sauvegarde ou une restauration est déjà programmée"
 
-#: backup/views.py:57
+#: backup/views.py:60
 #, python-format
 msgid ""
 "Your backup has been scheduled successfully. There are %i other backups "
@@ -683,7 +699,7 @@ msgstr ""
 "Votre sauvegarde a été programmée avec succès. Il y a %i autres sauvegardes "
 "avant la votre."
 
-#: backup/views.py:80
+#: backup/views.py:83
 #, python-format
 msgid ""
 "Your restore has been scheduled successfully. There are %i other restores "
@@ -692,14 +708,18 @@ msgstr ""
 "Votre restauration a été programmée avec succès. Il y a %i autres "
 "restaurations avant la votre."
 
-#: backup/views.py:83
+#: backup/views.py:86
 msgid "Form data have been tempered"
 msgstr "Les données du formulaire ont été altérées"
 
-#: backup/views.py:86 templates/backup/index.html:24
-#: templates/backup/index.html.py:49
+#: backup/views.py:89 templates/backup/index.html:36
+#: templates/backup/index.html.py:61
 msgid "Backup"
 msgstr "Sauvegarder"
+
+#: backup/views.py:148
+msgid "Export dates are invalid"
+msgstr "Les dates d'export sont invalides"
 
 #: bugtracker/models.py:13
 msgid "Bug"
@@ -1909,19 +1929,19 @@ msgstr "Se déconnecter"
 msgid "Contact us"
 msgstr "Nous contacter"
 
-#: templates/backup/index.html:10 templates/backup/index.html.py:59
+#: templates/backup/index.html:22 templates/backup/index.html.py:71
 msgid "Operation"
 msgstr "Opération"
 
-#: templates/backup/index.html:13 templates/backup/index.html.py:62
+#: templates/backup/index.html:25 templates/backup/index.html.py:74
 msgid "Since"
 msgstr "Depuis"
 
-#: templates/backup/index.html:39
+#: templates/backup/index.html:51
 msgid "No backup actions"
 msgstr "Aucune opération de sauvegarde"
 
-#: templates/backup/index.html:43
+#: templates/backup/index.html:55
 msgid ""
 "You can make a backup to load your data in another instance of Aemanager, "
 "use data in an other software or just keep your data not only on our server."
@@ -1930,18 +1950,35 @@ msgstr ""
 "instance de Aemanager, utiliser les données dans un autre logiciel ou juste "
 "pour ne pas garder vos données uniquement sur notre serveur."
 
-#: templates/backup/index.html:53 templates/backup/index.html.py:71
-#: templates/backup/index.html:96
+#: templates/backup/index.html:65 templates/backup/index.html.py:83
+#: templates/backup/index.html:108
 msgid "Restore"
 msgstr "Restaurer"
 
-#: templates/backup/index.html:84
+#: templates/backup/index.html:96
 msgid "No restore actions"
 msgstr "Aucune opération de restauration"
 
-#: templates/backup/index.html:88
+#: templates/backup/index.html:100
 msgid "You can restore a backup."
 msgstr "Vous pouvez restaurer une sauvegarde"
+
+#: templates/backup/index.html:113
+msgid "CSV export"
+msgstr "Export CSV"
+
+#: templates/backup/index.html:116
+msgid ""
+"You may download your invoices in CSV format for further treatments. CSV "
+"files are not backups and you won't be able to restore them."
+msgstr "Vous pouvez télécharger vos factures au format CSV pour effectuer "
+"d'autres traitements. Les fichiers CSV ne sont pas des backups et vous ne pourrez "
+"pas les restaurer."
+
+#: templates/backup/index.html:124 templates/expense/list.html:209
+#: templates/invoice/list.html:12
+msgid "Export"
+msgstr "Exporter"
 
 #: templates/comment/edit.html:13 templates/core/contact_us.html:19
 #: templates/issue/detail.html:99 templates/issue/edit.html:13
@@ -2314,10 +2351,6 @@ msgstr "supprimer"
 #: templates/expense/list.html:205
 msgid "Export purchase book"
 msgstr "Exporter le registre des achats"
-
-#: templates/expense/list.html:209 templates/invoice/list.html:12
-msgid "Export"
-msgstr "Exporter"
 
 #: templates/faq/list.html:29
 msgid "back to category"
