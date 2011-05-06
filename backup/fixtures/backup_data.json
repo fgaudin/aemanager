@@ -476,7 +476,7 @@
         "model": "autoentrepreneur.subscription",
         "fields": {
             "expiration_date": "2011-06-06",
-            "state": 3,
+            "state": 2,
             "error_message": null,
             "transaction_id": "TRIAL-201147-4"
         }
@@ -486,7 +486,7 @@
         "model": "autoentrepreneur.subscription",
         "fields": {
             "expiration_date": "2011-06-06",
-            "state": 3,
+            "state": 2,
             "error_message": null,
             "transaction_id": "TRIAL-201147-5"
         }

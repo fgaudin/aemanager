@@ -14,7 +14,7 @@ from project.models import Proposal, Project, PROPOSAL_STATE_ACCEPTED
 from accounts.models import Invoice, INVOICE_STATE_PAID, PAYMENT_TYPE_CHECK, \
     PAYMENT_TYPE_BANK_CARD
 from contact.models import Contact, CONTACT_TYPE_COMPANY, Address
-from autoentrepreneur.models import Subscription
+from autoentrepreneur.models import Subscription, SUBSCRIPTION_STATE_TRIAL
 from django.test.testcases import TransactionTestCase, TestCase
 from core.models import OwnedObject
 from django.core.exceptions import SuspiciousOperation
@@ -42,7 +42,7 @@ class BackupTest(TransactionTestCase):
         if os.path.exists('%s_backup' % (settings.FILE_UPLOAD_DIR[:-1])):
             shutil.move('%s_backup' % (settings.FILE_UPLOAD_DIR[:-1]), settings.FILE_UPLOAD_DIR[:-1])
 
-    def test_backup(self):
+    def testBackup(self):
         response = self.client.get(reverse('backup'))
         self.assertEquals(response.status_code, 200)
 
@@ -58,7 +58,7 @@ class BackupTest(TransactionTestCase):
                                                                          self.user1.get_profile().uuid,
                                                                          self.user1.backuprequest.creation_datetime.strftime('%Y%m%d%H%M'))))
 
-    def test_restore_add_missing(self):
+    def testRestoreAddMissing(self):
         response = self.client.post(reverse('backup'),
                                     {'backup_or_restore': 'backup'})
         call_command('backup_user_data')
@@ -121,7 +121,7 @@ class BackupTest(TransactionTestCase):
 
         self.assertEquals(Contact.objects.filter(pk=c.id).count(), 1)
 
-    def test_restore_add_and_update(self):
+    def testRestoreAddAndUpdate(self):
         response = self.client.post(reverse('backup'),
                                     {'backup_or_restore': 'backup'})
         call_command('backup_user_data')
@@ -184,7 +184,7 @@ class BackupTest(TransactionTestCase):
 
         self.assertEquals(Contact.objects.filter(pk=c.id).count(), 1)
 
-    def test_restore_delete_all_and_restore(self):
+    def testRestoreDeleteAllAndRestore(self):
         response = self.client.post(reverse('backup'),
                                     {'backup_or_restore': 'backup'})
         call_command('backup_user_data')
@@ -247,7 +247,7 @@ class BackupTest(TransactionTestCase):
 
         self.assertEquals(Contact.objects.filter(pk=c.id).count(), 0)
 
-    def test_cannot_add_user(self):
+    def testCannotAddUser(self):
         backup_file = '%s/backup/fixtures/backup_injected_user.tar.gz' % (settings.BASE_PATH)
         restore_file = '%s%s/restore/backup_injected_user.tar.gz' % (settings.FILE_UPLOAD_DIR,
                                                                      self.user1.get_profile().uuid)
@@ -271,7 +271,7 @@ class BackupTest(TransactionTestCase):
 
         self.assertEquals(User.objects.count(), 2)
 
-    def test_cannot_update_subscription(self):
+    def testCannotUpdateSubscription(self):
         backup_file = '%s/backup/fixtures/backup_injected_subscription.tar.gz' % (settings.BASE_PATH)
         restore_file = '%s%s/restore/backup_injected_subscription.tar.gz' % (settings.FILE_UPLOAD_DIR,
                                                                              self.user1.get_profile().uuid)
@@ -294,9 +294,9 @@ class BackupTest(TransactionTestCase):
         self.assertEquals(OwnedObject.objects.filter(owner=self.user2).count(), 12)
 
         self.assertEquals(Subscription.objects.filter(owner=self.user1).count(), 1)
-        self.assertEquals(Subscription.objects.filter(owner=self.user1)[0].state, 3)
+        self.assertEquals(Subscription.objects.filter(owner=self.user1)[0].state, 2)
 
-    def test_cannot_reference_not_owned_object(self):
+    def testCannotReferenceNotOwnedObject(self):
         backup_file = '%s/backup/fixtures/backup_with_disallowed_reference.tar.gz' % (settings.BASE_PATH)
         restore_file = '%s%s/restore/backup_with_disallowed_reference.tar.gz' % (settings.FILE_UPLOAD_DIR,
                                                                                  self.user1.get_profile().uuid)
@@ -326,7 +326,7 @@ class BackupTest(TransactionTestCase):
         self.assertEquals(len(mail.outbox), 1)
         self.assertEquals(mail.outbox[0].subject, ugettext("%sRestore failed") % (settings.EMAIL_SUBJECT_PREFIX))
 
-    def test_uuid_from_other_create_new_object(self):
+    def testUuidFromOtherCreateNewObject(self):
         backup_file = '%s/backup/fixtures/backup_from_other_user.tar.gz' % (settings.BASE_PATH)
         restore_file = '%s%s/restore/backup_from_other_user.tar.gz' % (settings.FILE_UPLOAD_DIR,
                                                                        self.user1.get_profile().uuid)
@@ -353,7 +353,7 @@ class BackupTest(TransactionTestCase):
         self.assertNotEquals(Project.objects.get(owner=self.user1).customer.uuid, 'fa73c0f1-1abc-4b60-a6a6-42b7dea8e989')
         self.assertEquals(Project.objects.get(owner=self.user1).customer.owner, self.user1)
 
-    def test_tar_with_unneeded_files(self):
+    def testTarWithUnneededFiles(self):
         """
         with files that won't be restored
         """
@@ -381,7 +381,7 @@ class BackupTest(TransactionTestCase):
         self.assertEquals(set(os.listdir('%s%s' % (settings.FILE_UPLOAD_DIR, self.user1.get_profile().uuid))),
                               set([u'proposal', u'restore', u'contract', u'logo']))
 
-    def test_tar_trying_to_add_files_in_parent_directories(self):
+    def testTarTryingToAddFilesInParentDirectories(self):
         backup_file = '%s/backup/fixtures/backup_dest_dir_modified.tar.gz' % (settings.BASE_PATH)
         restore_file = '%s%s/restore/backup_dest_dir_modified.tar.gz' % (settings.FILE_UPLOAD_DIR,
                                                                          self.user1.get_profile().uuid)
@@ -406,7 +406,7 @@ class BackupTest(TransactionTestCase):
         self.assertFalse(os.path.exists('%s/injected_file.txt' % (self.user1.get_profile().uuid)))
         self.assertFalse(os.path.exists('%s/../injected_file.txt' % (self.user1.get_profile().uuid)))
 
-    def test_dump_referencing_other_user_files(self):
+    def testDumpReferencingOtherUserFiles(self):
         backup_file = '%s/backup/fixtures/backup_referencing_other_files.tar.gz' % (settings.BASE_PATH)
         restore_file = '%s%s/restore/backup_referencing_other_files.tar.gz' % (settings.FILE_UPLOAD_DIR,
                                                                                self.user1.get_profile().uuid)
@@ -430,7 +430,7 @@ class BackupTest(TransactionTestCase):
         self.assertEquals(Proposal.objects.get(uuid='2e6bed41-43e5-41b1-8c7f-60353e7727a2').contract_file.name,
                           '%s/proposal/contract.pdf' % (self.user1.get_profile().uuid))
 
-    def test_username_injection(self):
+    def testUsernameInjection(self):
         """
         injected username can't pass through upload dir restriction
         """
@@ -451,7 +451,7 @@ class BackupTest(TransactionTestCase):
                            'action': RESTORE_ACTION_DELETE_ALL_AND_RESTORE,
                            'backup_file': open(backup_file, 'rb')})
 
-    def test_backup_restore_backup_stability(self):
+    def testBackupRestoreBackupStability(self):
         """
         verify that a backup, restore with delete and backup give the
         same backup file
@@ -515,6 +515,28 @@ class BackupTest(TransactionTestCase):
         new_backup_digest = new_backup_file_md5.hexdigest()
 
         self.assertEquals(backup_digest, new_backup_digest)
+
+    def testCantRestoreIfTrial(self):
+        sub = Subscription.objects.get(owner__username='test1')
+        sub.state = SUBSCRIPTION_STATE_TRIAL
+        sub.save()
+
+        response = self.client.post(reverse('backup'),
+                                    {'backup_or_restore': 'backup'})
+        call_command('backup_user_data')
+
+        backup_file = '%s%s/backup/backup_%s.tar.gz' % (settings.FILE_UPLOAD_DIR,
+                                                        self.user1.get_profile().uuid,
+                                                        self.user1.backuprequest.creation_datetime.strftime('%Y%m%d%H%M'))
+        restore_file = '%s%s/restore/backup_%s.tar.gz' % (settings.FILE_UPLOAD_DIR,
+                                                          self.user1.get_profile().uuid,
+                                                          self.user1.backuprequest.creation_datetime.strftime('%Y%m%d%H%M'))
+
+        response = self.client.post(reverse('backup'),
+                                    {'backup_or_restore': 'restore',
+                                     'action': RESTORE_ACTION_DELETE_ALL_AND_RESTORE,
+                                     'backup_file': open(backup_file, 'rb')})
+        self.assertContains(response, 'You have to subscribe to restore your backups', status_code=200)
 
 class CsvExportTest(TestCase):
     fixtures = ['test_users', 'test_contacts', 'test_projects']

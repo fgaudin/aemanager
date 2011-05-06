@@ -95,6 +95,9 @@ jQuery(document).ready(function(){
 {% else %}
 <div>{% trans "No restore actions" %}<br/><br/></div>
 {% endif %}
+{% if cant_restore %}
+<div>{% trans "You can't restore a backup during trial period. You have to subscribe to do this action" %}</div>
+{% else %}
 {% if not action_pending %}
 <form action="" method="post" id="restore-form" enctype="multipart/form-data">
     <div>{% trans "You can restore a backup." %}</div>
@@ -108,6 +111,7 @@ jQuery(document).ready(function(){
     <input class="default" type="submit" name="action_btn" value="{% trans "Restore" %}" />
 </div>
 </form>
+{% endif %}
 {% endif %}
 
 <h1>{% trans "CSV export" %}</h1>

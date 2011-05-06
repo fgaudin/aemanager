@@ -16,10 +16,13 @@ from django.utils.encoding import smart_str
 from django.conf import settings
 import unicodecsv
 from accounts.models import Invoice
+from autoentrepreneur.models import SUBSCRIPTION_STATE_TRIAL
 
 @settings_required
 @commit_on_success
 def backup(request):
+    subscription = request.user.get_profile().get_last_subscription()
+
     backup_request = None
     restore_request = None
     old_file = None
@@ -60,28 +63,31 @@ def backup(request):
                     messages.info(request, _("Your backup has been scheduled successfully. There are %i other backups before yours.") % (position - 1))
                     return redirect(reverse('backup'))
         elif request.POST.get('backup_or_restore') == 'restore':
-            restore_form = RestoreForm(request.POST, request.FILES, instance=restore_request)
-            if restore_form.is_valid():
-                if request.FILES:
-                    try:
-                        if old_file:
-                            if os.path.exists(old_file.path):
-                                os.remove(old_file.path)
-                    except:
-                        pass
+            if subscription.state == SUBSCRIPTION_STATE_TRIAL:
+                messages.error(request, _("You have to subscribe to restore your backups"))
+            else:
+                restore_form = RestoreForm(request.POST, request.FILES, instance=restore_request)
+                if restore_form.is_valid():
+                    if request.FILES:
+                        try:
+                            if old_file:
+                                if os.path.exists(old_file.path):
+                                    os.remove(old_file.path)
+                        except:
+                            pass
 
-                if action_pending:
-                    messages.error(request, _("A backup or restore is already scheduled"))
-                else:
-                    restore_request = restore_form.save(commit=False)
-                    restore_request.user = request.user
-                    restore_request.state = BACKUP_RESTORE_STATE_PENDING
-                    restore_request.creation_datetime = datetime.datetime.now()
-                    restore_request.last_state_datetime = restore_request.creation_datetime
-                    restore_request.save()
-                    position = RestoreRequest.objects.filter(state__lte=BACKUP_RESTORE_STATE_IN_PROGRESS).count()
-                    messages.info(request, _("Your restore has been scheduled successfully. There are %i other restores before yours.") % (position - 1))
-                    return redirect(reverse('backup'))
+                    if action_pending:
+                        messages.error(request, _("A backup or restore is already scheduled"))
+                    else:
+                        restore_request = restore_form.save(commit=False)
+                        restore_request.user = request.user
+                        restore_request.state = BACKUP_RESTORE_STATE_PENDING
+                        restore_request.creation_datetime = datetime.datetime.now()
+                        restore_request.last_state_datetime = restore_request.creation_datetime
+                        restore_request.save()
+                        position = RestoreRequest.objects.filter(state__lte=BACKUP_RESTORE_STATE_IN_PROGRESS).count()
+                        messages.info(request, _("Your restore has been scheduled successfully. There are %i other restores before yours.") % (position - 1))
+                        return redirect(reverse('backup'))
         else:
             messages.error(request, _("Form data have been tempered"))
 
@@ -92,7 +98,8 @@ def backup(request):
                'backup_form': backup_form,
                'restore_form': restore_form,
                'csv_form': csv_form,
-               'action_pending': action_pending
+               'action_pending': action_pending,
+               'cant_restore': subscription.state == SUBSCRIPTION_STATE_TRIAL
                }
     return render_to_response('backup/index.html',
                               context,
