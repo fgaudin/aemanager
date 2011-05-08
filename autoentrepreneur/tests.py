@@ -560,6 +560,64 @@ L'\xe9quipe %(site_name)s""" % {'site': Site.objects.get_current(),
                                 'days': 1,
                                 'subscribe_url': reverse('subscribe')})
 
+    def testAddDays(self):
+        sub1 = Subscription.objects.create(owner_id=1,
+                                           state=SUBSCRIPTION_STATE_TRIAL,
+                                           expiration_date=datetime.date.today() + datetime.timedelta(3),
+                                           transaction_id='XX1')
+        sub2 = Subscription.objects.create(owner_id=2,
+                                           state=SUBSCRIPTION_STATE_PAID,
+                                           expiration_date=datetime.date.today() + datetime.timedelta(8),
+                                           transaction_id='XX2')
+
+        call_command('add_days_to_subscriptions', 3)
+
+        self.assertEquals(Subscription.objects.get(pk=sub1.id).expiration_date,
+                          datetime.date.today() + datetime.timedelta(6))
+        self.assertEquals(Subscription.objects.get(pk=sub2.id).expiration_date,
+                          datetime.date.today() + datetime.timedelta(11))
+
+    def testDoNotAddDaysToExpired(self):
+        sub1 = Subscription.objects.create(owner_id=1,
+                                           state=SUBSCRIPTION_STATE_TRIAL,
+                                           expiration_date=datetime.date.today() - datetime.timedelta(3),
+                                           transaction_id='XX1')
+        sub2 = Subscription.objects.create(owner_id=2,
+                                           state=SUBSCRIPTION_STATE_PAID,
+                                           expiration_date=datetime.date.today() + datetime.timedelta(8),
+                                           transaction_id='XX2')
+
+        call_command('add_days_to_subscriptions', 3)
+
+        self.assertEquals(Subscription.objects.get(pk=sub1.id).expiration_date,
+                          datetime.date.today() - datetime.timedelta(3))
+        self.assertEquals(Subscription.objects.get(pk=sub2.id).expiration_date,
+                          datetime.date.today() + datetime.timedelta(11))
+
+    def testAddDaysToSubscriptionFollowingExpired(self):
+        sub1 = Subscription.objects.create(owner_id=1,
+                                           state=SUBSCRIPTION_STATE_TRIAL,
+                                           expiration_date=datetime.date.today() - datetime.timedelta(3),
+                                           transaction_id='XX1')
+        sub1bis = Subscription.objects.create(owner_id=1,
+                                              state=SUBSCRIPTION_STATE_PAID,
+                                              expiration_date=datetime.date.today() + datetime.timedelta(3),
+                                              transaction_id='XX1bis')
+        sub2 = Subscription.objects.create(owner_id=2,
+                                           state=SUBSCRIPTION_STATE_PAID,
+                                           expiration_date=datetime.date.today() + datetime.timedelta(8),
+                                           transaction_id='XX2')
+
+        call_command('add_days_to_subscriptions', 3)
+
+        self.assertEquals(Subscription.objects.get(pk=sub1.id).expiration_date,
+                          datetime.date.today() - datetime.timedelta(3))
+        self.assertEquals(Subscription.objects.get(pk=sub1bis.id).expiration_date,
+                          datetime.date.today() + datetime.timedelta(6))
+        self.assertEquals(Subscription.objects.get(pk=sub2.id).expiration_date,
+                          datetime.date.today() + datetime.timedelta(11))
+
+
 class UnregisterTest(TestCase):
     fixtures = ['test_users']
 

@@ -17,6 +17,7 @@ from registration.signals import user_registered
 from django.core.files.storage import FileSystemStorage
 import unicodedata
 from accounts.models import Invoice
+from django.db.models.expressions import F
 
 AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC = 1
 AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC = 2
@@ -97,6 +98,10 @@ class SubscriptionManager(models.Manager):
                    .values_list('owner', flat=True)\
                    .annotate(max_date=Max('expiration_date'))\
                    .filter(max_date__lte=datetime.date.today() - datetime.timedelta(days)).distinct()
+
+    def add_days(self, days):
+        """Add hours and days to active subscriptions"""
+        return self.filter(expiration_date__gte=datetime.date.today()).update(expiration_date=F('expiration_date') + days)
 
 class Subscription(OwnedObject):
     state = models.IntegerField(choices=SUBSCRIPTION_STATE, verbose_name=_('State'), db_index=True)
