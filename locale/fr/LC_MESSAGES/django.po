@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-07 00:34+0200\n"
+"POT-Creation-Date: 2011-05-08 16:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,11 +18,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
 
-#: settings.py:44
+#: settings.py:46
 msgid "English"
 msgstr "Anglais"
 
-#: settings.py:45
+#: settings.py:47
 msgid "French"
 msgstr "Français"
 
@@ -102,7 +102,7 @@ msgstr "Date"
 #: accounts/models.py:35 accounts/models.py:166 accounts/models.py:167
 #: accounts/models.py:169 accounts/models.py:170 accounts/models.py:171
 #: accounts/models.py:172 autoentrepreneur/forms.py:13
-#: autoentrepreneur/models.py:103 autoentrepreneur/models.py:158
+#: autoentrepreneur/models.py:108 autoentrepreneur/models.py:163
 #: project/models.py:36 project/models.py:176 project/models.py:177
 #: project/models.py:179 project/models.py:180
 msgid "format: mm/dd/yyyy"
@@ -136,7 +136,7 @@ msgstr "Éditée"
 msgid "Sent"
 msgstr "Envoyé"
 
-#: accounts/models.py:58 autoentrepreneur/models.py:42 core/views.py:483
+#: accounts/models.py:58 autoentrepreneur/models.py:43 core/views.py:488
 msgid "Paid"
 msgstr "Payée"
 
@@ -146,7 +146,7 @@ msgstr "Payée"
 msgid "Customer"
 msgstr "Client"
 
-#: accounts/models.py:164 autoentrepreneur/models.py:102 backup/views.py:134
+#: accounts/models.py:164 autoentrepreneur/models.py:107 backup/views.py:134
 #: bugtracker/models.py:35 project/forms.py:29 project/models.py:112
 #: project/models.py:174 templates/backup/index.html:24
 #: templates/backup/index.html.py:73 templates/core/subscribe.html:9
@@ -317,7 +317,7 @@ msgstr "Ref."
 msgid "Nature"
 msgstr "Nature"
 
-#: accounts/views.py:207 core/views.py:723
+#: accounts/views.py:207 core/views.py:730
 #: templates/core/invoices_widget.html:3 templates/project/detail.html:52
 #: templates/proposal/detail.html:89
 msgid "Invoices"
@@ -361,7 +361,7 @@ msgid "Payment date is greater than penalty date, is this normal ?"
 msgstr ""
 "La date de paiement est supérieure à la date des pénalités, est-ce normal ?"
 
-#: accounts/views.py:353 contact/views.py:77 core/views.py:342
+#: accounts/views.py:353 contact/views.py:77 core/views.py:345
 #: project/views.py:77 project/views.py:187 project/views.py:412
 msgid "Data provided are invalid"
 msgstr "Les données saisies sont invalides"
@@ -404,11 +404,11 @@ msgstr ""
 "Votre abonnement a expiré. Vous devez vous réabonner pour continuer à "
 "utiliser %(site_name)s"
 
-#: autoentrepreneur/forms.py:9 autoentrepreneur/models.py:153
+#: autoentrepreneur/forms.py:9 autoentrepreneur/models.py:158
 msgid "Company name"
 msgstr "Nom de la société"
 
-#: autoentrepreneur/forms.py:10 autoentrepreneur/models.py:154
+#: autoentrepreneur/forms.py:10 autoentrepreneur/models.py:159
 #: contact/models.py:36
 msgid "Company id"
 msgstr "SIRET"
@@ -420,29 +420,29 @@ msgstr ""
 "Saisissez \"En cours d'immatriculation\" si vous n'avez pas encore reçu "
 "votre SIRET"
 
-#: autoentrepreneur/forms.py:11 autoentrepreneur/models.py:33
-#: autoentrepreneur/models.py:156 templates/core/admin_dashboard.html:17
+#: autoentrepreneur/forms.py:11 autoentrepreneur/models.py:34
+#: autoentrepreneur/models.py:161 templates/core/admin_dashboard.html:17
 msgid "Activity"
 msgstr "Activité"
 
-#: autoentrepreneur/forms.py:12 autoentrepreneur/models.py:157
+#: autoentrepreneur/forms.py:12 autoentrepreneur/models.py:162
 msgid "Professional category"
 msgstr "Catégorie professionnelle"
 
-#: autoentrepreneur/forms.py:13 autoentrepreneur/models.py:158
+#: autoentrepreneur/forms.py:13 autoentrepreneur/models.py:163
 #: templates/backup/index.html:23 templates/backup/index.html.py:72
 msgid "Creation date"
 msgstr "Date de création"
 
-#: autoentrepreneur/forms.py:14 autoentrepreneur/models.py:159
+#: autoentrepreneur/forms.py:14 autoentrepreneur/models.py:164
 msgid "Creation help"
 msgstr "ACCRE"
 
-#: autoentrepreneur/forms.py:15 autoentrepreneur/models.py:160
+#: autoentrepreneur/forms.py:15 autoentrepreneur/models.py:165
 msgid "Freeing tax payment"
 msgstr "Prélèvement libératoire sur l'impôt"
 
-#: autoentrepreneur/forms.py:16 autoentrepreneur/models.py:161
+#: autoentrepreneur/forms.py:16 autoentrepreneur/models.py:166
 msgid "Payment option"
 msgstr "Option de paiement"
 
@@ -454,119 +454,119 @@ msgstr "Votre en-tête personnalisé est trop grand"
 msgid "Unsupported format"
 msgstr "Format non supporté"
 
-#: autoentrepreneur/models.py:25
+#: autoentrepreneur/models.py:26
 msgid "Product sale (BIC)"
 msgstr "Vente de produit (BIC)"
 
-#: autoentrepreneur/models.py:26
+#: autoentrepreneur/models.py:27
 msgid "Provision of a service (BIC)"
 msgstr "Prestation de service (BIC)"
 
-#: autoentrepreneur/models.py:27
+#: autoentrepreneur/models.py:28
 msgid "Provision of a service (BNC)"
 msgstr "Prestation de service (BNC)"
 
-#: autoentrepreneur/models.py:28
+#: autoentrepreneur/models.py:29
 msgid "Liberal profession (BNC)"
 msgstr "Profession libérale (BNC)"
 
-#: autoentrepreneur/models.py:31
+#: autoentrepreneur/models.py:32
 msgid "Year"
 msgstr "Année"
 
-#: autoentrepreneur/models.py:34 templates/core/sales_widget.html:44
+#: autoentrepreneur/models.py:35 templates/core/sales_widget.html:44
 #: templates/core/sales_widget.html:54
 msgid "Limit"
 msgstr "Plafond"
 
-#: autoentrepreneur/models.py:35
+#: autoentrepreneur/models.py:36
 msgid "Limit 2"
 msgstr "Limite 2"
 
-#: autoentrepreneur/models.py:41
+#: autoentrepreneur/models.py:42
 msgid "Not paid"
 msgstr "Non payé"
 
-#: autoentrepreneur/models.py:43
+#: autoentrepreneur/models.py:44
 msgid "Trial"
 msgstr "Période d'essai"
 
-#: autoentrepreneur/models.py:44
+#: autoentrepreneur/models.py:45
 msgid "Free"
 msgstr "Gratuit"
 
-#: autoentrepreneur/models.py:103 project/models.py:180
+#: autoentrepreneur/models.py:108 project/models.py:180
 #: templates/core/subscribe.html:10 templates/core/subscribe.html.py:31
 msgid "Expiration date"
 msgstr "Date de validité"
 
-#: autoentrepreneur/models.py:104 templates/core/subscribe.html:11
+#: autoentrepreneur/models.py:109 templates/core/subscribe.html:11
 #: templates/core/subscribe.html.py:32
 msgid "Transaction id"
 msgstr "Identifiant de transaction"
 
-#: autoentrepreneur/models.py:105
+#: autoentrepreneur/models.py:110
 msgid "Error message"
 msgstr "Message d'erreur"
 
-#: autoentrepreneur/models.py:116
+#: autoentrepreneur/models.py:121
 msgid "Quaterly"
 msgstr "Trimestriel"
 
-#: autoentrepreneur/models.py:117
+#: autoentrepreneur/models.py:122
 msgid "Monthly"
 msgstr "Mensuel"
 
-#: autoentrepreneur/models.py:134
+#: autoentrepreneur/models.py:139
 msgid "Trader"
 msgstr "Commerçant"
 
-#: autoentrepreneur/models.py:135
+#: autoentrepreneur/models.py:140
 msgid "Craftsman"
 msgstr "Artisan"
 
-#: autoentrepreneur/models.py:136
+#: autoentrepreneur/models.py:141
 msgid "Liberal profession"
 msgstr "Profession libérale"
 
-#: autoentrepreneur/models.py:151 contact/forms.py:40
+#: autoentrepreneur/models.py:156 contact/forms.py:40
 #: templates/contact/search.html:21
 msgid "Phone number"
 msgstr "Téléphone"
 
-#: autoentrepreneur/models.py:151 autoentrepreneur/models.py:152
+#: autoentrepreneur/models.py:156 autoentrepreneur/models.py:157
 msgid "will appear on your proposals if set"
 msgstr "apparaîtra sur vos devis si renseigné"
 
-#: autoentrepreneur/models.py:152
+#: autoentrepreneur/models.py:157
 msgid "Professional email"
 msgstr "Email professionnel"
 
-#: autoentrepreneur/models.py:155 backup/views.py:134 contact/models.py:42
+#: autoentrepreneur/models.py:160 backup/views.py:134 contact/models.py:42
 msgid "Address"
 msgstr "Adresse"
 
-#: autoentrepreneur/models.py:162
+#: autoentrepreneur/models.py:167
 msgid "Unregister date"
 msgstr "Date de désinscription"
 
-#: autoentrepreneur/models.py:163
+#: autoentrepreneur/models.py:168
 msgid "IBAN/BBAN"
 msgstr "IBAN/RIB"
 
-#: autoentrepreneur/models.py:163 autoentrepreneur/models.py:164
+#: autoentrepreneur/models.py:168 autoentrepreneur/models.py:169
 msgid "will appear on your invoices if set"
 msgstr "apparaîtra sur vos factures si renseigné"
 
-#: autoentrepreneur/models.py:164
+#: autoentrepreneur/models.py:169
 msgid "BIC/SWIFT"
 msgstr "BIC/SWIFT"
 
-#: autoentrepreneur/models.py:165
+#: autoentrepreneur/models.py:170
 msgid "Custom header"
 msgstr "En-tête personnalisé"
 
-#: autoentrepreneur/models.py:165
+#: autoentrepreneur/models.py:170
 msgid ""
 "will appear in place of your personnal informations on proposals and "
 "invoices. Maximum width and height: 252x137"
@@ -574,12 +574,12 @@ msgstr ""
 "apparaîtra à la place de vos informations personnelles sur les devis et "
 "factures. Largeur/Hauteur maximales : 252x137"
 
-#: autoentrepreneur/models.py:180 autoentrepreneur/tests.py:658
+#: autoentrepreneur/models.py:185 autoentrepreneur/tests.py:716
 #, python-format
 msgid "You've just unregistered from %(site)s"
 msgstr "Vous venez de vous désinscrire de %(site)s"
 
-#: autoentrepreneur/models.py:181
+#: autoentrepreneur/models.py:186
 #, python-format
 msgid ""
 "You have left the site and your data will been deleted in "
@@ -596,7 +596,7 @@ msgstr ""
 "Notre service évolue en permanence et s'il ne correspond pas à vos besoins "
 "aujourd'hui, vous pouvez revenir le tester plus tard."
 
-#: autoentrepreneur/models.py:187
+#: autoentrepreneur/models.py:192
 #: templates/registration/activation_email.txt:3
 #: templates/registration/password_reset_email.html:13
 #, python-format
@@ -631,7 +631,7 @@ msgstr "En cours"
 msgid "Done"
 msgstr "Terminé"
 
-#: backup/models.py:34 core/views.py:631 templates/backup/index.html:27
+#: backup/models.py:34 core/views.py:637 templates/backup/index.html:27
 #: templates/backup/index.html.py:77
 msgid "Error"
 msgstr "Erreur"
@@ -770,7 +770,7 @@ msgstr "Seuls les bugs et les demandes de fonctionnalités sont publics"
 msgid "Subject"
 msgstr "Sujet"
 
-#: bugtracker/models.py:33 bugtracker/models.py:69 bugtracker/views.py:265
+#: bugtracker/models.py:33 bugtracker/models.py:69 bugtracker/views.py:272
 #: core/forms.py:63 newsletter/models.py:15 templates/issue/detail.html:70
 #: templates/message/detail.html:42
 msgid "Message"
@@ -791,126 +791,126 @@ msgstr "Dernier commentaire"
 msgid "External reference"
 msgstr "Référence externe"
 
-#: bugtracker/models.py:70 bugtracker/models.py:91 bugtracker/views.py:243
+#: bugtracker/models.py:70 bugtracker/models.py:91 bugtracker/views.py:249
 msgid "Issue"
 msgstr "Problème"
 
-#: bugtracker/tests.py:589 bugtracker/views.py:124
+#: bugtracker/tests.py:589 bugtracker/views.py:127
 msgid "An issue has been opened"
 msgstr "Un problème a été ouvert"
 
-#: bugtracker/tests.py:624 bugtracker/views.py:120
+#: bugtracker/tests.py:624 bugtracker/views.py:123
 msgid "An issue has been updated"
 msgstr "Un problème a été mis à jour"
 
-#: bugtracker/tests.py:699 bugtracker/views.py:216
+#: bugtracker/tests.py:699 bugtracker/views.py:221
 msgid "An issue has been reopened"
 msgstr "Un problème a été réouvert"
 
 #: bugtracker/tests.py:715 bugtracker/tests.py:753 bugtracker/tests.py:795
-#: bugtracker/views.py:309
+#: bugtracker/views.py:318
 msgid "A comment has been added"
 msgstr "Un commentaire a été ajouté"
 
 #: bugtracker/tests.py:755 bugtracker/tests.py:756 bugtracker/tests.py:797
-#: bugtracker/tests.py:798 bugtracker/views.py:328
+#: bugtracker/tests.py:798 bugtracker/views.py:337
 #, python-format
 msgid "A new comment has been added on issue #%(id)d"
 msgstr "Un nouveau commentaire a été ajouté au problème #%(id)d"
 
-#: bugtracker/tests.py:834 bugtracker/views.py:302
+#: bugtracker/tests.py:834 bugtracker/views.py:311
 msgid "A comment has been updated"
 msgstr "Un commentaire a été mis à jour"
 
-#: bugtracker/tests.py:948 bugtracker/views.py:142
+#: bugtracker/tests.py:948 bugtracker/views.py:145
 msgid "A new message has been posted"
 msgstr "Un message a été posté"
 
-#: bugtracker/tests.py:964 bugtracker/views.py:386
+#: bugtracker/tests.py:964 bugtracker/views.py:396
 msgid "An answer has been posted"
 msgstr "Une réponse a été postée"
 
-#: bugtracker/tests.py:986 bugtracker/views.py:381
+#: bugtracker/tests.py:986 bugtracker/views.py:391
 #, python-format
 msgid "You have received an answer on %(site_name)s"
 msgstr "Vous avez reçu une réponse sur %(site_name)s"
 
-#: bugtracker/views.py:52 bugtracker/views.py:103
+#: bugtracker/views.py:53 bugtracker/views.py:106
 msgid "Issue reporting"
 msgstr "Rapport de problème"
 
-#: bugtracker/views.py:68 templates/menu.html:84
+#: bugtracker/views.py:70 templates/menu.html:84
 msgid "Messages"
 msgstr "Messages"
 
-#: bugtracker/views.py:115
+#: bugtracker/views.py:118
 msgid "Edit an issue"
 msgstr "Éditer un problème"
 
-#: bugtracker/views.py:122 templates/issue/list.html:6
+#: bugtracker/views.py:125 templates/issue/list.html:6
 msgid "Send an issue"
 msgstr "Envoyer un problème"
 
-#: bugtracker/views.py:135
+#: bugtracker/views.py:138
 msgid "The issue has been saved successfully"
 msgstr "Le problème a été sauvegardé avec succès"
 
-#: bugtracker/views.py:137 bugtracker/views.py:217 bugtracker/views.py:322
+#: bugtracker/views.py:140 bugtracker/views.py:222 bugtracker/views.py:331
 #, python-format
 msgid "%(issue_subject)s : %(issue_url)s"
 msgstr "%(issue_subject)s : %(issue_url)s"
 
-#: bugtracker/views.py:140
+#: bugtracker/views.py:143
 msgid "The message has been saved successfully"
 msgstr "Le message a été sauvegardé avec succès"
 
-#: bugtracker/views.py:143 bugtracker/views.py:387
+#: bugtracker/views.py:146 bugtracker/views.py:397
 #, python-format
 msgid "%(message_subject)s : %(message_url)s"
 msgstr "%(message_subject)s : %(message_url)s"
 
-#: bugtracker/views.py:181
+#: bugtracker/views.py:185
 msgid "The issue has been closed successfully"
 msgstr "Le problème a été fermé avec succès"
 
-#: bugtracker/views.py:188
+#: bugtracker/views.py:192
 msgid "Close an issue"
 msgstr "Fermer un problème"
 
-#: bugtracker/views.py:220
+#: bugtracker/views.py:225
 msgid "The issue has been reopened successfully"
 msgstr "Le problème a été réouvert avec succès"
 
-#: bugtracker/views.py:227
+#: bugtracker/views.py:232
 msgid "Reopen an issue"
 msgstr "Réouvrir un problème"
 
-#: bugtracker/views.py:281
+#: bugtracker/views.py:289
 msgid "The issue has been deleted successfully"
 msgstr "Le problème a été supprimé avec succès"
 
-#: bugtracker/views.py:288
+#: bugtracker/views.py:296
 msgid "Delete an issue"
 msgstr "Supprimer un problème"
 
-#: bugtracker/views.py:296
+#: bugtracker/views.py:305
 msgid "Edit a comment"
 msgstr "Éditer un commentaire"
 
-#: bugtracker/views.py:304 bugtracker/views.py:357
+#: bugtracker/views.py:313 bugtracker/views.py:367
 msgid "Send a comment"
 msgstr "Envoyer un commentaire"
 
-#: bugtracker/views.py:329
+#: bugtracker/views.py:338
 #, python-format
 msgid "%(user)s wrote:"
 msgstr "%(user)s a écrit :"
 
-#: bugtracker/views.py:343 bugtracker/views.py:390
+#: bugtracker/views.py:352 bugtracker/views.py:400
 msgid "Your comment has been saved successfully"
 msgstr "Votre commentaire a été sauvegardé avec succès"
 
-#: bugtracker/views.py:382
+#: bugtracker/views.py:392
 #, python-format
 msgid ""
 "%(message_url)s\n"
@@ -921,27 +921,27 @@ msgstr ""
 "\n"
 "%(message)s"
 
-#: bugtracker/views.py:413
+#: bugtracker/views.py:423
 msgid "The comment has been deleted successfully"
 msgstr "Le commentaire a été supprimé avec succès"
 
-#: bugtracker/views.py:420
+#: bugtracker/views.py:430
 msgid "Delete a comment"
 msgstr "Supprimer un commentaire"
 
-#: bugtracker/views.py:435
+#: bugtracker/views.py:446
 msgid "Your vote has been saved successfully"
 msgstr "Votre vote a été sauvegardé avec succès"
 
-#: bugtracker/views.py:437
+#: bugtracker/views.py:448
 msgid "You can't vote anymore"
 msgstr "Vous ne pouvez plus voter"
 
-#: bugtracker/views.py:439
+#: bugtracker/views.py:450
 msgid "No votes for closed issues"
 msgstr "Pas de vote pour les problèmes fermés"
 
-#: bugtracker/views.py:452
+#: bugtracker/views.py:464
 msgid "Your vote has been removed successfully"
 msgstr "Votre vote a été supprimé avec succès"
 
@@ -1057,9 +1057,13 @@ msgstr "Le contact a été supprimé avec succès"
 msgid "Delete a contact"
 msgstr "Supprimer un contact"
 
-#: core/decorators.py:18
+#: core/decorators.py:20
 msgid "You need to fill these informations to continue"
 msgstr "Vous devez remplir ces informations pour continuer"
+
+#: core/decorators.py:32
+msgid "You can't use this feature in demo"
+msgstr "Vous ne pouvez pas utiliser cette fonctionnalité dans la démo"
 
 #: core/forms.py:10
 msgid "first name"
@@ -1112,22 +1116,32 @@ msgstr "doit être valide pour activer votre compte"
 msgid "A user with that username already exists."
 msgstr "Un utilisateur avec ce nom existe déjà."
 
-#: core/tests.py:67 core/views.py:402
+#: core/tests.py:67 core/views.py:406
 msgid "Wrong password"
 msgstr "Mot de passe erroné"
 
-#: core/tests.py:82 core/views.py:400
+#: core/tests.py:82 core/views.py:404
 msgid "Your password has been modified successfully"
 msgstr "Votre mot de passe a été sauvegardé avec succès"
 
-#: core/views.py:50
+#: core/views.py:47
+#, python-format
+msgid ""
+"You're currently using the demo version. Data are reset every %i hours. "
+"Stroke links are disabled features."
+msgstr ""
+"Vous utilisez actuellement la version de démonstration. Les données sont "
+"réinitialisées toutes les %i heures. Les liens barrés correspondent à des "
+"fonctionnalités désactivées."
+
+#: core/views.py:53
 msgid ""
 "How-to : create a customer, a project, a proposal and finally an invoice"
 msgstr ""
 "Mode d'emploi : créer un client, un projet, un devis et finalement une "
 "facture"
 
-#: core/views.py:58
+#: core/views.py:61
 #, python-format
 msgid ""
 "Your trial ends in %(days)d days, if you want to keep using %(site_name)s "
@@ -1136,7 +1150,7 @@ msgstr ""
 "Votre période d'essai expire dans %(days)d jours, si vous souhaitez "
 "continuer à utiliser %(site_name)s n'oubliez pas de vous abonner"
 
-#: core/views.py:61
+#: core/views.py:64
 #, python-format
 msgid ""
 "Your subscription ends in %(days)d days, if you want to keep using "
@@ -1145,28 +1159,28 @@ msgstr ""
 "Votre abonnement expire dans %(days)d jours, si vous souhaitez continuer à "
 "utiliser %(site_name)s n'oubliez pas de le renouveler"
 
-#: core/views.py:104 core/views.py:112
+#: core/views.py:107 core/views.py:115
 msgid ""
 "You will leave the Auto-entrepreneur status at the end of the current year."
 msgstr "Vous allez quitter le régime Auto-entrepreneur à la fin de l'année."
 
-#: core/views.py:106 core/views.py:116
+#: core/views.py:109 core/views.py:119
 msgid "You lose tax rates associated with creation help for overrunning sales."
 msgstr ""
 "Vous perdez les taux de cotisations associés à l'ACCRE pour le chiffre "
 "d'affaire dépassant le plafond."
 
-#: core/views.py:108 core/views.py:118
+#: core/views.py:111 core/views.py:121
 msgid "You lose freeing tax payment."
 msgstr "Vous perdez le prélèvement libératoire sur l'impôt."
 
-#: core/views.py:114
+#: core/views.py:117
 msgid ""
 "You will leave the Auto-entrepreneur status at the end of the next year."
 msgstr ""
 "Vous allez quitter le régime Auto-entrepreneur à la fin de l'année prochaine."
 
-#: core/views.py:121
+#: core/views.py:124
 msgid ""
 "Attention, you will leave the Auto-entrepreneur status at the end of the "
 "current year if all your proposals and invoices are paid before the end of "
@@ -1175,7 +1189,7 @@ msgstr ""
 "Attention vous allez perdre le régime Auto-entrepreneur à la fin de l'année "
 "si tous vos devis et factures sont payés avant la fin de l'année."
 
-#: core/views.py:123
+#: core/views.py:126
 msgid ""
 "Attention, you will leave the Auto-entrepreneur status at the end of the "
 "next year if all your proposals and invoices are paid before the end of the "
@@ -1184,7 +1198,7 @@ msgstr ""
 "Attention, vous allez perdre le régime Auto-entrepreneur à la fin de l'année "
 "prochaine si tous vos devis et factures sont payés avant la fin de l'année."
 
-#: core/views.py:125
+#: core/views.py:128
 msgid ""
 "Attention, you will lose tax rates associated with creation help for "
 "overrunning sales if all your proposals and invoices are paid before the end "
@@ -1194,7 +1208,7 @@ msgstr ""
 "le chiffre d'affaire dépassant le plafond si vos devis et factures sont "
 "payés avant la fin de l'année."
 
-#: core/views.py:127
+#: core/views.py:130
 msgid ""
 "Attention, you will lose freeing tax payment if all your proposals and "
 "invoices are paid before the end of the year."
@@ -1202,76 +1216,76 @@ msgstr ""
 "Attention, vous allez perdre le prélèvement libératoire sur l'impôt si tous "
 "vos devis et factures sont payés avant la fin de l'année."
 
-#: core/views.py:130
+#: core/views.py:133
 msgid "You have to declare VAT from the first month of overrun."
 msgstr "Vous devez déclarer la TVA à partir du premier mois de dépassement."
 
-#: core/views.py:300 templates/menu.html:10 templates/core/index.html:3
+#: core/views.py:303 templates/menu.html:10 templates/core/index.html:3
 msgid "Dashboard"
 msgstr "Tableau de bord"
 
-#: core/views.py:337
+#: core/views.py:340
 msgid "Your settings have been updated successfully"
 msgstr "Vos paramètres ont été sauvegardés avec succès"
 
-#: core/views.py:339
+#: core/views.py:342
 msgid "Creation date is in the future, is this normal ?"
 msgstr "La date de création est dans le futur, est-ce normal ?"
 
-#: core/views.py:350 templates/menu.html:106
+#: core/views.py:353 templates/menu.html:106
 msgid "Settings"
 msgstr "Paramètres"
 
-#: core/views.py:404
+#: core/views.py:408
 msgid "Your password has not been modified"
 msgstr "Votre mot de passe n'a pas été modifié"
 
-#: core/views.py:410 templates/menu.html:109
+#: core/views.py:414 templates/menu.html:109
 msgid "Change password"
 msgstr "Changer de mot de passe"
 
-#: core/views.py:427 templates/menu.html:113
+#: core/views.py:432 templates/menu.html:113
 msgid "My subscription"
 msgstr "Mon abonnement"
 
-#: core/views.py:440
+#: core/views.py:445
 msgid "Subscription paid"
 msgstr "Abonnement payé"
 
-#: core/views.py:471
+#: core/views.py:476
 msgid "Not verified"
 msgstr "Non vérifié"
 
-#: core/views.py:475
+#: core/views.py:480
 msgid "Receiver is not as defined in settings. Spoofing ?"
 msgstr "Le destinataire n'est pas celui défini dans settings. Spoofing ?"
 
-#: core/views.py:477
+#: core/views.py:482
 msgid "Payment not completed"
 msgstr "Paiement non complet"
 
-#: core/views.py:479 core/views.py:481
+#: core/views.py:484 core/views.py:486
 msgid "Amount altered. Bad guy ?"
 msgstr "Montant modifié. Gros vilain ?"
 
-#: core/views.py:592
+#: core/views.py:597
 msgid "Subscribe"
 msgstr "S'abonner"
 
-#: core/views.py:612 templates/core/unregister.html:15
+#: core/views.py:618 templates/core/unregister.html:15
 msgid "Unregister"
 msgstr "Se désinscrire"
 
-#: core/views.py:625
+#: core/views.py:631
 msgid "CSRF error"
 msgstr "Erreur CSRF"
 
-#: core/views.py:626
+#: core/views.py:632
 #, python-format
 msgid "An error occured for %(email)s on %(path)s, reason : %(reason)s"
 msgstr "Une erreur est survenue pour %(email)s à %(path)s, raison : %(reason)s"
 
-#: core/views.py:645
+#: core/views.py:652
 msgid ""
 "Activation key expired. You may already have activated your account. If not, "
 "activation delay may have passed, you have to wait for your previous "
@@ -1281,7 +1295,7 @@ msgstr ""
 "ce n'est pas le cas, le délai d'activation peut être écoulé, vous devez "
 "attendre que votre inscription précédente soit supprimée (max. 1 journée)."
 
-#: core/views.py:651
+#: core/views.py:658
 msgid ""
 "Email address not found. Activation delay may have expired. Try subscribing "
 "again."
@@ -1289,82 +1303,82 @@ msgstr ""
 "Adresse email non trouvée. Le délai d'activation est peut-être écoulé. "
 "Essayez de vous inscrire à nouveau."
 
-#: core/views.py:677
+#: core/views.py:684
 msgid "Total users"
 msgstr "Total utilisateurs"
 
-#: core/views.py:679
+#: core/views.py:686
 msgid "Unconfirmed users"
 msgstr "Utilisateurs non validés"
 
-#: core/views.py:681
+#: core/views.py:688
 msgid "Waiting for deletion"
 msgstr "En attente de suppression"
 
-#: core/views.py:683
+#: core/views.py:690
 msgid "Expired users"
 msgstr "Utilisateurs expirés"
 
-#: core/views.py:685
+#: core/views.py:692
 msgid "Active users"
 msgstr "Utilisateurs actifs"
 
-#: core/views.py:687
+#: core/views.py:694
 msgid "Subscribed users"
 msgstr "Abonnés"
 
-#: core/views.py:691
+#: core/views.py:698
 msgid "Connections today"
 msgstr "Connexions aujourd'hui"
 
-#: core/views.py:693
+#: core/views.py:700
 msgid "Connections in past 7 days"
 msgstr "Connexions dans les 7 derniers jours"
 
-#: core/views.py:695
+#: core/views.py:702
 msgid "Connections in past 30 days"
 msgstr "Connexions dans les 30 derniers jours"
 
-#: core/views.py:697
+#: core/views.py:704
 msgid "Registrations today"
 msgstr "Inscriptions aujourd'hui"
 
-#: core/views.py:699
+#: core/views.py:706
 msgid "Registrations in past 7 days"
 msgstr "Inscriptions dans les 7 derniers jours"
 
-#: core/views.py:701
+#: core/views.py:708
 msgid "Registrations in past 30 days"
 msgstr "Inscriptions dans les 30 derniers jours"
 
-#: core/views.py:705
+#: core/views.py:712
 msgid "Trial users expiring in 1 day"
 msgstr "Utilisateurs en période d'essai expirant dans 1 jour"
 
-#: core/views.py:707 core/views.py:709
+#: core/views.py:714 core/views.py:716
 #, python-format
 msgid "Trial users expiring in %i days"
 msgstr "Utilisateurs en période d'essai expirant dans %i jours"
 
-#: core/views.py:711
+#: core/views.py:718
 msgid "Subscribed users expiring in 1 day"
 msgstr "Abonnés expirant dans 1 jour"
 
-#: core/views.py:713 core/views.py:715
+#: core/views.py:720 core/views.py:722
 #, python-format
 msgid "Subscribed users expiring in %i day"
 msgstr "Abonnés expirant dans %i jours"
 
-#: core/views.py:719 templates/project/detail.html:23
+#: core/views.py:726 templates/project/detail.html:23
 msgid "Proposals"
 msgstr "Devis"
 
-#: core/views.py:721
+#: core/views.py:728
 msgid "Users having proposals"
 msgstr "Utilisateurs ayant des devis"
 
 #
-#: core/views.py:725
+#: core/views.py:732
 msgid "Users having invoices"
 msgstr "Utilisateurs ayant des factures"
 
@@ -1967,8 +1981,9 @@ msgstr "Aucune opération de restauration"
 msgid ""
 "You can't restore a backup during trial period. You have to subscribe to do "
 "this action"
-msgstr "Vous ne pouvez pas restaurer de backup pendant votre période d'essai. "
-"Vous devez vous abonner pour effectuer cette action"
+msgstr ""
+"Vous ne pouvez pas restaurer de backup pendant votre période d'essai. Vous "
+"devez vous abonner pour effectuer cette action"
 
 #: templates/backup/index.html:103
 msgid "You can restore a backup."
@@ -2585,19 +2600,23 @@ msgstr "Mot de passe"
 msgid "Log in"
 msgstr "Connexion"
 
-#: templates/registration/login.html:48
+#: templates/registration/login.html:49
+msgid "This is a demo version. Login and password are \"demo\""
+msgstr "Ceci est une version de démonstration. Les nom d'utilisateur et mot de passe sont \"demo\""
+
+#: templates/registration/login.html:51
 msgid "Not yet registered ?"
 msgstr "Pas encore inscrit ?"
 
-#: templates/registration/login.html:48
+#: templates/registration/login.html:51
 msgid "Create an account"
 msgstr "Créer un compte"
 
-#: templates/registration/login.html:49
+#: templates/registration/login.html:52
 msgid "Forgot your password? Click here"
 msgstr "Mot de passe oublié ? Cliquez ici"
 
-#: templates/registration/login.html:50
+#: templates/registration/login.html:53
 msgid "Resend activation link? Click here"
 msgstr "Renvoyer le mail d'activation ? Cliquez ici"
 

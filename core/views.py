@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils import simplejson
 from accounts.models import Expense, Invoice, INVOICE_STATE_PAID, \
     PAYMENT_TYPE_BANK_CARD, InvoiceRow
-from core.decorators import settings_required
+from core.decorators import settings_required, disabled_for_demo
 from autoentrepreneur.models import AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC, \
     Subscription, SUBSCRIPTION_STATE_NOT_PAID, SUBSCRIPTION_STATE_PAID, \
     SUBSCRIPTION_STATE_TRIAL, UserProfile
@@ -43,6 +43,9 @@ from django.db.models.aggregates import Sum
 @settings_required
 @subscription_required
 def index(request):
+    if settings.DEMO:
+        messages.warning(request, _("You're currently using the demo version. Data are reset every %i hours. Stroke links are disabled features.") % (settings.DEMO_RESET_DELAY))
+
     user = request.user
     profile = user.get_profile()
 
@@ -387,6 +390,7 @@ def logo_delete(request):
     return HttpResponse(simplejson.dumps(response),
                         mimetype='application/javascript')
 
+@disabled_for_demo
 @login_required
 @commit_on_success
 def change_password(request):
@@ -411,6 +415,7 @@ def change_password(request):
                                'passwordform': passwordform},
                               context_instance=RequestContext(request))
 
+@disabled_for_demo
 @settings_required
 def subscribe(request):
     profile = request.user.get_profile()
@@ -592,6 +597,7 @@ def paypal_ipn(request):
                                'title': _('Subscribe')},
                               context_instance=RequestContext(request))
 
+@disabled_for_demo
 @login_required
 @commit_on_success
 def unregister(request):
@@ -633,6 +639,7 @@ def csrf_failure(request, reason=""):
     response.status_code = 403
     return response
 
+@disabled_for_demo
 def resend_activation_email(request):
     if request.method == 'POST':
         form = ResendActivationEmailForm(request.POST)

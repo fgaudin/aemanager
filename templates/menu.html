@@ -106,14 +106,14 @@
                             <a href="{% url settings_edit %}">{% trans "Settings" %}</a>
                             </li>
                         <li>
-                            <a href="{% url change_password %}">{% trans "Change password" %}</a>
+                            {%if demo_mode %}<del>{% endif %}<a href="{% url change_password %}">{% trans "Change password" %}</a>{%if demo_mode %}</del>{% endif %}
                         </li>
                         {% if not user.is_superuser %}
                         <li>
-                            <a href="{% url subscribe %}">{% trans "My subscription" %}</a>
+                            {%if demo_mode %}<del>{% endif %}<a href="{% url subscribe %}">{% trans "My subscription" %}</a>{%if demo_mode %}</del>{% endif %}
                         </li>
                         <li>
-                            <a href="{% url message_list %}">{% trans "My messages" %}{% if user.get_profile.unread_message_count %} ({{ user.get_profile.unread_message_count }}){% endif %}</a>
+                            {%if demo_mode %}<del>{% endif %}<a href="{% url message_list %}">{% trans "My messages" %}{% if user.get_profile.unread_message_count %} ({{ user.get_profile.unread_message_count }}){% endif %}</a>{%if demo_mode %}</del>{% endif %}
                         </li>
                         <li>
                             <a href="{% url backup %}">{% trans "Backup/Restore" %}</a>
@@ -132,7 +132,7 @@
                 <div class="sub">
                     <ul>
                         <li>
-                            <a href="{% url issue_list %}">{% trans "Bug reports" %}</a>
+                            {%if demo_mode %}<del>{% endif %}<a href="{% url issue_list %}">{% trans "Bug reports" %}</a>{%if demo_mode %}</del>{% endif %}
                             </li>
                         <li>
                             <a href="{% url faq_list %}">{% trans "FAQ" %}</a>

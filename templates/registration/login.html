@@ -45,9 +45,13 @@
             <br class="clear">
             </div>
             <div id="footer">
+            {% if demo_mode %}
+            {% trans 'This is a demo version. Login and password are "demo"' %}
+            {% else %}
             {% trans "Not yet registered ?" %} <a href="{% url registration_register %}">{% trans "Create an account" %}</a><br/><br/>
             <a href="{% url django.contrib.auth.views.password_reset %}">{% trans "Forgot your password? Click here" %}</a><br/>
             <a href="{% url resend_activation_email %}">{% trans "Resend activation link? Click here" %}</a>
+            {% endif %}
             </div>
         </div>
     </body>

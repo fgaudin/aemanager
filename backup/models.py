@@ -17,7 +17,7 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.utils.encoding import smart_unicode
 from django.utils.xmlutils import SimplerXMLGenerator
-from core.context_processors import version
+from core.context_processors import common
 from django.db.models.fields.related import ForeignKey, OneToOneField
 import os
 import errno
@@ -130,7 +130,7 @@ class BackupRequest(models.Model):
 
         self.xml = SimplerXMLGenerator(self.stream, settings.DEFAULT_CHARSET)
         self.xml.startDocument()
-        self.xml.startElement("aemanager", {"version" : version()['version']})
+        self.xml.startElement("aemanager", {"version" : common()['version']})
 
         for model in models:
             for object in model.objects.filter(owner=self.user):

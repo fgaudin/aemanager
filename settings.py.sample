@@ -7,6 +7,8 @@ BASE_PATH = os.path.dirname(__file__)
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 DEBUG_TOOLBAR = False
+DEMO = False
+DEMO_RESET_DELAY = 3 # hours
 
 ADMINS = (
     ('', ''),
@@ -94,9 +96,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
     "django.contrib.messages.context_processors.messages",
-    "core.context_processors.parent_site",
-    "core.context_processors.version",
-    "core.context_processors.google_api_key",
+    "core.context_processors.common",
 )
 
 ROOT_URLCONF = 'aemanager.urls'
@@ -136,6 +136,8 @@ LOGIN_URL = '/user/login/'
 LOGOUT_URL = '/user/logout/'
 LOGIN_REDIRECT_URL = '/'
 REGISTRATION_OPEN = True
+if DEMO:
+    REGISTRATION_OPEN = False
 ACCOUNT_ACTIVATION_DAYS = 7
 ACCOUNT_UNREGISTER_DAYS = 7
 ACCOUNT_EXPIRED_DAYS = 365

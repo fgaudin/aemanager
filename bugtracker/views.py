@@ -9,13 +9,14 @@ from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db.transaction import commit_on_success
 from django.db.models.aggregates import Count, Max
-from core.decorators import settings_required
+from core.decorators import settings_required, disabled_for_demo
 from django.core.mail import mail_admins, send_mass_mail
 from django.contrib.sites.models import Site
 from django.conf import settings
 from core.templatetags.modeltags import display_name
 import datetime
 
+@disabled_for_demo
 @settings_required
 def issue_list(request):
     o = request.GET.get('o', 'last_comment_date')
@@ -56,6 +57,7 @@ def issue_list(request):
                                'ot': ot},
                               context_instance=RequestContext(request))
 
+@disabled_for_demo
 @settings_required
 def message_list(request):
     if request.user.is_superuser:
@@ -69,6 +71,7 @@ def message_list(request):
                                'issues': issues},
                               context_instance=RequestContext(request))
 
+@disabled_for_demo
 @settings_required
 def closed_issue_list(request):
     o = request.GET.get('o', 'last_comment_date')
@@ -107,7 +110,7 @@ def closed_issue_list(request):
                                'ot': ot},
                               context_instance=RequestContext(request))
 
-
+@disabled_for_demo
 @settings_required
 @commit_on_success
 def issue_create_or_edit(request, id=None):
@@ -154,6 +157,7 @@ def issue_create_or_edit(request, id=None):
                                'form': form},
                               context_instance=RequestContext(request))
 
+@disabled_for_demo
 @settings_required
 @commit_on_success
 def issue_close(request, id):
@@ -189,6 +193,7 @@ def issue_close(request, id):
                                'form': commentForm},
                               context_instance=RequestContext(request))
 
+@disabled_for_demo
 @settings_required
 @commit_on_success
 def issue_reopen(request, id):
@@ -228,6 +233,7 @@ def issue_reopen(request, id):
                                'form': commentForm},
                               context_instance=RequestContext(request))
 
+@disabled_for_demo
 @settings_required
 def issue_detail(request, id):
     issue = get_object_or_404(Issue,
@@ -247,6 +253,7 @@ def issue_detail(request, id):
                                'user_votes': user_votes},
                               context_instance=RequestContext(request))
 
+@disabled_for_demo
 @settings_required
 def message_detail(request, id):
     if request.user.is_superuser:
@@ -267,6 +274,7 @@ def message_detail(request, id):
                                'commentForm': commentForm},
                               context_instance=RequestContext(request))
 
+@disabled_for_demo
 @settings_required
 @commit_on_success
 def issue_delete(request, id):
@@ -289,6 +297,7 @@ def issue_delete(request, id):
                                'object_label': 'Issue "%s"' % (issue)},
                                context_instance=RequestContext(request))
 
+@disabled_for_demo
 @settings_required
 @commit_on_success
 def comment_create_or_edit(request, id=None, issue_id=None):
@@ -351,6 +360,7 @@ def comment_create_or_edit(request, id=None, issue_id=None):
                                'form': form},
                               context_instance=RequestContext(request))
 
+@disabled_for_demo
 @settings_required
 @commit_on_success
 def comment_message_create(request, issue_id=None):
@@ -398,7 +408,7 @@ def comment_message_create(request, issue_id=None):
                                'form': form},
                               context_instance=RequestContext(request))
 
-
+@disabled_for_demo
 @settings_required
 @commit_on_success
 def comment_delete(request, id):
@@ -421,6 +431,7 @@ def comment_delete(request, id):
                                'object_label': 'Comment "%s"' % (comment)},
                                context_instance=RequestContext(request))
 
+@disabled_for_demo
 @settings_required
 @commit_on_success
 def vote(request, issue_id):
@@ -439,6 +450,7 @@ def vote(request, issue_id):
         messages.error(request, _("No votes for closed issues"))
     return redirect(reverse('issue_detail', kwargs={'id': issue.id }))
 
+@disabled_for_demo
 @settings_required
 @commit_on_success
 def unvote(request, issue_id):
