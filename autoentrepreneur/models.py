@@ -169,6 +169,7 @@ class UserProfile(models.Model):
     bic = models.CharField(max_length=11, blank=True, default='', verbose_name=_('BIC/SWIFT'), help_text=_('will appear on your invoices if set'))
     logo_file = models.FileField(upload_to=logo_upload_to_handler, null=True, blank=True, storage=store, verbose_name=_('Custom header'), help_text=_('will appear in place of your personnal informations on proposals and invoices. Maximum width and height: 252x137'))
     uuid = models.CharField(max_length=36, unique=True, default=uuid.uuid4)
+    vat_enabled = models.BooleanField(default=False, verbose_name=_('Enable VAT'), help_text=_('If you overrun the second sales limit, you need to declare VAT'))
 
     def __unicode__(self):
         return self.user.__unicode__()

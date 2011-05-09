@@ -10,7 +10,7 @@ from reportlab.lib.units import inch
 from reportlab.lib.enums import TA_CENTER
 from reportlab.platypus import Table, TableStyle, Image
 from reportlab.lib import colors
-from django.db import models
+from django.db import models, connection
 from core.models import OwnedObject
 from django.utils.translation import ugettext_lazy as _, ugettext
 from contact.models import Contact, CONTACT_TYPE_COMPANY
@@ -21,6 +21,7 @@ from django.db.models.aggregates import Sum, Min, Max
 from django.db.models.signals import post_save, pre_save, post_delete
 from django.conf import settings
 from django.core.validators import MaxValueValidator
+from django.db.models.expressions import F
 
 PAYMENT_TYPE_CASH = 1
 PAYMENT_TYPE_BANK_CARD = 2
@@ -226,6 +227,17 @@ class Invoice(OwnedObject):
                 raise InvoiceRowAmountError(ugettext("Amounts invoiced can't be greater than proposals remaining amounts"))
 
         return True
+
+    def get_vat(self):
+        cursor = connection.cursor()
+        cursor.execute('SELECT SUM(accounts_invoicerow.amount * accounts_invoicerow.vat_rate / 100) AS "vat" FROM "accounts_invoicerow" WHERE "accounts_invoicerow"."invoice_id" = %s', [self.id])
+        row = cursor.fetchone()
+        vat = row[0]
+        vat = vat.quantize(Decimal(1)) if vat == vat.to_integral() else vat.normalize()
+        return vat
+
+    def amount_including_tax(self):
+        return self.amount + self.get_vat()
 
     def to_pdf(self, user, response):
         def invoice_footer(canvas, doc):
@@ -454,10 +466,18 @@ class Invoice(OwnedObject):
 class InvoiceRowAmountError(Exception):
     pass
 
+VAT_RATES_19_6 = Decimal('19.6')
+VAT_RATES_5_5 = Decimal('5.5')
+VAT_RATES_2_1 = Decimal('2.1')
+VAT_RATES = ((VAT_RATES_19_6, _('%s%%') % (localize(VAT_RATES_19_6))),
+             (VAT_RATES_5_5, _('%s%%') % (localize(VAT_RATES_5_5))),
+             (VAT_RATES_2_1, _('%s%%') % (localize(VAT_RATES_2_1))),)
+
 class InvoiceRow(Row):
     invoice = models.ForeignKey(Invoice, related_name="invoice_rows")
     proposal = models.ForeignKey(Proposal, related_name="invoice_rows", verbose_name=_('Proposal'))
     balance_payments = models.BooleanField(verbose_name=_('Balance payments for the proposal'), help_text=_('"Balancing payments for the proposal" means there will be no future invoices for the selected proposal. Thus the amount remaining to invoice for this proposal will fall to zero and its state will be set to "balanced" when all invoices are paid.'))
+    vat_rate = models.DecimalField(choices=VAT_RATES, decimal_places=1, max_digits=4, verbose_name=_('Vat'), blank=True, null=True)
 
     class Meta:
         ordering = ['id']

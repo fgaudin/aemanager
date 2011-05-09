@@ -22,9 +22,21 @@
     </div>
     <div class="detail-row">
       <div>
-      <label>{% trans "Amount" %} :</label> {{ invoice.amount }}
+      <label>{% trans "Amount excluding tax" %} :</label> {{ invoice.amount }}
       </div>
     </div>
+    {% if user.get_profile.vat_enabled %}
+    <div class="detail-row">
+      <div>
+      <label>{% trans "VAT" %} :</label> {{ invoice.get_vat }}
+      </div>
+    </div>
+    <div class="detail-row">
+      <div>
+      <label>{% trans "Amount including tax" %} :</label> {{ invoice.amount_including_tax }}
+      </div>
+    </div>
+    {% endif %}
     {% with invoice as object %}{% with "edition_date" as name %}
     {% include "detail_field.html" %}
     {% endwith %}{% endwith %}
@@ -72,6 +84,9 @@
                 <th>{% trans "Quantity" %}</th>
                 <th>{% trans "Unit price" %}</th>
                 <th>{% trans "Total price" %}</th>
+                {% if user.get_profile.vat_enabled %}
+                <th>{% trans "VAT rate" %}</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -84,6 +99,9 @@
                 <td>{{ invoicerow.quantity|floatformat }}</td>
                 <td>{{ invoicerow.unit_price|floatformat }}</td>
                 <td>{{ invoicerow.amount|floatformat }}</td>
+                {% if user.get_profile.vat_enabled %}
+                <td>{{ invoicerow.vat_rate|default:'' }}</td>
+                {% endif %}
             </tr>
         {% endfor %}
         </tbody>

@@ -95,6 +95,9 @@ jQuery(document).ready(function(){
       </div>
     </div>
     {% endwith %}
+    {% with form.vat_enabled as field %}
+    {% include "field.html" %}
+    {% endwith %}
     {% endwith %}
     </fieldset>
 
