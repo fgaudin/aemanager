@@ -452,7 +452,7 @@ def paypal_ipn(request):
     data = dict(request.POST.items())
     args = {'cmd': '_notify-validate'}
     args.update(data)
-    params = urllib.urlencode(args)
+    params = urllib.urlencode(dict([k, v.encode('utf-8')] for k, v in args.items()))
     paypal_response = urllib2.urlopen(settings.PAYPAL_URL + '/cgi-bin/webscr', params).read()
 
     # process the payment
