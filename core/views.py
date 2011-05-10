@@ -1,4 +1,5 @@
 import logging
+from decimal import Decimal
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template.context import RequestContext, Context
 from django.utils.translation import ugettext_lazy as _, ugettext
@@ -12,7 +13,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils import simplejson
 from accounts.models import Expense, Invoice, INVOICE_STATE_PAID, \
-    PAYMENT_TYPE_BANK_CARD, InvoiceRow
+    PAYMENT_TYPE_BANK_CARD, InvoiceRow, VAT_RATES_19_6
 from core.decorators import settings_required, disabled_for_demo
 from autoentrepreneur.models import AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC, \
     Subscription, SUBSCRIPTION_STATE_NOT_PAID, SUBSCRIPTION_STATE_PAID, \
@@ -491,6 +492,9 @@ def paypal_ipn(request):
             # create an invoice for this payment
             # first, get the provider user
             provider = User.objects.get(email=settings.SERVICE_PROVIDER_EMAIL)
+            if provider.get_profile().vat_number:
+                payment_amount = Decimal(payment_amount) / Decimal('1.196')
+
             # look for a customer corresponding to user
             address, created = Address.objects.get_or_create(contact__email=user.email,
                                                              owner=provider,
@@ -533,11 +537,16 @@ def paypal_ipn(request):
                                                update_date=datetime.date.today(),
                                                expiration_date=None,
                                                owner=provider)
+
+            unit_price = Decimal(settings.PAYPAL_APP_SUBSCRIPTION_AMOUNT)
+            if provider.get_profile().vat_number:
+                unit_price = Decimal(unit_price) / Decimal('1.196')
+
             proposal_row = ProposalRow.objects.create(proposal=proposal,
                                                       label=item_name,
                                                       category=ROW_CATEGORY_SERVICE,
                                                       quantity=1,
-                                                      unit_price='%s' % settings.PAYPAL_APP_SUBSCRIPTION_AMOUNT,
+                                                      unit_price='%s' % unit_price,
                                                       owner=provider)
 
             # finally create invoice
@@ -563,6 +572,7 @@ def paypal_ipn(request):
                                                     quantity=1,
                                                     unit_price=payment_amount,
                                                     balance_payments=True,
+                                                    vat_rate=VAT_RATES_19_6,
                                                     owner=provider)
             # create expense for paypal fee
             expense = Expense.objects.create(date=datetime.date.today(),

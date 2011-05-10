@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-08 16:25+0200\n"
+"POT-Creation-Date: 2011-05-10 22:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,16 +25,15 @@ msgstr ""
 msgid "French"
 msgstr ""
 
-#: accounts/forms.py:8 accounts/models.py:38 accounts/models.py:165
+#: accounts/forms.py:8 accounts/models.py:39 accounts/models.py:166
 #: accounts/views.py:178 accounts/views.py:252 backup/views.py:134
 #: project/models.py:175 project/models.py:548 templates/expense/list.html:220
-#: templates/invoice/detail.html:25 templates/invoice/list.html:28
-#: templates/project/detail.html:32 templates/project/detail.html.py:60
-#: templates/proposal/detail.html:97
+#: templates/invoice/list.html:28 templates/project/detail.html:32
+#: templates/project/detail.html.py:60 templates/proposal/detail.html:97
 msgid "Amount"
 msgstr ""
 
-#: accounts/forms.py:20 accounts/models.py:163 templates/invoice/list.html:20
+#: accounts/forms.py:20 accounts/models.py:164 templates/invoice/list.html:20
 msgid "Invoice id"
 msgstr ""
 
@@ -43,7 +42,7 @@ msgstr ""
 msgid "An integer less than or equal to %d. Must be sequential."
 msgstr ""
 
-#: accounts/forms.py:24 accounts/models.py:173 backup/views.py:137
+#: accounts/forms.py:24 accounts/models.py:174 backup/views.py:137
 msgid "Penalty rate"
 msgstr ""
 
@@ -59,89 +58,89 @@ msgstr ""
 msgid "This field is required since invoice state is set to \"paid\"."
 msgstr ""
 
-#: accounts/forms.py:65 accounts/models.py:370 project/forms.py:63
+#: accounts/forms.py:65 accounts/models.py:387 project/forms.py:63
 #: project/models.py:390 project/models.py:546
-#: templates/invoice/detail.html:72 templates/proposal/detail.html:66
+#: templates/invoice/detail.html:84 templates/proposal/detail.html:66
 #: templates/proposal/detail_ajax.html:33
 msgid "Quantity"
 msgstr ""
 
-#: accounts/forms.py:66 accounts/models.py:370 project/forms.py:64
+#: accounts/forms.py:66 accounts/models.py:387 project/forms.py:64
 #: project/models.py:390 project/models.py:547
-#: templates/invoice/detail.html:73 templates/proposal/detail.html:67
+#: templates/invoice/detail.html:85 templates/proposal/detail.html:67
 #: templates/proposal/detail_ajax.html:34
 msgid "Unit price"
 msgstr ""
 
-#: accounts/models.py:29
+#: accounts/models.py:30
 msgid "Cash"
 msgstr ""
 
-#: accounts/models.py:30
+#: accounts/models.py:31
 msgid "Bank card"
 msgstr ""
 
-#: accounts/models.py:31
+#: accounts/models.py:32
 msgid "Transfer"
 msgstr ""
 
-#: accounts/models.py:32
+#: accounts/models.py:33
 msgid "Check"
 msgstr ""
 
-#: accounts/models.py:35 accounts/views.py:178 accounts/views.py:252
+#: accounts/models.py:36 accounts/views.py:178 accounts/views.py:252
 #: templates/expense/list.html:217
 msgid "Date"
 msgstr ""
 
-#: accounts/models.py:35 accounts/models.py:166 accounts/models.py:167
-#: accounts/models.py:169 accounts/models.py:170 accounts/models.py:171
-#: accounts/models.py:172 autoentrepreneur/forms.py:13
+#: accounts/models.py:36 accounts/models.py:167 accounts/models.py:168
+#: accounts/models.py:170 accounts/models.py:171 accounts/models.py:172
+#: accounts/models.py:173 autoentrepreneur/forms.py:13
 #: autoentrepreneur/models.py:108 autoentrepreneur/models.py:163
 #: project/models.py:36 project/models.py:176 project/models.py:177
 #: project/models.py:179 project/models.py:180
 msgid "format: mm/dd/yyyy"
 msgstr ""
 
-#: accounts/models.py:36 backup/views.py:134 project/models.py:173
+#: accounts/models.py:37 backup/views.py:134 project/models.py:173
 #: templates/expense/list.html:218 templates/project/detail.html:29
 msgid "Reference"
 msgstr ""
 
-#: accounts/models.py:37 accounts/views.py:178 templates/expense/list.html:219
+#: accounts/models.py:38 accounts/views.py:178 templates/expense/list.html:219
 msgid "Supplier"
 msgstr ""
 
-#: accounts/models.py:39 accounts/models.py:168 accounts/views.py:178
+#: accounts/models.py:40 accounts/models.py:169 accounts/views.py:178
 #: accounts/views.py:252 backup/views.py:135 templates/expense/list.html:221
 #: templates/invoice/list.html:26
 msgid "Payment type"
 msgstr ""
 
-#: accounts/models.py:40 templates/expense/list.html:222
+#: accounts/models.py:41 templates/expense/list.html:222
 msgid "Description"
 msgstr ""
 
-#: accounts/models.py:56
+#: accounts/models.py:57
 msgid "Edited"
 msgstr ""
 
-#: accounts/models.py:57 newsletter/models.py:17 project/models.py:131
+#: accounts/models.py:58 newsletter/models.py:17 project/models.py:131
 #: templates/newsletter/email_users.html:25
 msgid "Sent"
 msgstr ""
 
-#: accounts/models.py:58 autoentrepreneur/models.py:43 core/views.py:488
+#: accounts/models.py:59 autoentrepreneur/models.py:43 core/views.py:488
 msgid "Paid"
 msgstr ""
 
-#: accounts/models.py:162 accounts/views.py:252 backup/views.py:134
+#: accounts/models.py:163 accounts/views.py:252 backup/views.py:134
 #: project/forms.py:28 project/models.py:32 project/models.py:111
 #: templates/invoice/list.html:23 templates/project/list.html:20
 msgid "Customer"
 msgstr ""
 
-#: accounts/models.py:164 autoentrepreneur/models.py:107 backup/views.py:134
+#: accounts/models.py:165 autoentrepreneur/models.py:107 backup/views.py:134
 #: bugtracker/models.py:35 project/forms.py:29 project/models.py:112
 #: project/models.py:174 templates/backup/index.html:24
 #: templates/backup/index.html.py:73 templates/core/subscribe.html:9
@@ -151,138 +150,165 @@ msgstr ""
 msgid "State"
 msgstr ""
 
-#: accounts/models.py:166 backup/views.py:135 templates/invoice/list.html:21
+#: accounts/models.py:167 backup/views.py:135 templates/invoice/list.html:21
 msgid "Edition date"
 msgstr ""
 
-#: accounts/models.py:167 backup/views.py:135
+#: accounts/models.py:168 backup/views.py:135
 msgid "Payment date"
 msgstr ""
 
-#: accounts/models.py:169 backup/views.py:136 templates/invoice/list.html:22
+#: accounts/models.py:170 backup/views.py:136 templates/invoice/list.html:22
 msgid "Paid date"
 msgstr ""
 
-#: accounts/models.py:170 backup/views.py:136
+#: accounts/models.py:171 backup/views.py:136
 msgid "Execution begin date"
 msgstr ""
 
-#: accounts/models.py:171 backup/views.py:136
+#: accounts/models.py:172 backup/views.py:136
 msgid "Execution end date"
 msgstr ""
 
-#: accounts/models.py:172 backup/views.py:137
+#: accounts/models.py:173 backup/views.py:137
 msgid "Penalty date"
 msgstr ""
 
-#: accounts/models.py:174 backup/views.py:137
+#: accounts/models.py:175 backup/views.py:137
 msgid "Discount conditions"
 msgstr ""
 
-#: accounts/models.py:182
+#: accounts/models.py:183
 #, python-format
 msgid "invoice #%d"
 msgstr ""
 
-#: accounts/models.py:214
+#: accounts/models.py:215
 #, python-format
 msgid "Invoice id must be less than or equal to %d"
 msgstr ""
 
-#: accounts/models.py:216 accounts/views.py:351
+#: accounts/models.py:217 accounts/views.py:351
 msgid "Invoice id must be unique"
 msgstr ""
 
-#: accounts/models.py:226 accounts/views.py:348
+#: accounts/models.py:227 accounts/views.py:348
 msgid "Amounts invoiced can't be greater than proposals remaining amounts"
 msgstr ""
 
-#: accounts/models.py:247
+#: accounts/models.py:262
 #, python-format
 msgid "invoice_%(invoice_id)d.pdf"
 msgstr ""
 
-#: accounts/models.py:250
+#: accounts/models.py:265
 #, python-format
 msgid "Invoice #%(invoice_id)d"
 msgstr ""
 
-#: accounts/models.py:354 project/models.py:374
+#: accounts/models.py:369 project/models.py:374
 #, python-format
 msgid "Date : %s"
 msgstr ""
 
-#: accounts/models.py:364
+#: accounts/models.py:379
 #, python-format
 msgid "INVOICE #%d"
 msgstr ""
 
-#: accounts/models.py:370 faq/models.py:5 project/models.py:390
-#: project/models.py:544 templates/invoice/detail.html:68
+#: accounts/models.py:387 faq/models.py:5 project/models.py:390
+#: project/models.py:544 templates/invoice/detail.html:80
 #: templates/proposal/detail.html:64 templates/proposal/detail_ajax.html:31
 msgid "Label"
 msgstr ""
 
-#: accounts/models.py:370 project/models.py:390
-#: templates/core/sales_widget.html:38
-msgid "Total"
+#: accounts/models.py:387
+msgid "Total excl tax"
 msgstr ""
 
-#: accounts/models.py:426
+#: accounts/models.py:389 templates/invoice/detail.html:31
+msgid "VAT"
+msgstr ""
+
+#: accounts/models.py:462
 #, python-format
 msgid "Payment date : %s"
 msgstr ""
 
-#: accounts/models.py:427
+#: accounts/models.py:463
 #, python-format
 msgid "Penalty begins on : %s"
 msgstr ""
 
-#: accounts/models.py:428
+#: accounts/models.py:464
 #, python-format
 msgid "Penalty rate : %s"
 msgstr ""
 
-#: accounts/models.py:429
+#: accounts/models.py:465
 #, python-format
 msgid "Discount conditions : %s"
 msgstr ""
 
-#: accounts/models.py:432
+#: accounts/models.py:468
 #, python-format
 msgid "IBAN/BBAN : %s"
 msgstr ""
 
-#: accounts/models.py:434
+#: accounts/models.py:470
 #, python-format
 msgid "BIC/SWIFT : %s"
 msgstr ""
 
-#: accounts/models.py:438 project/models.py:447
+#: accounts/models.py:473
 #, python-format
-msgid "TOTAL excl. VAT : %(amount)s %(currency)s"
+msgid "Total excl tax : %(amount)s %(currency)s"
 msgstr ""
 
-#: accounts/models.py:443 project/models.py:452
+#: accounts/models.py:485
+#, python-format
+msgid "VAT %(vat_rate)s%% : %(vat_amount)s %(currency)s"
+msgstr ""
+
+#: accounts/models.py:494
+#, python-format
+msgid "TOTAL incl tax : %(amount)s %(currency)s"
+msgstr ""
+
+#: accounts/models.py:496
+#, python-format
+msgid "TOTAL excl tax : %(amount)s %(currency)s"
+msgstr ""
+
+#: accounts/models.py:505 project/models.py:452
 #, python-format
 msgid "Execution dates : %(begin_date)s to %(end_date)s"
 msgstr ""
 
-#: accounts/models.py:459 templates/invoice/detail.html:69
+#: accounts/models.py:522 accounts/models.py:523 accounts/models.py:524
+#, python-format
+msgid "%s%%"
+msgstr ""
+
+#: accounts/models.py:528 templates/invoice/detail.html:81
 #: templates/invoice/edit.html:19 templates/invoice/edit.html.py:84
 msgid "Proposal"
 msgstr ""
 
-#: accounts/models.py:460
+#: accounts/models.py:529
 msgid "Balance payments for the proposal"
 msgstr ""
 
-#: accounts/models.py:460
+#: accounts/models.py:529
 msgid ""
 "\"Balancing payments for the proposal\" means there will be no future "
 "invoices for the selected proposal. Thus the amount remaining to invoice for "
 "this proposal will fall to zero and its state will be set to \"balanced\" "
 "when all invoices are paid."
+msgstr ""
+
+#: accounts/models.py:530
+msgid "Vat"
 msgstr ""
 
 #: accounts/views.py:61 templates/core/charts_widget.html:37
@@ -555,12 +581,22 @@ msgid ""
 "invoices. Maximum width and height: 252x137"
 msgstr ""
 
-#: autoentrepreneur/models.py:185 autoentrepreneur/tests.py:716
+#: autoentrepreneur/models.py:172
+msgid "VAT number"
+msgstr ""
+
+#: autoentrepreneur/models.py:172
+msgid ""
+"If you overrun the second sales limit, you need to declare VAT. Filling this "
+"field enables VAT management on invoices"
+msgstr ""
+
+#: autoentrepreneur/models.py:186 autoentrepreneur/tests.py:716
 #, python-format
 msgid "You've just unregistered from %(site)s"
 msgstr ""
 
-#: autoentrepreneur/models.py:186
+#: autoentrepreneur/models.py:187
 #, python-format
 msgid ""
 "You have left the site and your data will been deleted in "
@@ -571,7 +607,7 @@ msgid ""
 "today, please come back to test later."
 msgstr ""
 
-#: autoentrepreneur/models.py:192
+#: autoentrepreneur/models.py:193
 #: templates/registration/activation_email.txt:3
 #: templates/registration/password_reset_email.html:13
 #, python-format
@@ -725,7 +761,7 @@ msgid "User"
 msgstr ""
 
 #: bugtracker/models.py:31 faq/models.py:17 project/models.py:545
-#: templates/invoice/detail.html:71 templates/issue/list.html:21
+#: templates/invoice/detail.html:83 templates/issue/list.html:21
 #: templates/message/list.html:20 templates/proposal/detail.html:65
 #: templates/proposal/detail_ajax.html:32
 msgid "Category"
@@ -1619,6 +1655,10 @@ msgstr ""
 msgid "PROPOSAL %s"
 msgstr ""
 
+#: project/models.py:390 templates/core/sales_widget.html:38
+msgid "Total"
+msgstr ""
+
 #: project/models.py:444
 #, python-format
 msgid "Proposal valid through : %s"
@@ -1627,6 +1667,11 @@ msgstr ""
 #: project/models.py:445
 #, python-format
 msgid "Payment delay : %s"
+msgstr ""
+
+#: project/models.py:447
+#, python-format
+msgid "TOTAL excl. VAT : %(amount)s %(currency)s"
 msgstr ""
 
 #: project/models.py:465 project/models.py:493
@@ -1807,7 +1852,7 @@ msgstr ""
 
 #: templates/menu.html:29 templates/menu.html.py:65
 #: templates/contact/edit.html:152 templates/expense/list.html:235
-#: templates/invoice/edit.html:157 templates/proposal/edit.html:217
+#: templates/invoice/edit.html:158 templates/proposal/edit.html:217
 msgid "Add"
 msgstr ""
 
@@ -1950,7 +1995,7 @@ msgid "No master aggreements"
 msgstr ""
 
 #: templates/contact/edit.html:179 templates/contract/edit.html:78
-#: templates/core/settings_edit.html:102 templates/invoice/edit.html:163
+#: templates/core/settings_edit.html:105 templates/invoice/edit.html:164
 #: templates/newsletter/email_users.html:13 templates/project/edit.html:23
 #: templates/proposal/edit.html:257
 msgid "Save"
@@ -1976,7 +2021,7 @@ msgstr ""
 msgid "No contacts"
 msgstr ""
 
-#: templates/contract/detail.html:28 templates/invoice/detail.html:58
+#: templates/contract/detail.html:28 templates/invoice/detail.html:70
 #: templates/proposal/detail.html:54 templates/proposal/detail.html.py:124
 msgid "download pdf file"
 msgstr ""
@@ -2282,33 +2327,45 @@ msgstr ""
 msgid "Invoice for <a href=\"%(customer_url)s\">%(customer)s</a>"
 msgstr ""
 
-#: templates/invoice/detail.html:58 templates/proposal/detail.html:54
+#: templates/invoice/detail.html:25
+msgid "Amount excluding tax"
+msgstr ""
+
+#: templates/invoice/detail.html:36
+msgid "Amount including tax"
+msgstr ""
+
+#: templates/invoice/detail.html:70 templates/proposal/detail.html:54
 msgid "Exported file"
 msgstr ""
 
-#: templates/invoice/detail.html:62 templates/invoice/edit.html:143
+#: templates/invoice/detail.html:74 templates/invoice/edit.html:143
 #: templates/proposal/detail.html:58 templates/proposal/edit.html:204
 msgid "Detail rows"
 msgstr ""
 
-#: templates/invoice/detail.html:70
+#: templates/invoice/detail.html:82
 msgid "Balance payments"
 msgstr ""
 
-#: templates/invoice/detail.html:74 templates/proposal/detail.html:68
+#: templates/invoice/detail.html:86 templates/proposal/detail.html:68
 #: templates/proposal/detail_ajax.html:35
 msgid "Total price"
 msgstr ""
 
-#: templates/invoice/detail.html:82 templates/newsletter/email_users.html:35
+#: templates/invoice/detail.html:88
+msgid "VAT rate"
+msgstr ""
+
+#: templates/invoice/detail.html:97 templates/newsletter/email_users.html:35
 msgid "yes"
 msgstr ""
 
-#: templates/invoice/detail.html:82 templates/newsletter/email_users.html:35
+#: templates/invoice/detail.html:97 templates/newsletter/email_users.html:35
 msgid "no"
 msgstr ""
 
-#: templates/invoice/detail.html:93 templates/proposal/detail.html:85
+#: templates/invoice/detail.html:111 templates/proposal/detail.html:85
 #: templates/proposal/detail_ajax.html:52
 msgid "No rows"
 msgstr ""

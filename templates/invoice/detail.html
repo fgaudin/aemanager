@@ -3,7 +3,7 @@
 {% load modeltags %}
 {% load arithmetictags %}
 
-{% block title %}{% url customer_detail invoice.customer.id as customer_url %}{% blocktrans with invoice.customer as customer and customer_url as customer_url %}Invoice for <a href="{{ customer_url }}">{{ customer }}</a>{% endblocktrans %}{% endblock %}
+{% block title %}{% url contact_detail invoice.customer.id as customer_url %}{% blocktrans with invoice.customer as customer and customer_url as customer_url %}Invoice for <a href="{{ customer_url }}">{{ customer }}</a>{% endblocktrans %}{% endblock %}
 
 {% block context_menu %}
 <div><a href="{% url invoice_edit invoice.id %}">{% trans "Edit" %}</a></div>
@@ -25,15 +25,15 @@
       <label>{% trans "Amount excluding tax" %} :</label> {{ invoice.amount }}
       </div>
     </div>
-    {% if user.get_profile.vat_enabled %}
+    {% if user.get_profile.vat_number %}
     <div class="detail-row">
       <div>
-      <label>{% trans "VAT" %} :</label> {{ invoice.get_vat }}
+      <label>{% trans "VAT" %} :</label> {{ invoice.get_vat|floatformat:2 }}
       </div>
     </div>
     <div class="detail-row">
       <div>
-      <label>{% trans "Amount including tax" %} :</label> {{ invoice.amount_including_tax }}
+      <label>{% trans "Amount including tax" %} :</label> {{ invoice.amount_including_tax|floatformat:2 }}
       </div>
     </div>
     {% endif %}
@@ -84,7 +84,7 @@
                 <th>{% trans "Quantity" %}</th>
                 <th>{% trans "Unit price" %}</th>
                 <th>{% trans "Total price" %}</th>
-                {% if user.get_profile.vat_enabled %}
+                {% if user.get_profile.vat_number %}
                 <th>{% trans "VAT rate" %}</th>
                 {% endif %}
             </tr>
@@ -97,9 +97,9 @@
                 <td>{% if invoicerow.balance_payments %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}</td>
                 <td>{{ invoicerow.get_category_display }}</td>
                 <td>{{ invoicerow.quantity|floatformat }}</td>
-                <td>{{ invoicerow.unit_price|floatformat }}</td>
-                <td>{{ invoicerow.amount|floatformat }}</td>
-                {% if user.get_profile.vat_enabled %}
+                <td>{{ invoicerow.unit_price|floatformat:2 }}</td>
+                <td>{{ invoicerow.amount|floatformat:2 }}</td>
+                {% if user.get_profile.vat_number %}
                 <td>{{ invoicerow.vat_rate|default:'' }}</td>
                 {% endif %}
             </tr>
