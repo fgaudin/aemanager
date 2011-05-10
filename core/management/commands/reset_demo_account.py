@@ -10,7 +10,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 import datetime
 from project.models import Project, PROJECT_STATE_FINISHED, \
-    PROJECT_STATE_PROPOSAL_ACCEPTED, PROJECT_STATE_PROPOSAL_SENT, Proposal, \
+    PROJECT_STATE_PROPOSAL_ACCEPTED, Proposal, \
     PROPOSAL_STATE_DRAFT, PROPOSAL_STATE_BALANCED, ProposalRow, \
     ROW_CATEGORY_SERVICE, PROJECT_STATE_STARTED, PROPOSAL_STATE_ACCEPTED, \
     PROJECT_STATE_PROSPECT
@@ -19,13 +19,16 @@ from contact.models import Contact, CONTACT_TYPE_COMPANY, Address, PhoneNumber, 
 from accounts.models import InvoiceRow, Invoice, INVOICE_STATE_PAID, \
     PAYMENT_TYPE_CHECK, Expense, PAYMENT_TYPE_BANK_CARD, INVOICE_STATE_SENT, \
     INVOICE_STATE_EDITED
-from django.db import connection, transaction, connections, DEFAULT_DB_ALIAS, models
+from django.db import connection, transaction, models
 from django.core.management.color import no_style
 
 class Command(BaseCommand):
     help = "Reset data for demo account"
 
     def handle(self, *args, **options):
+        if not settings.DEMO:
+            self.stderr.write("Demo is set to False\n")
+
         for profile in UserProfile.objects.all():
             shutil.rmtree('%s%s' % (settings.FILE_UPLOAD_DIR,
                                     profile.uuid),
