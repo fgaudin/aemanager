@@ -271,6 +271,11 @@ class Invoice(OwnedObject):
         styleH.leading = 16
         styleH.borderPadding = (5,) * 4
 
+        styleCustomer = ParagraphStyle({})
+        styleCustomer.fontSize = 12
+        styleCustomer.leading = 14
+        styleCustomer.borderPadding = (5,) * 4
+
         styleTotal = ParagraphStyle({})
         styleTotal.fontSize = 14
         styleTotal.leading = 16
@@ -309,7 +314,7 @@ class Invoice(OwnedObject):
         %s<br/>
         %s %s<br/>
         %s<br/>
-        SIRET : %s<br/>
+        Siret : %s<br/>
         """ % (user.first_name,
                user.last_name,
                user.get_profile().address.street.replace("\n", "<br/>"),
@@ -319,6 +324,7 @@ class Invoice(OwnedObject):
                user.get_profile().company_id)
 
         customer_header_content = """
+        <br/><br/><br/><br/>
         %s<br/>
         %s<br/>
         %s %s<br/>
@@ -336,21 +342,14 @@ class Invoice(OwnedObject):
                                                      self.customer.address.city,
                                                      self.customer.address.country or '')
 
-        if self.customer.contact_type == CONTACT_TYPE_COMPANY \
-            and self.customer.company_id:
-            customer_header = "%sSIRET : %s<br/>" % (customer_header,
-                                                     self.customer.company_id)
-
-        customer_header = Paragraph(customer_header, styleH)
+        customer_header = Paragraph(customer_header, styleCustomer)
 
         data.append([user_header,
                     '',
                     customer_header])
 
-        t1 = Table(data, [3.5 * inch, 0.3 * inch, 3.5 * inch], [1.9 * inch])
-        table_style = [('BOX', (0, 0), (0, 0), 0.25, colors.black),
-                       ('BOX', (2, 0), (2, 0), 0.25, colors.black),
-                       ('VALIGN', (0, 0), (-1, -1), 'TOP'), ]
+        t1 = Table(data, [3.5 * inch, 0.7 * inch, 3.1 * inch], [1.9 * inch])
+        table_style = [('VALIGN', (0, 0), (-1, -1), 'TOP'), ]
         if user.get_profile().logo_file:
             table_style.append(('TOPPADDING', (0, 0), (0, 0), 0))
             table_style.append(('LEFTPADDING', (0, 0), (0, 0), 0))
@@ -366,7 +365,7 @@ class Invoice(OwnedObject):
         msg = u"Dispensé d'immatriculation au registre du commerce et des sociétés (RCS) et au répertoire des métiers (RM)"
         data.append([Paragraph(msg, styleN),
                     '',
-                    Paragraph(_("Date : %s") % (localize(self.edition_date)), styleH2)])
+                    Paragraph("<br/>" + _("Date : %s") % (localize(self.edition_date)), styleH2)])
 
         t2 = Table(data, [3.5 * inch, 0.3 * inch, 3.5 * inch], [0.7 * inch])
         t2.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP'), ]))

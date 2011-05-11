@@ -767,6 +767,12 @@ class InvoiceTest(TestCase):
         profile.iban_bban = 'FR76 1234 1234 1234 1234 1234 123'
         profile.bic = 'CCBPFRABCDE'
         profile.save()
+        customer_address = self.proposal.project.customer.address
+        customer_address.street = u"128 boulevard des champs élysées\nEspace ZAC du champs de mars\nBP 140"
+        customer_address.zipcode = '75001'
+        customer_address.city = 'Paris CEDEX 1'
+        customer_address.save()
+
         i = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
                                    invoice_id=1,
                                    state=INVOICE_STATE_EDITED,
@@ -799,7 +805,7 @@ class InvoiceTest(TestCase):
         content = response.content.split("\n")
         invariant_content = content[0:66] + content[67:110] + content[111:-1]
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
-                          "119afaaace168edcf2ddcc82297b4bfe")
+                          "6451df912dc90e90df3865f8e0ab8dea")
 
     def testInvoiceBookDownloadPdf(self):
         """
@@ -1397,6 +1403,12 @@ class InvoiceTest(TestCase):
         profile.bic = 'CCBPFRABCDE'
         profile.vat_number = 'FR010123456789123'
         profile.save()
+        customer_address = self.proposal.project.customer.address
+        customer_address.street = u"128 boulevard des champs élysées\nEspace ZAC du champs de mars\nBP 140"
+        customer_address.zipcode = '75001'
+        customer_address.city = 'Paris CEDEX 1'
+        customer_address.save()
+
         i = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
                                    invoice_id=1,
                                    state=INVOICE_STATE_EDITED,
@@ -1430,7 +1442,7 @@ class InvoiceTest(TestCase):
         content = response.content.split("\n")
         invariant_content = content[0:66] + content[67:110] + content[111:-1]
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
-                          "142188046b08a8c9f39868815fa7bd11")
+                          "0acee8461a531bcb58403f8775f0f041")
 
 class InvoiceBug106Test(TransactionTestCase):
     fixtures = ['test_users', 'test_contacts', 'test_projects']

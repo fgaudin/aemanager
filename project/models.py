@@ -281,6 +281,11 @@ class Proposal(OwnedObject):
         styleH.leading = 16
         styleH.borderPadding = (5,) * 4
 
+        styleCustomer = ParagraphStyle({})
+        styleCustomer.fontSize = 12
+        styleCustomer.leading = 14
+        styleCustomer.borderPadding = (5,) * 4
+
         styleTotal = ParagraphStyle({})
         styleTotal.fontSize = 14
         styleTotal.leading = 16
@@ -331,6 +336,7 @@ class Proposal(OwnedObject):
             user_header_content = "%s%s<br/>" % (user_header_content, user.get_profile().professional_email)
 
         customer_header_content = """
+        <br/><br/><br/><br/>
         %s<br/>
         %s<br/>
         %s %s<br/>
@@ -348,13 +354,11 @@ class Proposal(OwnedObject):
                                                          self.project.customer.address.street.replace("\n", "<br/>"),
                                                          self.project.customer.address.zipcode,
                                                          self.project.customer.address.city,
-                                                         self.project.customer.address.country or ''), styleH)])
+                                                         self.project.customer.address.country or ''), styleCustomer)])
 
-        t1 = Table(data, [3.5 * inch, 0.3 * inch, 3.5 * inch], [1.9 * inch])
+        t1 = Table(data, [3.5 * inch, 0.7 * inch, 3.1 * inch], [1.9 * inch])
 
-        table_style = [('BOX', (0, 0), (0, 0), 0.25, colors.black),
-                       ('BOX', (2, 0), (2, 0), 0.25, colors.black),
-                       ('VALIGN', (0, 0), (-1, -1), 'TOP'), ]
+        table_style = [('VALIGN', (0, 0), (-1, -1), 'TOP'), ]
 
         if user.get_profile().logo_file:
             table_style.append(('TOPPADDING', (0, 0), (0, 0), 0))
@@ -371,7 +375,7 @@ class Proposal(OwnedObject):
         msg = u"Dispensé d'immatriculation au registre du commerce et des sociétés (RCS) et au répertoire des métiers (RM)"
         data.append([Paragraph(msg, styleN),
                     '',
-                    Paragraph(_("Date : %s") % (localize(self.update_date)), styleH2)])
+                    Paragraph("<br/>" + _("Date : %s") % (localize(self.update_date)), styleH2)])
 
         t2 = Table(data, [3.5 * inch, 0.3 * inch, 3.5 * inch], [0.7 * inch])
         t2.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP'), ]))

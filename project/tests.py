@@ -1,3 +1,5 @@
+# coding=utf-8
+
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from project.models import Project, PROJECT_STATE_PROSPECT, \
@@ -763,6 +765,12 @@ class ProposalTest(TestCase):
         """
         Tests non-regression on pdf
         """
+        customer_address = Contact.objects.get(project=30).address
+        customer_address.street = u"128 boulevard des champs élysées\nEspace ZAC du champs de mars\nBP 140"
+        customer_address.zipcode = '75001'
+        customer_address.city = 'Paris CEDEX 1'
+        customer_address.save()
+
         p = Proposal.objects.create(project_id=30,
                                     update_date=datetime.date(2011, 2, 5),
                                     state=PROPOSAL_STATE_DRAFT,
@@ -789,7 +797,7 @@ class ProposalTest(TestCase):
         content = response.content.split("\n")
         invariant_content = content[0:66] + content[67:110] + content[111:-1]
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
-                          "f6bb40291f0055da0922836979ca998f")
+                          "fd21d1234e423b1c48be79f2a6135509")
 
     def testContractDownloadPdf(self):
         """
