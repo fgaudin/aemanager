@@ -5,7 +5,8 @@ from project.models import Project, PROJECT_STATE_PROSPECT, \
     PROJECT_STATE_PROPOSAL_ACCEPTED, PROJECT_STATE_STARTED, \
     PROJECT_STATE_FINISHED, Proposal, PROPOSAL_STATE_DRAFT, ROW_CATEGORY_SERVICE, \
     PROPOSAL_STATE_SENT, ROW_CATEGORY_PRODUCT, ProposalRow, \
-    ProposalAmountError, Contract, PAYMENT_DELAY_30_DAYS
+    ProposalAmountError, Contract, PAYMENT_DELAY_30_DAYS, PAYMENT_DELAY_OTHER, \
+    PAYMENT_DELAY_TYPE_OTHER_END_OF_MONTH
 from accounts.models import Invoice, InvoiceRow, INVOICE_STATE_EDITED, \
     PAYMENT_TYPE_CHECK
 from contact.models import Contact, Address, Country
@@ -907,6 +908,61 @@ class ProposalTest(TestCase):
 
         response = self.client.get(reverse('proposal_download', kwargs={'id': p.id}))
         self.assertEqual(response.status_code, 200)
+
+    def testBug226(self):
+        """
+        No control on payment delay extra fields if "other"
+        """
+        response = self.client.post(reverse('proposal_add', kwargs={'project_id': 30}),
+                                    {'proposal-state': PROPOSAL_STATE_DRAFT,
+                                     'proposal-begin_date': '2010-8-1',
+                                     'proposal-end_date': '2010-8-15',
+                                     'proposal-payment_delay': PAYMENT_DELAY_OTHER,
+                                     'proposal-payment_delay_other': 10,
+                                     'proposal-contract_content': 'Content of contract',
+                                     'proposal_rows-TOTAL_FORMS': 1,
+                                     'proposal_rows-INITIAL_FORMS': 0,
+                                     'proposal_rows-0-ownedobject_ptr': '',
+                                     'proposal_rows-0-label': 'Day of work',
+                                     'proposal_rows-0-category': ROW_CATEGORY_SERVICE,
+                                     'proposal_rows-0-quantity': 10,
+                                     'proposal_rows-0-unit_price': 200.50 })
+        self.assertEquals(response.status_code, 200)
+        self.assertTrue('payment_delay' in response.context['proposalForm'].errors)
+
+        response = self.client.post(reverse('proposal_add', kwargs={'project_id': 30}),
+                                    {'proposal-state': PROPOSAL_STATE_DRAFT,
+                                     'proposal-begin_date': '2010-8-1',
+                                     'proposal-end_date': '2010-8-15',
+                                     'proposal-payment_delay': PAYMENT_DELAY_OTHER,
+                                     'proposal-payment_delay_type_other': PAYMENT_DELAY_TYPE_OTHER_END_OF_MONTH,
+                                     'proposal-contract_content': 'Content of contract',
+                                     'proposal_rows-TOTAL_FORMS': 1,
+                                     'proposal_rows-INITIAL_FORMS': 0,
+                                     'proposal_rows-0-ownedobject_ptr': '',
+                                     'proposal_rows-0-label': 'Day of work',
+                                     'proposal_rows-0-category': ROW_CATEGORY_SERVICE,
+                                     'proposal_rows-0-quantity': 10,
+                                     'proposal_rows-0-unit_price': 200.50 })
+        self.assertEquals(response.status_code, 200)
+        self.assertTrue('payment_delay' in response.context['proposalForm'].errors)
+
+        response = self.client.post(reverse('proposal_add', kwargs={'project_id': 30}),
+                                    {'proposal-state': PROPOSAL_STATE_DRAFT,
+                                     'proposal-begin_date': '2010-8-1',
+                                     'proposal-end_date': '2010-8-15',
+                                     'proposal-payment_delay': PAYMENT_DELAY_OTHER,
+                                     'proposal-payment_delay_other': 10,
+                                     'proposal-payment_delay_type_other': PAYMENT_DELAY_TYPE_OTHER_END_OF_MONTH,
+                                     'proposal-contract_content': 'Content of contract',
+                                     'proposal_rows-TOTAL_FORMS': 1,
+                                     'proposal_rows-INITIAL_FORMS': 0,
+                                     'proposal_rows-0-ownedobject_ptr': '',
+                                     'proposal_rows-0-label': 'Day of work',
+                                     'proposal_rows-0-category': ROW_CATEGORY_SERVICE,
+                                     'proposal_rows-0-quantity': 10,
+                                     'proposal_rows-0-unit_price': 200.50 })
+        self.assertEquals(response.status_code, 302)
 
 class Bug31Test(TestCase):
     fixtures = ['test_dashboard_product_sales']
