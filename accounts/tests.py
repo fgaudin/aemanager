@@ -360,18 +360,25 @@ class InvoiceTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['invoiceForm'].initial['execution_begin_date'], datetime.date(2010, 8, 1))
         self.assertEqual(response.context['invoiceForm'].initial['execution_end_date'], datetime.date(2010, 8, 15))
-        self.assertEqual(response.context['invoicerowformset'].forms[0].initial, {'category': 1,
-                                                                                 'balance_payments': True,
-                                                                                 'unit_price': Decimal('150.00'),
-                                                                                 'label': u'Discount',
-                                                                                 'proposal': self.proposal,
-                                                                                 'quantity': Decimal('3.0')})
-        self.assertEqual(response.context['invoicerowformset'].forms[1].initial, {'category': 1,
-                                                                                 'balance_payments': True,
-                                                                                 'unit_price': Decimal('100.00'),
-                                                                                 'label': u'Day of work',
-                                                                                 'proposal': self.proposal,
-                                                                                 'quantity': Decimal('12.0')})
+        expected_row1 = {'category': 1,
+                         'balance_payments': True,
+                         'unit_price': Decimal('150.00'),
+                         'label': u'Discount',
+                         'proposal': self.proposal,
+                         'quantity': Decimal('3.0')}
+        expected_row2 = {'category': 1,
+                         'balance_payments': True,
+                         'unit_price': Decimal('100.00'),
+                         'label': u'Day of work',
+                         'proposal': self.proposal,
+                         'quantity': Decimal('12.0')}
+
+        row1 = response.context['invoicerowformset'].forms[0].initial
+        row2 = response.context['invoicerowformset'].forms[1].initial
+
+        verification = (expected_row1 == row1 and expected_row2 == row2) or \
+                       (expected_row1 == row2 and expected_row2 == row1)
+        self.assertTrue(verification)
 
     def testGetEdit(self):
         """
