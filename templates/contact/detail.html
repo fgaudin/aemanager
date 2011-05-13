@@ -29,7 +29,14 @@
       <div class="inline-formset">{{ phonenumber.get_type_display }} : {{ phonenumber.number }}</div>
       {% endfor %}
     </div>
-
+    {% if contact.is_company %}
+    {% with contact as object %}{% with "representative" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}{% endwith %}
+    {% with contact as object %}{% with "representative_function" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}{% endwith %}
+    {% endif %}
     <div class="detail-row">
       <div><label>{{ contact|verbose_name:"contacts" }} :</label>
       {% for contact in contact.contacts.all %}

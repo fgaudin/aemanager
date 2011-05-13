@@ -48,6 +48,9 @@ class Contact(OwnedObject):
             name = "%s %s" % (name, self.firstname)
         return name
 
+    def is_company(self):
+        return self.contact_type == CONTACT_TYPE_COMPANY
+
     def default_phonenumber(self):
         default_phonenumber = self.phonenumber_set.filter(default=True)
         if len(default_phonenumber):
