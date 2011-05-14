@@ -9,7 +9,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
 
         # Adding field 'InvoiceRow.vat_rate'
-        db.add_column('accounts_invoicerow', 'vat_rate', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=4, decimal_places=2, blank=True), keep_default=False)
+        db.add_column('accounts_invoicerow', 'vat_rate', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=4, decimal_places=1, blank=True), keep_default=False)
 
 
     def backwards(self, orm):
@@ -57,7 +57,7 @@ class Migration(SchemaMigration):
             'proposal': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'invoice_rows'", 'to': "orm['project.Proposal']"}),
             'quantity': ('django.db.models.fields.DecimalField', [], {'max_digits': '5', 'decimal_places': '1'}),
             'unit_price': ('django.db.models.fields.DecimalField', [], {'max_digits': '12', 'decimal_places': '2'}),
-            'vat_rate': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '4', 'decimal_places': '2', 'blank': 'True'})
+            'vat_rate': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '4', 'decimal_places': '1', 'blank': 'True'})
         },
         'auth.group': {
             'Meta': {'object_name': 'Group'},

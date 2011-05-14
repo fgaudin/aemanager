@@ -66,6 +66,9 @@
                 <th>{% trans "Quantity" %}</th>
                 <th>{% trans "Unit price" %}</th>
                 <th>{% trans "Total price" %}</th>
+                {% if user.get_profile.vat_number %}
+                <th>{% trans "VAT rate" %}</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -76,6 +79,9 @@
                 <td>{{ proposalrow.quantity|floatformat }}</td>
                 <td>{{ proposalrow.unit_price|floatformat }}</td>
                 <td>{{ proposalrow.unit_price|multiply:proposalrow.quantity|floatformat }}</td>
+                {% if user.get_profile.vat_number %}
+                <td>{{ proposalrow.vat_rate|default:'' }}</td>
+                {% endif %}
             </tr>
         {% endfor %}
         </tbody>
@@ -114,7 +120,7 @@
 <br />
 
 <fieldset class="module aligned">
-	{% with proposal as object %}{% with "contract_file" as name %}
+    {% with proposal as object %}{% with "contract_file" as name %}
     <div class="detail-row">
       <div><label>{{ object|verbose_name:name }} :</label>{% if object.contract_file %} <a href="{% url proposal_uploaded_contract_download proposal.id %}">{{ object.contract_file.name|basename|default:'' }}</a>{% endif %}
       </div>

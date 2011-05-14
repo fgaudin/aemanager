@@ -8,7 +8,7 @@ from project.models import Project, PROJECT_STATE_PROSPECT, \
     PROJECT_STATE_FINISHED, Proposal, PROPOSAL_STATE_DRAFT, ROW_CATEGORY_SERVICE, \
     PROPOSAL_STATE_SENT, ROW_CATEGORY_PRODUCT, ProposalRow, \
     ProposalAmountError, Contract, PAYMENT_DELAY_30_DAYS, PAYMENT_DELAY_OTHER, \
-    PAYMENT_DELAY_TYPE_OTHER_END_OF_MONTH
+    PAYMENT_DELAY_TYPE_OTHER_END_OF_MONTH, VAT_RATES_19_6
 from accounts.models import Invoice, InvoiceRow, INVOICE_STATE_EDITED, \
     PAYMENT_TYPE_CHECK
 from contact.models import Contact, Address, Country
@@ -798,7 +798,7 @@ class ProposalTest(TestCase):
         content = response.content.split("\n")
         invariant_content = content[0:66] + content[67:110] + content[111:-1]
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
-                          "fd21d1234e423b1c48be79f2a6135509")
+                          "1cf71b609bd3b39291bc6663af5014b5")
 
     def testContractDownloadPdf(self):
         """
@@ -971,6 +971,48 @@ class ProposalTest(TestCase):
                                      'proposal_rows-0-quantity': 10,
                                      'proposal_rows-0-unit_price': 200.50 })
         self.assertEquals(response.status_code, 302)
+
+    def testDownloadPdfWithVat(self):
+        """
+        Tests non-regression on pdf with vat enabled
+        """
+        profile = User.objects.get(pk=1).get_profile()
+        profile.vat_number = 'FR010123456789123'
+        profile.save()
+        customer_address = Contact.objects.get(project=30).address
+        customer_address.street = u"128 boulevard des champs élysées\nEspace ZAC du champs de mars\nBP 140"
+        customer_address.zipcode = '75001'
+        customer_address.city = 'Paris CEDEX 1'
+        customer_address.save()
+
+        p = Proposal.objects.create(project_id=30,
+                                    update_date=datetime.date(2011, 2, 5),
+                                    state=PROPOSAL_STATE_DRAFT,
+                                    begin_date=datetime.date(2010, 8, 1),
+                                    end_date=datetime.date(2010, 8, 15),
+                                    contract_content='Content of contract',
+                                    amount=1000,
+                                    reference='XXX',
+                                    expiration_date=datetime.date(2010, 8, 2),
+                                    owner_id=1)
+
+        p_row = ProposalRow.objects.create(proposal_id=p.id,
+                                           label='Day of work',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           quantity=10,
+                                           unit_price='100',
+                                           vat_rate=VAT_RATES_19_6,
+                                           owner_id=1)
+
+        response = self.client.get(reverse('proposal_download', kwargs={'id': p.id}))
+        self.assertEqual(response.status_code, 200)
+        f = open('/tmp/proposalVat.pdf', 'w')
+        f.write(response.content)
+        f.close()
+        content = response.content.split("\n")
+        invariant_content = content[0:66] + content[67:110] + content[111:-1]
+        self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
+                          "6fd59f103a1f3379c26467bcfa12e212")
 
 class Bug31Test(TestCase):
     fixtures = ['test_dashboard_product_sales']

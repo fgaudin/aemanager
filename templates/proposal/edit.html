@@ -210,7 +210,8 @@ jQuery(document).ready(function(){
             {{ form.category.errors|format_errors:form.category.label }}
             {{ form.quantity.errors|format_errors:form.quantity.label }}
             {{ form.unit_price.errors|format_errors:form.unit_price.label }}
-            {{ form.ownedobject_ptr }}<span class="inline-label">{{ form.label.label }} : </span>{{ form.label }} {{ form.category }} <span class="inline-label">{{ form.quantity.label }} : </span>{{ form.quantity }} <span class="inline-label">{{ form.unit_price.label }} : </span>{{ form.unit_price }} <a href="#" class="delete-button"><img src="{{ MEDIA_URL }}img/icon_deletelink.gif" /></a><span class="delete-checkbox">{{ form.DELETE }}</span>
+            {{ form.vat_rate.errors|format_errors:form.vat_rate.label }}
+            {{ form.ownedobject_ptr }}<span class="inline-label">{{ form.label.label }} : </span>{{ form.label }} {{ form.category }} <span class="inline-label">{{ form.quantity.label }} : </span>{{ form.quantity }} <span class="inline-label">{{ form.unit_price.label }} : </span>{{ form.unit_price }} {% if user.get_profile.vat_number %} {{ form.vat_rate }}{% endif %}<a href="#" class="delete-button"><img src="{{ MEDIA_URL }}img/icon_deletelink.gif" /></a><span class="delete-checkbox">{{ form.DELETE }}</span>
         </div>
     {% endfor %}
         <div class="inline-formset">

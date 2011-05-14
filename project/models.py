@@ -257,16 +257,19 @@ class Proposal(OwnedObject):
             canvas.saveState()
             canvas.setFont('Times-Roman', 10)
             PAGE_WIDTH = defaultPageSize[0]
-            footer_text = "%s %s - SIRET : %s - %s, %s %s" % (user.first_name,
-                                                              user.last_name,
-                                                              user.get_profile().company_id,
-                                                              user.get_profile().address.street.replace("\n", ", ").replace("\r", ""),
-                                                              user.get_profile().address.zipcode,
-                                                              user.get_profile().address.city)
+            footer_text = "%s %s - %s, %s %s" % (user.first_name,
+                                                 user.last_name,
+                                                 user.get_profile().address.street.replace("\n", ", ").replace("\r", ""),
+                                                 user.get_profile().address.zipcode,
+                                                 user.get_profile().address.city)
             if user.get_profile().address.country:
                 footer_text = footer_text + u", %s" % (user.get_profile().address.country)
 
             canvas.drawCentredString(PAGE_WIDTH / 2.0, 0.5 * inch, footer_text)
+            extra_info = u"SIRET : %s" % (user.get_profile().company_id)
+            if user.get_profile().vat_number:
+                extra_info = u"%s - N° TVA : %s" % (extra_info, user.get_profile().vat_number)
+            canvas.drawCentredString(PAGE_WIDTH / 2.0, 0.35 * inch, extra_info)
             canvas.restoreState()
 
         filename = ugettext('proposal_%(id)d.pdf') % {'id': self.id}
@@ -390,11 +393,15 @@ class Proposal(OwnedObject):
         spacer3 = Spacer(doc.width, 0.1 * inch)
         story.append(spacer3)
 
-        # invoice row list
-        data = [[ugettext('Label'), ugettext('Quantity'), ugettext('Unit price'), ugettext('Total')]]
+        # proposal row list
         rows = self.proposal_rows.all()
         extra_rows = 0
-        label_width = 4.6 * inch
+        data = [[ugettext('Label'), ugettext('Quantity'), ugettext('Unit price'), ugettext('Total excl tax')]]
+        if user.get_profile().vat_number:
+            data[0].append(ugettext('VAT'))
+            label_width = 4.0 * inch
+        else:
+            label_width = 4.5 * inch
         for row in rows:
             para = Paragraph(row.label, styleLabel)
             para.width = label_width
@@ -406,10 +413,16 @@ class Proposal(OwnedObject):
             unit_price = unit_price.quantize(Decimal(1)) if unit_price == unit_price.to_integral() else unit_price.normalize()
             total = row.quantity * row.unit_price
             total = total.quantize(Decimal(1)) if total == total.to_integral() else total.normalize()
-            data.append([label, localize(quantity), "%s %s" % (localize(unit_price), "€".decode('utf-8')), "%s %s" % (localize(total), "€".decode('utf-8'))])
+            data_row = [label, localize(quantity), "%s %s" % (localize(unit_price), "€".decode('utf-8')), "%s %s" % (localize(total), "€".decode('utf-8'))]
+            if user.get_profile().vat_number:
+                data_row.append("%s%%" % (localize(row.vat_rate)))
+            data.append(data_row)
             for extra_row in splitted_para.lines[1:]:
                 label = " ".join(extra_row[1])
-                data.append([label, '', '', ''])
+                if user.get_profile().vat_number:
+                    data.append([label, '', '', '', ''])
+                else:
+                    data.append([label, '', '', ''])
                 extra_rows = extra_rows + 1
 
         row_count = len(rows) + extra_rows
@@ -424,19 +437,28 @@ class Proposal(OwnedObject):
                 max_row_count = max_row_count + normal_page_count
 
         for i in range(max_row_count - row_count):
-            data.append(['', '', '', ''])
+            if user.get_profile().vat_number:
+                data.append(['', '', '', '', ''])
+            else:
+                data.append(['', '', '', ''])
 
-        row_table = Table(data, [4.7 * inch, 0.8 * inch, 0.9 * inch, 0.8 * inch], (max_row_count + 1) * [0.3 * inch])
-        row_table.setStyle(TableStyle([('ALIGN', (0, 0), (-1, 0), 'CENTER'),
-                                       ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
-                                       ('FONT', (0, 0), (-1, 0), 'Times-Bold'),
-                                       ('BOX', (0, 0), (-1, 0), 0.25, colors.black),
-                                       ('INNERGRID', (0, 0), (-1, 0), 0.25, colors.black),
-                                       ('BOX', (0, 1), (0, -1), 0.25, colors.black),
-                                       ('BOX', (1, 1), (1, -1), 0.25, colors.black),
-                                       ('BOX', (2, 1), (2, -1), 0.25, colors.black),
-                                       ('BOX', (3, 1), (3, -1), 0.25, colors.black),
-                                       ]))
+        if user.get_profile().vat_number:
+            row_table = Table(data, [4.2 * inch, 0.8 * inch, 0.9 * inch, 0.8 * inch, 0.5 * inch], (max_row_count + 1) * [0.3 * inch])
+        else:
+            row_table = Table(data, [4.7 * inch, 0.8 * inch, 0.9 * inch, 0.8 * inch], (max_row_count + 1) * [0.3 * inch])
+        row_style = [('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+                     ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
+                     ('FONT', (0, 0), (-1, 0), 'Times-Bold'),
+                     ('BOX', (0, 0), (-1, 0), 0.25, colors.black),
+                     ('INNERGRID', (0, 0), (-1, 0), 0.25, colors.black),
+                     ('BOX', (0, 1), (0, -1), 0.25, colors.black),
+                     ('BOX', (1, 1), (1, -1), 0.25, colors.black),
+                     ('BOX', (2, 1), (2, -1), 0.25, colors.black),
+                     ('BOX', (3, 1), (3, -1), 0.25, colors.black)]
+        if user.get_profile().vat_number:
+            row_style.append(('BOX', (4, 1), (4, -1), 0.25, colors.black))
+
+        row_table.setStyle(TableStyle(row_style))
 
         story.append(row_table)
 
@@ -445,12 +467,39 @@ class Proposal(OwnedObject):
         proposal_amount = self.amount
         proposal_amount = proposal_amount.quantize(Decimal(1)) if proposal_amount == proposal_amount.to_integral() else proposal_amount.normalize()
 
+        if user.get_profile().vat_number:
+            right_block = [Paragraph(_("Total excl tax : %(amount)s %(currency)s") % {'amount': localize(proposal_amount), 'currency' : "€".decode('utf-8')}, styleN)]
+            vat_amounts = {}
+            for row in rows:
+                vat_rate = row.vat_rate
+                vat_amount = row.amount * vat_rate / 100
+                if vat_rate in vat_amounts:
+                    vat_amounts[vat_rate] = vat_amounts[vat_rate] + vat_amount
+                else:
+                    vat_amounts[vat_rate] = vat_amount
+            for vat_rate, vat_amount in vat_amounts.items():
+                vat_amount = round(vat_amount, 2)
+                #vat_amount = vat_amount.quantize(Decimal(1)) if vat_amount == vat_amount.to_integral() else vat_amount.normalize()
+                right_block.append(Paragraph(_("VAT %(vat_rate)s%% : %(vat_amount)s %(currency)s") % {'vat_rate': localize(vat_rate),
+                                                                                                      'vat_amount': localize(vat_amount),
+                                                                                                      'currency' : "€".decode('utf-8')},
+                                             styleN))
+
+            incl_tax_amount = proposal_amount + sum(vat_amounts.values())
+            #incl_tax_amount = incl_tax_amount.quantize(Decimal(1)) if incl_tax_amount == incl_tax_amount.to_integral() else incl_tax_amount.normalize()
+            incl_tax_amount = round(incl_tax_amount, 2)
+            right_block.append(Spacer(1, 0.25 * inch))
+            right_block.append(Paragraph(_("TOTAL incl tax : %(amount)s %(currency)s") % {'amount': localize(incl_tax_amount), 'currency' : "€".decode('utf-8')}, styleTotal))
+        else:
+            right_block = [Paragraph(_("TOTAL excl tax : %(amount)s %(currency)s") % {'amount': localize(proposal_amount), 'currency' : "€".decode('utf-8')}, styleTotal),
+                           Spacer(1, 0.25 * inch),
+                           Paragraph(u"TVA non applicable, art. 293 B du CGI", styleN)]
+
+
         data = [[[Paragraph(_("Proposal valid through : %s") % (localize(self.expiration_date) or ''), styleN),
                   Paragraph(_("Payment delay : %s") % (self.get_payment_delay()), styleN)],
                 '',
-                [Paragraph(_("TOTAL excl. VAT : %(amount)s %(currency)s") % {'amount': localize(proposal_amount), 'currency' : "€".decode('utf-8')}, styleTotal),
-                 Spacer(1, 0.25 * inch),
-                 Paragraph(u"TVA non applicable, art. 293 B du CGI", styleN)]], ]
+                right_block], ]
 
         if self.begin_date and self.end_date:
             data[0][0].append(Paragraph(_("Execution dates : %(begin_date)s to %(end_date)s") % {'begin_date': localize(self.begin_date), 'end_date' : localize(self.end_date)}, styleN))
@@ -544,12 +593,20 @@ ROW_CATEGORY_PRODUCT = 2
 ROW_CATEGORY = ((ROW_CATEGORY_SERVICE, _('Service')),
                 (ROW_CATEGORY_PRODUCT, _('Product')))
 
+VAT_RATES_19_6 = Decimal('19.6')
+VAT_RATES_5_5 = Decimal('5.5')
+VAT_RATES_2_1 = Decimal('2.1')
+VAT_RATES = ((VAT_RATES_19_6, _('%s%%') % (localize(VAT_RATES_19_6))),
+             (VAT_RATES_5_5, _('%s%%') % (localize(VAT_RATES_5_5))),
+             (VAT_RATES_2_1, _('%s%%') % (localize(VAT_RATES_2_1))),)
+
 class Row(OwnedObject):
     label = models.CharField(max_length=255, verbose_name=_('Label'))
     category = models.IntegerField(choices=ROW_CATEGORY, verbose_name=_('Category'))
     quantity = models.DecimalField(max_digits=5, decimal_places=1, verbose_name=_('Quantity'))
     unit_price = models.DecimalField(max_digits=12, decimal_places=2, verbose_name=_('Unit price'))
     amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True, verbose_name=_('Amount'))
+    vat_rate = models.DecimalField(choices=VAT_RATES, decimal_places=1, max_digits=4, verbose_name=_('Vat'), blank=True, null=True)
 
     class Meta:
         abstract = True

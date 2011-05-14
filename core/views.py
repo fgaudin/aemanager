@@ -13,13 +13,13 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils import simplejson
 from accounts.models import Expense, Invoice, INVOICE_STATE_PAID, \
-    PAYMENT_TYPE_BANK_CARD, InvoiceRow, VAT_RATES_19_6
+    PAYMENT_TYPE_BANK_CARD, InvoiceRow
 from core.decorators import settings_required, disabled_for_demo
 from autoentrepreneur.models import AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC, \
     Subscription, SUBSCRIPTION_STATE_NOT_PAID, SUBSCRIPTION_STATE_PAID, \
     SUBSCRIPTION_STATE_TRIAL, UserProfile
 from project.models import Proposal, Project, PROJECT_STATE_FINISHED, \
-    PROPOSAL_STATE_BALANCED, ROW_CATEGORY_SERVICE, ProposalRow
+    PROPOSAL_STATE_BALANCED, ROW_CATEGORY_SERVICE, ProposalRow, VAT_RATES_19_6
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from autoentrepreneur.decorators import subscription_required

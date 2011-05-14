@@ -515,18 +515,10 @@ class Invoice(OwnedObject):
 class InvoiceRowAmountError(Exception):
     pass
 
-VAT_RATES_19_6 = Decimal('19.6')
-VAT_RATES_5_5 = Decimal('5.5')
-VAT_RATES_2_1 = Decimal('2.1')
-VAT_RATES = ((VAT_RATES_19_6, _('%s%%') % (localize(VAT_RATES_19_6))),
-             (VAT_RATES_5_5, _('%s%%') % (localize(VAT_RATES_5_5))),
-             (VAT_RATES_2_1, _('%s%%') % (localize(VAT_RATES_2_1))),)
-
 class InvoiceRow(Row):
     invoice = models.ForeignKey(Invoice, related_name="invoice_rows")
     proposal = models.ForeignKey(Proposal, related_name="invoice_rows", verbose_name=_('Proposal'))
     balance_payments = models.BooleanField(verbose_name=_('Balance payments for the proposal'), help_text=_('"Balancing payments for the proposal" means there will be no future invoices for the selected proposal. Thus the amount remaining to invoice for this proposal will fall to zero and its state will be set to "balanced" when all invoices are paid.'))
-    vat_rate = models.DecimalField(choices=VAT_RATES, decimal_places=1, max_digits=4, verbose_name=_('Vat'), blank=True, null=True)
 
     class Meta:
         ordering = ['id']

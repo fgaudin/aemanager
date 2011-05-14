@@ -10,10 +10,10 @@ from django.utils import simplejson
 from django.utils.formats import localize
 from project.models import Proposal, PROPOSAL_STATE_DRAFT, ROW_CATEGORY_SERVICE, \
     ROW_CATEGORY_PRODUCT, PROPOSAL_STATE_BALANCED, PROPOSAL_STATE_ACCEPTED, \
-    ProposalRow
+    ProposalRow, VAT_RATES_19_6
 from accounts.models import INVOICE_STATE_EDITED, Invoice, InvoiceRow, \
     INVOICE_STATE_SENT, InvoiceRowAmountError, PAYMENT_TYPE_CHECK, \
-    PAYMENT_TYPE_CASH, Expense, INVOICE_STATE_PAID, VAT_RATES_19_6
+    PAYMENT_TYPE_CASH, Expense, INVOICE_STATE_PAID
 from contact.models import Country
 from autoentrepreneur.models import UserProfile
 
