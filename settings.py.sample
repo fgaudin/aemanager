@@ -128,6 +128,7 @@ INSTALLED_APPS = (
     'core',
     'faq',
     'newsletter',
+    'notification',
     'project',
 )
 

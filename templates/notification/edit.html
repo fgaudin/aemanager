@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<form action="" method="post" id="notification-edit-form">
+    {% csrf_token %}
+    <fieldset class="module aligned">
+    {% include "form.html" %}
+    </fieldset>
+
+    <div class="submit-row">
+    <input class="default" type="submit" name="action" value="{% trans "Save" %}" />
+    </div>
+</form>
+{% endblock %}

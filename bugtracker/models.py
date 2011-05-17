@@ -51,12 +51,14 @@ class Issue(models.Model):
         return self.state == ISSUE_STATE_CLOSED
 
     def emails_to_notify(self):
-        if self.owner:
+        if self.owner and self.owner.notification.notify_bug_comments:
             emails = [self.owner.email]
         else:
             emails = []
-        emails = emails + list(self.comment_set.exclude(owner=None).values_list('owner__email',
-                                                                                flat=True).order_by().distinct())
+        emails = emails + list(self.comment_set\
+                                   .filter(owner__notification__notify_bug_comments=True)\
+                                   .exclude(owner=None).values_list('owner__email',
+                                                                    flat=True).order_by().distinct())
         return list(set(emails))
 
     def external_url(self):

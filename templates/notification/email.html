@@ -1,0 +1,13 @@
+Vous avez des factures en attente d'une action de votre part.
+{% if late_invoices %}
+Le paiement des factures suivantes est en retard. Soit vous avez reçu le paiement et vous avez oublié de les mettre à jour, soit vous devriez relancer vos clients :
+
+{% for invoice in late_invoices %} - Facture {{ invoice.invoice_id }} à {{ invoice.customer }} (date de paiement : {{ invoice.payment_date|date:"d/m/Y" }})
+{% endfor %}{% endif %}
+{% if invoices_to_send %}La date d'édition des factures suivantes est dépassée et elles n'ont toujours pas le statut "envoyée". Soit vous avez oublié de les mettre à jour, soit vous devriez les envoyer à vos clients :
+
+{% for invoice in invoices_to_send %} - Facture {{ invoice.invoice_id }} à {{ invoice.customer }} (date d'édition : {{ invoice.edition_date|date:"d/m/Y" }})
+{% endfor %}{% endif %}
+Rendez vous sur votre tableau de bord pour voir et modifier ces factures : https://{{ site }}{% url index %}
+
+Pour modifier vos paramètres de notification : https://{{ site }}{% url notification_edit %}

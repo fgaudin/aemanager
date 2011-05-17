@@ -36,6 +36,26 @@
         }
     },
     {
+        "pk": 1,
+        "model": "notification.notification",
+        "fields": {
+            "notify_invoices_to_send": true,
+            "user": 1,
+            "notify_bug_comments": true,
+            "notify_late_invoices": true
+        }
+    },
+    {
+        "pk": 2,
+        "model": "notification.notification",
+        "fields": {
+            "notify_invoices_to_send": true,
+            "user": 2,
+            "notify_bug_comments": true,
+            "notify_late_invoices": true
+        }
+    },
+    {
         "pk": 200,
         "model": "core.ownedobject",
         "fields": {
@@ -115,7 +135,7 @@
             "freeing_tax_payment": false,
             "user": 1,
             "activity": 4,
-			"professional_category": 3,
+            "professional_category": 3,
             "creation_date": "2010-01-01",
             "company_name": ""
         }
@@ -131,7 +151,7 @@
             "freeing_tax_payment": false,
             "user": 2,
             "activity": 4,
-			"professional_category": 3,
+            "professional_category": 3,
             "creation_date": "2010-01-01",
             "company_name": ""
         }

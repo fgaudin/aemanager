@@ -96,10 +96,22 @@ class InvoiceManager(models.Manager):
                                     owner=owner)
         return late_invoices
 
+    def get_late_invoices_for_notification(self):
+        late_invoices = self.filter(state=INVOICE_STATE_SENT,
+                                    payment_date__lt=datetime.date.today(),
+                                    owner__notification__notify_late_invoices=True)
+        return late_invoices
+
     def get_invoices_to_send(self, owner):
         invoices_to_send = self.filter(state=INVOICE_STATE_EDITED,
                                        edition_date__lte=datetime.date.today(),
                                        owner=owner)
+        return invoices_to_send
+
+    def get_invoices_to_send_for_notification(self):
+        invoices_to_send = self.filter(state=INVOICE_STATE_EDITED,
+                                       edition_date__lte=datetime.date.today(),
+                                       owner__notification__notify_invoices_to_send=True)
         return invoices_to_send
 
     def get_paid_sales_for_period(self, owner, begin_date, end_date):

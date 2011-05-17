@@ -18,6 +18,7 @@ from django.core.files.storage import FileSystemStorage
 import unicodedata
 from accounts.models import Invoice
 from django.db.models.expressions import F
+from notification.models import Notification
 
 AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC = 1
 AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC = 2
@@ -468,6 +469,9 @@ class UserProfile(models.Model):
 
 def user_post_save(sender, instance, created, **kwargs):
     if created and not kwargs.get('raw', False):
+        notification = Notification()
+        notification.user = instance
+        notification.save()
         address = Address()
         address.save(user=instance)
         profile = UserProfile()
