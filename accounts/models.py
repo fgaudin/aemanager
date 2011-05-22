@@ -62,12 +62,13 @@ class InvoiceManager(models.Manager):
     def get_next_invoice_id(self, owner):
         return (Invoice.objects.filter(owner=owner).aggregate(invoice_id=Max('invoice_id'))['invoice_id'] or 0) + 1
 
-    def get_paid_sales(self, owner, year=None):
-        if not year:
-            year = datetime.date.today().year
+    def get_paid_sales(self, owner, reference_date=None):
+        if not reference_date:
+            reference_date = datetime.date.today()
         amount_sum = self.filter(state=INVOICE_STATE_PAID,
                                  owner=owner,
-                                 paid_date__year=year).aggregate(sales=Sum('amount'))
+                                 paid_date__lte=reference_date,
+                                 paid_date__year=reference_date.year).aggregate(sales=Sum('amount'))
         return amount_sum['sales'] or 0
 
     def get_paid_service_sales(self, owner, year=None):

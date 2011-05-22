@@ -6,10 +6,9 @@ import autoentrepreneur
 import accounts
 import core.views
 from autoentrepreneur.models import AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_LIBERAL, \
-    Subscription, SUBSCRIPTION_STATE_PAID, SUBSCRIPTION_STATE_FREE
+    Subscription, SUBSCRIPTION_STATE_PAID, SUBSCRIPTION_STATE_FREE, UserProfile
 import datetime
 from registration.models import RegistrationProfile
-accounts.models.datetime = datetimestub.DatetimeStub()
 from django.test import TestCase
 from core.models import OwnedObject
 from django.contrib.auth.models import User
@@ -88,8 +87,15 @@ class DashboardTest(TestCase):
     fixtures = ['test_dashboard']
 
     def setUp(self):
-        autoentrepreneur.models.datetime = datetimestub.DatetimeStub()
         self.client.login(username='test', password='test')
+        autoentrepreneur.models.datetime = datetimestub.DatetimeStub()
+        accounts.models.datetime = datetimestub.DatetimeStub()
+        core.views.datetime = datetimestub.DatetimeStub()
+
+    def tearDown(self):
+        autoentrepreneur.models.datetime = datetime
+        accounts.models.datetime = datetime
+        core.views.datetime = datetime
 
     def testGetDashBoard(self):
         """
@@ -286,15 +292,17 @@ class DashboardProductActivityTest(TestCase):
 
     def setUp(self):
         autoentrepreneur.models.datetime = datetimestub.DatetimeStub()
+        accounts.models.datetime = datetimestub.DatetimeStub()
+        core.views.datetime = datetimestub.DatetimeStub()
         self.client.login(username='test', password='test')
         autoentrepreneur.models.datetime.date.mock_year = 2011
         autoentrepreneur.models.datetime.date.mock_month = 2
         autoentrepreneur.models.datetime.date.mock_day = 1
 
     def tearDown(self):
-        autoentrepreneur.models.datetime.date.mock_year = 2010
-        autoentrepreneur.models.datetime.date.mock_month = 10
-        autoentrepreneur.models.datetime.date.mock_day = 25
+        autoentrepreneur.models.datetime = datetime
+        accounts.models.datetime = datetime
+        core.views.datetime = datetime
 
     def testServicePaid(self):
         response = self.client.get(reverse('index'))
@@ -326,12 +334,272 @@ class DashboardProductActivityTest(TestCase):
         self.assertEqual(response.context['sales']['limit'], 81500)
         self.assertEqual(response.context['sales']['service_limit'], 32600)
 
+class PreviousTaxTest(TestCase):
+    fixtures = ['test_users', 'test_contacts', 'test_projects']
+
+    def setUp(self):
+        datetimestub.DatetimeStub.date.mock_year = 2011
+        datetimestub.DatetimeStub.date.mock_month = 5
+        datetimestub.DatetimeStub.date.mock_day = 1
+        autoentrepreneur.models.datetime = datetimestub.DatetimeStub()
+        accounts.models.datetime = datetimestub.DatetimeStub()
+        core.views.datetime = datetimestub.DatetimeStub()
+
+        profile = UserProfile.objects.get(user=1)
+        profile.creation_help = True
+        profile.freeing_tax_payment = True
+        profile.creation_date = datetime.date(2010, 4, 15)
+        profile.save()
+        self.client.login(username='test', password='test')
+        self.proposal = Proposal.objects.create(project_id=30,
+                                                update_date=datetime.date.today(),
+                                                state=PROPOSAL_STATE_ACCEPTED,
+                                                begin_date=datetime.date(2010, 8, 1),
+                                                end_date=datetime.date(2010, 8, 15),
+                                                contract_content='Content of contract',
+                                                amount=40000,
+                                                owner_id=1)
+
+    def tearDown(self):
+        autoentrepreneur.models.datetime = datetime
+        accounts.models.datetime = datetime
+        core.views.datetime = datetime
+        datetimestub.DatetimeStub.date.mock_year = 2010
+        datetimestub.DatetimeStub.date.mock_month = 10
+        datetimestub.DatetimeStub.date.mock_day = 25
+
+    def testPreviousTax(self):
+        i = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                   invoice_id=1,
+                                   state=INVOICE_STATE_PAID,
+                                   amount='1000',
+                                   edition_date=datetime.date(2011, 2, 1),
+                                   payment_date=datetime.date(2011, 2, 1),
+                                   paid_date=datetime.date(2011, 2, 1),
+                                   payment_type=PAYMENT_TYPE_CHECK,
+                                   execution_begin_date=datetime.date(2010, 8, 1),
+                                   execution_end_date=datetime.date(2010, 8, 7),
+                                   penalty_date=datetime.date(2010, 10, 8),
+                                   penalty_rate='1.5',
+                                   discount_conditions='Nothing',
+                                   owner_id=1)
+        i_row = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=10,
+                                          unit_price='100',
+                                          balance_payments=False,
+                                          owner_id=1)
+
+        i2 = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                    invoice_id=2,
+                                    state=INVOICE_STATE_PAID,
+                                    amount='2000',
+                                    edition_date=datetime.date(2011, 4, 1),
+                                    payment_date=datetime.date(2011, 4, 1),
+                                    paid_date=datetime.date(2011, 4, 1),
+                                    payment_type=PAYMENT_TYPE_CHECK,
+                                    execution_begin_date=datetime.date(2010, 8, 1),
+                                    execution_end_date=datetime.date(2010, 8, 7),
+                                    penalty_date=datetime.date(2010, 10, 8),
+                                    penalty_rate='1.5',
+                                    discount_conditions='Nothing',
+                                    owner_id=1)
+        i_row2 = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                           invoice_id=i2.id,
+                                           label='Day of work',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           quantity=10,
+                                           unit_price='200',
+                                           balance_payments=False,
+                                           owner_id=1)
+
+        response = self.client.get(reverse('index'))
+        self.assertEquals(response.context['taxes']['period_begin'], datetimestub.DatetimeStub.date(2011, 4, 1))
+        self.assertEquals(response.context['taxes']['period_end'], datetimestub.DatetimeStub.date(2011, 6, 30))
+        self.assertEquals(float(response.context['taxes']['paid_sales_for_period']), 2000.0)
+        self.assertEquals(float(response.context['taxes']['estimated_paid_sales_for_period']), 2000.0)
+        self.assertEquals(float(response.context['taxes']['tax_rate']), 11.6)
+        self.assertEquals(float(response.context['taxes']['amount_to_pay']), 232.0)
+        self.assertEquals(float(response.context['taxes']['estimated_amount_to_pay']), 232.0)
+        self.assertEquals(response.context['taxes']['tax_due_date'], datetimestub.DatetimeStub.date(2011, 7, 31))
+
+        self.assertEquals(response.context['previous_taxes']['period_begin'], datetimestub.DatetimeStub.date(2011, 1, 1))
+        self.assertEquals(response.context['previous_taxes']['period_end'], datetimestub.DatetimeStub.date(2011, 3, 31))
+        self.assertEquals(float(response.context['previous_taxes']['paid_sales_for_period']), 1000.0)
+        self.assertEquals(float(response.context['previous_taxes']['tax_rate']), 7.7)
+        self.assertEquals(float(response.context['previous_taxes']['amount_to_pay']), 77.0)
+        self.assertEquals(response.context['previous_taxes']['tax_due_date'], datetimestub.DatetimeStub.date(2011, 4, 30))
+
+    def testPreviousTaxOverruning(self):
+        i = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                   invoice_id=1,
+                                   state=INVOICE_STATE_PAID,
+                                   amount='32700',
+                                   edition_date=datetime.date(2011, 2, 1),
+                                   payment_date=datetime.date(2011, 2, 1),
+                                   paid_date=datetime.date(2011, 2, 1),
+                                   payment_type=PAYMENT_TYPE_CHECK,
+                                   execution_begin_date=datetime.date(2010, 8, 1),
+                                   execution_end_date=datetime.date(2010, 8, 7),
+                                   penalty_date=datetime.date(2010, 10, 8),
+                                   penalty_rate='1.5',
+                                   discount_conditions='Nothing',
+                                   owner_id=1)
+        i_row = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=1,
+                                          unit_price='32700',
+                                          balance_payments=False,
+                                          owner_id=1)
+
+        i2 = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                    invoice_id=2,
+                                    state=INVOICE_STATE_PAID,
+                                    amount='2000',
+                                    edition_date=datetime.date(2011, 4, 1),
+                                    payment_date=datetime.date(2011, 4, 1),
+                                    paid_date=datetime.date(2011, 4, 1),
+                                    payment_type=PAYMENT_TYPE_CHECK,
+                                    execution_begin_date=datetime.date(2010, 8, 1),
+                                    execution_end_date=datetime.date(2010, 8, 7),
+                                    penalty_date=datetime.date(2010, 10, 8),
+                                    penalty_rate='1.5',
+                                    discount_conditions='Nothing',
+                                    owner_id=1)
+        i_row2 = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                           invoice_id=i2.id,
+                                           label='Day of work',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           quantity=10,
+                                           unit_price='200',
+                                           balance_payments=False,
+                                           owner_id=1)
+
+        response = self.client.get(reverse('index'))
+        self.assertEquals(response.context['taxes']['period_begin'], datetimestub.DatetimeStub.date(2011, 4, 1))
+        self.assertEquals(response.context['taxes']['period_end'], datetimestub.DatetimeStub.date(2011, 6, 30))
+        self.assertEquals(float(response.context['taxes']['paid_sales_for_period']), 2000.0)
+        self.assertEquals(float(response.context['taxes']['estimated_paid_sales_for_period']), 2000.0)
+        self.assertEquals(float(response.context['taxes']['tax_rate']), 18.5)
+        self.assertEquals(float(response.context['taxes']['amount_to_pay']), 370.0)
+        self.assertEquals(float(response.context['taxes']['estimated_amount_to_pay']), 370.0)
+        self.assertEquals(response.context['taxes']['tax_due_date'], datetimestub.DatetimeStub.date(2011, 7, 31))
+
+        self.assertEquals(response.context['previous_taxes']['period_begin'], datetimestub.DatetimeStub.date(2011, 1, 1))
+        self.assertEquals(response.context['previous_taxes']['period_end'], datetimestub.DatetimeStub.date(2011, 3, 31))
+        self.assertEquals(float(response.context['previous_taxes']['paid_sales_for_period']), 32700.0)
+        self.assertEquals(float(response.context['previous_taxes']['tax_rate']), 5.5)
+        self.assertEquals(float(response.context['previous_taxes']['amount_to_pay']), 1793.0)
+        self.assertEquals(float(response.context['previous_taxes']['extra_taxes']), 18.5)
+        self.assertEquals(response.context['previous_taxes']['tax_due_date'], datetimestub.DatetimeStub.date(2011, 4, 30))
+
+    def testPreviousTaxWithCurrentOverruning(self):
+        i = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                   invoice_id=1,
+                                   state=INVOICE_STATE_PAID,
+                                   amount='30000',
+                                   edition_date=datetime.date(2011, 2, 1),
+                                   payment_date=datetime.date(2011, 2, 1),
+                                   paid_date=datetime.date(2011, 2, 1),
+                                   payment_type=PAYMENT_TYPE_CHECK,
+                                   execution_begin_date=datetime.date(2010, 8, 1),
+                                   execution_end_date=datetime.date(2010, 8, 7),
+                                   penalty_date=datetime.date(2010, 10, 8),
+                                   penalty_rate='1.5',
+                                   discount_conditions='Nothing',
+                                   owner_id=1)
+        i_row = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=1,
+                                          unit_price='30000',
+                                          balance_payments=False,
+                                          owner_id=1)
+
+        i2 = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                    invoice_id=2,
+                                    state=INVOICE_STATE_PAID,
+                                    amount='3000',
+                                    edition_date=datetime.date(2011, 4, 1),
+                                    payment_date=datetime.date(2011, 4, 1),
+                                    paid_date=datetime.date(2011, 4, 1),
+                                    payment_type=PAYMENT_TYPE_CHECK,
+                                    execution_begin_date=datetime.date(2010, 8, 1),
+                                    execution_end_date=datetime.date(2010, 8, 7),
+                                    penalty_date=datetime.date(2010, 10, 8),
+                                    penalty_rate='1.5',
+                                    discount_conditions='Nothing',
+                                    owner_id=1)
+        i_row2 = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                           invoice_id=i2.id,
+                                           label='Day of work',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           quantity=10,
+                                           unit_price='300',
+                                           balance_payments=False,
+                                           owner_id=1)
+
+        response = self.client.get(reverse('index'))
+        self.assertEquals(response.context['taxes']['period_begin'], datetimestub.DatetimeStub.date(2011, 4, 1))
+        self.assertEquals(response.context['taxes']['period_end'], datetimestub.DatetimeStub.date(2011, 6, 30))
+        self.assertEquals(float(response.context['taxes']['paid_sales_for_period']), 3000.0)
+        self.assertEquals(float(response.context['taxes']['estimated_paid_sales_for_period']), 3000.0)
+        self.assertEquals(float(response.context['taxes']['tax_rate']), 9.2 + 0.2)
+        self.assertEquals(float(response.context['taxes']['amount_to_pay']), 2600 * (9.2 + 0.2) / 100)
+        self.assertEquals(float(response.context['taxes']['estimated_amount_to_pay']), 2600 * (9.2 + 0.2) / 100)
+        self.assertEquals(float(response.context['taxes']['extra_taxes']), 74)
+        self.assertEquals(response.context['taxes']['tax_due_date'], datetimestub.DatetimeStub.date(2011, 7, 31))
+
+        self.assertEquals(response.context['previous_taxes']['period_begin'], datetimestub.DatetimeStub.date(2011, 1, 1))
+        self.assertEquals(response.context['previous_taxes']['period_end'], datetimestub.DatetimeStub.date(2011, 3, 31))
+        self.assertEquals(float(response.context['previous_taxes']['paid_sales_for_period']), 30000.0)
+        self.assertEquals(float(response.context['previous_taxes']['tax_rate']), 7.7)
+        self.assertEquals(float(response.context['previous_taxes']['amount_to_pay']), 2310.0)
+        self.assertEquals(response.context['previous_taxes']['tax_due_date'], datetimestub.DatetimeStub.date(2011, 4, 30))
+
+    def testNoPreviousTaxForFirstPeriod(self):
+        profile = UserProfile.objects.get(user=1)
+        profile.creation_date = datetime.date(2011, 4, 15)
+        profile.save()
+
+        i = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                   invoice_id=1,
+                                   state=INVOICE_STATE_PAID,
+                                   amount='30000',
+                                   edition_date=datetime.date(2011, 2, 1),
+                                   payment_date=datetime.date(2011, 2, 1),
+                                   paid_date=datetime.date(2011, 2, 1),
+                                   payment_type=PAYMENT_TYPE_CHECK,
+                                   execution_begin_date=datetime.date(2010, 8, 1),
+                                   execution_end_date=datetime.date(2010, 8, 7),
+                                   penalty_date=datetime.date(2010, 10, 8),
+                                   penalty_rate='1.5',
+                                   discount_conditions='Nothing',
+                                   owner_id=1)
+        i_row = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=1,
+                                          unit_price='30000',
+                                          balance_payments=False,
+                                          owner_id=1)
+
+        response = self.client.get(reverse('index'))
+        self.assertEquals(response.context['previous_taxes'], None)
+
 class OverrunTest(TestCase):
     fixtures = ['test_users', 'test_contacts', 'test_projects']
 
     def setUp(self):
-        core.views.datetime = datetimestub.DatetimeStub()
         autoentrepreneur.models.datetime = datetimestub.DatetimeStub()
+        accounts.models.datetime = datetimestub.DatetimeStub()
+        core.views.datetime = datetimestub.DatetimeStub()
 
         self.client.login(username='test', password='test')
         self.proposal = Proposal.objects.create(project_id=30,
@@ -344,6 +612,8 @@ class OverrunTest(TestCase):
                                                 owner_id=1)
 
     def tearDown(self):
+        autoentrepreneur.models.datetime = datetime
+        accounts.models.datetime = datetime
         core.views.datetime = datetime
         datetimestub.DatetimeStub.date.mock_year = 2010
         datetimestub.DatetimeStub.date.mock_month = 10
@@ -592,8 +862,8 @@ class OverrunTest(TestCase):
         response = self.client.get(reverse('index'))
         self.assertEquals(response.context['taxes']['tax_rate'], 5.3)
         self.assertEquals(response.context['taxes']['paid_sales_for_period'], 32200)
-        self.assertEquals(response.context['taxes']['amount_to_pay'], 1706.6)
-        self.assertEquals(response.context['taxes']['extra_taxes'], 13)
+        self.assertEquals(response.context['taxes']['amount_to_pay'], 1701.3)
+        self.assertEquals(response.context['taxes']['extra_taxes'], 18.3)
         self.assertEquals(response.context['taxes']['total_amount_to_pay'], 1719.6)
 
     def testTaxAmountOnNextPeriodAfterOverrun(self):

@@ -84,7 +84,8 @@ def index(request):
     paid = Invoice.objects.get_paid_sales(owner=user)
 
     if not first_year:
-        paid_previous_year = Invoice.objects.get_paid_sales(owner=user, year=one_year_back.year)
+        paid_previous_year = Invoice.objects.get_paid_sales(owner=user,
+                                                            reference_date=datetime.date(one_year_back.year, 12, 31))
     waiting = Invoice.objects.get_waiting_payments(owner=user)
     to_be_invoiced = Invoice.objects.get_to_be_invoiced(owner=user)
     limit = profile.get_sales_limit()
@@ -138,28 +139,6 @@ def index(request):
     potential = Proposal.objects.get_potential_sales(owner=user)
     duration = Proposal.objects.get_potential_duration(owner=user)
     proposals_to_send = Proposal.objects.get_proposals_to_send(owner=user)
-    begin_date, end_date = profile.get_period_for_tax()
-    amount_paid_for_tax = Invoice.objects.get_paid_sales_for_period(user, begin_date, end_date)
-    waiting_amount_for_tax = Invoice.objects.get_waiting_sales_for_period(user, end_date)
-    only_overrun = False
-    if amount_paid_for_tax <= paid - sales_limit or (not first_year and paid_previous_year > limit_previous_year):
-        only_overrun = True
-    tax_rate = profile.get_tax_rate(period_is_only_overrun=only_overrun)
-    amount_to_pay = float(amount_paid_for_tax) * float(tax_rate) / 100
-    extra_taxes = profile.get_extra_taxes(paid, amount_paid_for_tax)
-    estimated_amount_for_tax = amount_paid_for_tax + waiting_amount_for_tax
-    estimated_amount_to_pay = float(estimated_amount_for_tax) * float(tax_rate) / 100
-
-    pay_date = profile.get_pay_date(end_date)
-
-    next_begin_date, next_end_date = profile.get_period_for_tax(pay_date + datetime.timedelta(1))
-    next_pay_date = profile.get_pay_date(next_end_date)
-    next_amount_paid_for_tax = Invoice.objects.get_paid_sales_for_period(user, next_begin_date, next_end_date)
-    next_waiting_amount_for_tax = Invoice.objects.get_waiting_sales_for_period(user, next_end_date, next_begin_date)
-    next_tax_rate = profile.get_tax_rate(pay_date + datetime.timedelta(1), period_is_only_overrun=(only_overrun or extra_taxes))
-    next_amount_to_pay = float(next_amount_paid_for_tax) * float(next_tax_rate) / 100
-    next_estimated_amount_for_tax = next_amount_paid_for_tax + next_waiting_amount_for_tax
-    next_estimated_amount_to_pay = float(next_estimated_amount_for_tax) * float(next_tax_rate) / 100
 
     min_date = Invoice.objects.get_first_invoice_paid_date(owner=user)
     if not min_date:
@@ -269,25 +248,12 @@ def index(request):
                  'average_unit_price': average_unit_price,
                  'proposals_to_send': proposals_to_send}
 
-    taxes = {'period_begin': begin_date,
-             'period_end': end_date,
-             'paid_sales_for_period': amount_paid_for_tax,
-             'estimated_paid_sales_for_period': estimated_amount_for_tax,
-             'tax_rate': tax_rate,
-             'amount_to_pay': amount_to_pay,
-             'estimated_amount_to_pay': estimated_amount_to_pay,
-             'tax_due_date': pay_date,
-             'extra_taxes': extra_taxes,
-             'total_amount_to_pay': amount_to_pay + extra_taxes}
-
-    next_taxes = {'period_begin': next_begin_date,
-                  'period_end': next_end_date,
-                  'paid_sales_for_period': next_amount_paid_for_tax,
-                  'estimated_paid_sales_for_period': next_estimated_amount_for_tax,
-                  'tax_rate': next_tax_rate,
-                  'amount_to_pay': next_amount_to_pay,
-                  'estimated_amount_to_pay': next_estimated_amount_to_pay,
-                  'tax_due_date': next_pay_date}
+    taxes = profile.get_tax_data(today)
+    if taxes['period_begin'] == profile.creation_date:
+        previous_taxes = None
+    else:
+        previous_taxes = profile.get_tax_data(taxes['period_begin'] - datetime.timedelta(1))
+    next_taxes = profile.get_tax_data(taxes['tax_due_date'] + datetime.timedelta(1))
 
     charts = {'sales_progression':simplejson.dumps(sales_progression),
               'waiting_progression':simplejson.dumps(waiting_progression),
@@ -309,6 +275,7 @@ def index(request):
                                'invoices': invoices,
                                'prospects': prospects,
                                'taxes': taxes,
+                               'previous_taxes': previous_taxes,
                                'next_taxes': next_taxes,
                                'charts': charts},
                               context_instance=RequestContext(request))

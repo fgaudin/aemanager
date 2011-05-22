@@ -2,22 +2,37 @@
 
 <script language="javascript" type="text/javascript">
 jQuery(document).ready(function(){
+    var show_previous_period = function(e){
+        e.preventDefault();
+        jQuery('#show_next_period').html('<a href="#">' + jQuery('#show_next_period').text() + '</a>');
+        jQuery('#show_current_period').html('<a href="#">' + jQuery('#show_current_period').text() + '</a>');
+        jQuery('#show_previous_period').html('<strong>' + jQuery('#show_previous_period').text() + '</strong>');
+        jQuery('#previous_period').show();
+        jQuery('#current_period').hide();
+        jQuery('#next_period').hide();
+    };
+
     var show_current_period = function(e){
         e.preventDefault();
+        jQuery('#show_previous_period').html('<a href="#">' + jQuery('#show_previous_period').text() + '</a>');
         jQuery('#show_next_period').html('<a href="#">' + jQuery('#show_next_period').text() + '</a>');
         jQuery('#show_current_period').html('<strong>' + jQuery('#show_current_period').text() + '</strong>');
         jQuery('#current_period').show();
+        jQuery('#previous_period').hide();
         jQuery('#next_period').hide();
     };
 
     var show_next_period = function(e){
         e.preventDefault();
+        jQuery('#show_previous_period').html('<a href="#">' + jQuery('#show_previous_period').text() + '</a>');
         jQuery('#show_current_period').html('<a href="#">' + jQuery('#show_current_period').text() + '</a>');
         jQuery('#show_next_period').html('<strong>' + jQuery('#show_next_period').text() + '</strong>');
         jQuery('#next_period').show();
+        jQuery('#previous_period').hide();
         jQuery('#current_period').hide();
     };
 
+    jQuery('#show_previous_period').click(show_previous_period);
     jQuery('#show_current_period').click(show_current_period);
     jQuery('#show_next_period').click(show_next_period);
     jQuery('#show_current_period').click();
@@ -25,9 +40,28 @@ jQuery(document).ready(function(){
 </script>
 
 <h2>{% trans "Taxes" %}</h2>
+{% if previous_taxes %}
+<span id="show_previous_period">{% trans "previous period" %}</span>
+&nbsp;-&nbsp;
+{% endif %}
 <span id="show_current_period">{% trans "current period" %}</span>
 &nbsp;-&nbsp;
 <span id="show_next_period">{% trans "next period" %}</span>
+
+{% if previous_taxes %}
+<div id="previous_period">
+    <div>{% trans "Period" %} : {% blocktrans with previous_taxes.period_begin as period_begin and previous_taxes.period_end as period_end %}{{ period_begin }} to {{ period_end }}{% endblocktrans %}</div>
+    <div>{% trans "Paid sales" %} : {{ previous_taxes.paid_sales_for_period }}</div>
+    <div>{% trans "Rate" %} : {{ previous_taxes.tax_rate }}%</div>
+    {% if previous_taxes.extra_taxes %}
+    <div>{% trans "Base taxes" %} : {{ previous_taxes.amount_to_pay|floatformat:"-2" }}</div>
+    <div>{% trans "Extra taxes because of overrun" %} : {{ previous_taxes.extra_taxes|floatformat:"-2" }}</div>
+    <div>{% trans "Total amount to pay" %} : {% blocktrans with previous_taxes.total_amount_to_pay|floatformat:"-2" as amount_to_pay and previous_taxes.tax_due_date as tax_due_date %}{{ amount_to_pay }} before {{ tax_due_date }}{% endblocktrans %}</div>
+    {% else %}
+    <div>{% trans "Amount to pay" %} : {% blocktrans with previous_taxes.amount_to_pay|floatformat:"-2" as amount_to_pay and previous_taxes.tax_due_date as tax_due_date %}{{ amount_to_pay }} before {{ tax_due_date }}{% endblocktrans %}</div>
+    {% endif %}
+</div>
+{% endif%}
 
 <div id="current_period">
     <div>{% trans "Period" %} : {% blocktrans with taxes.period_begin as period_begin and taxes.period_end as period_end %}{{ period_begin }} to {{ period_end }}{% endblocktrans %}</div>
@@ -49,7 +83,13 @@ jQuery(document).ready(function(){
     <div>{% trans "Period" %} : {% blocktrans with next_taxes.period_begin as period_begin and next_taxes.period_end as period_end %}{{ period_begin }} to {{ period_end }}{% endblocktrans %}</div>
     <div>{% trans "Paid sales" %} : {{ next_taxes.paid_sales_for_period }}</div>
     <div>{% trans "Rate" %} : {{ next_taxes.tax_rate }}%</div>
+    {% if next_taxes.extra_taxes %}
+    <div>{% trans "Base taxes" %} : {{ next_taxes.amount_to_pay|floatformat:"-2" }}</div>
+    <div>{% trans "Extra taxes because of overrun" %} : {{ next_taxes.extra_taxes|floatformat:"-2" }}</div>
+    <div>{% trans "Total amount to pay" %} : {% blocktrans with next_taxes.total_amount_to_pay|floatformat:"-2" as amount_to_pay and next_taxes.tax_due_date as tax_due_date %}{{ amount_to_pay }} before {{ tax_due_date }}{% endblocktrans %}</div>
+    {% else %}
     <div>{% trans "Amount to pay" %} : {% blocktrans with next_taxes.amount_to_pay|floatformat:"-2" as amount_to_pay and next_taxes.tax_due_date as tax_due_date %}{{ amount_to_pay }} before {{ tax_due_date }}{% endblocktrans %}</div>
+    {% endif %}
     <h3>{% trans "Estimations based on invoice payment dates" %}</h3>
     <div>{% trans "Estimated paid sales" %} : {{ next_taxes.estimated_paid_sales_for_period }}</div>
     <div>{% trans "Estimated amount to pay" %} : {{ next_taxes.estimated_amount_to_pay|floatformat:"-2" }}</div>

@@ -373,11 +373,13 @@ class UserProfile(models.Model):
         tax_rate = 0
         if not self.activity:
             return tax_rate
-        today = reference_date or datetime.date.today()
+
+        if not reference_date:
+            reference_date = datetime.date.today()
 
         freeing_tax_payment = self.freeing_tax_payment
 
-        one_year_back = datetime.date(today.year - 1, today.month, today.day)
+        one_year_back = datetime.date(reference_date.year - 1, reference_date.month, reference_date.day)
         first_year = True
         if one_year_back.year >= self.creation_date.year:
             first_year = False
@@ -386,14 +388,14 @@ class UserProfile(models.Model):
         limit_previous_year = 0
         if not first_year:
             paid_previous_year = Invoice.objects.get_paid_sales(owner=self.user,
-                                                                year=one_year_back.year)
+                                                                reference_date=datetime.date(one_year_back.year, 12, 31))
             limit_previous_year = self.get_sales_limit(year=one_year_back.year)
 
         if not first_year and paid_previous_year > limit_previous_year:
             freeing_tax_payment = False
 
-        paid = Invoice.objects.get_paid_sales(owner=self.user)
-        limit = self.get_sales_limit()
+        paid = Invoice.objects.get_paid_sales(owner=self.user, reference_date=reference_date)
+        limit = self.get_sales_limit(reference_date.year)
 
         if paid > limit:
             freeing_tax_payment = False
@@ -408,17 +410,17 @@ class UserProfile(models.Model):
             third_period_end_date = datetime.date(first_period_end_date.year + 2,
                                                    first_period_end_date.month,
                                                    first_period_end_date.day)
-            if today <= first_period_end_date:
+            if reference_date <= first_period_end_date:
                 if freeing_tax_payment:
                     tax_rate = TAX_RATE_WITH_FREEING[self.activity][0]
                 else:
                     tax_rate = TAX_RATE_WITHOUT_FREEING[self.activity][0]
-            elif today <= second_period_end_date:
+            elif reference_date <= second_period_end_date:
                 if freeing_tax_payment:
                     tax_rate = TAX_RATE_WITH_FREEING[self.activity][1]
                 else:
                     tax_rate = TAX_RATE_WITHOUT_FREEING[self.activity][1]
-            elif today <= third_period_end_date:
+            elif reference_date <= third_period_end_date:
                 if freeing_tax_payment:
                     tax_rate = TAX_RATE_WITH_FREEING[self.activity][2]
                 else:
@@ -435,7 +437,7 @@ class UserProfile(models.Model):
             else:
                 tax_rate = TAX_RATE_WITHOUT_FREEING[self.activity][3]
 
-        if today.year >= 2011:
+        if reference_date.year >= 2011:
             tax_rate = tax_rate + self.get_professional_training_tax_rate()
 
         return tax_rate
@@ -451,21 +453,72 @@ class UserProfile(models.Model):
                                      1) - datetime.timedelta(1)
         return pay_date
 
-    def get_extra_taxes(self, paid, amount_paid_for_tax):
+    def get_extra_taxes(self, reference_date, paid, amount_paid_for_tax):
         extra_taxes = 0
-        today = datetime.date.today()
-        limit = self.get_sales_limit()
+        limit = self.get_sales_limit(year=reference_date.year)
 
         if paid > limit:
             overrun = paid - limit
             if amount_paid_for_tax > overrun:
                 tax_rate = TAX_RATE_WITHOUT_FREEING[self.activity][3]
-                if today.year >= 2011:
+                if reference_date.year >= 2011:
                     tax_rate = tax_rate + self.get_professional_training_tax_rate()
-                tax_rate = tax_rate - self.get_tax_rate()
                 extra_taxes = float(overrun) * float(tax_rate) / 100
 
         return extra_taxes
+
+    def is_first_year(self, reference_date):
+        first_year = True
+        one_year_back = datetime.date(reference_date.year - 1, reference_date.month, reference_date.day)
+        if one_year_back.year >= self.creation_date.year:
+            first_year = False
+        return first_year
+
+    def get_tax_data(self, reference_date=None):
+        if not reference_date:
+            reference_date = datetime.date.today()
+        today = reference_date or datetime.date.today()
+
+        begin_date, end_date = self.get_period_for_tax(reference_date)
+        pay_date = self.get_pay_date(end_date)
+        amount_paid_for_tax = Invoice.objects.get_paid_sales_for_period(self.user, begin_date, end_date)
+        waiting_amount_for_tax = 0
+        if reference_date >= today:
+            waiting_amount_for_tax = Invoice.objects.get_waiting_sales_for_period(self.user, end_date, begin_date)
+
+        first_year = self.is_first_year(begin_date)
+        one_year_back = datetime.date(begin_date.year - 1, begin_date.month, begin_date.day)
+        if not first_year:
+            paid_previous_year = Invoice.objects.get_paid_sales(owner=self.user,
+                                                                reference_date=datetime.date(one_year_back.year, 12, 31))
+        only_overrun = False
+        sales_limit = self.get_sales_limit(year=begin_date.year)
+        limit_previous_year = self.get_sales_limit(year=one_year_back.year)
+        paid = Invoice.objects.get_paid_sales(owner=self.user, reference_date=end_date)
+        if amount_paid_for_tax <= paid - sales_limit or (not first_year and paid_previous_year > limit_previous_year):
+            only_overrun = True
+        tax_rate = self.get_tax_rate(reference_date, period_is_only_overrun=only_overrun)
+        if only_overrun:
+            base_taxed_amount = amount_paid_for_tax
+        else:
+            base_taxed_amount = amount_paid_for_tax - (max([0, paid - sales_limit]))
+        amount_to_pay = float(base_taxed_amount) * float(tax_rate) / 100
+        extra_taxes = self.get_extra_taxes(end_date, paid, amount_paid_for_tax)
+        estimated_amount_for_tax = amount_paid_for_tax + waiting_amount_for_tax
+        estimated_amount_to_pay = float(base_taxed_amount + waiting_amount_for_tax) * float(tax_rate) / 100
+
+        taxes = {'period_begin': begin_date,
+                 'period_end': end_date,
+                 'paid_sales_for_period': amount_paid_for_tax,
+                 'estimated_paid_sales_for_period': estimated_amount_for_tax,
+                 'tax_rate': tax_rate,
+                 'amount_to_pay': amount_to_pay,
+                 'estimated_amount_to_pay': estimated_amount_to_pay,
+                 'tax_due_date': pay_date,
+                 'extra_taxes': extra_taxes,
+                 'total_amount_to_pay': amount_to_pay + extra_taxes}
+
+        return taxes
 
 def user_post_save(sender, instance, created, **kwargs):
     if created and not kwargs.get('raw', False):
