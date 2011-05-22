@@ -670,6 +670,9 @@ def admin_dashboard(request):
                   'value': users[0]['value'] - users[1]['value'] - users[2]['value'] - users[3]['value']})
     users.append({'label': _('Subscribed users'),
                   'value': Subscription.objects.get_users_with_paid_subscription().count()})
+    users.append({'label': _('Last 5 users'),
+                  'type': 'list',
+                  'value': User.objects.filter(is_superuser=False).order_by('-date_joined')[:5]})
 
     activity = []
     activity.append({'label': _('Connections today'),

@@ -9,7 +9,17 @@
     <h2>{% trans "Users" %}</h2>
     <ul>
       {% for line in users %}
+      {% if line.type == "list" %}
+      <li>{{ line.label }} :
+      <ul>
+      {% for user in line.value %}
+      <li>{{ user.email }}</li>
+      {% endfor %}
+      </ul>
+      </li>
+      {% else %}
       <li>{{ line.label }} : {{ line.value }}</li>
+      {% endif %}
       {% endfor %}
     </ul>
   </div>

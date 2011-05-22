@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-22 02:17+0200\n"
+"POT-Creation-Date: 2011-05-22 19:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -130,7 +130,7 @@ msgstr ""
 msgid "Sent"
 msgstr ""
 
-#: accounts/models.py:59 autoentrepreneur/models.py:44 core/views.py:454
+#: accounts/models.py:59 autoentrepreneur/models.py:44 core/views.py:456
 msgid "Paid"
 msgstr ""
 
@@ -325,7 +325,7 @@ msgstr ""
 msgid "Nature"
 msgstr ""
 
-#: accounts/views.py:207 core/views.py:705
+#: accounts/views.py:207 core/views.py:710
 #: templates/core/invoices_widget.html:3 templates/project/detail.html:52
 #: templates/proposal/detail.html:95
 msgid "Invoices"
@@ -366,7 +366,7 @@ msgstr ""
 msgid "Payment date is greater than penalty date, is this normal ?"
 msgstr ""
 
-#: accounts/views.py:353 contact/views.py:77 core/views.py:311
+#: accounts/views.py:353 contact/views.py:77 core/views.py:313
 #: notification/views.py:23 project/views.py:77 project/views.py:187
 #: project/views.py:412
 msgid "Data provided are invalid"
@@ -423,7 +423,7 @@ msgid ""
 msgstr ""
 
 #: autoentrepreneur/forms.py:11 autoentrepreneur/models.py:35
-#: autoentrepreneur/models.py:162 templates/core/admin_dashboard.html:17
+#: autoentrepreneur/models.py:162 templates/core/admin_dashboard.html:27
 msgid "Activity"
 msgstr ""
 
@@ -635,7 +635,7 @@ msgstr ""
 msgid "Done"
 msgstr ""
 
-#: backup/models.py:34 core/views.py:612 templates/backup/index.html:27
+#: backup/models.py:34 core/views.py:614 templates/backup/index.html:27
 #: templates/backup/index.html.py:77
 msgid "Error"
 msgstr ""
@@ -1110,11 +1110,11 @@ msgstr ""
 msgid "A user with that username already exists."
 msgstr ""
 
-#: core/tests.py:66 core/views.py:372
+#: core/tests.py:66 core/views.py:374
 msgid "Wrong password"
 msgstr ""
 
-#: core/tests.py:81 core/views.py:370
+#: core/tests.py:81 core/views.py:372
 msgid "Your password has been modified successfully"
 msgstr ""
 
@@ -1193,159 +1193,163 @@ msgstr ""
 msgid "You have to declare VAT from the first month of overrun."
 msgstr ""
 
-#: core/views.py:268 templates/menu.html:10 templates/core/index.html:3
+#: core/views.py:270 templates/menu.html:10 templates/core/index.html:3
 msgid "Dashboard"
 msgstr ""
 
-#: core/views.py:306
+#: core/views.py:308
 msgid "Your settings have been updated successfully"
 msgstr ""
 
-#: core/views.py:308
+#: core/views.py:310
 msgid "Creation date is in the future, is this normal ?"
 msgstr ""
 
-#: core/views.py:319 templates/menu.html:106
+#: core/views.py:321 templates/menu.html:106
 msgid "Settings"
 msgstr ""
 
-#: core/views.py:374
+#: core/views.py:376
 msgid "Your password has not been modified"
 msgstr ""
 
-#: core/views.py:380 templates/menu.html:109
+#: core/views.py:382 templates/menu.html:109
 msgid "Change password"
 msgstr ""
 
-#: core/views.py:398 templates/menu.html:113
+#: core/views.py:400 templates/menu.html:113
 msgid "My subscription"
 msgstr ""
 
-#: core/views.py:411
+#: core/views.py:413
 msgid "Subscription paid"
 msgstr ""
 
-#: core/views.py:442
+#: core/views.py:444
 msgid "Not verified"
 msgstr ""
 
-#: core/views.py:446
+#: core/views.py:448
 msgid "Receiver is not as defined in settings. Spoofing ?"
 msgstr ""
 
-#: core/views.py:448
+#: core/views.py:450
 msgid "Payment not completed"
 msgstr ""
 
-#: core/views.py:450 core/views.py:452
+#: core/views.py:452 core/views.py:454
 msgid "Amount altered. Bad guy ?"
 msgstr ""
 
-#: core/views.py:572
+#: core/views.py:574
 msgid "Subscribe"
 msgstr ""
 
-#: core/views.py:593 templates/core/unregister.html:15
+#: core/views.py:595 templates/core/unregister.html:15
 msgid "Unregister"
 msgstr ""
 
-#: core/views.py:606
+#: core/views.py:608
 msgid "CSRF error"
 msgstr ""
 
-#: core/views.py:607
+#: core/views.py:609
 #, python-format
 msgid "An error occured for %(email)s on %(path)s, reason : %(reason)s"
 msgstr ""
 
-#: core/views.py:627
+#: core/views.py:629
 msgid ""
 "Activation key expired. You may already have activated your account. If not, "
 "activation delay may have passed, you have to wait for your previous "
 "registration to be deleted (max. 1 day)."
 msgstr ""
 
-#: core/views.py:633
+#: core/views.py:635
 msgid ""
 "Email address not found. Activation delay may have expired. Try subscribing "
 "again."
 msgstr ""
 
-#: core/views.py:659
+#: core/views.py:661
 msgid "Total users"
 msgstr ""
 
-#: core/views.py:661
+#: core/views.py:663
 msgid "Unconfirmed users"
 msgstr ""
 
-#: core/views.py:663
+#: core/views.py:665
 msgid "Waiting for deletion"
 msgstr ""
 
-#: core/views.py:665
+#: core/views.py:667
 msgid "Expired users"
 msgstr ""
 
-#: core/views.py:667
+#: core/views.py:669
 msgid "Active users"
 msgstr ""
 
-#: core/views.py:669
+#: core/views.py:671
 msgid "Subscribed users"
 msgstr ""
 
 #: core/views.py:673
+msgid "Last 5 users"
+msgstr ""
+
+#: core/views.py:678
 msgid "Connections today"
 msgstr ""
 
-#: core/views.py:675
+#: core/views.py:680
 msgid "Connections in past 7 days"
 msgstr ""
 
-#: core/views.py:677
+#: core/views.py:682
 msgid "Connections in past 30 days"
 msgstr ""
 
-#: core/views.py:679
+#: core/views.py:684
 msgid "Registrations today"
 msgstr ""
 
-#: core/views.py:681
+#: core/views.py:686
 msgid "Registrations in past 7 days"
 msgstr ""
 
-#: core/views.py:683
+#: core/views.py:688
 msgid "Registrations in past 30 days"
 msgstr ""
 
-#: core/views.py:687
+#: core/views.py:692
 msgid "Trial users expiring in 1 day"
 msgstr ""
 
-#: core/views.py:689 core/views.py:691
+#: core/views.py:694 core/views.py:696
 #, python-format
 msgid "Trial users expiring in %i days"
 msgstr ""
 
-#: core/views.py:693
+#: core/views.py:698
 msgid "Subscribed users expiring in 1 day"
 msgstr ""
 
-#: core/views.py:695 core/views.py:697
+#: core/views.py:700 core/views.py:702
 #, python-format
 msgid "Subscribed users expiring in %i day"
 msgstr ""
 
-#: core/views.py:701 templates/project/detail.html:23
+#: core/views.py:706 templates/project/detail.html:23
 msgid "Proposals"
 msgstr ""
 
-#: core/views.py:703
+#: core/views.py:708
 msgid "Users having proposals"
 msgstr ""
 
-#: core/views.py:707
+#: core/views.py:712
 msgid "Users having invoices"
 msgstr ""
 
@@ -2079,11 +2083,11 @@ msgstr ""
 msgid "Users"
 msgstr ""
 
-#: templates/core/admin_dashboard.html:28
+#: templates/core/admin_dashboard.html:38
 msgid "Forecast"
 msgstr ""
 
-#: templates/core/admin_dashboard.html:36
+#: templates/core/admin_dashboard.html:46
 msgid "Data"
 msgstr ""
 
@@ -2096,8 +2100,8 @@ msgid "Charts"
 msgstr ""
 
 #: templates/core/charts_widget.html:12 templates/core/sales_widget.html:35
-#: templates/core/sales_widget.html:48 templates/core/taxes_widget.html:51
-#: templates/core/taxes_widget.html:64 templates/core/taxes_widget.html:80
+#: templates/core/sales_widget.html:48 templates/core/taxes_widget.html:54
+#: templates/core/taxes_widget.html:68 templates/core/taxes_widget.html:84
 msgid "Paid sales"
 msgstr ""
 
@@ -2271,70 +2275,70 @@ msgstr ""
 msgid "Taxes"
 msgstr ""
 
-#: templates/core/taxes_widget.html:43
+#: templates/core/taxes_widget.html:44
 msgid "previous period"
 msgstr ""
 
-#: templates/core/taxes_widget.html:45
+#: templates/core/taxes_widget.html:47
 msgid "current period"
 msgstr ""
 
-#: templates/core/taxes_widget.html:47
+#: templates/core/taxes_widget.html:49
 msgid "next period"
 msgstr ""
 
-#: templates/core/taxes_widget.html:50 templates/core/taxes_widget.html:63
-#: templates/core/taxes_widget.html:79
+#: templates/core/taxes_widget.html:53 templates/core/taxes_widget.html:67
+#: templates/core/taxes_widget.html:83
 msgid "Period"
 msgstr ""
 
-#: templates/core/taxes_widget.html:50 templates/core/taxes_widget.html:63
-#: templates/core/taxes_widget.html:79
+#: templates/core/taxes_widget.html:53 templates/core/taxes_widget.html:67
+#: templates/core/taxes_widget.html:83
 #, python-format
 msgid "%(period_begin)s to %(period_end)s"
 msgstr ""
 
-#: templates/core/taxes_widget.html:52 templates/core/taxes_widget.html:65
-#: templates/core/taxes_widget.html:81
+#: templates/core/taxes_widget.html:55 templates/core/taxes_widget.html:69
+#: templates/core/taxes_widget.html:85
 msgid "Rate"
 msgstr ""
 
-#: templates/core/taxes_widget.html:54 templates/core/taxes_widget.html:67
-#: templates/core/taxes_widget.html:83
+#: templates/core/taxes_widget.html:57 templates/core/taxes_widget.html:71
+#: templates/core/taxes_widget.html:87
 msgid "Base taxes"
 msgstr ""
 
-#: templates/core/taxes_widget.html:55 templates/core/taxes_widget.html:68
-#: templates/core/taxes_widget.html:84
+#: templates/core/taxes_widget.html:58 templates/core/taxes_widget.html:72
+#: templates/core/taxes_widget.html:88
 msgid "Extra taxes because of overrun"
 msgstr ""
 
-#: templates/core/taxes_widget.html:56 templates/core/taxes_widget.html:69
-#: templates/core/taxes_widget.html:85
+#: templates/core/taxes_widget.html:59 templates/core/taxes_widget.html:73
+#: templates/core/taxes_widget.html:89
 msgid "Total amount to pay"
 msgstr ""
 
-#: templates/core/taxes_widget.html:56 templates/core/taxes_widget.html:58
-#: templates/core/taxes_widget.html:69 templates/core/taxes_widget.html:71
-#: templates/core/taxes_widget.html:85 templates/core/taxes_widget.html:87
+#: templates/core/taxes_widget.html:59 templates/core/taxes_widget.html:61
+#: templates/core/taxes_widget.html:73 templates/core/taxes_widget.html:75
+#: templates/core/taxes_widget.html:89 templates/core/taxes_widget.html:91
 #, python-format
 msgid "%(amount_to_pay)s before %(tax_due_date)s"
 msgstr ""
 
-#: templates/core/taxes_widget.html:58 templates/core/taxes_widget.html:71
-#: templates/core/taxes_widget.html:87
+#: templates/core/taxes_widget.html:61 templates/core/taxes_widget.html:75
+#: templates/core/taxes_widget.html:91
 msgid "Amount to pay"
 msgstr ""
 
-#: templates/core/taxes_widget.html:73 templates/core/taxes_widget.html:89
+#: templates/core/taxes_widget.html:77 templates/core/taxes_widget.html:93
 msgid "Estimations based on invoice payment dates"
 msgstr ""
 
-#: templates/core/taxes_widget.html:74 templates/core/taxes_widget.html:90
+#: templates/core/taxes_widget.html:78 templates/core/taxes_widget.html:94
 msgid "Estimated paid sales"
 msgstr ""
 
-#: templates/core/taxes_widget.html:75 templates/core/taxes_widget.html:91
+#: templates/core/taxes_widget.html:79 templates/core/taxes_widget.html:95
 msgid "Estimated amount to pay"
 msgstr ""
 
