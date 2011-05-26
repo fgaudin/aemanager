@@ -494,7 +494,7 @@ def paypal_ipn(request):
                 begin_date = last_subscription.expiration_date
 
             proposal = Proposal.objects.create(project=project,
-                                               reference='subscription-%i%i%i' % (subscription.expiration_date.year,
+                                               reference='subscription%i%i%i' % (subscription.expiration_date.year,
                                                                                   subscription.expiration_date.month,
                                                                                   subscription.expiration_date.day),
                                                state=PROPOSAL_STATE_BALANCED,
