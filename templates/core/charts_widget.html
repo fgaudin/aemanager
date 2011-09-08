@@ -11,9 +11,9 @@ jQuery(function () {
 
     jQuery.plot(jQuery("#sales-chart"), [ {label : "{% trans "Paid sales" %}", data: paid},
                                           {label : "{% trans "Waiting" %}", data: waiting},
-                                          {label: "{% trans "To be invoiced" %}", data: to_be_invoiced},
+                                          {label: "{% trans "To be invoiced" %}", data: to_be_invoiced}
                                           {% if sales.remaining >= 0 %}
-                                          {label : "{% trans "Remaining" %}", data : remaining}
+                                          ,{label : "{% trans "Remaining" %}", data : remaining}
                                           {% endif %}
                                          ], {
         series: {
