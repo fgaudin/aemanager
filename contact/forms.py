@@ -38,3 +38,13 @@ class ContactSearchForm(forms.Form):
     name = forms.CharField(label=_('Name'), required=False)
     email = forms.CharField(label=_('Email'), required=False)
     phonenumber = forms.CharField(label=_('Phone number'), required=False)
+
+class ContactQuickCreateForm(ModelForm):
+    customer_id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
+
+    class Meta:
+        model = Contact
+        fields = ['name']
+
+    def setToEditMode(self):
+        self.fields['name'].widget.attrs['readonly'] = True

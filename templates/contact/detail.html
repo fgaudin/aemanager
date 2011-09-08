@@ -85,4 +85,31 @@
 {% else %}
 <div>{% trans "No master aggreements" %}</div>
 {% endif %}
+
+<div class="context-menu"><a href="{% url invoice_add customer_id=contact.id %}">{% trans "Draw up an invoice" %}</a></div>
+<h1>{% trans "Invoices" %}</h1>
+{% if contact.invoice_set.count %}
+<div class="search-list">
+    <table>
+        <thead>
+            <tr>
+                <th>{% trans "Id" %}</th>
+                <th>{% trans "State" %}</th>
+                <th>{% trans "Amount" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for invoice in contact.invoice_set.all %}
+           <tr class="{% cycle 'row1' 'row2' %}">
+                <td><a href="{% url invoice_detail invoice.id %}">{{ invoice.invoice_id }}</a></td>
+                <td><a href="{% url invoice_detail invoice.id %}">{{ invoice.get_state_display }}</a></td>
+                <td><a href="{% url invoice_detail invoice.id %}">{{ invoice.amount|default:"" }}</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div>{% trans "No invoices" %}</div>
+{% endif %}
 {% endblock %}

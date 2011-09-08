@@ -15,6 +15,33 @@ jQuery(document).ready(function(){
     jQuery.include('{{ MEDIA_URL }}js/datepicker_i18n','jquery.ui.datepicker-'+"{{ LANGUAGE_CODE }}".substr(0,2)+'.js');
     jQuery('.date').datepicker(jQuery.datepicker.regional["{{ LANGUAGE_CODE }}".substr(0,2)]);
 
+    if (!jQuery("input#id_contact-name").val()) {
+        jQuery("input#id_contact-name").autocomplete({
+            source: "{% url contact_ajax_search %}",
+            create: function(event, ui){
+                jQuery('input#id_contact-name').after('<p class="help" id="new-contact-label">({% trans "new contact" %})</p>');
+            },
+            search: function(event, ui) {
+                jQuery('#id_contact-customer_id').val('');
+                jQuery('.proposal-field').find("option[value!='']").remove();
+                jQuery('#new-contact-label').show();
+            },
+            select: function(event, ui) {
+                jQuery('#new-contact-label').hide();
+                jQuery('#id_contact-customer_id').val(ui.item.id)
+                jQuery('#id_address-street').val(ui.item.address__street);
+                jQuery('#id_address-zipcode').val(ui.item.address__zipcode);
+                jQuery('#id_address-city').val(ui.item.address__city);
+                jQuery('#id_address-country').val(ui.item.address__country__id);
+                jQuery.getJSON('{% url invoice_proposals %}?customer_id=' + ui.item.id, function(data){
+                    jQuery(data).each(function(){
+                        jQuery('.proposal-field').append('<option value="' + this.value + '">' + this.label + '</option>');
+                    });
+                });
+            }
+        });
+    }
+
     jQuery('.invoice-row input:text').labelInside();
     jQuery('.proposal-field').proposalOverview('{% trans "Proposal" %}', '{% url proposal_detail id=0 %}');
     jQuery('.balance_payments_label').rowHelp();
@@ -103,6 +130,14 @@ jQuery(document).ready(function(){
 <form action="" method="post" id="invoice-edit-form">
     {% csrf_token %}
     <fieldset class="module aligned">
+    <div id="contact-box">
+        {% with contactForm as form %}
+        {% include "form.html" %}
+        {% endwith %}
+        {% with addressForm as form %}
+        {% include "form.html" %}
+        {% endwith %}
+    </div>
     {% for hidden in invoiceForm.hidden_fields %}
         {{ hidden }}
     {% endfor %}

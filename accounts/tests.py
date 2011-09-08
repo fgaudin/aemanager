@@ -14,7 +14,7 @@ from project.models import Proposal, PROPOSAL_STATE_DRAFT, ROW_CATEGORY_SERVICE,
 from accounts.models import INVOICE_STATE_EDITED, Invoice, InvoiceRow, \
     INVOICE_STATE_SENT, InvoiceRowAmountError, PAYMENT_TYPE_CHECK, \
     PAYMENT_TYPE_CASH, Expense, INVOICE_STATE_PAID
-from contact.models import Country
+from contact.models import Country, Contact
 from autoentrepreneur.models import UserProfile
 
 class ExpensePermissionTest(TestCase):
@@ -206,6 +206,66 @@ class InvoicePermissionTest(TestCase):
         response = self.client.get(reverse('invoice_download', kwargs={'id': self.invoice2.id}))
         self.assertEqual(response.status_code, 404)
 
+    def testInvoiceWithoutProposal(self):
+        customer = self.proposal1.project.customer
+        customer.owner_id = 2
+        customer.save()
+
+        response = self.client.post(reverse('invoice_add_without_proposal'),
+                                    {'contact-customer_id': customer.id,
+                                     'contact-name': 'New customer',
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75001',
+                                     'address-city': 'Paris',
+                                     'invoice-invoice_id': 3,
+                                     'invoice-state': INVOICE_STATE_EDITED,
+                                     'invoice-amount': 1000,
+                                     'invoice-edition_date': '2010-8-31',
+                                     'invoice-payment_date': '2010-9-30',
+                                     'invoice-paid_date': '',
+                                     'invoice-payment_type': PAYMENT_TYPE_CHECK,
+                                     'invoice-execution_begin_date': '2010-8-1',
+                                     'invoice-execution_end_date': '2010-8-7',
+                                     'invoice-penalty_date': '2010-10-8',
+                                     'invoice-penalty_rate': 1.5,
+                                     'invoice-discount_conditions':'Nothing',
+                                     'invoice_rows-TOTAL_FORMS': 1,
+                                     'invoice_rows-INITIAL_FORMS': 0,
+                                     'invoice_rows-0-ownedobject_ptr': '',
+                                     'invoice_rows-0-label': 'Day of work',
+                                     'invoice_rows-0-proposal': '',
+                                     'invoice_rows-0-category': ROW_CATEGORY_SERVICE,
+                                     'invoice_rows-0-quantity': 10,
+                                     'invoice_rows-0-unit_price': 100 })
+
+        self.assertEqual(response.status_code, 404)
+
+    def testGetContactsAjax(self):
+        response = self.client.get("%s?term=contact" % (reverse('contact_ajax_search')))
+        self.assertEquals(response.content, '[{"name": "Contact 1", "address__country__id": null, "address__zipcode": "", "value": "Contact 1", "label": "Contact 1", "address__city": "", "address__street": "", "id": 10}, {"name": "Contact 2", "address__country__id": null, "address__zipcode": "", "value": "Contact 2", "label": "Contact 2", "address__city": "", "address__street": "", "id": 11}]')
+
+        customer = self.proposal1.project.customer
+        customer.owner_id = 2
+        customer.save()
+
+        response = self.client.get("%s?term=contact" % (reverse('contact_ajax_search')))
+        self.assertEquals(response.content, '[{"name": "Contact 2", "address__country__id": null, "address__zipcode": "", "value": "Contact 2", "label": "Contact 2", "address__city": "", "address__street": "", "id": 11}]')
+
+    def testGetProposalsAjax(self):
+        response = self.client.get("%s?customer_id=" % (reverse('invoice_proposals')))
+        self.assertEqual(response.status_code, 404)
+
+        customer = self.proposal1.project.customer
+
+        response = self.client.get("%s?customer_id=%d" % (reverse('invoice_proposals'), customer.id))
+        self.assertEqual(response.status_code, 200)
+
+        customer.owner_id = 2
+        customer.save()
+
+        response = self.client.get("%s?customer_id=%d" % (reverse('invoice_proposals'), customer.id))
+        self.assertEqual(response.status_code, 404)
+
 class InvoiceTest(TestCase):
     fixtures = ['test_users', 'test_contacts', 'test_projects']
 
@@ -291,7 +351,11 @@ class InvoiceTest(TestCase):
         Tests posting to Add invoice page
         """
         response = self.client.post(reverse('invoice_add', kwargs={'customer_id': self.proposal.project.customer.id}),
-                                    {'invoice-invoice_id': 1,
+                                    {'contact-name': self.proposal.project.customer.name,
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75001',
+                                     'address-city': 'Paris',
+                                     'invoice-invoice_id': 1,
                                      'invoice-state': INVOICE_STATE_EDITED,
                                      'invoice-amount': 1000,
                                      'invoice-edition_date': '2010-8-31',
@@ -440,7 +504,11 @@ class InvoiceTest(TestCase):
                                           owner_id=1)
 
         response = self.client.post(reverse('invoice_edit', kwargs={'id': i.id}),
-                                    {'invoice-invoice_id': 1,
+                                    {'contact-name': i.customer.name,
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75001',
+                                     'address-city': 'Paris',
+                                     'invoice-invoice_id': 1,
                                      'invoice-state': INVOICE_STATE_SENT,
                                      'invoice-amount': 1500,
                                      'invoice-edition_date': '2010-8-30',
@@ -642,7 +710,11 @@ class InvoiceTest(TestCase):
         self.assertRaises(InvoiceRowAmountError, i2.check_amounts)
 
         response = self.client.post(reverse('invoice_edit', kwargs={'id': i.id}),
-                                    {'invoice-invoice_id': 1,
+                                    {'contact-name': i.customer.name,
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75001',
+                                     'address-city': 'Paris',
+                                     'invoice-invoice_id': 1,
                                      'invoice-state': INVOICE_STATE_SENT,
                                      'invoice-edition_date': '2010-8-30',
                                      'invoice-payment_date': '2010-9-29',
@@ -671,7 +743,11 @@ class InvoiceTest(TestCase):
         Tests that each invoice_id is unique for a user
         """
         response = self.client.post(reverse('invoice_add', kwargs={'customer_id': self.proposal.project.customer.id}),
-                                    {'invoice-invoice_id': 1,
+                                    {'contact-name': self.proposal.project.customer.name,
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75001',
+                                     'address-city': 'Paris',
+                                     'invoice-invoice_id': 1,
                                      'invoice-state': INVOICE_STATE_EDITED,
                                      'invoice-amount': 1000,
                                      'invoice-edition_date': '2010-8-31',
@@ -694,7 +770,11 @@ class InvoiceTest(TestCase):
 
         self.assertEqual(response.status_code, 302)
         response = self.client.post(reverse('invoice_add', kwargs={'customer_id': self.proposal.project.customer.id}),
-                                    {'invoice-invoice_id': 1,
+                                    {'contact-name': self.proposal.project.customer.name,
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75001',
+                                     'address-city': 'Paris',
+                                     'invoice-invoice_id': 1,
                                      'invoice-state': INVOICE_STATE_EDITED,
                                      'invoice-amount': 1000,
                                      'invoice-edition_date': '2010-8-31',
@@ -719,7 +799,11 @@ class InvoiceTest(TestCase):
         self.assertTrue('invoice_id' in response.context['invoiceForm'].errors)
 
         response = self.client.post(reverse('invoice_add', kwargs={'customer_id': self.proposal.project.customer.id}),
-                                    {'invoice-invoice_id': 2,
+                                    {'contact-name': self.proposal.project.customer.name,
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75001',
+                                     'address-city': 'Paris',
+                                     'invoice-invoice_id': 2,
                                      'invoice-state': INVOICE_STATE_EDITED,
                                      'invoice-amount': 1000,
                                      'invoice-edition_date': '2010-8-31',
@@ -742,7 +826,11 @@ class InvoiceTest(TestCase):
 
         invoice = Invoice.objects.get(invoice_id=2)
         response = self.client.post(reverse('invoice_edit', kwargs={'id': invoice.id}),
-                                    {'invoice-invoice_id': 1,
+                                    {'contact-name': self.proposal.project.customer.name,
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75001',
+                                     'address-city': 'Paris',
+                                     'invoice-invoice_id': 1,
                                      'invoice-state': INVOICE_STATE_EDITED,
                                      'invoice-amount': 1000,
                                      'invoice-edition_date': '2010-8-31',
@@ -858,7 +946,11 @@ class InvoiceTest(TestCase):
         Tests changing state of proposal to balanced
         """
         response = self.client.post(reverse('invoice_add', kwargs={'customer_id': self.proposal.project.customer.id}),
-                                    {'invoice-invoice_id': 1,
+                                    {'contact-name': self.proposal.project.customer.name,
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75001',
+                                     'address-city': 'Paris',
+                                     'invoice-invoice_id': 1,
                                      'invoice-state': INVOICE_STATE_PAID,
                                      'invoice-amount': 1000,
                                      'invoice-edition_date': '2010-8-31',
@@ -915,7 +1007,11 @@ class InvoiceTest(TestCase):
                                           owner_id=1)
 
         response = self.client.post(reverse('invoice_edit', kwargs={'id': i.id}),
-                                    {'invoice-invoice_id': 1,
+                                    {'contact-name': i.customer.name,
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75001',
+                                     'address-city': 'Paris',
+                                     'invoice-invoice_id': 1,
                                      'invoice-state': INVOICE_STATE_SENT,
                                      'invoice-amount': 1500,
                                      'invoice-edition_date': '2010-8-30',
@@ -940,7 +1036,11 @@ class InvoiceTest(TestCase):
         self.assertEqual(response.status_code, 302)
 
         response = self.client.post(reverse('invoice_edit', kwargs={'id': i.id}),
-                                    {'invoice-invoice_id': 1,
+                                    {'contact-name': i.customer.name,
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75001',
+                                     'address-city': 'Paris',
+                                     'invoice-invoice_id': 1,
                                      'invoice-state': INVOICE_STATE_PAID,
                                      'invoice-amount': 1500,
                                      'invoice-edition_date': '2010-8-30',
@@ -966,7 +1066,11 @@ class InvoiceTest(TestCase):
         self.assertTrue('payment_type' in response.context['invoiceForm'].errors)
 
         response = self.client.post(reverse('invoice_edit', kwargs={'id': i.id}),
-                                    {'invoice-invoice_id': 1,
+                                    {'contact-name': i.customer.name,
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75001',
+                                     'address-city': 'Paris',
+                                     'invoice-invoice_id': 1,
                                      'invoice-state': INVOICE_STATE_PAID,
                                      'invoice-amount': 1500,
                                      'invoice-edition_date': '2010-8-30',
@@ -1027,7 +1131,11 @@ class InvoiceTest(TestCase):
                                            owner_id=1)
 
         response = self.client.post(reverse('invoice_edit', kwargs={'id': i.id}),
-                                    {'invoice-invoice_id': 1,
+                                    {'contact-name': i.customer.name,
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75001',
+                                     'address-city': 'Paris',
+                                     'invoice-invoice_id': 1,
                                      'invoice-state': INVOICE_STATE_SENT,
                                      'invoice-amount': 1500,
                                      'invoice-edition_date': '2010-8-30',
@@ -1089,7 +1197,11 @@ class InvoiceTest(TestCase):
                                           owner_id=1)
 
         response = self.client.post(reverse('invoice_edit', kwargs={'id': i.id}),
-                                    {'invoice-invoice_id': 1,
+                                    {'contact-name': i.customer.name,
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75001',
+                                     'address-city': 'Paris',
+                                     'invoice-invoice_id': 1,
                                      'invoice-state': INVOICE_STATE_PAID,
                                      'invoice-amount': 1000,
                                      'invoice-edition_date': '2010-8-30',
@@ -1118,7 +1230,11 @@ class InvoiceTest(TestCase):
         i.state = INVOICE_STATE_SENT
         i.save()
         response = self.client.post(reverse('invoice_edit', kwargs={'id': i.id}),
-                                    {'invoice-invoice_id': 1,
+                                    {'contact-name': i.customer.name,
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75001',
+                                     'address-city': 'Paris',
+                                     'invoice-invoice_id': 1,
                                      'invoice-state': INVOICE_STATE_EDITED,
                                      'invoice-amount': 1000,
                                      'invoice-edition_date': '2010-8-30',
@@ -1171,7 +1287,11 @@ class InvoiceTest(TestCase):
                                             owner_id=1)
 
         response = self.client.post(reverse('invoice_add', kwargs={'customer_id': p.project.customer.id}),
-                                    {'invoice-invoice_id': 1,
+                                    {'contact-name': p.project.customer.name,
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75001',
+                                     'address-city': 'Paris',
+                                     'invoice-invoice_id': 1,
                                      'invoice-state': INVOICE_STATE_EDITED,
                                      'invoice-edition_date': '2010-8-31',
                                      'invoice-payment_date': '2010-9-30',
@@ -1265,7 +1385,11 @@ class InvoiceTest(TestCase):
                                           owner_id=1)
 
         response = self.client.post(reverse('invoice_edit', kwargs={'id': i.id}),
-                                    {'invoice-invoice_id': 1,
+                                    {'contact-name': i.customer.name,
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75001',
+                                     'address-city': 'Paris',
+                                     'invoice-invoice_id': 1,
                                      'invoice-state': INVOICE_STATE_SENT,
                                      'invoice-amount': 1500,
                                      'invoice-edition_date': '2010-8-30',
@@ -1451,6 +1575,195 @@ class InvoiceTest(TestCase):
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
                           "0acee8461a531bcb58403f8775f0f041")
 
+    def testCanCreateInvoiceWithoutProposal(self):
+        contacts = Contact.objects.filter(name='New customer').count()
+        self.assertEquals(contacts, 0)
+        response = self.client.post(reverse('invoice_add_without_proposal'),
+                                    {'contact-name': 'New customer',
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75001',
+                                     'address-city': 'Paris',
+                                     'invoice-invoice_id': 1,
+                                     'invoice-state': INVOICE_STATE_EDITED,
+                                     'invoice-amount': 1000,
+                                     'invoice-edition_date': '2010-8-31',
+                                     'invoice-payment_date': '2010-9-30',
+                                     'invoice-paid_date': '',
+                                     'invoice-payment_type': PAYMENT_TYPE_CHECK,
+                                     'invoice-execution_begin_date': '2010-8-1',
+                                     'invoice-execution_end_date': '2010-8-7',
+                                     'invoice-penalty_date': '2010-10-8',
+                                     'invoice-penalty_rate': 1.5,
+                                     'invoice-discount_conditions':'Nothing',
+                                     'invoice_rows-TOTAL_FORMS': 1,
+                                     'invoice_rows-INITIAL_FORMS': 0,
+                                     'invoice_rows-0-ownedobject_ptr': '',
+                                     'invoice_rows-0-label': 'Day of work',
+                                     'invoice_rows-0-proposal': '',
+                                     'invoice_rows-0-category': ROW_CATEGORY_SERVICE,
+                                     'invoice_rows-0-quantity': 10,
+                                     'invoice_rows-0-unit_price': 100 })
+
+        self.assertEqual(response.status_code, 302)
+
+        customer = Contact.objects.get(name='New customer')
+        result = Invoice.objects.filter(customer__id=customer.id,
+                                        invoice_id=1,
+                                        state=INVOICE_STATE_EDITED,
+                                        amount='1000',
+                                        edition_date=datetime.date(2010, 8, 31),
+                                        payment_date=datetime.date(2010, 9, 30),
+                                        paid_date=None,
+                                        payment_type=PAYMENT_TYPE_CHECK,
+                                        execution_begin_date=datetime.date(2010, 8, 1),
+                                        execution_end_date=datetime.date(2010, 8, 7),
+                                        penalty_date=datetime.date(2010, 10, 8),
+                                        penalty_rate='1.5',
+                                        discount_conditions='Nothing',
+                                        owner__id=1)
+        self.assertEqual(len(result), 1)
+        invoice_rows = result[0].invoice_rows.all()
+        self.assertEqual(len(invoice_rows), 1)
+        invoice_rows = result[0].invoice_rows.filter(label='Day of work',
+                                                     proposal__id=None,
+                                                     balance_payments=False,
+                                                     category=ROW_CATEGORY_SERVICE,
+                                                     quantity=10,
+                                                     unit_price='100')
+        self.assertEqual(len(invoice_rows), 1)
+
+    def testCanReferenceExistentContact(self):
+        self.assertEquals(Contact.objects.count(), 2)
+
+        response = self.client.post(reverse('invoice_add_without_proposal'),
+                                    {'contact-customer_id': self.proposal.project.customer.id,
+                                     'contact-name': 'New customer',
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75001',
+                                     'address-city': 'Paris',
+                                     'invoice-invoice_id': 1,
+                                     'invoice-state': INVOICE_STATE_EDITED,
+                                     'invoice-amount': 1000,
+                                     'invoice-edition_date': '2010-8-31',
+                                     'invoice-payment_date': '2010-9-30',
+                                     'invoice-paid_date': '',
+                                     'invoice-payment_type': PAYMENT_TYPE_CHECK,
+                                     'invoice-execution_begin_date': '2010-8-1',
+                                     'invoice-execution_end_date': '2010-8-7',
+                                     'invoice-penalty_date': '2010-10-8',
+                                     'invoice-penalty_rate': 1.5,
+                                     'invoice-discount_conditions':'Nothing',
+                                     'invoice_rows-TOTAL_FORMS': 1,
+                                     'invoice_rows-INITIAL_FORMS': 0,
+                                     'invoice_rows-0-ownedobject_ptr': '',
+                                     'invoice_rows-0-label': 'Day of work',
+                                     'invoice_rows-0-proposal': '',
+                                     'invoice_rows-0-category': ROW_CATEGORY_SERVICE,
+                                     'invoice_rows-0-quantity': 10,
+                                     'invoice_rows-0-unit_price': 100 })
+
+        self.assertEqual(response.status_code, 302)
+
+        self.assertEquals(Contact.objects.count(), 2)
+
+        result = Invoice.objects.filter(customer__id=self.proposal.project.customer.id,
+                                        invoice_id=1,
+                                        state=INVOICE_STATE_EDITED,
+                                        amount='1000',
+                                        edition_date=datetime.date(2010, 8, 31),
+                                        payment_date=datetime.date(2010, 9, 30),
+                                        paid_date=None,
+                                        payment_type=PAYMENT_TYPE_CHECK,
+                                        execution_begin_date=datetime.date(2010, 8, 1),
+                                        execution_end_date=datetime.date(2010, 8, 7),
+                                        penalty_date=datetime.date(2010, 10, 8),
+                                        penalty_rate='1.5',
+                                        discount_conditions='Nothing',
+                                        owner__id=1)
+        self.assertEqual(len(result), 1)
+
+    def testCanModifyContactAddress(self):
+        customer = self.proposal.project.customer
+        self.assertEquals(customer.address.street, '')
+        self.assertEquals(customer.address.zipcode, '')
+        self.assertEquals(customer.address.city, '')
+        self.assertEquals(customer.address.country_id, None)
+
+        response = self.client.post(reverse('invoice_add_without_proposal'),
+                                    {'contact-customer_id': self.proposal.project.customer.id,
+                                     'contact-name': 'New customer',
+                                     'address-street': '2 rue du calvaire',
+                                     'address-zipcode': '33000',
+                                     'address-city': 'Bordeaux',
+                                     'address-country': 10,
+                                     'invoice-invoice_id': 1,
+                                     'invoice-state': INVOICE_STATE_EDITED,
+                                     'invoice-amount': 1000,
+                                     'invoice-edition_date': '2010-8-31',
+                                     'invoice-payment_date': '2010-9-30',
+                                     'invoice-paid_date': '',
+                                     'invoice-payment_type': PAYMENT_TYPE_CHECK,
+                                     'invoice-execution_begin_date': '2010-8-1',
+                                     'invoice-execution_end_date': '2010-8-7',
+                                     'invoice-penalty_date': '2010-10-8',
+                                     'invoice-penalty_rate': 1.5,
+                                     'invoice-discount_conditions':'Nothing',
+                                     'invoice_rows-TOTAL_FORMS': 1,
+                                     'invoice_rows-INITIAL_FORMS': 0,
+                                     'invoice_rows-0-ownedobject_ptr': '',
+                                     'invoice_rows-0-label': 'Day of work',
+                                     'invoice_rows-0-proposal': '',
+                                     'invoice_rows-0-category': ROW_CATEGORY_SERVICE,
+                                     'invoice_rows-0-quantity': 10,
+                                     'invoice_rows-0-unit_price': 100 })
+
+        self.assertEqual(response.status_code, 302)
+
+        invoice = Invoice.objects.get(invoice_id=1)
+        customer = invoice.customer
+        self.assertEquals(customer.address.street, '2 rue du calvaire')
+        self.assertEquals(customer.address.zipcode, '33000')
+        self.assertEquals(customer.address.city, 'Bordeaux')
+        self.assertEquals(customer.address.country_id, 10)
+
+    def testCannotModifyContactName(self):
+        customer = self.proposal.project.customer
+        self.assertEquals(customer.name, 'Contact 1')
+
+        response = self.client.post(reverse('invoice_add_without_proposal'),
+                                    {'contact-customer_id': self.proposal.project.customer.id,
+                                     'contact-name': 'New customer',
+                                     'address-street': '2 rue du calvaire',
+                                     'address-zipcode': '33000',
+                                     'address-city': 'Bordeaux',
+                                     'address-country': 10,
+                                     'invoice-invoice_id': 1,
+                                     'invoice-state': INVOICE_STATE_EDITED,
+                                     'invoice-amount': 1000,
+                                     'invoice-edition_date': '2010-8-31',
+                                     'invoice-payment_date': '2010-9-30',
+                                     'invoice-paid_date': '',
+                                     'invoice-payment_type': PAYMENT_TYPE_CHECK,
+                                     'invoice-execution_begin_date': '2010-8-1',
+                                     'invoice-execution_end_date': '2010-8-7',
+                                     'invoice-penalty_date': '2010-10-8',
+                                     'invoice-penalty_rate': 1.5,
+                                     'invoice-discount_conditions':'Nothing',
+                                     'invoice_rows-TOTAL_FORMS': 1,
+                                     'invoice_rows-INITIAL_FORMS': 0,
+                                     'invoice_rows-0-ownedobject_ptr': '',
+                                     'invoice_rows-0-label': 'Day of work',
+                                     'invoice_rows-0-proposal': '',
+                                     'invoice_rows-0-category': ROW_CATEGORY_SERVICE,
+                                     'invoice_rows-0-quantity': 10,
+                                     'invoice_rows-0-unit_price': 100 })
+
+        self.assertEqual(response.status_code, 302)
+
+        invoice = Invoice.objects.get(invoice_id=1)
+        customer = invoice.customer
+        self.assertEquals(customer.name, 'Contact 1')
+
 class InvoiceBug106Test(TransactionTestCase):
     fixtures = ['test_users', 'test_contacts', 'test_projects']
 
@@ -1524,7 +1837,11 @@ class InvoiceBug106Test(TransactionTestCase):
                                            owner_id=1)
 
         response = self.client.post(reverse('invoice_edit', kwargs={'id': i.id}),
-                                    {'invoice-invoice_id': 1,
+                                    {'contact-name': i.customer.name,
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75001',
+                                     'address-city': 'Paris',
+                                     'invoice-invoice_id': 1,
                                      'invoice-state': INVOICE_STATE_EDITED,
                                      'invoice-edition_date': '2010-8-31',
                                      'invoice-payment_date': '2010-9-29',

@@ -93,8 +93,8 @@
         {% for invoicerow in invoice.invoice_rows.all %}
            <tr class="{% cycle 'row1' 'row2' %}">
                 <td>{{ invoicerow.label }}</td>
-                <td><a href="{% url proposal_detail invoicerow.proposal.id %}">{{ invoicerow.proposal }}</a></td>
-                <td>{% if invoicerow.balance_payments %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}</td>
+                <td>{% if invoicerow.proposal %}<a href="{% url proposal_detail invoicerow.proposal.id %}">{{ invoicerow.proposal }}</a>{% endif %}</td>
+                <td>{% if invoicerow.proposal %}{% if invoicerow.balance_payments %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}{% endif %}</td>
                 <td>{{ invoicerow.get_category_display }}</td>
                 <td>{{ invoicerow.quantity|floatformat }}</td>
                 <td>{{ invoicerow.unit_price|floatformat:2 }}</td>

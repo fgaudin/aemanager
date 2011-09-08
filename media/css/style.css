@@ -578,3 +578,30 @@ body.login {
     margin-bottom: 5px;
     font-weight: bold;
 }
+
+#contact-box {
+    float:right;
+    border-left:1px solid #ccc;
+    border-bottom:1px solid #ccc;
+    margin-left:10px;
+}
+
+#contact-box label {
+    width:8em;
+}
+
+#contact-box textarea {
+    width:250px;
+}
+
+#contact-box select {
+    width:250px;
+}
+
+#contact-box .help {
+    margin-left: 7em;
+}
+
+.ui-autocomplete li {
+    list-style-type: none;
+}

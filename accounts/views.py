@@ -10,7 +10,7 @@ from django.http import HttpResponse
 from django.utils import simplejson
 from django.utils.formats import localize
 from django.db.transaction import commit_on_success
-from contact.models import Contact
+from contact.models import Contact, CONTACT_TYPE_COMPANY
 from django.forms.models import inlineformset_factory
 from project.models import Proposal, PROPOSAL_STATE_BALANCED, \
     PROPOSAL_STATE_ACCEPTED
@@ -30,6 +30,7 @@ from reportlab.lib.units import inch
 from reportlab.lib.enums import TA_CENTER
 from reportlab.platypus import Table, TableStyle
 from reportlab.lib import colors
+from contact.forms import ContactQuickCreateForm, AddressForm
 
 @settings_required
 @subscription_required
@@ -280,7 +281,25 @@ def invoice_create_or_edit(request, id=None, customer_id=None, proposal_id=None)
     else:
         title = _('Draw up an invoice')
         invoice = None
-        customer = get_object_or_404(Contact, pk=customer_id, owner=request.user)
+        """
+        in case of invoice creation, if a customer_id is not provided by url
+        we look for it in the autocomplete field (case of direct invoice draw up
+        without proposal)
+        """
+        if request.method == 'POST':
+            autocompleted_customer_id = request.POST.get('contact-customer_id')
+            if not customer_id:
+                customer_id = autocompleted_customer_id
+        if customer_id:
+            customer = get_object_or_404(Contact, pk=customer_id, owner=request.user)
+        else:
+            customer = None
+
+    address = None
+    original_customer_name = None
+    if customer:
+        address = customer.address
+        original_customer_name = customer.name
 
     proposal = None
     if proposal_id:
@@ -296,24 +315,43 @@ def invoice_create_or_edit(request, id=None, customer_id=None, proposal_id=None)
                                               fk_name="invoice",
                                               extra=1)
 
-    filter = Q(project__customer=customer,
-               state=PROPOSAL_STATE_ACCEPTED,
-               owner=request.user)
-    if invoice:
-        filter = filter | Q(invoice_rows__invoice=invoice,
-                            owner=request.user)
-
-    proposals = Proposal.objects.filter(filter).distinct()
+    proposals = Proposal.objects.get_proposals_for_invoice(customer, request.user, invoice)
 
     if request.method == 'POST':
-        invoiceForm = InvoiceForm(request.POST, instance=invoice, prefix="invoice")
-        invoicerowformset = InvoiceRowFormSet(request.POST, instance=invoice)
+        contactForm = ContactQuickCreateForm(request.POST,
+                                             instance=customer,
+                                             prefix="contact")
+        if customer:
+            contactForm.setToEditMode()
+
+        addressForm = AddressForm(request.POST,
+                                  instance=address,
+                                  prefix="address")
+        invoiceForm = InvoiceForm(request.POST,
+                                  instance=invoice,
+                                  prefix="invoice")
+        invoicerowformset = InvoiceRowFormSet(request.POST,
+                                              instance=invoice)
         for invoicerowform in invoicerowformset.forms:
             invoicerowform.fields['proposal'].queryset = proposals
 
-        if invoiceForm.is_valid() and invoicerowformset.is_valid():
+        if contactForm.is_valid() and addressForm.is_valid() and \
+           invoiceForm.is_valid() and invoicerowformset.is_valid():
             try:
                 user = request.user
+
+                address = addressForm.save(commit=False)
+                address.save(user=user)
+
+                customer = contactForm.save(commit=False)
+                if not customer.contact_type:
+                    customer.contact_type = CONTACT_TYPE_COMPANY
+                # restore original name since it shouldn't be changed in invoice
+                if original_customer_name:
+                    customer.name = original_customer_name
+                customer.address_id = address.id
+                customer.save(user=user)
+
                 invoice = invoiceForm.save(commit=False)
                 invoice.customer = customer
                 if invoice.paid_date:
@@ -361,6 +399,13 @@ def invoice_create_or_edit(request, id=None, customer_id=None, proposal_id=None)
                 initial_data['execution_begin_date'] = proposal.begin_date
                 initial_data['execution_end_date'] = proposal.end_date
 
+        contactForm = ContactQuickCreateForm(instance=customer,
+                                             prefix="contact")
+        if customer:
+            contactForm.setToEditMode()
+        addressForm = AddressForm(instance=address,
+                                  prefix="address")
+
         invoiceForm = InvoiceForm(instance=invoice,
                                   prefix="invoice",
                                   initial=initial_data)
@@ -391,6 +436,8 @@ def invoice_create_or_edit(request, id=None, customer_id=None, proposal_id=None)
                               {'active': 'accounts',
                                'title': title,
                                'from_proposal': proposal,
+                               'contactForm': contactForm,
+                               'addressForm': addressForm,
                                'invoiceForm': invoiceForm,
                                'invoicerowformset': invoicerowformset},
                                context_instance=RequestContext(request))
@@ -435,3 +482,14 @@ def invoice_download(request, id):
     response = HttpResponse(mimetype='application/pdf')
     invoice.to_pdf(user, response)
     return response
+
+@settings_required
+@subscription_required
+def invoice_proposals(request):
+    customer_id = int(request.GET.get('customer_id') or (-1))
+    customer = get_object_or_404(Contact, pk=customer_id, owner=request.user)
+    proposals = Proposal.objects.get_proposals_for_invoice(customer, request.user)
+    data = []
+    for proposal in proposals:
+        data.append({'label': unicode(proposal), 'value': proposal.id})
+    return HttpResponse(simplejson.dumps(data), mimetype='application/javascript')

@@ -15,7 +15,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.core.urlresolvers import reverse
 from accounts.models import Invoice, INVOICE_STATE_EDITED, \
-    PAYMENT_TYPE_CHECK, INVOICE_STATE_PAID, InvoiceRow
+    PAYMENT_TYPE_CHECK, INVOICE_STATE_PAID, InvoiceRow, INVOICE_STATE_SENT
 
 class PermissionTest(TestCase):
     def test_save_owned_object(self):
@@ -219,7 +219,11 @@ class DashboardTest(TestCase):
         Only on invoice which never had rows
         """
         response = self.client.post(reverse('invoice_add', kwargs={'customer_id': 3}),
-                                    {'invoice-invoice_id': 10,
+                                    {'contact-name': 'My customer',
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75001',
+                                     'address-city': 'Paris',
+                                     'invoice-invoice_id': 10,
                                      'invoice-state': INVOICE_STATE_EDITED,
                                      'invoice-edition_date': '2010-8-31',
                                      'invoice-payment_date': '2010-9-30',
@@ -286,6 +290,162 @@ class DashboardTest(TestCase):
         autoentrepreneur.models.datetime.date.mock_year = 2010
         autoentrepreneur.models.datetime.date.mock_month = 10
         autoentrepreneur.models.datetime.date.mock_day = 25
+
+    def testWithInvoiceWithoutProposal(self):
+        response = self.client.post(reverse('invoice_add_without_proposal'),
+                                    {'contact-name': 'New customer',
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75001',
+                                     'address-city': 'Paris',
+                                     'invoice-invoice_id': 10,
+                                     'invoice-state': INVOICE_STATE_EDITED,
+                                     'invoice-amount': 1000,
+                                     'invoice-edition_date': '2010-8-31',
+                                     'invoice-payment_date': '2010-9-30',
+                                     'invoice-paid_date': '',
+                                     'invoice-payment_type': PAYMENT_TYPE_CHECK,
+                                     'invoice-execution_begin_date': '2010-8-1',
+                                     'invoice-execution_end_date': '2010-8-7',
+                                     'invoice-penalty_date': '2010-10-8',
+                                     'invoice-penalty_rate': 1.5,
+                                     'invoice-discount_conditions':'Nothing',
+                                     'invoice_rows-TOTAL_FORMS': 1,
+                                     'invoice_rows-INITIAL_FORMS': 0,
+                                     'invoice_rows-0-ownedobject_ptr': '',
+                                     'invoice_rows-0-label': 'Day of work',
+                                     'invoice_rows-0-proposal': '',
+                                     'invoice_rows-0-category': ROW_CATEGORY_SERVICE,
+                                     'invoice_rows-0-quantity': 10,
+                                     'invoice_rows-0-unit_price': 100 })
+
+        self.assertEqual(response.status_code, 302)
+
+        response = self.client.get(reverse('index'))
+        self.assertEqual(response.context['sales']['paid'], 5000)
+        self.assertEqual(response.context['sales']['waiting'], 1500)
+        self.assertEqual(response.context['sales']['to_be_invoiced'], 1750)
+        self.assertEqual(response.context['sales']['total'], 8250)
+        self.assertEqual(response.context['sales']['remaining'], 7932)
+        self.assertEquals(float(response.context['taxes']['paid_sales_for_period']), 5000.0)
+        self.assertEquals(float(response.context['taxes']['estimated_paid_sales_for_period']), 8250.0)
+        self.assertEquals(float(response.context['taxes']['amount_to_pay']), 915.0)
+        self.assertEquals(float(response.context['taxes']['estimated_amount_to_pay']), 1509.75)
+
+        invoice = Invoice.objects.get(invoice_id=10)
+        invoice.state = INVOICE_STATE_SENT
+        invoice.save()
+
+        response = self.client.get(reverse('index'))
+        self.assertEqual(response.context['sales']['paid'], 5000)
+        self.assertEqual(response.context['sales']['waiting'], 2500)
+        self.assertEqual(response.context['sales']['to_be_invoiced'], 750)
+        self.assertEqual(response.context['sales']['total'], 8250)
+        self.assertEqual(response.context['sales']['remaining'], 7932)
+        self.assertEquals(float(response.context['taxes']['paid_sales_for_period']), 5000.0)
+        self.assertEquals(float(response.context['taxes']['estimated_paid_sales_for_period']), 8250.0)
+        self.assertEquals(float(response.context['taxes']['amount_to_pay']), 915.0)
+        self.assertEquals(float(response.context['taxes']['estimated_amount_to_pay']), 1509.75)
+
+        invoice = Invoice.objects.get(invoice_id=10)
+        invoice.state = INVOICE_STATE_PAID
+        invoice.paid_date = datetime.date(2010, 9, 10)
+        invoice.save()
+
+        response = self.client.get(reverse('index'))
+        self.assertEqual(response.context['sales']['paid'], 6000)
+        self.assertEqual(response.context['sales']['waiting'], 1500)
+        self.assertEqual(response.context['sales']['to_be_invoiced'], 750)
+        self.assertEqual(response.context['sales']['total'], 8250)
+        self.assertEqual(response.context['sales']['remaining'], 7932)
+        self.assertEquals(float(response.context['taxes']['paid_sales_for_period']), 6000.0)
+        self.assertEquals(float(response.context['taxes']['estimated_paid_sales_for_period']), 8250.0)
+        self.assertEquals(float(response.context['taxes']['amount_to_pay']), 1098.0)
+        self.assertEquals(float(response.context['taxes']['estimated_amount_to_pay']), 1509.75)
+
+    def testWithInvoiceWithAndWithoutProposal(self):
+        """
+        one row have proposal, the other not
+        """
+        proposal = Proposal.objects.get(pk=24)
+        proposal.state = PROPOSAL_STATE_ACCEPTED
+        proposal.save()
+
+        response = self.client.post(reverse('invoice_add_without_proposal'),
+                                    {'contact-customer_id': proposal.project.customer.id,
+                                     'contact-name': 'New customer',
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75001',
+                                     'address-city': 'Paris',
+                                     'invoice-invoice_id': 10,
+                                     'invoice-state': INVOICE_STATE_EDITED,
+                                     'invoice-amount': 1000,
+                                     'invoice-edition_date': '2010-8-31',
+                                     'invoice-payment_date': '2010-9-30',
+                                     'invoice-paid_date': '',
+                                     'invoice-payment_type': PAYMENT_TYPE_CHECK,
+                                     'invoice-execution_begin_date': '2010-8-1',
+                                     'invoice-execution_end_date': '2010-8-7',
+                                     'invoice-penalty_date': '2010-10-8',
+                                     'invoice-penalty_rate': 1.5,
+                                     'invoice-discount_conditions':'Nothing',
+                                     'invoice_rows-TOTAL_FORMS': 2,
+                                     'invoice_rows-INITIAL_FORMS': 0,
+                                     'invoice_rows-0-ownedobject_ptr': '',
+                                     'invoice_rows-0-label': 'Day of work',
+                                     'invoice_rows-0-proposal': '',
+                                     'invoice_rows-0-category': ROW_CATEGORY_SERVICE,
+                                     'invoice_rows-0-quantity': 6,
+                                     'invoice_rows-0-unit_price': 100,
+                                     'invoice_rows-1-ownedobject_ptr': '',
+                                     'invoice_rows-1-label': 'Day of work',
+                                     'invoice_rows-1-proposal': 24,
+                                     'invoice_rows-1-category': ROW_CATEGORY_SERVICE,
+                                     'invoice_rows-1-quantity': 4,
+                                     'invoice_rows-1-unit_price': 100 })
+
+        self.assertEqual(response.status_code, 302)
+
+        response = self.client.get(reverse('index'))
+        self.assertEqual(response.context['sales']['paid'], 5000)
+        self.assertEqual(response.context['sales']['waiting'], 1500)
+        self.assertEqual(response.context['sales']['to_be_invoiced'], 8350)
+        self.assertEqual(response.context['sales']['total'], 14850)
+        self.assertEqual(response.context['sales']['remaining'], 1332)
+        self.assertEquals(float(response.context['taxes']['paid_sales_for_period']), 5000.0)
+        self.assertEquals(float(response.context['taxes']['estimated_paid_sales_for_period']), 8250.0)
+        self.assertEquals(float(response.context['taxes']['amount_to_pay']), 915.0)
+        self.assertEquals(float(response.context['taxes']['estimated_amount_to_pay']), 1509.75)
+
+        invoice = Invoice.objects.get(invoice_id=10)
+        invoice.state = INVOICE_STATE_SENT
+        invoice.save()
+
+        response = self.client.get(reverse('index'))
+        self.assertEqual(response.context['sales']['paid'], 5000)
+        self.assertEqual(response.context['sales']['waiting'], 2500)
+        self.assertEqual(response.context['sales']['to_be_invoiced'], 7350)
+        self.assertEqual(response.context['sales']['total'], 14850)
+        self.assertEqual(response.context['sales']['remaining'], 1332)
+        self.assertEquals(float(response.context['taxes']['paid_sales_for_period']), 5000.0)
+        self.assertEquals(float(response.context['taxes']['estimated_paid_sales_for_period']), 8250.0)
+        self.assertEquals(float(response.context['taxes']['amount_to_pay']), 915.0)
+        self.assertEquals(float(response.context['taxes']['estimated_amount_to_pay']), 1509.75)
+
+        invoice = Invoice.objects.get(invoice_id=10)
+        invoice.state = INVOICE_STATE_PAID
+        invoice.paid_date = datetime.date(2010, 9, 10)
+        invoice.save()
+
+        response = self.client.get(reverse('index'))
+        self.assertEqual(response.context['sales']['paid'], 6000)
+        self.assertEqual(response.context['sales']['waiting'], 1500)
+        self.assertEqual(response.context['sales']['to_be_invoiced'], 7350)
+        self.assertEqual(response.context['sales']['total'], 14850)
+        self.assertEqual(response.context['sales']['remaining'], 1332)
+        self.assertEquals(float(response.context['taxes']['paid_sales_for_period']), 6000.0)
+        self.assertEquals(float(response.context['taxes']['estimated_paid_sales_for_period']), 8250.0)
+        self.assertEquals(float(response.context['taxes']['amount_to_pay']), 1098.0)
+        self.assertEquals(float(response.context['taxes']['estimated_amount_to_pay']), 1509.75)
 
 class DashboardProductActivityTest(TestCase):
     fixtures = ['test_dashboard_product_sales']

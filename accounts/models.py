@@ -157,9 +157,15 @@ class InvoiceManager(models.Manager):
         accepted_proposal_amount_sum = Proposal.objects.filter(state=PROPOSAL_STATE_ACCEPTED,
                                                    owner=owner).extra(where=['project_proposal.ownedobject_ptr_id NOT IN (SELECT proposal_id FROM accounts_invoicerow irow JOIN accounts_invoice i ON irow.invoice_id = i.ownedobject_ptr_id WHERE i.state IN (%s,%s) AND irow.balance_payments = %s)'],
                                                                                  params=[INVOICE_STATE_SENT, INVOICE_STATE_PAID, True]).aggregate(amount=Sum('amount'))
+        # exclude amount found in sent or paid invoices referencing accepted proposal, aka computing already invoiced from not sold proposal
         invoicerows_to_exclude = InvoiceRow.objects.extra(where=['accounts_invoicerow.proposal_id NOT IN (SELECT proposal_id FROM accounts_invoicerow irow JOIN accounts_invoice i ON irow.invoice_id = i.ownedobject_ptr_id WHERE i.state IN (%s,%s) AND irow.balance_payments = %s)'],
                                                           params=[INVOICE_STATE_SENT, INVOICE_STATE_PAID, True]).exclude(invoice__state=INVOICE_STATE_EDITED).filter(owner=owner).aggregate(amount=Sum('amount'))
-        return (accepted_proposal_amount_sum['amount'] or 0) - (invoicerows_to_exclude['amount'] or 0)
+
+        # adding invoice rows of edited invoices which don't have proposal linked
+        invoicerows_whithout_proposals = InvoiceRow.objects.filter(owner=owner,
+                                                                   proposal=None,
+                                                                   invoice__state=INVOICE_STATE_EDITED).aggregate(amount=Sum('amount'))
+        return (accepted_proposal_amount_sum['amount'] or 0) - (invoicerows_to_exclude['amount'] or 0) + (invoicerows_whithout_proposals['amount'] or 0)
 
     def get_service_to_be_invoiced(self, owner):
         accepted_proposal_amount_sum = ProposalRow.objects.filter(proposal__state=PROPOSAL_STATE_ACCEPTED,
@@ -404,7 +410,7 @@ class Invoice(OwnedObject):
             label_width = 4.5 * inch
         for row in rows:
             label = row.label
-            if row.proposal.reference:
+            if row.proposal and row.proposal.reference:
                 label = u"%s - [%s]" % (label, row.proposal.reference)
             para = Paragraph(label, styleLabel)
             para.width = label_width
@@ -530,7 +536,7 @@ class InvoiceRowAmountError(Exception):
 
 class InvoiceRow(Row):
     invoice = models.ForeignKey(Invoice, related_name="invoice_rows")
-    proposal = models.ForeignKey(Proposal, related_name="invoice_rows", verbose_name=_('Proposal'))
+    proposal = models.ForeignKey(Proposal, related_name="invoice_rows", verbose_name=_('Proposal'), null=True, blank=True)
     balance_payments = models.BooleanField(verbose_name=_('Balance payments for the proposal'), help_text=_('"Balancing payments for the proposal" means there will be no future invoices for the selected proposal. Thus the amount remaining to invoice for this proposal will fall to zero and its state will be set to "balanced" when all invoices are paid.'))
 
     class Meta:

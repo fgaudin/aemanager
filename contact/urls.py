@@ -16,4 +16,7 @@ urlpatterns = patterns('contact.views',
     url(regex=r'^edit/(?P<id>\d+)/$',
         view='contact_create_or_edit',
         name='contact_edit'),
+    url(regex=r'^ajax_search/$',
+        view='contact_ajax_search',
+        name='contact_ajax_search'),
 )

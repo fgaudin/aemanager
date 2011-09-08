@@ -42,9 +42,12 @@
                     <ul>
                         <li>
                             <a href="{% url invoice_list %}">{% trans "Receipts/Invoices" %}</a>
-                            </li>
+                        </li>
                         <li>
                             <a href="{% url expense_list %}">{% trans "Purchases/Expenses" %}</a>
+                        </li>
+                        <li>
+                            <a href="{% url invoice_add_without_proposal %}">{% trans "Draw up an invoice" %}</a>
                         </li>
                     </ul>
                     <div class="btm-bg"></div>

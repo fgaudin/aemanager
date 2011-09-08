@@ -22,6 +22,7 @@ from core.templatetags.htmltags import to_html
 from django.conf import settings
 import ho.pisa as pisa
 from django.core.files.storage import FileSystemStorage
+from django.db.models.query_utils import Q
 
 store = FileSystemStorage(location=settings.FILE_UPLOAD_DIR)
 
@@ -164,6 +165,16 @@ class ProposalManager(models.Manager):
         quantity_sum = ProposalRow.objects.filter(proposal__state__lte=PROPOSAL_STATE_SENT,
                                                   owner=owner).exclude(proposal__project__state__gte=PROJECT_STATE_FINISHED).aggregate(quantity=Sum('quantity'))
         return quantity_sum['quantity'] or 0
+
+    def get_proposals_for_invoice(self, customer, user, invoice=None):
+        filter = Q(project__customer=customer,
+                   state=PROPOSAL_STATE_ACCEPTED,
+                   owner=user)
+        if invoice:
+            filter = filter | Q(invoice_rows__invoice=invoice,
+                                owner=user)
+
+        return self.filter(filter).distinct()
 
 def proposal_upload_to_handler(instance, filename):
         return "%s/proposal/%s" % (instance.owner.get_profile().uuid, unicodedata.normalize('NFKD', filename).encode('ascii', 'ignore'))

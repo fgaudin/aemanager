@@ -12,6 +12,9 @@ from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.db.models.query_utils import Q
 from core.decorators import settings_required
 from autoentrepreneur.decorators import subscription_required
+from django.http import HttpResponse
+from django.utils import simplejson
+from django.db.models.aggregates import Max
 
 @settings_required
 @subscription_required
@@ -173,3 +176,15 @@ def contact_delete(request, id):
                                'title': _('Delete a contact'),
                                'object_label': 'contact "%s"' % (contact)},
                                context_instance=RequestContext(request))
+
+@settings_required
+@subscription_required
+def contact_ajax_search(request):
+    term = request.GET.get('term')
+    user = request.user
+    data = list(Contact.objects.filter(owner=user, name__icontains=term)
+      .extra(select={'label': 'name',
+                     'value':'name'})
+      .values('id', 'name', 'address__street', 'address__zipcode', 'address__city', 'address__country__id', 'label', 'value'))
+
+    return HttpResponse(simplejson.dumps(data), mimetype='application/javascript')
