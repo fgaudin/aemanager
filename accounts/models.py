@@ -251,7 +251,7 @@ class Invoice(OwnedObject):
         cursor = connection.cursor()
         cursor.execute('SELECT SUM(accounts_invoicerow.amount * accounts_invoicerow.vat_rate / 100) AS "vat" FROM "accounts_invoicerow" WHERE "accounts_invoicerow"."invoice_id" = %s', [self.id])
         row = cursor.fetchone()
-        vat = row[0]
+        vat = row[0] or Decimal(0)
         vat = vat.quantize(Decimal(1)) if vat == vat.to_integral() else vat.normalize()
         return vat
 
@@ -425,7 +425,10 @@ class Invoice(OwnedObject):
 
             data_row = [label, localize(quantity), "%s %s" % (localize(unit_price), "€".decode('utf-8')), "%s %s" % (localize(total), "€".decode('utf-8'))]
             if user.get_profile().vat_number:
-                data_row.append("%s%%" % (localize(row.vat_rate)))
+                if row.vat_rate:
+                    data_row.append("%s%%" % (localize(row.vat_rate)))
+                else:
+                    data_row.append("-")
             data.append(data_row)
             for extra_row in splitted_para.lines[1:]:
                 label = " ".join(extra_row[1])
@@ -491,12 +494,13 @@ class Invoice(OwnedObject):
             right_block = [Paragraph(_("Total excl tax : %(amount)s %(currency)s") % {'amount': localize(invoice_amount), 'currency' : "€".decode('utf-8')}, styleN)]
             vat_amounts = {}
             for row in rows:
-                vat_rate = row.vat_rate
+                vat_rate = row.vat_rate or 0
                 vat_amount = row.amount * vat_rate / 100
-                if vat_rate in vat_amounts:
-                    vat_amounts[vat_rate] = vat_amounts[vat_rate] + vat_amount
-                else:
-                    vat_amounts[vat_rate] = vat_amount
+                if vat_rate:
+                    if vat_rate in vat_amounts:
+                        vat_amounts[vat_rate] = vat_amounts[vat_rate] + vat_amount
+                    else:
+                        vat_amounts[vat_rate] = vat_amount
             for vat_rate, vat_amount in vat_amounts.items():
                 vat_amount = round(vat_amount, 2)
                 #vat_amount = vat_amount.quantize(Decimal(1)) if vat_amount == vat_amount.to_integral() else vat_amount.normalize()
