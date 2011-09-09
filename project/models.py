@@ -426,7 +426,10 @@ class Proposal(OwnedObject):
             total = total.quantize(Decimal(1)) if total == total.to_integral() else total.normalize()
             data_row = [label, localize(quantity), "%s %s" % (localize(unit_price), "€".decode('utf-8')), "%s %s" % (localize(total), "€".decode('utf-8'))]
             if user.get_profile().vat_number:
-                data_row.append("%s%%" % (localize(row.vat_rate)))
+                if row.vat_rate:
+                    data_row.append("%s%%" % (localize(row.vat_rate)))
+                else:
+                    data_row.append('-')
             data.append(data_row)
             for extra_row in splitted_para.lines[1:]:
                 label = " ".join(extra_row[1])
@@ -482,12 +485,13 @@ class Proposal(OwnedObject):
             right_block = [Paragraph(_("Total excl tax : %(amount)s %(currency)s") % {'amount': localize(proposal_amount), 'currency' : "€".decode('utf-8')}, styleN)]
             vat_amounts = {}
             for row in rows:
-                vat_rate = row.vat_rate
+                vat_rate = row.vat_rate or 0
                 vat_amount = row.amount * vat_rate / 100
-                if vat_rate in vat_amounts:
-                    vat_amounts[vat_rate] = vat_amounts[vat_rate] + vat_amount
-                else:
-                    vat_amounts[vat_rate] = vat_amount
+                if vat_rate:
+                    if vat_rate in vat_amounts:
+                        vat_amounts[vat_rate] = vat_amounts[vat_rate] + vat_amount
+                    else:
+                        vat_amounts[vat_rate] = vat_amount
             for vat_rate, vat_amount in vat_amounts.items():
                 vat_amount = round(vat_amount, 2)
                 #vat_amount = vat_amount.quantize(Decimal(1)) if vat_amount == vat_amount.to_integral() else vat_amount.normalize()
