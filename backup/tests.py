@@ -10,9 +10,10 @@ from django.core.urlresolvers import reverse
 import os
 from django.conf import settings
 from django.core.management import call_command
-from project.models import Proposal, Project, PROPOSAL_STATE_ACCEPTED
+from project.models import Proposal, Project, PROPOSAL_STATE_ACCEPTED, \
+    ROW_CATEGORY_SERVICE, VAT_RATES_19_6
 from accounts.models import Invoice, INVOICE_STATE_PAID, PAYMENT_TYPE_CHECK, \
-    PAYMENT_TYPE_BANK_CARD
+    PAYMENT_TYPE_BANK_CARD, INVOICE_STATE_EDITED, InvoiceRow
 from contact.models import Contact, CONTACT_TYPE_COMPANY, Address
 from autoentrepreneur.models import Subscription, SUBSCRIPTION_STATE_TRIAL
 from django.test.testcases import TransactionTestCase, TestCase
@@ -54,9 +55,12 @@ class BackupTest(TransactionTestCase):
         call_command('backup_user_data')
 
         self.assertEquals(BackupRequest.objects.get(user=self.user1).state, BACKUP_RESTORE_STATE_DONE)
-        self.assertTrue(os.path.exists('%s%s/backup/backup_%s.tar.gz' % (settings.FILE_UPLOAD_DIR,
-                                                                         self.user1.get_profile().uuid,
-                                                                         self.user1.backuprequest.creation_datetime.strftime('%Y%m%d%H%M'))))
+
+        filename = '%s%s/backup/backup_%s.tar.gz' % (settings.FILE_UPLOAD_DIR,
+                                                     self.user1.get_profile().uuid,
+                                                     self.user1.backuprequest.creation_datetime.strftime('%Y%m%d%H%M'))
+        self.assertTrue(os.path.exists(filename))
+        self.assertNotEquals(os.path.getsize(filename), 0)
 
     def testRestoreAddMissing(self):
         response = self.client.post(reverse('backup'),
@@ -109,7 +113,7 @@ class BackupTest(TransactionTestCase):
 
         self.assertEquals(OwnedObject.objects.filter(owner=self.user2).count(), 12)
 
-        self.assertTrue(RestoreRequest.objects.get(user=self.user1).state, BACKUP_RESTORE_STATE_DONE)
+        self.assertEquals(RestoreRequest.objects.get(user=self.user1).state, BACKUP_RESTORE_STATE_DONE)
         self.assertEquals(Proposal.objects.filter(owner=self.user1).count(), 1)
         self.assertEquals(Proposal.objects.count(), 2)
         self.assertEquals(Proposal.objects.get(pk=p.id).reference, 'modified')
@@ -172,7 +176,7 @@ class BackupTest(TransactionTestCase):
 
         self.assertEquals(OwnedObject.objects.filter(owner=self.user2).count(), 12)
 
-        self.assertTrue(RestoreRequest.objects.get(user=self.user1).state, BACKUP_RESTORE_STATE_DONE)
+        self.assertEquals(RestoreRequest.objects.get(user=self.user1).state, BACKUP_RESTORE_STATE_DONE)
         self.assertEquals(Proposal.objects.filter(owner=self.user1).count(), 1)
         self.assertEquals(Proposal.objects.count(), 2)
         self.assertEquals(Proposal.objects.get(pk=p.id).reference, 'ref1')
@@ -235,7 +239,7 @@ class BackupTest(TransactionTestCase):
 
         self.assertEquals(OwnedObject.objects.filter(owner=self.user2).count(), 12)
 
-        self.assertTrue(RestoreRequest.objects.get(user=self.user1).state, BACKUP_RESTORE_STATE_DONE)
+        self.assertEquals(RestoreRequest.objects.get(user=self.user1).state, BACKUP_RESTORE_STATE_DONE)
         self.assertEquals(Proposal.objects.filter(owner=self.user1).count(), 1)
         self.assertEquals(Proposal.objects.count(), 2)
         self.assertEquals(Proposal.objects.get(uuid=p.uuid).reference, 'ref1')
@@ -537,6 +541,141 @@ class BackupTest(TransactionTestCase):
                                      'action': RESTORE_ACTION_DELETE_ALL_AND_RESTORE,
                                      'backup_file': open(backup_file, 'rb')})
         self.assertContains(response, 'You have to subscribe to restore your backups', status_code=200)
+
+    def testBackupWithNoProposalAndNoVat(self):
+        profile = self.user1.get_profile()
+        profile.vat_number = '1234'
+        profile.save()
+
+        customer = Contact.objects.all()[0]
+        i = Invoice.objects.create(customer=customer,
+                                   invoice_id=10,
+                                   state=INVOICE_STATE_EDITED,
+                                   amount='1000',
+                                   edition_date=datetime.date(2010, 8, 31),
+                                   payment_date=datetime.date(2010, 9, 30),
+                                   paid_date=None,
+                                   payment_type=PAYMENT_TYPE_CHECK,
+                                   execution_begin_date=datetime.date(2010, 8, 1),
+                                   execution_end_date=datetime.date(2010, 8, 7),
+                                   penalty_date=datetime.date(2010, 10, 8),
+                                   penalty_rate='1.5',
+                                   discount_conditions='Nothing',
+                                   owner=self.user1)
+
+        i_row = InvoiceRow.objects.create(proposal=None,
+                                          vat_rate=None,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=5,
+                                          unit_price='100',
+                                          balance_payments=False,
+                                          owner=self.user1)
+
+        i_row = InvoiceRow.objects.create(proposal=None,
+                                          vat_rate=VAT_RATES_19_6,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=5,
+                                          unit_price='100',
+                                          balance_payments=False,
+                                          owner=self.user1)
+
+        response = self.client.post(reverse('backup'),
+                                    {'backup_or_restore': 'backup'})
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals(self.user1.backuprequest.state, BACKUP_RESTORE_STATE_PENDING)
+
+        call_command('backup_user_data')
+
+        self.assertEquals(BackupRequest.objects.get(user=self.user1).state, BACKUP_RESTORE_STATE_DONE)
+
+        filename = '%s%s/backup/backup_%s.tar.gz' % (settings.FILE_UPLOAD_DIR,
+                                                     self.user1.get_profile().uuid,
+                                                     self.user1.backuprequest.creation_datetime.strftime('%Y%m%d%H%M'))
+        self.assertTrue(os.path.exists(filename))
+        self.assertNotEquals(os.path.getsize(filename), 0)
+
+    def testRestoreWithNoProposalAndNoVat(self):
+        profile = self.user1.get_profile()
+        profile.vat_number = '1234'
+        profile.save()
+
+        customer = Contact.objects.filter(owner=self.user1)[0]
+        i = Invoice.objects.create(customer=customer,
+                                   invoice_id=10,
+                                   state=INVOICE_STATE_EDITED,
+                                   amount='1000',
+                                   edition_date=datetime.date(2010, 8, 31),
+                                   payment_date=datetime.date(2010, 9, 30),
+                                   paid_date=None,
+                                   payment_type=PAYMENT_TYPE_CHECK,
+                                   execution_begin_date=datetime.date(2010, 8, 1),
+                                   execution_end_date=datetime.date(2010, 8, 7),
+                                   penalty_date=datetime.date(2010, 10, 8),
+                                   penalty_rate='1.5',
+                                   discount_conditions='Nothing',
+                                   owner=self.user1)
+
+        i_row = InvoiceRow.objects.create(proposal=None,
+                                          vat_rate=None,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=5,
+                                          unit_price='100',
+                                          balance_payments=False,
+                                          owner=self.user1)
+
+        i_row = InvoiceRow.objects.create(proposal=None,
+                                          vat_rate=VAT_RATES_19_6,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=5,
+                                          unit_price='100',
+                                          balance_payments=False,
+                                          owner=self.user1)
+
+        response = self.client.post(reverse('backup'),
+                                    {'backup_or_restore': 'backup'})
+        call_command('backup_user_data')
+
+        # delete the new invoice
+        invoice_uuid = i.uuid
+        i.delete()
+
+        backup_file = '%s%s/backup/backup_%s.tar.gz' % (settings.FILE_UPLOAD_DIR,
+                                                        self.user1.get_profile().uuid,
+                                                        self.user1.backuprequest.creation_datetime.strftime('%Y%m%d%H%M'))
+        restore_file = '%s%s/restore/backup_%s.tar.gz' % (settings.FILE_UPLOAD_DIR,
+                                                          self.user1.get_profile().uuid,
+                                                          self.user1.backuprequest.creation_datetime.strftime('%Y%m%d%H%M'))
+
+        response = self.client.post(reverse('backup'),
+                                    {'backup_or_restore': 'restore',
+                                     'action': RESTORE_ACTION_ADD_MISSING,
+                                     'backup_file': open(backup_file, 'rb')})
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals(self.user1.restorerequest.state, BACKUP_RESTORE_STATE_PENDING)
+        self.assertEquals(self.user1.restorerequest.backup_file.name,
+                          '%s/restore/backup_%s.tar.gz' % (self.user1.get_profile().uuid,
+                                                           self.user1.backuprequest.creation_datetime.strftime('%Y%m%d%H%M')))
+        shutil.copyfile(backup_file, restore_file)
+
+        call_command('restore_user_data')
+
+        self.assertEquals(RestoreRequest.objects.get(user=self.user1).state, BACKUP_RESTORE_STATE_DONE)
+
+        self.assertEquals(Invoice.objects.count(), 3)
+        self.assertEquals(Invoice.objects.filter(owner=self.user1).count(), 2)
+        self.assertEquals(Invoice.objects.filter(owner=self.user1,
+                                                 uuid=invoice_uuid).count(), 1)
+
+        self.assertEquals(InvoiceRow.objects.filter(invoice__uuid=invoice_uuid, proposal=None, vat_rate=None).count(), 1)
+        self.assertEquals(InvoiceRow.objects.filter(invoice__uuid=invoice_uuid, proposal=None, vat_rate=VAT_RATES_19_6).count(), 1)
 
 class CsvExportTest(TestCase):
     fixtures = ['test_users', 'test_contacts', 'test_projects']
