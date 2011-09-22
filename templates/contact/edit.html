@@ -94,6 +94,12 @@ jQuery(document).ready(function(){
     jQuery('.delete-checkbox').hide()
     activate_delete();
     jQuery('.default-phonenumber').click(activate_default);
+
+    jQuery("#company-search-engine").click(function(e){
+        e.preventDefault();
+        var name = jQuery("#id_contact-name").val();
+        window.open(jQuery(e.currentTarget).attr("href").replace("%s", name));
+    });
 });
 </script>
 {% endblock %}
@@ -106,7 +112,15 @@ jQuery(document).ready(function(){
         {{ hidden }}
     {% endfor %}
     {% with contactForm.name as field %}
-    {% include "field.html" %}
+    <div class="form-row">
+    {{ field.errors }}
+      <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label> {{ field }}
+      <a href="{{ search_engine.url }}" id="company-search-engine">{% blocktrans with search_engine.name as search_engine_name %}search on {{ search_engine_name }}{% endblocktrans %}</a>
+      {% if field.field.help_text %}
+        <p class="help">{{ field.field.help_text|safe }}</p>
+      {% endif %}
+      </div>
+    </div>
     {% endwith %}
     {% with contactForm.contact_type as field %}
     <div class="form-row">

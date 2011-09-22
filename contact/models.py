@@ -81,3 +81,18 @@ class PhoneNumber(OwnedObject):
 
     def __unicode__(self):
         return ('%s : %s' % (self.get_type_display(), self.number))
+
+class CompanySearchEngineManager(models.Manager):
+    def get_current(self):
+        if self.count():
+            return self.all()[0]
+        return None
+
+class CompanySearchEngine(models.Model):
+    name = models.CharField(max_length=50, verbose_name=_('Name'))
+    url = models.URLField(verbose_name=_('Url'))
+
+    objects = CompanySearchEngineManager()
+
+    def __unicode__(self):
+        return self.name

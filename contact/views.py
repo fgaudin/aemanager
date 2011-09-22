@@ -3,7 +3,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.template.context import RequestContext
 from contact.forms import ContactForm, AddressForm, PhoneNumberForm, \
     ContactSearchForm
-from contact.models import Contact, PhoneNumber, CONTACT_TYPE_PERSON
+from contact.models import Contact, PhoneNumber, CONTACT_TYPE_PERSON, \
+    CompanySearchEngine
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db.transaction import commit_on_success
@@ -40,6 +41,8 @@ def contact_create_or_edit(request, id=None):
         title = _('Add a contact')
         contact = None
         address = None
+
+    company_search_engine = CompanySearchEngine.objects.get_current()
 
     PhoneNumberFormSet = inlineformset_factory(Contact,
                                                PhoneNumber,
@@ -89,7 +92,8 @@ def contact_create_or_edit(request, id=None):
                                'title': title,
                                'contactForm': contactForm,
                                'addressForm': addressForm,
-                               'phonenumberformset': phonenumberformset},
+                               'phonenumberformset': phonenumberformset,
+                               'search_engine': company_search_engine},
                                context_instance=RequestContext(request))
 
 @settings_required
