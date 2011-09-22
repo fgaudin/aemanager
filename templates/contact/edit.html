@@ -127,7 +127,7 @@ jQuery(document).ready(function(){
     {{ field.errors }}
     <div><label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}{% if field.field.required %}*{% endif %} :</label>
        <label for="id_contact-contact_type_0"><input type="radio" name="contact-contact_type" value="1" id="id_contact-contact_type_0"{% ifequal contactForm.instance.contact_type 1 %} checked="checked"{% endifequal %}> {% trans "Person" %}</label>
-       <label for="id_contact-contact_type_1"><input type="radio" name="contact-contact_type" value="2" id="id_contact-contact_type_1"{% ifequal contactForm.instance.contact_type 2 %} checked="checked"{% endifequal %}> {% trans "Company" %}</label>
+       <label for="id_contact-contact_type_1"><input type="radio" name="contact-contact_type" value="2" id="id_contact-contact_type_1"{% ifequal contactForm.instance.contact_type 2 %} checked="checked"{% endifequal %}> {% trans "Professional" %}</label>
     </div>
     </div>
     {% endwith %}

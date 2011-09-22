@@ -26,7 +26,7 @@ class Address(OwnedObject):
 CONTACT_TYPE_PERSON = 1
 CONTACT_TYPE_COMPANY = 2
 CONTACT_TYPE = ((CONTACT_TYPE_PERSON, _('Person')),
-                (CONTACT_TYPE_COMPANY, _('Company')))
+                (CONTACT_TYPE_COMPANY, _('Professional')))
 
 class Contact(OwnedObject):
     contact_type = models.IntegerField(choices=CONTACT_TYPE, verbose_name=_('Type'))
