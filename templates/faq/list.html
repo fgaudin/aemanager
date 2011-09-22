@@ -24,7 +24,7 @@
         {% for question in category.questions.all %}
         <div class="question-answer">
             <div class="question"><a name="question-{{ question.id }}">{{ question }}</a></div>
-            <div class="answer">{{ question.answer }}</div>
+            <div class="answer">{% autoescape off %}{{ question.answer }}{% endautoescape %}</div>
         </div>
         <a href="#category-{{ category.id }}">{% trans "back to category" %}</a>
         -
