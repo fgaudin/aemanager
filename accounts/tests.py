@@ -16,6 +16,7 @@ from accounts.models import INVOICE_STATE_EDITED, Invoice, InvoiceRow, \
     PAYMENT_TYPE_CASH, Expense, INVOICE_STATE_PAID
 from contact.models import Country, Contact
 from autoentrepreneur.models import UserProfile
+from django.contrib.webdesign import lorem_ipsum
 
 class ExpensePermissionTest(TestCase):
     fixtures = ['test_users']
@@ -411,12 +412,14 @@ class InvoiceTest(TestCase):
                                            category=ROW_CATEGORY_SERVICE,
                                            quantity=12,
                                            unit_price='100',
+                                           detail="detail 1",
                                            owner_id=1)
         p_row2 = ProposalRow.objects.create(proposal_id=self.proposal.id,
                                             label='Discount',
                                             category=ROW_CATEGORY_SERVICE,
                                             quantity=3,
                                             unit_price='150',
+                                            detail="detail 2",
                                             owner_id=1)
 
         response = self.client.get(reverse('invoice_add_from_proposal', kwargs={'customer_id': self.proposal.project.customer_id,
@@ -429,12 +432,14 @@ class InvoiceTest(TestCase):
                          'unit_price': Decimal('150.00'),
                          'label': u'Discount',
                          'proposal': self.proposal,
+                         'detail': "detail 2",
                          'quantity': Decimal('3.0')}
         expected_row2 = {'category': 1,
                          'balance_payments': True,
                          'unit_price': Decimal('100.00'),
                          'label': u'Day of work',
                          'proposal': self.proposal,
+                         'detail': "detail 1",
                          'quantity': Decimal('12.0')}
 
         row1 = response.context['invoicerowformset'].forms[0].initial
@@ -900,7 +905,7 @@ class InvoiceTest(TestCase):
         content = response.content.split("\n")
         invariant_content = content[0:66] + content[67:110] + content[111:-1]
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
-                          "6451df912dc90e90df3865f8e0ab8dea")
+                          "8d6ca232060a96f8ad6855bdce59dc2c")
 
     def testInvoiceBookDownloadPdf(self):
         """
@@ -1573,7 +1578,78 @@ class InvoiceTest(TestCase):
         content = response.content.split("\n")
         invariant_content = content[0:66] + content[67:110] + content[111:-1]
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
-                          "0acee8461a531bcb58403f8775f0f041")
+                          "5cbe0bd475ed4aa5f46ce91d06f56992")
+
+    def testDownloadPdfWithRowDetail(self):
+        """
+        Tests non-regression on pdf with row detail set
+        """
+        profile = User.objects.get(pk=1).get_profile()
+        profile.iban_bban = 'FR76 1234 1234 1234 1234 1234 123'
+        profile.bic = 'CCBPFRABCDE'
+        profile.vat_number = 'FR010123456789123'
+        profile.save()
+        customer_address = self.proposal.project.customer.address
+        customer_address.street = u"128 boulevard des champs élysées\nEspace ZAC du champs de mars\nBP 140"
+        customer_address.zipcode = '75001'
+        customer_address.city = 'Paris CEDEX 1'
+        customer_address.save()
+
+        i = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                   invoice_id=1,
+                                   state=INVOICE_STATE_EDITED,
+                                   amount='1000',
+                                   edition_date=datetime.date(2010, 8, 31),
+                                   payment_date=datetime.date(2010, 9, 30),
+                                   paid_date=None,
+                                   payment_type=PAYMENT_TYPE_CHECK,
+                                   execution_begin_date=datetime.date(2010, 8, 1),
+                                   execution_end_date=datetime.date(2010, 8, 7),
+                                   penalty_date=datetime.date(2010, 10, 8),
+                                   penalty_rate='1.5',
+                                   discount_conditions='Nothing',
+                                   owner_id=1)
+
+        i_row = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=10,
+                                          unit_price='100',
+                                          balance_payments=False,
+                                          vat_rate=VAT_RATES_19_6,
+                                          detail=lorem_ipsum.COMMON_P,
+                                          owner_id=1)
+        i_row = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=10,
+                                          unit_price='100',
+                                          balance_payments=False,
+                                          vat_rate=VAT_RATES_19_6,
+                                          detail=lorem_ipsum.COMMON_P,
+                                          owner_id=1)
+        i_row = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=10,
+                                          unit_price='100',
+                                          balance_payments=False,
+                                          vat_rate=VAT_RATES_19_6,
+                                          detail=lorem_ipsum.COMMON_P,
+                                          owner_id=1)
+
+        response = self.client.get(reverse('invoice_download', kwargs={'id': i.id}))
+        self.assertEqual(response.status_code, 200)
+        f = open('/tmp/invoice_row_detail.pdf', 'w')
+        f.write(response.content)
+        f.close()
+        content = response.content.split("\n")
+        invariant_content = content[0:95] + content[96:152] + content[153:-1]
+        self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
+                          "f65bdc5502bf75def1ed0fae9ff1b399")
 
     def testCanCreateInvoiceWithoutProposal(self):
         contacts = Contact.objects.filter(name='New customer').count()

@@ -87,6 +87,7 @@
                 {% if user.get_profile.vat_number %}
                 <th>{% trans "VAT rate" %}</th>
                 {% endif %}
+                <th>{% trans "Detail" %}</th>
             </tr>
         </thead>
         <tbody>
@@ -102,6 +103,7 @@
                 {% if user.get_profile.vat_number %}
                 <td>{{ invoicerow.vat_rate|default:'' }}</td>
                 {% endif %}
+                <td>{{ invoicerow.detail|default:''|linebreaksbr }}</td>
             </tr>
         {% endfor %}
         </tbody>

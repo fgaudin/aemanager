@@ -43,12 +43,21 @@ jQuery(document).ready(function(){
     }
 
     jQuery('.invoice-row input:text').labelInside();
+    jQuery('.invoice-row textarea').labelInside();
+    jQuery('.row-detail.empty-field').hide();
     jQuery('.proposal-field').proposalOverview('{% trans "Proposal" %}', '{% url proposal_detail id=0 %}');
     jQuery('.balance_payments_label').rowHelp();
     jQuery('.balance-payments-field').balanceAll();
+    jQuery('.delete-checkbox').children('input').attr('checked', false);
+
+    jQuery('.form-row').delegate('.show-detail', 'click', function(e){
+        e.preventDefault();
+        jQuery(e.currentTarget).siblings('.row-detail.empty-field').show();
+    });
 
     jQuery('#invoice-edit-form').submit(function() {
         jQuery('.invoice-row input.empty-field:text').val('');
+        jQuery('.invoice-row textarea.empty-field').val('');
         return true;
     });
 
@@ -67,6 +76,9 @@ jQuery(document).ready(function(){
                 jQuery('input:text',row).focusin();
                 jQuery('input',row).val('');
                 jQuery('input:text',row).focusout();
+                jQuery('textarea',row).focusin();
+                jQuery('textarea',row).val('');
+                jQuery('textarea',row).focusout();
                 jQuery('input',row).attr('checked', false);
                 jQuery('option',row).attr('selected', false);
                 jQuery("option[value='']",row).attr('selected', true);
@@ -93,11 +105,13 @@ jQuery(document).ready(function(){
           && jQuery('.invoice-row:hidden').length
           && !jQuery('.invoice-row:hidden').children('input[type="hidden"]').first().val()) {
             jQuery('.invoice-row:hidden').show();
+            jQuery('.row-detail.empty-field').hide();
         } else {
             new_row = jQuery(e.currentTarget).parent('.inline-formset').prev('.invoice-row').clone();
             jQuery(e.currentTarget).parent('.inline-formset').before(new_row);
             jQuery('ul.errorlist', new_row).remove();
             jQuery('input',new_row).val('');
+            jQuery('textarea',new_row).val('');
             jQuery('input',new_row).attr('checked', false);
             jQuery('option',new_row).attr('selected', false);
             jQuery("option[value='']",new_row).attr('selected', true);
@@ -108,6 +122,8 @@ jQuery(document).ready(function(){
             });
 
             jQuery('input:text', new_row).labelInside();
+            jQuery('textarea', new_row).labelInside();
+            jQuery('.row-detail.empty-field', new_row).hide();
             jQuery('.proposal-field', new_row).proposalOverview('{% trans "Proposal" %}', '{% url proposal_detail id=0 %}');
             jQuery('.balance_payments_label', new_row).rowHelp();
             jQuery('.balance-payments-field', new_row).balanceAll();
@@ -186,7 +202,11 @@ jQuery(document).ready(function(){
             {{ form.quantity.errors|format_errors:form.quantity.label }}
             {{ form.unit_price.errors|format_errors:form.unit_price.label }}
             {{ form.vat_rate.errors|format_errors:form.vat_rate.label }}
+            {{ form.detail.errors|format_errors:form.detail.label }}
             {{ form.ownedobject_ptr }}<span class="inline-label">{{ form.label.label }} : </span>{{ form.label }} {{ form.proposal }} <span class="balance_payments_label">{{ form.balance_payments.label }} : </span>{{ form.balance_payments }} <span class="help_text" style="display: none">{{ form.balance_payments.help_text }}</span>{{ form.category }} <span class="inline-label">{{ form.quantity.label }} : </span>{{ form.quantity }} <span class="inline-label">{{ form.unit_price.label }} : </span>{{ form.unit_price }}{% if user.get_profile.vat_number %} {{ form.vat_rate }}{% endif %}<a href="#" class="delete-button"><img src="{{ MEDIA_URL }}img/icon_deletelink.gif" /></a><span class="delete-checkbox">{{ form.DELETE }}</span>
+            <a class="show-detail" href="#"><img src="{{ MEDIA_URL }}img/edit.png" alt="{% trans "detail" %}" title="{% trans "detail" %}"/></a>
+            <br>
+            <span class="inline-label">{{ form.detail.label }} : </span>{{ form.detail }}
         </div>
     {% endfor %}
         <div class="inline-formset">

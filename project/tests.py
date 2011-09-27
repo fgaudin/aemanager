@@ -15,6 +15,7 @@ from contact.models import Contact, Address, Country
 import datetime
 import hashlib
 from django.contrib.auth.models import User
+from django.contrib.webdesign import lorem_ipsum
 
 class ContractPermissionTest(TestCase):
     fixtures = ['test_users', 'test_contacts']
@@ -798,7 +799,7 @@ class ProposalTest(TestCase):
         content = response.content.split("\n")
         invariant_content = content[0:66] + content[67:110] + content[111:-1]
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
-                          "1cf71b609bd3b39291bc6663af5014b5")
+                          "489e25b4c6a9c868301776b0883bc0b6")
 
     def testContractDownloadPdf(self):
         """
@@ -1012,7 +1013,66 @@ class ProposalTest(TestCase):
         content = response.content.split("\n")
         invariant_content = content[0:66] + content[67:110] + content[111:-1]
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
-                          "6fd59f103a1f3379c26467bcfa12e212")
+                          "c892095693e8cd4470738b36b60b6a84")
+
+    def testDownloadPdfWithRowDetail(self):
+        """
+        Tests non-regression on pdf with detail on rows
+        """
+        profile = User.objects.get(pk=1).get_profile()
+        profile.vat_number = 'FR010123456789123'
+        profile.save()
+        customer_address = Contact.objects.get(project=30).address
+        customer_address.street = u"128 boulevard des champs élysées\nEspace ZAC du champs de mars\nBP 140"
+        customer_address.zipcode = '75001'
+        customer_address.city = 'Paris CEDEX 1'
+        customer_address.save()
+
+        p = Proposal.objects.create(project_id=30,
+                                    update_date=datetime.date(2011, 2, 5),
+                                    state=PROPOSAL_STATE_DRAFT,
+                                    begin_date=datetime.date(2010, 8, 1),
+                                    end_date=datetime.date(2010, 8, 15),
+                                    contract_content='Content of contract',
+                                    amount=1000,
+                                    reference='XXX',
+                                    expiration_date=datetime.date(2010, 8, 2),
+                                    owner_id=1)
+
+        p_row = ProposalRow.objects.create(proposal_id=p.id,
+                                           label='Day of work',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           quantity=10,
+                                           unit_price='100',
+                                           vat_rate=VAT_RATES_19_6,
+                                           detail=lorem_ipsum.COMMON_P,
+                                           owner_id=1)
+        p_row = ProposalRow.objects.create(proposal_id=p.id,
+                                           label='Day of work',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           quantity=10,
+                                           unit_price='100',
+                                           vat_rate=VAT_RATES_19_6,
+                                           detail=lorem_ipsum.COMMON_P,
+                                           owner_id=1)
+        p_row = ProposalRow.objects.create(proposal_id=p.id,
+                                           label='Day of work',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           quantity=10,
+                                           unit_price='100',
+                                           vat_rate=VAT_RATES_19_6,
+                                           detail=lorem_ipsum.COMMON_P,
+                                           owner_id=1)
+
+        response = self.client.get(reverse('proposal_download', kwargs={'id': p.id}))
+        self.assertEqual(response.status_code, 200)
+        f = open('/tmp/proposal_row_detail.pdf', 'w')
+        f.write(response.content)
+        f.close()
+        content = response.content.split("\n")
+        invariant_content = content[0:95] + content[96:152] + content[153:-1]
+        self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
+                          "3af10992262c39ea7d83e54248797b1a")
 
 class Bug31Test(TestCase):
     fixtures = ['test_dashboard_product_sales']

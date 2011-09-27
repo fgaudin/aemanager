@@ -2,26 +2,20 @@
 from decimal import Decimal
 from django.utils.formats import localize
 import datetime
-from custom_canvas import NumberedCanvas
-from reportlab.platypus import Paragraph, Frame, Spacer, BaseDocTemplate, PageTemplate
-from reportlab.lib.styles import ParagraphStyle
-from reportlab.rl_config import defaultPageSize
+from reportlab.platypus import Paragraph, Spacer
 from reportlab.lib.units import inch
-from reportlab.lib.enums import TA_CENTER
-from reportlab.platypus import Table, TableStyle, Image
-from reportlab.lib import colors
+from reportlab.platypus import Table, TableStyle
 from django.db import models, connection
 from core.models import OwnedObject
 from django.utils.translation import ugettext_lazy as _, ugettext
-from contact.models import Contact, CONTACT_TYPE_COMPANY
+from contact.models import Contact
 from django.core.urlresolvers import reverse
 from project.models import Row, Proposal, update_row_amount, \
     ROW_CATEGORY_SERVICE, ROW_CATEGORY, PROPOSAL_STATE_ACCEPTED, ProposalRow
 from django.db.models.aggregates import Sum, Min, Max
 from django.db.models.signals import post_save, pre_save, post_delete
-from django.conf import settings
 from django.core.validators import MaxValueValidator
-from django.db.models.expressions import F
+from accounts.utils.pdf import InvoiceTemplate
 
 PAYMENT_TYPE_CASH = 1
 PAYMENT_TYPE_BANK_CARD = 2
@@ -259,279 +253,47 @@ class Invoice(OwnedObject):
         return self.amount + self.get_vat()
 
     def to_pdf(self, user, response):
-        def invoice_footer(canvas, doc):
-            canvas.saveState()
-            canvas.setFont('Times-Roman', 10)
-            PAGE_WIDTH = defaultPageSize[0]
-            footer_text = "%s %s - %s, %s %s" % (user.first_name,
-                                                 user.last_name,
-                                                 user.get_profile().address.street.replace("\n", ", ").replace("\r", ""),
-                                                 user.get_profile().address.zipcode,
-                                                 user.get_profile().address.city)
-            if user.get_profile().address.country:
-                footer_text = footer_text + u", %s" % (user.get_profile().address.country)
-
-            canvas.drawCentredString(PAGE_WIDTH / 2.0, 0.5 * inch, footer_text)
-            extra_info = u"SIRET : %s" % (user.get_profile().company_id)
-            if user.get_profile().vat_number:
-                extra_info = u"%s - N° TVA : %s" % (extra_info, user.get_profile().vat_number)
-            canvas.drawCentredString(PAGE_WIDTH / 2.0, 0.35 * inch, extra_info)
-            canvas.restoreState()
-
         filename = ugettext('invoice_%(invoice_id)d.pdf') % {'invoice_id': self.invoice_id}
         response['Content-Disposition'] = 'attachment; filename=%s' % (filename)
 
-        doc = BaseDocTemplate(response, title=ugettext('Invoice #%(invoice_id)d') % {'invoice_id': self.invoice_id}, leftMargin=0.5 * inch, rightMargin=0.5 * inch)
-        frameT = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height + 0.5 * inch, id='normal')
-        doc.addPageTemplates([PageTemplate(id='all', frames=frameT, onPage=invoice_footer), ])
+        invoice_template = InvoiceTemplate(response, user)
 
-        styleH = ParagraphStyle({})
-        styleH.fontSize = 14
-        styleH.leading = 16
-        styleH.borderPadding = (5,) * 4
+        invoice_template.init_doc(ugettext('Invoice #%(invoice_id)d') % {'invoice_id': self.invoice_id})
+        invoice_template.add_headers(self, self.customer, self.edition_date)
+        invoice_template.add_title(_("INVOICE #%d") % (self.invoice_id))
 
-        styleCustomer = ParagraphStyle({})
-        styleCustomer.fontSize = 12
-        styleCustomer.leading = 14
-        styleCustomer.borderPadding = (5,) * 4
-
-        styleTotal = ParagraphStyle({})
-        styleTotal.fontSize = 14
-        styleTotal.leading = 16
-        styleTotal.borderColor = colors.black
-        styleTotal.borderWidth = 0.5
-        styleTotal.borderPadding = (5,) * 4
-
-        styleH2 = ParagraphStyle({})
-        styleH2.fontSize = 14
-        styleH2.leading = 16
-
-
-        styleTitle = ParagraphStyle({})
-        styleTitle.fontSize = 14
-        styleTitle.fontName = "Times-Bold"
-
-        styleN = ParagraphStyle({})
-        styleN.fontSize = 12
-        styleN.leading = 14
-
-        styleNSmall = ParagraphStyle({})
-        styleNSmall.fontSize = 8
-        styleNSmall.leading = 14
-
-        styleF = ParagraphStyle({})
-        styleF.fontSize = 10
-        styleF.alignment = TA_CENTER
-
-        styleLabel = ParagraphStyle({})
-
-        story = []
-
-        data = []
-        user_header_content = """
-        %s %s<br/>
-        %s<br/>
-        %s %s<br/>
-        %s<br/>
-        Siret : %s<br/>
-        """ % (user.first_name,
-               user.last_name,
-               user.get_profile().address.street.replace("\n", "<br/>"),
-               user.get_profile().address.zipcode,
-               user.get_profile().address.city,
-               user.get_profile().address.country or '',
-               user.get_profile().company_id)
-
-        customer_header_content = """
-        <br/><br/><br/><br/>
-        %s<br/>
-        %s<br/>
-        %s %s<br/>
-        %s<br/>
-        """
-
-        if user.get_profile().logo_file:
-            user_header = Image("%s%s" % (settings.FILE_UPLOAD_DIR, user.get_profile().logo_file))
-        else:
-            user_header = Paragraph(user_header_content, styleH)
-
-        customer_header = customer_header_content % (self.customer.name,
-                                                     self.customer.address.street.replace("\n", "<br/>"),
-                                                     self.customer.address.zipcode,
-                                                     self.customer.address.city,
-                                                     self.customer.address.country or '')
-
-        customer_header = Paragraph(customer_header, styleCustomer)
-
-        data.append([user_header,
-                    '',
-                    customer_header])
-
-        t1 = Table(data, [3.5 * inch, 0.7 * inch, 3.1 * inch], [1.9 * inch])
-        table_style = [('VALIGN', (0, 0), (-1, -1), 'TOP'), ]
-        if user.get_profile().logo_file:
-            table_style.append(('TOPPADDING', (0, 0), (0, 0), 0))
-            table_style.append(('LEFTPADDING', (0, 0), (0, 0), 0))
-
-        t1.setStyle(TableStyle(table_style))
-
-        story.append(t1)
-
-        spacer1 = Spacer(doc.width, 0.25 * inch)
-        story.append(spacer1)
-
-        data = []
-        msg = u"Dispensé d'immatriculation au registre du commerce et des sociétés (RCS) et au répertoire des métiers (RM)"
-        data.append([Paragraph(msg, styleN),
-                    '',
-                    Paragraph("<br/>" + _("Date : %s") % (localize(self.edition_date)), styleH2)])
-
-        t2 = Table(data, [3.5 * inch, 0.3 * inch, 3.5 * inch], [0.7 * inch])
-        t2.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP'), ]))
-
-        story.append(t2)
-
-        spacer2 = Spacer(doc.width, 0.25 * inch)
-        story.append(spacer2)
-
-        story.append(Paragraph(_("INVOICE #%d") % (self.invoice_id), styleTitle))
-
-        spacer3 = Spacer(doc.width, 0.1 * inch)
-        story.append(spacer3)
-
-        # invoice row list
+        # proposal row list
         rows = self.invoice_rows.all()
-        extra_rows = 0
-        data = [[ugettext('Label'), ugettext('Quantity'), ugettext('Unit price'), ugettext('Total excl tax')]]
-        if user.get_profile().vat_number:
-            data[0].append(ugettext('VAT'))
-            label_width = 4.0 * inch
-        else:
-            label_width = 4.5 * inch
-        for row in rows:
-            label = row.label
-            if row.proposal and row.proposal.reference:
-                label = u"%s - [%s]" % (label, row.proposal.reference)
-            para = Paragraph(label, styleLabel)
-            para.width = label_width
-            splitted_para = para.breakLines(label_width)
-            label = " ".join(splitted_para.lines[0][1])
-            quantity = row.quantity
-            quantity = quantity.quantize(Decimal(1)) if quantity == quantity.to_integral() else quantity.normalize()
-            unit_price = row.unit_price
-            unit_price = unit_price.quantize(Decimal(1)) if unit_price == unit_price.to_integral() else unit_price.normalize()
-            total = row.quantity * row.unit_price
-            total = total.quantize(Decimal(1)) if total == total.to_integral() else total.normalize()
+        invoice_template.add_rows(rows)
 
-            data_row = [label, localize(quantity), "%s %s" % (localize(unit_price), "€".decode('utf-8')), "%s %s" % (localize(total), "€".decode('utf-8'))]
-            if user.get_profile().vat_number:
-                if row.vat_rate:
-                    data_row.append("%s%%" % (localize(row.vat_rate)))
-                else:
-                    data_row.append("-")
-            data.append(data_row)
-            for extra_row in splitted_para.lines[1:]:
-                label = " ".join(extra_row[1])
-                if user.get_profile().vat_number:
-                    data.append([label, '', '', '', ''])
-                else:
-                    data.append([label, '', '', ''])
-                extra_rows = extra_rows + 1
+        # total amount on the right side of footer
+        right_block = invoice_template.get_total_amount(self.amount, rows)
 
-        row_count = len(rows) + extra_rows
-        if row_count <= 16:
-            max_row_count = 16
-        else:
-            first_page_count = 21
-            normal_page_count = 33
-            last_page_count = 27
-            max_row_count = first_page_count + ((row_count - first_page_count) // normal_page_count * normal_page_count) + last_page_count
-            if row_count - first_page_count - ((row_count - first_page_count) // normal_page_count * normal_page_count) > last_page_count:
-                max_row_count = max_row_count + normal_page_count
-
-        for i in range(max_row_count - row_count):
-            if user.get_profile().vat_number:
-                data.append(['', '', '', '', ''])
-            else:
-                data.append(['', '', '', ''])
-
-        if user.get_profile().vat_number:
-            row_table = Table(data, [4.2 * inch, 0.8 * inch, 0.9 * inch, 0.8 * inch, 0.5 * inch], (max_row_count + 1) * [0.3 * inch])
-        else:
-            row_table = Table(data, [4.7 * inch, 0.8 * inch, 0.9 * inch, 0.8 * inch], (max_row_count + 1) * [0.3 * inch])
-
-        row_style = [('ALIGN', (0, 0), (-1, 0), 'CENTER'),
-                     ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
-                     ('FONT', (0, 0), (-1, 0), 'Times-Bold'),
-                     ('BOX', (0, 0), (-1, 0), 0.25, colors.black),
-                     ('INNERGRID', (0, 0), (-1, 0), 0.25, colors.black),
-                     ('BOX', (0, 1), (0, -1), 0.25, colors.black),
-                     ('BOX', (1, 1), (1, -1), 0.25, colors.black),
-                     ('BOX', (2, 1), (2, -1), 0.25, colors.black),
-                     ('BOX', (3, 1), (3, -1), 0.25, colors.black)]
-        if user.get_profile().vat_number:
-            row_style.append(('BOX', (4, 1), (4, -1), 0.25, colors.black))
-
-        row_table.setStyle(TableStyle(row_style))
-
-        story.append(row_table)
-
-        spacer4 = Spacer(doc.width, 0.35 * inch)
-        story.append(spacer4)
         invoice_amount = self.amount
         invoice_amount = invoice_amount.quantize(Decimal(1)) if invoice_amount == invoice_amount.to_integral() else invoice_amount.normalize()
-        left_block = [Paragraph(_("Payment date : %s") % (localize(self.payment_date)), styleN),
-                      Paragraph(_("Penalty begins on : %s") % (localize(self.penalty_date) or ''), styleN),
-                      Paragraph(_("Penalty rate : %s") % (localize(self.penalty_rate) or ''), styleN),
-                      Paragraph(_("Discount conditions : %s") % (self.discount_conditions or ''), styleN)]
+        left_block = [Paragraph(_("Payment date : %s") % (localize(self.payment_date)), InvoiceTemplate.styleN),
+                      Paragraph(_("Penalty begins on : %s") % (localize(self.penalty_date) or ''), InvoiceTemplate.styleN),
+                      Paragraph(_("Penalty rate : %s") % (localize(self.penalty_rate) or ''), InvoiceTemplate.styleN),
+                      Paragraph(_("Discount conditions : %s") % (self.discount_conditions or ''), InvoiceTemplate.styleN)]
         if self.owner.get_profile().iban_bban:
-            left_block.append(Spacer(doc.width, 0.2 * inch))
-            left_block.append(Paragraph(_("IBAN/BBAN : %s") % (self.owner.get_profile().iban_bban), styleNSmall))
+            left_block.append(Spacer(invoice_template.doc.width, 0.2 * inch))
+            left_block.append(Paragraph(_("IBAN/BBAN : %s") % (self.owner.get_profile().iban_bban), InvoiceTemplate.styleNSmall))
             if self.owner.get_profile().bic:
-                left_block.append(Paragraph(_("BIC/SWIFT : %s") % (self.owner.get_profile().bic), styleNSmall))
-
-        if user.get_profile().vat_number:
-            right_block = [Paragraph(_("Total excl tax : %(amount)s %(currency)s") % {'amount': localize(invoice_amount), 'currency' : "€".decode('utf-8')}, styleN)]
-            vat_amounts = {}
-            for row in rows:
-                vat_rate = row.vat_rate or 0
-                vat_amount = row.amount * vat_rate / 100
-                if vat_rate:
-                    if vat_rate in vat_amounts:
-                        vat_amounts[vat_rate] = vat_amounts[vat_rate] + vat_amount
-                    else:
-                        vat_amounts[vat_rate] = vat_amount
-            for vat_rate, vat_amount in vat_amounts.items():
-                vat_amount = round(vat_amount, 2)
-                #vat_amount = vat_amount.quantize(Decimal(1)) if vat_amount == vat_amount.to_integral() else vat_amount.normalize()
-                right_block.append(Paragraph(_("VAT %(vat_rate)s%% : %(vat_amount)s %(currency)s") % {'vat_rate': localize(vat_rate),
-                                                                                                      'vat_amount': localize(vat_amount),
-                                                                                                      'currency' : "€".decode('utf-8')},
-                                             styleN))
-
-            incl_tax_amount = invoice_amount + sum(vat_amounts.values())
-            #incl_tax_amount = incl_tax_amount.quantize(Decimal(1)) if incl_tax_amount == incl_tax_amount.to_integral() else incl_tax_amount.normalize()
-            incl_tax_amount = round(incl_tax_amount, 2)
-            right_block.append(Spacer(1, 0.25 * inch))
-            right_block.append(Paragraph(_("TOTAL incl tax : %(amount)s %(currency)s") % {'amount': localize(incl_tax_amount), 'currency' : "€".decode('utf-8')}, styleTotal))
-        else:
-            right_block = [Paragraph(_("TOTAL excl tax : %(amount)s %(currency)s") % {'amount': localize(invoice_amount), 'currency' : "€".decode('utf-8')}, styleTotal),
-                           Spacer(1, 0.25 * inch),
-                           Paragraph(u"TVA non applicable, art. 293 B du CGI", styleN)]
+                left_block.append(Paragraph(_("BIC/SWIFT : %s") % (self.owner.get_profile().bic), InvoiceTemplate.styleNSmall))
 
         data = [[left_block,
                 '',
                 right_block], ]
 
         if self.execution_begin_date and self.execution_end_date:
-            data[0][0].insert(1, Paragraph(_("Execution dates : %(begin_date)s to %(end_date)s") % {'begin_date': localize(self.execution_begin_date), 'end_date' : localize(self.execution_end_date)}, styleN))
+            data[0][0].insert(1, Paragraph(_("Execution dates : %(begin_date)s to %(end_date)s") % {'begin_date': localize(self.execution_begin_date), 'end_date' : localize(self.execution_end_date)}, InvoiceTemplate.styleN))
 
         footer_table = Table(data, [4.5 * inch, 0.3 * inch, 2.5 * inch], [1 * inch])
         footer_table.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP'), ]))
 
-        story.append(footer_table)
+        invoice_template.append_to_story(footer_table)
 
-        doc.build(story, canvasmaker=NumberedCanvas)
+        invoice_template.build()
 
         return response
 

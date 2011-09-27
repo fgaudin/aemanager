@@ -515,6 +515,11 @@ body.login {
     text-align:right;
 }
 
+.row-detail {
+    width:500px;
+    height:30px;
+}
+
 .empty-field {
     color: gray;
     text-align:left;

@@ -1,14 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import unicodedata
-from custom_canvas import NumberedCanvas
-from reportlab.platypus import Paragraph, Frame, Spacer, BaseDocTemplate, PageTemplate
-from reportlab.lib.styles import ParagraphStyle
-from reportlab.rl_config import defaultPageSize
+from reportlab.platypus import Paragraph
 from reportlab.lib.units import inch
-from reportlab.lib.enums import TA_CENTER
-from reportlab.platypus import Table, TableStyle, Image
-from reportlab.lib import colors
+from reportlab.platypus import Table, TableStyle
 
 from decimal import Decimal
 from django.db import models
@@ -23,6 +18,7 @@ from django.conf import settings
 import ho.pisa as pisa
 from django.core.files.storage import FileSystemStorage
 from django.db.models.query_utils import Q
+from project.utils.pdf import ProposalTemplate
 
 store = FileSystemStorage(location=settings.FILE_UPLOAD_DIR)
 
@@ -264,267 +260,37 @@ class Proposal(OwnedObject):
         """
         Generate a PDF file for the proposal
         """
-        def proposal_footer(canvas, doc):
-            canvas.saveState()
-            canvas.setFont('Times-Roman', 10)
-            PAGE_WIDTH = defaultPageSize[0]
-            footer_text = "%s %s - %s, %s %s" % (user.first_name,
-                                                 user.last_name,
-                                                 user.get_profile().address.street.replace("\n", ", ").replace("\r", ""),
-                                                 user.get_profile().address.zipcode,
-                                                 user.get_profile().address.city)
-            if user.get_profile().address.country:
-                footer_text = footer_text + u", %s" % (user.get_profile().address.country)
-
-            canvas.drawCentredString(PAGE_WIDTH / 2.0, 0.5 * inch, footer_text)
-            extra_info = u"SIRET : %s" % (user.get_profile().company_id)
-            if user.get_profile().vat_number:
-                extra_info = u"%s - N° TVA : %s" % (extra_info, user.get_profile().vat_number)
-            canvas.drawCentredString(PAGE_WIDTH / 2.0, 0.35 * inch, extra_info)
-            canvas.restoreState()
-
         filename = ugettext('proposal_%(id)d.pdf') % {'id': self.id}
         response['Content-Disposition'] = 'attachment; filename=%s' % (filename)
 
-        doc = BaseDocTemplate(response, title=ugettext('Proposal %(reference)s') % {'reference': self.reference}, leftMargin=0.5 * inch, rightMargin=0.5 * inch)
-        frameT = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height + 0.5 * inch, id='normal')
-        doc.addPageTemplates([PageTemplate(id='all', frames=frameT, onPage=proposal_footer), ])
+        proposal_template = ProposalTemplate(response, user)
 
-        styleH = ParagraphStyle({})
-        styleH.fontSize = 14
-        styleH.leading = 16
-        styleH.borderPadding = (5,) * 4
-
-        styleCustomer = ParagraphStyle({})
-        styleCustomer.fontSize = 12
-        styleCustomer.leading = 14
-        styleCustomer.borderPadding = (5,) * 4
-
-        styleTotal = ParagraphStyle({})
-        styleTotal.fontSize = 14
-        styleTotal.leading = 16
-        styleTotal.borderColor = colors.black
-        styleTotal.borderWidth = 0.5
-        styleTotal.borderPadding = (5,) * 4
-
-        styleH2 = ParagraphStyle({})
-        styleH2.fontSize = 14
-        styleH2.leading = 16
-
-
-        styleTitle = ParagraphStyle({})
-        styleTitle.fontSize = 14
-        styleTitle.fontName = "Times-Bold"
-
-        styleN = ParagraphStyle({})
-        styleN.fontSize = 12
-        styleN.leading = 14
-
-        styleF = ParagraphStyle({})
-        styleF.fontSize = 10
-        styleF.alignment = TA_CENTER
-
-        styleLabel = ParagraphStyle({})
-
-        story = []
-
-        data = []
-        user_header_content = """
-        %s %s<br/>
-        %s<br/>
-        %s %s<br/>
-        %s<br/>
-        SIRET : %s<br/>
-        """
-        user_header_content = user_header_content % (user.first_name,
-                                                     user.last_name,
-                                                     user.get_profile().address.street.replace("\n", "<br/>"),
-                                                     user.get_profile().address.zipcode,
-                                                     user.get_profile().address.city,
-                                                     user.get_profile().address.country or '',
-                                                     user.get_profile().company_id)
-
-        if user.get_profile().phonenumber:
-            user_header_content = "%s%s<br/>" % (user_header_content, user.get_profile().phonenumber)
-        if user.get_profile().professional_email:
-            user_header_content = "%s%s<br/>" % (user_header_content, user.get_profile().professional_email)
-
-        customer_header_content = """
-        <br/><br/><br/><br/>
-        %s<br/>
-        %s<br/>
-        %s %s<br/>
-        %s<br/>
-        """
-
-        if user.get_profile().logo_file:
-            user_header = Image("%s%s" % (settings.FILE_UPLOAD_DIR, user.get_profile().logo_file))
-        else:
-            user_header = Paragraph(user_header_content, styleH)
-
-        data.append([user_header,
-                    '',
-                    Paragraph(customer_header_content % (self.project.customer.name,
-                                                         self.project.customer.address.street.replace("\n", "<br/>"),
-                                                         self.project.customer.address.zipcode,
-                                                         self.project.customer.address.city,
-                                                         self.project.customer.address.country or ''), styleCustomer)])
-
-        t1 = Table(data, [3.5 * inch, 0.7 * inch, 3.1 * inch], [1.9 * inch])
-
-        table_style = [('VALIGN', (0, 0), (-1, -1), 'TOP'), ]
-
-        if user.get_profile().logo_file:
-            table_style.append(('TOPPADDING', (0, 0), (0, 0), 0))
-            table_style.append(('LEFTPADDING', (0, 0), (0, 0), 0))
-
-        t1.setStyle(TableStyle(table_style))
-
-        story.append(t1)
-
-        spacer1 = Spacer(doc.width, 0.25 * inch)
-        story.append(spacer1)
-
-        data = []
-        msg = u"Dispensé d'immatriculation au registre du commerce et des sociétés (RCS) et au répertoire des métiers (RM)"
-        data.append([Paragraph(msg, styleN),
-                    '',
-                    Paragraph("<br/>" + _("Date : %s") % (localize(self.update_date)), styleH2)])
-
-        t2 = Table(data, [3.5 * inch, 0.3 * inch, 3.5 * inch], [0.7 * inch])
-        t2.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP'), ]))
-
-        story.append(t2)
-
-        spacer2 = Spacer(doc.width, 0.25 * inch)
-        story.append(spacer2)
-
-        story.append(Paragraph(_("PROPOSAL %s") % (self.reference), styleTitle))
-
-        spacer3 = Spacer(doc.width, 0.1 * inch)
-        story.append(spacer3)
+        proposal_template.init_doc(ugettext('Proposal %(reference)s') % {'reference': self.reference})
+        proposal_template.add_headers(self, self.project.customer, self.update_date)
+        proposal_template.add_title(_("PROPOSAL %s") % (self.reference))
 
         # proposal row list
         rows = self.proposal_rows.all()
-        extra_rows = 0
-        data = [[ugettext('Label'), ugettext('Quantity'), ugettext('Unit price'), ugettext('Total excl tax')]]
-        if user.get_profile().vat_number:
-            data[0].append(ugettext('VAT'))
-            label_width = 4.0 * inch
-        else:
-            label_width = 4.5 * inch
-        for row in rows:
-            para = Paragraph(row.label, styleLabel)
-            para.width = label_width
-            splitted_para = para.breakLines(label_width)
-            label = " ".join(splitted_para.lines[0][1])
-            quantity = row.quantity
-            quantity = quantity.quantize(Decimal(1)) if quantity == quantity.to_integral() else quantity.normalize()
-            unit_price = row.unit_price
-            unit_price = unit_price.quantize(Decimal(1)) if unit_price == unit_price.to_integral() else unit_price.normalize()
-            total = row.quantity * row.unit_price
-            total = total.quantize(Decimal(1)) if total == total.to_integral() else total.normalize()
-            data_row = [label, localize(quantity), "%s %s" % (localize(unit_price), "€".decode('utf-8')), "%s %s" % (localize(total), "€".decode('utf-8'))]
-            if user.get_profile().vat_number:
-                if row.vat_rate:
-                    data_row.append("%s%%" % (localize(row.vat_rate)))
-                else:
-                    data_row.append('-')
-            data.append(data_row)
-            for extra_row in splitted_para.lines[1:]:
-                label = " ".join(extra_row[1])
-                if user.get_profile().vat_number:
-                    data.append([label, '', '', '', ''])
-                else:
-                    data.append([label, '', '', ''])
-                extra_rows = extra_rows + 1
+        proposal_template.add_rows(rows)
 
-        row_count = len(rows) + extra_rows
-        if row_count <= 16:
-            max_row_count = 16
-        else:
-            first_page_count = 21
-            normal_page_count = 33
-            last_page_count = 27
-            max_row_count = first_page_count + ((row_count - first_page_count) // normal_page_count * normal_page_count) + last_page_count
-            if row_count - first_page_count - ((row_count - first_page_count) // normal_page_count * normal_page_count) > last_page_count:
-                max_row_count = max_row_count + normal_page_count
+        # total amount on the right side of footer
+        right_block = proposal_template.get_total_amount(self.amount, rows)
 
-        for i in range(max_row_count - row_count):
-            if user.get_profile().vat_number:
-                data.append(['', '', '', '', ''])
-            else:
-                data.append(['', '', '', ''])
-
-        if user.get_profile().vat_number:
-            row_table = Table(data, [4.2 * inch, 0.8 * inch, 0.9 * inch, 0.8 * inch, 0.5 * inch], (max_row_count + 1) * [0.3 * inch])
-        else:
-            row_table = Table(data, [4.7 * inch, 0.8 * inch, 0.9 * inch, 0.8 * inch], (max_row_count + 1) * [0.3 * inch])
-        row_style = [('ALIGN', (0, 0), (-1, 0), 'CENTER'),
-                     ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
-                     ('FONT', (0, 0), (-1, 0), 'Times-Bold'),
-                     ('BOX', (0, 0), (-1, 0), 0.25, colors.black),
-                     ('INNERGRID', (0, 0), (-1, 0), 0.25, colors.black),
-                     ('BOX', (0, 1), (0, -1), 0.25, colors.black),
-                     ('BOX', (1, 1), (1, -1), 0.25, colors.black),
-                     ('BOX', (2, 1), (2, -1), 0.25, colors.black),
-                     ('BOX', (3, 1), (3, -1), 0.25, colors.black)]
-        if user.get_profile().vat_number:
-            row_style.append(('BOX', (4, 1), (4, -1), 0.25, colors.black))
-
-        row_table.setStyle(TableStyle(row_style))
-
-        story.append(row_table)
-
-        spacer4 = Spacer(doc.width, 0.55 * inch)
-        story.append(spacer4)
-        proposal_amount = self.amount
-        proposal_amount = proposal_amount.quantize(Decimal(1)) if proposal_amount == proposal_amount.to_integral() else proposal_amount.normalize()
-
-        if user.get_profile().vat_number:
-            right_block = [Paragraph(_("Total excl tax : %(amount)s %(currency)s") % {'amount': localize(proposal_amount), 'currency' : "€".decode('utf-8')}, styleN)]
-            vat_amounts = {}
-            for row in rows:
-                vat_rate = row.vat_rate or 0
-                vat_amount = row.amount * vat_rate / 100
-                if vat_rate:
-                    if vat_rate in vat_amounts:
-                        vat_amounts[vat_rate] = vat_amounts[vat_rate] + vat_amount
-                    else:
-                        vat_amounts[vat_rate] = vat_amount
-            for vat_rate, vat_amount in vat_amounts.items():
-                vat_amount = round(vat_amount, 2)
-                #vat_amount = vat_amount.quantize(Decimal(1)) if vat_amount == vat_amount.to_integral() else vat_amount.normalize()
-                right_block.append(Paragraph(_("VAT %(vat_rate)s%% : %(vat_amount)s %(currency)s") % {'vat_rate': localize(vat_rate),
-                                                                                                      'vat_amount': localize(vat_amount),
-                                                                                                      'currency' : "€".decode('utf-8')},
-                                             styleN))
-
-            incl_tax_amount = proposal_amount + sum(vat_amounts.values())
-            #incl_tax_amount = incl_tax_amount.quantize(Decimal(1)) if incl_tax_amount == incl_tax_amount.to_integral() else incl_tax_amount.normalize()
-            incl_tax_amount = round(incl_tax_amount, 2)
-            right_block.append(Spacer(1, 0.25 * inch))
-            right_block.append(Paragraph(_("TOTAL incl tax : %(amount)s %(currency)s") % {'amount': localize(incl_tax_amount), 'currency' : "€".decode('utf-8')}, styleTotal))
-        else:
-            right_block = [Paragraph(_("TOTAL excl tax : %(amount)s %(currency)s") % {'amount': localize(proposal_amount), 'currency' : "€".decode('utf-8')}, styleTotal),
-                           Spacer(1, 0.25 * inch),
-                           Paragraph(u"TVA non applicable, art. 293 B du CGI", styleN)]
-
-
-        data = [[[Paragraph(_("Proposal valid through : %s") % (localize(self.expiration_date) or ''), styleN),
-                  Paragraph(_("Payment delay : %s") % (self.get_payment_delay()), styleN)],
+        # left side of footer
+        data = [[[Paragraph(_("Proposal valid through : %s") % (localize(self.expiration_date) or ''), ProposalTemplate.styleN),
+                  Paragraph(_("Payment delay : %s") % (self.get_payment_delay()), ProposalTemplate.styleN)],
                 '',
                 right_block], ]
 
         if self.begin_date and self.end_date:
-            data[0][0].append(Paragraph(_("Execution dates : %(begin_date)s to %(end_date)s") % {'begin_date': localize(self.begin_date), 'end_date' : localize(self.end_date)}, styleN))
+            data[0][0].append(Paragraph(_("Execution dates : %(begin_date)s to %(end_date)s") % {'begin_date': localize(self.begin_date), 'end_date' : localize(self.end_date)}, ProposalTemplate.styleN))
 
         footer_table = Table(data, [4.5 * inch, 0.3 * inch, 2.5 * inch], [1 * inch])
         footer_table.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP'), ]))
 
-        story.append(footer_table)
+        proposal_template.append_to_story(footer_table)
 
-        doc.build(story, canvasmaker=NumberedCanvas)
+        proposal_template.build()
 
         return response
 
@@ -622,6 +388,7 @@ class Row(OwnedObject):
     unit_price = models.DecimalField(max_digits=12, decimal_places=2, verbose_name=_('Unit price'))
     amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True, verbose_name=_('Amount'))
     vat_rate = models.DecimalField(choices=VAT_RATES, decimal_places=1, max_digits=4, verbose_name=_('Vat'), blank=True, null=True)
+    detail = models.TextField(verbose_name=_('Detail'), blank=True, null=True)
 
     class Meta:
         abstract = True

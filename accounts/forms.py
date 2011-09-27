@@ -75,3 +75,4 @@ class InvoiceRowForm(ModelForm):
         self.fields['balance_payments'].widget.attrs['class'] = 'balance-payments-field'
         self.fields['quantity'].widget.attrs['class'] = 'quantity-field'
         self.fields['unit_price'].widget.attrs['class'] = 'unit-price-field'
+        self.fields['detail'].widget.attrs['class'] = 'row-detail'

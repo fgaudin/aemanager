@@ -419,6 +419,7 @@ def invoice_create_or_edit(request, id=None, customer_id=None, proposal_id=None)
                                          'balance_payments': True,
                                          'category': proposal_row.category,
                                          'quantity': proposal_row.quantity,
+                                         'detail': proposal_row.detail,
                                          'unit_price': proposal_row.unit_price})
             InvoiceRowFormSet.extra = len(initial_row_data) + 1
 
