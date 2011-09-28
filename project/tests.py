@@ -801,6 +801,45 @@ class ProposalTest(TestCase):
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
                           "489e25b4c6a9c868301776b0883bc0b6")
 
+    def testBug240(self):
+        """
+        & character in proposal/invoice label crashes pdf download
+        """
+        customer_address = Contact.objects.get(project=30).address
+        customer_address.street = u"128 boulevard des champs élysées\nEspace ZAC du champs de mars\nBP 140"
+        customer_address.zipcode = '75001'
+        customer_address.city = 'Paris CEDEX 1'
+        customer_address.save()
+
+        p = Proposal.objects.create(project_id=30,
+                                    update_date=datetime.date(2011, 2, 5),
+                                    state=PROPOSAL_STATE_DRAFT,
+                                    begin_date=datetime.date(2010, 8, 1),
+                                    end_date=datetime.date(2010, 8, 15),
+                                    contract_content='Content of contract',
+                                    amount=2005,
+                                    reference='XXX',
+                                    expiration_date=datetime.date(2010, 8, 2),
+                                    owner_id=1)
+
+        p_row = ProposalRow.objects.create(proposal_id=p.id,
+                                           label='Day & work',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           quantity=20,
+                                           unit_price='200.5',
+                                           detail="detail & comments",
+                                           owner_id=1)
+
+        response = self.client.get(reverse('proposal_download', kwargs={'id': p.id}))
+        self.assertEqual(response.status_code, 200)
+        f = open('/tmp/proposal_bug240.pdf', 'w')
+        f.write(response.content)
+        f.close()
+        content = response.content.split("\n")
+        invariant_content = content[0:76] + content[77:121] + content[122:-1]
+        self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
+                          "b0ba361910042d9fd727ad17eb80e94a")
+
     def testContractDownloadPdf(self):
         """
         Tests non-regression on pdf

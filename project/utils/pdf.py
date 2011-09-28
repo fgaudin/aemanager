@@ -14,6 +14,8 @@ from reportlab.rl_config import defaultPageSize
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER
 from custom_canvas import NumberedCanvas
+from django.template.defaultfilters import force_escape
+from reportlab.platypus.paragraph import FragLine, ParaLines
 
 class ProposalTemplate(object):
 
@@ -175,11 +177,11 @@ class ProposalTemplate(object):
         extra_rows = 0
         if row.detail:
             for line in row.detail.split("\n"):
-                para = Paragraph(line, self.styleDetail)
+                para = Paragraph(force_escape(line), self.styleDetail)
                 para.width = label_width
                 splitted_para = para.breakLines(label_width)
                 for detail_row in splitted_para.lines:
-                    detail = " ".join(detail_row[1])
+                    detail = self.get_splitted_content(detail_row)
                     data.append((detail,))
                     extra_rows += 1
         return extra_rows
@@ -227,6 +229,14 @@ class ProposalTemplate(object):
     def get_label(self, row):
         return row.label
 
+    def get_splitted_content(self, splitted):
+        if isinstance(splitted, ParaLines)\
+           or isinstance(splitted, FragLine):
+            label = " ".join(["%s" % (frag.text) for frag in splitted.words])
+        else:
+            label = " ".join(splitted[1])
+        return label
+
     def add_rows(self, rows):
         row_count = 0
         extra_rows = 0
@@ -241,10 +251,11 @@ class ProposalTemplate(object):
         for row in rows:
             row_count += 1
             label = self.get_label(row)
-            para = Paragraph(label, ProposalTemplate.styleLabel)
+            #label = label.replace('&', '[et]')
+            para = Paragraph(force_escape(label), ProposalTemplate.styleLabel)
             para.width = label_width
             splitted_para = para.breakLines(label_width)
-            label = " ".join(splitted_para.lines[0][1])
+            label = self.get_splitted_content(splitted_para.lines[0])
             quantity = row.quantity
             quantity = quantity.quantize(Decimal(1)) if quantity == quantity.to_integral() else quantity.normalize()
             unit_price = row.unit_price
@@ -260,7 +271,7 @@ class ProposalTemplate(object):
             data.append(data_row)
 
             for extra_row in splitted_para.lines[1:]:
-                label = " ".join(extra_row[1])
+                label = self.get_splitted_content(extra_row)
                 if self.user.get_profile().vat_number:
                     data.append([label, '', '', '', ''])
                 else:
