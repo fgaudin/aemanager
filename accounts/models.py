@@ -11,7 +11,8 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 from contact.models import Contact
 from django.core.urlresolvers import reverse
 from project.models import Row, Proposal, update_row_amount, \
-    ROW_CATEGORY_SERVICE, ROW_CATEGORY, PROPOSAL_STATE_ACCEPTED, ProposalRow
+    ROW_CATEGORY_SERVICE, ROW_CATEGORY, PROPOSAL_STATE_ACCEPTED, ProposalRow, \
+    VAT_RATES_2_1, VAT_RATES_5_5, VAT_RATES_19_6
 from django.db.models.aggregates import Sum, Min, Max
 from django.db.models.signals import post_save, pre_save, post_delete
 from django.core.validators import MaxValueValidator
@@ -171,6 +172,28 @@ class InvoiceManager(models.Manager):
                                                            owner=owner).extra(where=['accounts_invoicerow.proposal_id NOT IN (SELECT proposal_id FROM accounts_invoicerow irow JOIN accounts_invoice i ON irow.invoice_id = i.ownedobject_ptr_id WHERE i.state IN (%s,%s) AND irow.balance_payments = %s)'],
                                                                              params=[INVOICE_STATE_SENT, INVOICE_STATE_PAID, True]).exclude(invoice__state=INVOICE_STATE_EDITED).filter(owner=owner).aggregate(amount=Sum('amount'))
         return (accepted_proposal_amount_sum['amount'] or 0) - (invoicerows_to_exclude['amount'] or 0)
+
+    def get_vat_for_period(self, owner, begin_date, end_date):
+        if not begin_date or not end_date:
+            return 0
+        amount_sum_2_1 = InvoiceRow.objects.filter(vat_rate=VAT_RATES_2_1,
+                                                   invoice__state=INVOICE_STATE_PAID,
+                                                   invoice__owner=owner,
+                                                   invoice__paid_date__gte=begin_date,
+                                                   invoice__paid_date__lte=end_date).aggregate(vat=Sum('amount'))
+        amount_sum_5_5 = InvoiceRow.objects.filter(vat_rate=VAT_RATES_5_5,
+                                                   invoice__state=INVOICE_STATE_PAID,
+                                                   invoice__owner=owner,
+                                                   invoice__paid_date__gte=begin_date,
+                                                   invoice__paid_date__lte=end_date).aggregate(vat=Sum('amount'))
+        amount_sum_19_6 = InvoiceRow.objects.filter(vat_rate=VAT_RATES_19_6,
+                                                    invoice__state=INVOICE_STATE_PAID,
+                                                    invoice__owner=owner,
+                                                    invoice__paid_date__gte=begin_date,
+                                                    invoice__paid_date__lte=end_date).aggregate(vat=Sum('amount'))
+        return (amount_sum_2_1['vat'] or 0) * VAT_RATES_2_1 / 100\
+               + (amount_sum_5_5['vat'] or 0) * VAT_RATES_5_5 / 100\
+               + (amount_sum_19_6['vat'] or 0) * VAT_RATES_19_6 / 100
 
 class Invoice(OwnedObject):
     customer = models.ForeignKey(Contact, blank=True, null=True, verbose_name=_('Customer'))

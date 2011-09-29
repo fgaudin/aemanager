@@ -60,6 +60,9 @@ jQuery(document).ready(function(){
     {% else %}
     <div>{% trans "Amount to pay" %} : {% blocktrans with previous_taxes.amount_to_pay|floatformat:"-2" as amount_to_pay and previous_taxes.tax_due_date as tax_due_date %}{{ amount_to_pay }} before {{ tax_due_date }}{% endblocktrans %}</div>
     {% endif %}
+    {% if user.get_profile.vat_number %}
+    <div>{% trans "VAT" %} : {{ previous_taxes.vat|floatformat:"-2" }}</div>
+    {% endif %}
 </div>
 {% endif%}
 
@@ -73,6 +76,9 @@ jQuery(document).ready(function(){
     <div>{% trans "Total amount to pay" %} : {% blocktrans with taxes.total_amount_to_pay|floatformat:"-2" as amount_to_pay and taxes.tax_due_date as tax_due_date %}{{ amount_to_pay }} before {{ tax_due_date }}{% endblocktrans %}</div>
     {% else %}
     <div>{% trans "Amount to pay" %} : {% blocktrans with taxes.amount_to_pay|floatformat:"-2" as amount_to_pay and taxes.tax_due_date as tax_due_date %}{{ amount_to_pay }} before {{ tax_due_date }}{% endblocktrans %}</div>
+    {% endif %}
+    {% if user.get_profile.vat_number %}
+    <div>{% trans "VAT" %} : {{ taxes.vat|floatformat:"-2" }}</div>
     {% endif %}
     <h3>{% trans "Estimations based on invoice payment dates" %}</h3>
     <div>{% trans "Estimated paid sales" %} : {{ taxes.estimated_paid_sales_for_period }}</div>
@@ -89,6 +95,9 @@ jQuery(document).ready(function(){
     <div>{% trans "Total amount to pay" %} : {% blocktrans with next_taxes.total_amount_to_pay|floatformat:"-2" as amount_to_pay and next_taxes.tax_due_date as tax_due_date %}{{ amount_to_pay }} before {{ tax_due_date }}{% endblocktrans %}</div>
     {% else %}
     <div>{% trans "Amount to pay" %} : {% blocktrans with next_taxes.amount_to_pay|floatformat:"-2" as amount_to_pay and next_taxes.tax_due_date as tax_due_date %}{{ amount_to_pay }} before {{ tax_due_date }}{% endblocktrans %}</div>
+    {% endif %}
+    {% if user.get_profile.vat_number %}
+    <div>{% trans "VAT" %} : {{ next_taxes.vat|floatformat:"-2" }}</div>
     {% endif %}
     <h3>{% trans "Estimations based on invoice payment dates" %}</h3>
     <div>{% trans "Estimated paid sales" %} : {{ next_taxes.estimated_paid_sales_for_period }}</div>

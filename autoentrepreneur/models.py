@@ -506,6 +506,7 @@ class UserProfile(models.Model):
         extra_taxes = self.get_extra_taxes(end_date, paid, amount_paid_for_tax)
         estimated_amount_for_tax = amount_paid_for_tax + waiting_amount_for_tax
         estimated_amount_to_pay = float(base_taxed_amount + waiting_amount_for_tax) * float(tax_rate) / 100
+        vat_amount = Invoice.objects.get_vat_for_period(self.user, begin_date, end_date)
 
         taxes = {'period_begin': begin_date,
                  'period_end': end_date,
@@ -516,7 +517,8 @@ class UserProfile(models.Model):
                  'estimated_amount_to_pay': estimated_amount_to_pay,
                  'tax_due_date': pay_date,
                  'extra_taxes': extra_taxes,
-                 'total_amount_to_pay': amount_to_pay + extra_taxes}
+                 'total_amount_to_pay': amount_to_pay + extra_taxes,
+                 'vat': vat_amount}
 
         return taxes
 
