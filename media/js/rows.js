@@ -92,4 +92,16 @@
           });
       });
   };
+
+  $.fn.toggleBalanceCheckbox = function(){
+        return $(this).each(function(){
+            if($(this).val()) {
+                $(this).siblings('.balance_payments_label').show();
+                $(this).siblings('.balance-payments-field').show();
+            } else {
+                $(this).siblings('.balance_payments_label').hide();
+                $(this).siblings('.balance-payments-field').hide();
+            }
+      });
+  };
 })( jQuery );

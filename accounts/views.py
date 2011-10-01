@@ -364,7 +364,7 @@ def invoice_create_or_edit(request, id=None, customer_id=None, proposal_id=None)
                         invoicerow.invoice = invoice
                         invoicerow.save(user=user)
 
-                        if invoicerow.balance_payments and invoice.paid_date:
+                        if invoicerow.proposal and invoicerow.balance_payments and invoice.paid_date:
                             invoicerow.proposal.state = PROPOSAL_STATE_BALANCED
                             invoicerow.proposal.save()
 

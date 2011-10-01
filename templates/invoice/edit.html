@@ -55,6 +55,11 @@ jQuery(document).ready(function(){
         jQuery(e.currentTarget).siblings('.row-detail.empty-field').show();
     });
 
+    jQuery('.form-row').delegate('.proposal-field', 'change', function(){
+        $(this).toggleBalanceCheckbox();
+    });
+    $('.proposal-field').toggleBalanceCheckbox();
+
     jQuery('#invoice-edit-form').submit(function() {
         jQuery('.invoice-row input.empty-field:text').val('');
         jQuery('.invoice-row textarea.empty-field').val('');
@@ -125,6 +130,7 @@ jQuery(document).ready(function(){
             jQuery('textarea', new_row).labelInside();
             jQuery('.row-detail.empty-field', new_row).hide();
             jQuery('.proposal-field', new_row).proposalOverview('{% trans "Proposal" %}', '{% url proposal_detail id=0 %}');
+            jQuery('.proposal-field', new_row).toggleBalanceCheckbox();
             jQuery('.balance_payments_label', new_row).rowHelp();
             jQuery('.balance-payments-field', new_row).balanceAll();
 

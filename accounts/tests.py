@@ -1757,6 +1757,38 @@ class InvoiceTest(TestCase):
                                                      unit_price='100')
         self.assertEqual(len(invoice_rows), 1)
 
+    def testBug242(self):
+        contacts = Contact.objects.filter(name='New customer').count()
+        self.assertEquals(contacts, 0)
+        response = self.client.post(reverse('invoice_add_without_proposal'),
+                                    {'contact-name': 'New customer',
+                                     'address-street': '1 rue de la paix',
+                                     'address-zipcode': '75001',
+                                     'address-city': 'Paris',
+                                     'invoice-invoice_id': 1,
+                                     'invoice-state': INVOICE_STATE_PAID,
+                                     'invoice-amount': 1000,
+                                     'invoice-edition_date': '2010-8-31',
+                                     'invoice-payment_date': '2010-9-30',
+                                     'invoice-paid_date': '2010-10-10',
+                                     'invoice-payment_type': PAYMENT_TYPE_CHECK,
+                                     'invoice-execution_begin_date': '2010-8-1',
+                                     'invoice-execution_end_date': '2010-8-7',
+                                     'invoice-penalty_date': '2010-10-8',
+                                     'invoice-penalty_rate': 1.5,
+                                     'invoice-discount_conditions':'Nothing',
+                                     'invoice_rows-TOTAL_FORMS': 1,
+                                     'invoice_rows-INITIAL_FORMS': 0,
+                                     'invoice_rows-0-ownedobject_ptr': '',
+                                     'invoice_rows-0-label': 'Day of work',
+                                     'invoice_rows-0-proposal': '',
+                                     'invoice_rows-0-balance_payments': 'on',
+                                     'invoice_rows-0-category': ROW_CATEGORY_SERVICE,
+                                     'invoice_rows-0-quantity': 10,
+                                     'invoice_rows-0-unit_price': 100 })
+
+        self.assertEqual(response.status_code, 302)
+
     def testCanReferenceExistentContact(self):
         self.assertEquals(Contact.objects.count(), 2)
 
