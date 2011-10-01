@@ -635,3 +635,7 @@ table#forum {
 .forum-author-column {
     width:150px;
 }
+
+#topic-create-form #id_topic-title {
+    width:500px;
+}
