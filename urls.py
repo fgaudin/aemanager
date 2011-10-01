@@ -43,6 +43,8 @@ urlpatterns = patterns('',
     url(r'^newsletter/', include('newsletter.urls')),
     url(r'^backup/', include('backup.urls')),
     url(r'^faq/', include('faq.urls')),
+    url(r'^forum/', include('forum.urls')),
+
 
 )
 

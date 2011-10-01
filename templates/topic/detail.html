@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load forum %}
+
+{% block extrahead %}
+<script language="JavaScript">
+    $(document).ready(function(){
+        function insertAtCaret(areaId,text) {
+            var txtarea = document.getElementById(areaId);
+            var scrollPos = txtarea.scrollTop;
+            var strPos = 0;
+            var br = ((txtarea.selectionStart || txtarea.selectionStart == '0') ?
+                "ff" : (document.selection ? "ie" : false ) );
+            if (br == "ie") {
+                txtarea.focus();
+                var range = document.selection.createRange();
+                range.moveStart ('character', -txtarea.value.length);
+                strPos = range.text.length;
+            }
+            else if (br == "ff") strPos = txtarea.selectionStart;
+
+            var front = (txtarea.value).substring(0,strPos);
+            var back = (txtarea.value).substring(strPos,txtarea.value.length);
+            txtarea.value=front+text+back;
+            strPos = strPos + text.length;
+            if (br == "ie") {
+                txtarea.focus();
+                var range = document.selection.createRange();
+                range.moveStart ('character', -txtarea.value.length);
+                range.moveStart ('character', strPos);
+                range.moveEnd ('character', 0);
+                range.select();
+            }
+            else if (br == "ff") {
+                txtarea.selectionStart = strPos;
+                txtarea.selectionEnd = strPos;
+                txtarea.focus();
+            }
+            txtarea.scrollTop = scrollPos;
+        };
+
+        $(".forum-quote-message").click(function(e){
+            e.preventDefault();
+            var author = $(e.currentTarget).parents('.forum-message').find('.forum-author').text();
+            var message = $(e.currentTarget).prev('.forum-message').html();
+            message = message.replace(new RegExp("<quote>", "g"), "[quote]");
+            message = message.replace(new RegExp("</quote>", "g"), "[/quote]");
+            message = message.replace(/<\/?[^>]+>/gi, '');
+            insertAtCaret('id_message-body', "[quote]" + '{% trans "{0} said:\n" %}'.replace("{0}", author) + message + "[/quote]");
+        });
+    });
+</script>
+{% endblock %}
+
+{% block context_menu %}
+<div><a href="{% url topic_list %}">{% trans "Back to topic list" %}</a></div>
+{% endblock %}
+
+{% block content %}
+<div class="module">
+    <table id="forum">
+        <tbody>
+            {% for message in answers.object_list %}
+            <tr class="forum-message {% cycle "row1" "row2" %}">
+                <td class="forum-author-column">
+                    {% if forloop.last %}<a name="last"></a>{% endif %}<a name="{{ message.id }}"></a>
+                    <div class="forum-author">{{ message.display_author }}</div>
+                    <div class="forum-message-count">
+                        {% blocktrans with message.author_message_count as message_count %}{{ message_count }} messages{% endblocktrans %}
+                    </div>
+                </td>
+                <td>
+                    <div class="forum-message">{{ message.body|replace_quote|urlize|linebreaksbr }}</div>
+                    <div class="forum-quote-message"><a href="#">{% trans "Quote" %}</a></div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="pagination">
+    <span class="step-links">
+        {% if answers.has_previous %}
+            <a href="?page={{ answers.previous_page_number }}">{% trans "previous" %}</a>
+        {% endif %}
+
+        <span class="current">
+            {% blocktrans with answers.number as number and answers.paginator.num_pages as num_pages %}Page {{ number }} of {{ num_pages }}.{% endblocktrans %}
+        </span>
+
+        {% if answers.has_next %}
+            <a href="?page={{ answers.next_page_number }}">{% trans "next" %}</a>
+        {% endif %}
+    </span>
+</div>
+<h3>{% trans "Answer" %}</h3>
+<form action="" method="post" id="message-create-form">
+    {% csrf_token %}
+    <fieldset class="module aligned">
+    {% with messageForm as form %}
+    {% include "form.html" %}
+    {% endwith %}
+    </fieldset>
+
+    <div class="submit-row">
+    <input class="default" type="submit" name="action" value="{% trans "Submit" %}" />
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block extrahead %}
+{% endblock %}
+
+{% block content %}
+<form action="" method="post" id="topic-create-form">
+    {% csrf_token %}
+    <fieldset class="module aligned">
+    {% with topicForm as form %}
+    {% include "form.html" %}
+    {% endwith %}
+    {% with messageForm as form %}
+    {% include "form.html" %}
+    {% endwith %}
+    </fieldset>
+
+    <div class="submit-row">
+    <input class="default" type="submit" name="action" value="{% trans "Submit" %}" />
+    </div>
+</form>
+{% endblock %}

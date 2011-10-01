@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block context_menu %}
+<div><a href="{% url topic_create %}">{% trans "New topic" %}</a></div>
+{% endblock %}
+
+{% block content %}
+{% if topics.object_list %}
+<div class="module">
+    <table id="forum">
+        <thead>
+            <tr>
+                <th>{% trans "Topic" %}</th>
+                <th class="date-header">{% trans "First message" %}</th>
+                <th>{% trans "Views" %}</th>
+                <th>{% trans "Messages" %}</th>
+                <th class="date-header">{% trans "Last message" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for topic in topics.object_list %}
+            <tr class="{% cycle "row1" "row2" %}">
+                <td><a href="{% url topic_detail topic.id %}">{{ topic.title }}</a></td>
+                <td>
+                    {{ topic.first_message.creation_date }}<br>
+                    {% blocktrans with topic.first_message.display_author as author %}by {{ author }}{% endblocktrans %}</td>
+                <td>{{ topic.views }}</td>
+                <td>{{ topic.messages.count }}</td>
+                <td>
+                    <a href="{% url topic_detail topic.id %}?page=-1#last">
+                    {{ topic.last_message.creation_date }}<br>
+                    {% blocktrans with topic.last_message.display_author as author %}by {{ author }}{% endblocktrans %}
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="pagination">
+    <span class="step-links">
+        {% if topics.has_previous %}
+            <a href="?page={{ topics.previous_page_number }}">{% trans "previous" %}</a>
+        {% endif %}
+
+        <span class="current">
+            {% blocktrans with topics.number as number and topics.paginator.num_pages as num_pages %}Page {{ number }} of {{ num_pages }}.{% endblocktrans %}
+        </span>
+
+        {% if topics.has_next %}
+            <a href="?page={{ topics.next_page_number }}">{% trans "next" %}</a>
+        {% endif %}
+    </span>
+</div>
+{% else %}
+{% trans "No topics yet" %}
+{% endif %}
+{% endblock %}

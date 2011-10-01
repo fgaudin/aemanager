@@ -610,3 +610,28 @@ body.login {
 .ui-autocomplete li {
     list-style-type: none;
 }
+
+table#forum {
+    width:100%;
+}
+
+#forum .date-header {
+    width:130px;
+}
+
+.forum-message quote {
+    display:block;
+    color: gray;
+    font-style: italic;
+    border: 1px solid lightgrey;
+    margin-left: 10px;
+    padding:5px;
+}
+
+.forum-quote-message {
+    float:right;
+}
+
+.forum-author-column {
+    width:150px;
+}

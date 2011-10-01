@@ -139,7 +139,10 @@
                     <ul>
                         <li>
                             {%if demo_mode %}<del>{% endif %}<a href="{% url issue_list %}">{% trans "Bug reports" %}</a>{%if demo_mode %}</del>{% endif %}
-                            </li>
+                        </li>
+                        <li>
+                            <a href="{% url topic_list %}">{% trans "Forum" %}</a>
+                        </li>
                         <li>
                             <a href="{% url faq_list %}">{% trans "FAQ" %}</a>
                         </li>
