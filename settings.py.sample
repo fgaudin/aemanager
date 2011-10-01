@@ -127,6 +127,7 @@ INSTALLED_APPS = (
     'contact',
     'core',
     'faq',
+    'forum',
     'newsletter',
     'notification',
     'project',
