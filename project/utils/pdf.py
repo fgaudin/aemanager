@@ -134,7 +134,7 @@ class ProposalTemplate(object):
 
         data.append([user_header,
                     '',
-                    Paragraph(customer_header_content % (customer.name,
+                    Paragraph(customer_header_content % (customer,
                                                          customer.address.street.replace("\n", "<br/>"),
                                                          customer.address.zipcode,
                                                          customer.address.city,

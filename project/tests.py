@@ -11,7 +11,7 @@ from project.models import Project, PROJECT_STATE_PROSPECT, \
     PAYMENT_DELAY_TYPE_OTHER_END_OF_MONTH, VAT_RATES_19_6
 from accounts.models import Invoice, InvoiceRow, INVOICE_STATE_EDITED, \
     PAYMENT_TYPE_CHECK
-from contact.models import Contact, Address, Country
+from contact.models import Contact, Address, Country, CONTACT_TYPE_PERSON
 import datetime
 import hashlib
 from django.contrib.auth.models import User
@@ -839,6 +839,44 @@ class ProposalTest(TestCase):
         invariant_content = content[0:76] + content[77:121] + content[122:-1]
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
                           "b0ba361910042d9fd727ad17eb80e94a")
+
+    def testBug245(self):
+        """
+        Firstname was not displayed when customer is a person
+        """
+        customer = Contact.objects.get(project=30)
+        customer.firstname = 'Pierre'
+        customer.name = 'Dupont'
+        customer.type = CONTACT_TYPE_PERSON
+        customer.save()
+
+        p = Proposal.objects.create(project_id=30,
+                                    update_date=datetime.date(2011, 2, 5),
+                                    state=PROPOSAL_STATE_DRAFT,
+                                    begin_date=datetime.date(2010, 8, 1),
+                                    end_date=datetime.date(2010, 8, 15),
+                                    contract_content='Content of contract',
+                                    amount=2005,
+                                    reference='XXX',
+                                    expiration_date=datetime.date(2010, 8, 2),
+                                    owner_id=1)
+
+        p_row = ProposalRow.objects.create(proposal_id=p.id,
+                                           label='Day of work',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           quantity=20,
+                                           unit_price='200.5',
+                                           owner_id=1)
+
+        response = self.client.get(reverse('proposal_download', kwargs={'id': p.id}))
+        self.assertEqual(response.status_code, 200)
+        f = open('/tmp/proposal_bug245.pdf', 'w')
+        f.write(response.content)
+        f.close()
+        content = response.content.split("\n")
+        invariant_content = content[0:66] + content[67:110] + content[111:-1]
+        self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
+                          "72424ed26747855a7166a887b77eb75b")
 
     def testContractDownloadPdf(self):
         """
