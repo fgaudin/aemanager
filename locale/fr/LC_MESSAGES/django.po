@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-01 04:00+0200\n"
+"POT-Creation-Date: 2011-10-12 16:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,7 +26,7 @@ msgstr "Anglais"
 msgid "French"
 msgstr "Français"
 
-#: accounts/forms.py:8 accounts/models.py:34 accounts/models.py:202
+#: accounts/forms.py:8 accounts/models.py:36 accounts/models.py:204
 #: accounts/views.py:179 accounts/views.py:253 backup/views.py:134
 #: project/models.py:182 project/models.py:389
 #: templates/contact/detail.html:98 templates/expense/list.html:220
@@ -35,7 +35,7 @@ msgstr "Français"
 msgid "Amount"
 msgstr "Montant"
 
-#: accounts/forms.py:20 accounts/models.py:200 templates/invoice/list.html:20
+#: accounts/forms.py:20 accounts/models.py:202 templates/invoice/list.html:20
 msgid "Invoice id"
 msgstr "Numéro de facture"
 
@@ -44,7 +44,7 @@ msgstr "Numéro de facture"
 msgid "An integer less than or equal to %d. Must be sequential."
 msgstr "Un entier inférieur ou égal à %d. Doit être séquentiel."
 
-#: accounts/forms.py:24 accounts/models.py:210 backup/views.py:137
+#: accounts/forms.py:24 accounts/models.py:212 backup/views.py:137
 msgid "Penalty rate"
 msgstr "Taux de pénalité"
 
@@ -76,75 +76,79 @@ msgstr "Quantité"
 msgid "Unit price"
 msgstr "Prix unitaire"
 
-#: accounts/models.py:25
+#: accounts/models.py:26
 msgid "Cash"
 msgstr "Liquide"
 
-#: accounts/models.py:26
+#: accounts/models.py:27
 msgid "Bank card"
 msgstr "Carte bancaire"
 
-#: accounts/models.py:27
+#: accounts/models.py:28
 msgid "Transfer"
 msgstr "Virement"
 
-#: accounts/models.py:28
+#: accounts/models.py:29
 msgid "Check"
 msgstr "Chèque"
 
-#: accounts/models.py:31 accounts/views.py:179 accounts/views.py:253
+#: accounts/models.py:30
+msgid "Paypal"
+msgstr "Paypal"
+
+#: accounts/models.py:33 accounts/views.py:179 accounts/views.py:253
 #: templates/expense/list.html:217
 msgid "Date"
 msgstr "Date"
 
-#: accounts/models.py:31 accounts/models.py:203 accounts/models.py:204
-#: accounts/models.py:206 accounts/models.py:207 accounts/models.py:208
-#: accounts/models.py:209 autoentrepreneur/forms.py:13
+#: accounts/models.py:33 accounts/models.py:205 accounts/models.py:206
+#: accounts/models.py:208 accounts/models.py:209 accounts/models.py:210
+#: accounts/models.py:211 autoentrepreneur/forms.py:13
 #: autoentrepreneur/models.py:109 autoentrepreneur/models.py:164
 #: project/models.py:33 project/models.py:183 project/models.py:184
 #: project/models.py:186 project/models.py:187
 msgid "format: mm/dd/yyyy"
 msgstr "format : jj/mm/aaaa"
 
-#: accounts/models.py:32 backup/views.py:134 project/models.py:180
+#: accounts/models.py:34 backup/views.py:134 project/models.py:180
 #: templates/expense/list.html:218 templates/project/detail.html:29
 msgid "Reference"
 msgstr "Référence"
 
-#: accounts/models.py:33 accounts/views.py:179 templates/expense/list.html:219
+#: accounts/models.py:35 accounts/views.py:179 templates/expense/list.html:219
 msgid "Supplier"
 msgstr "Fournisseur"
 
-#: accounts/models.py:35 accounts/models.py:205 accounts/views.py:179
+#: accounts/models.py:37 accounts/models.py:207 accounts/views.py:179
 #: accounts/views.py:253 backup/views.py:135 templates/expense/list.html:221
 #: templates/invoice/list.html:26
 msgid "Payment type"
 msgstr "Type de paiement"
 
-#: accounts/models.py:36 templates/expense/list.html:222
+#: accounts/models.py:38 templates/expense/list.html:222
 msgid "Description"
 msgstr "Description"
 
-#: accounts/models.py:52
+#: accounts/models.py:54
 msgid "Edited"
 msgstr "Éditée"
 
-#: accounts/models.py:53 newsletter/models.py:17 project/models.py:128
+#: accounts/models.py:55 newsletter/models.py:17 project/models.py:128
 #: templates/newsletter/email_users.html:25
 msgid "Sent"
 msgstr "Envoyé"
 
-#: accounts/models.py:54 autoentrepreneur/models.py:44 core/views.py:456
+#: accounts/models.py:56 autoentrepreneur/models.py:44 core/views.py:456
 msgid "Paid"
 msgstr "Payée"
 
-#: accounts/models.py:199 accounts/views.py:253 backup/views.py:134
+#: accounts/models.py:201 accounts/views.py:253 backup/views.py:134
 #: project/forms.py:28 project/models.py:29 project/models.py:108
 #: templates/invoice/list.html:23 templates/project/list.html:20
 msgid "Customer"
 msgstr "Client"
 
-#: accounts/models.py:201 autoentrepreneur/models.py:108 backup/views.py:134
+#: accounts/models.py:203 autoentrepreneur/models.py:108 backup/views.py:134
 #: bugtracker/models.py:35 project/forms.py:29 project/models.py:109
 #: project/models.py:181 templates/backup/index.html:24
 #: templates/backup/index.html.py:73 templates/contact/detail.html:97
@@ -155,113 +159,113 @@ msgstr "Client"
 msgid "State"
 msgstr "État"
 
-#: accounts/models.py:203 backup/views.py:135 templates/invoice/list.html:21
+#: accounts/models.py:205 backup/views.py:135 templates/invoice/list.html:21
 msgid "Edition date"
 msgstr "Date d'édition"
 
-#: accounts/models.py:204 backup/views.py:135
+#: accounts/models.py:206 backup/views.py:135
 msgid "Payment date"
 msgstr "Date de paiement"
 
-#: accounts/models.py:206 backup/views.py:136 templates/invoice/list.html:22
+#: accounts/models.py:208 backup/views.py:136 templates/invoice/list.html:22
 msgid "Paid date"
 msgstr "Date de réception du paiement"
 
-#: accounts/models.py:207 backup/views.py:136
+#: accounts/models.py:209 backup/views.py:136
 msgid "Execution begin date"
 msgstr "Date de début d'exécution"
 
-#: accounts/models.py:208 backup/views.py:136
+#: accounts/models.py:210 backup/views.py:136
 msgid "Execution end date"
 msgstr "Date de fin d'exécution"
 
-#: accounts/models.py:209 backup/views.py:137
+#: accounts/models.py:211 backup/views.py:137
 msgid "Penalty date"
 msgstr "Date des pénalités"
 
-#: accounts/models.py:211 backup/views.py:137
+#: accounts/models.py:213 backup/views.py:137
 msgid "Discount conditions"
 msgstr "Conditions d'escompte"
 
-#: accounts/models.py:219
+#: accounts/models.py:221
 #, python-format
 msgid "invoice #%d"
 msgstr "facture n°%d"
 
-#: accounts/models.py:251
+#: accounts/models.py:253
 #, python-format
 msgid "Invoice id must be less than or equal to %d"
 msgstr "Le numéro de facture doit être inférieur ou égal à %d"
 
-#: accounts/models.py:253 accounts/views.py:389
+#: accounts/models.py:255 accounts/views.py:389
 msgid "Invoice id must be unique"
 msgstr "Le numéro de facture doit être unique"
 
-#: accounts/models.py:263 accounts/views.py:386
+#: accounts/models.py:265 accounts/views.py:386
 msgid "Amounts invoiced can't be greater than proposals remaining amounts"
 msgstr ""
 "Les montants facturés ne peuvent pas dépasser les montants restants des devis"
 
-#: accounts/models.py:279
+#: accounts/models.py:281
 #, python-format
 msgid "invoice_%(invoice_id)d.pdf"
 msgstr "facture_%(invoice_id)d.pdf"
 
-#: accounts/models.py:284
+#: accounts/models.py:286
 #, python-format
 msgid "Invoice #%(invoice_id)d"
 msgstr "Facture #%(invoice_id)d"
 
-#: accounts/models.py:286
+#: accounts/models.py:288
 #, python-format
 msgid "INVOICE #%d"
 msgstr "FACTURE N°%d"
 
-#: accounts/models.py:297
+#: accounts/models.py:299
 #, python-format
 msgid "Payment date : %s"
 msgstr "Date de paiement : %s"
 
-#: accounts/models.py:298
+#: accounts/models.py:300
 #, python-format
 msgid "Penalty begins on : %s"
 msgstr "Pénalité à compter du : %s"
 
-#: accounts/models.py:299
+#: accounts/models.py:301
 #, python-format
 msgid "Penalty rate : %s"
 msgstr "Taux de pénalité : %s"
 
-#: accounts/models.py:300
+#: accounts/models.py:302
 #, python-format
 msgid "Discount conditions : %s"
 msgstr "Conditions d'escompte : %s"
 
-#: accounts/models.py:303
+#: accounts/models.py:305
 #, python-format
 msgid "IBAN/BBAN : %s"
 msgstr "IBAN/RIB : %s"
 
-#: accounts/models.py:305
+#: accounts/models.py:307
 #, python-format
 msgid "BIC/SWIFT : %s"
 msgstr "BIC/SWIFT : %s"
 
-#: accounts/models.py:312 project/models.py:286
+#: accounts/models.py:314 project/models.py:286
 #, python-format
 msgid "Execution dates : %(begin_date)s to %(end_date)s"
 msgstr "Date d'exécution : %(begin_date)s au %(end_date)s"
 
-#: accounts/models.py:328 templates/invoice/detail.html:81
-#: templates/invoice/edit.html:48 templates/invoice/edit.html.py:127
+#: accounts/models.py:330 templates/invoice/detail.html:81
+#: templates/invoice/edit.html:48 templates/invoice/edit.html.py:132
 msgid "Proposal"
 msgstr "Devis"
 
-#: accounts/models.py:329
+#: accounts/models.py:331
 msgid "Balance payments for the proposal"
 msgstr "Solde le devis"
 
-#: accounts/models.py:329
+#: accounts/models.py:331
 msgid ""
 "\"Balancing payments for the proposal\" means there will be no future "
 "invoices for the selected proposal. Thus the amount remaining to invoice for "
@@ -341,7 +345,7 @@ msgstr ""
 "La date de paiement est supérieure à la date des pénalités, est-ce normal ?"
 
 #: accounts/views.py:391 contact/views.py:83 core/views.py:313
-#: forum/views.py:58 forum/views.py:109 notification/views.py:23
+#: forum/views.py:67 forum/views.py:118 notification/views.py:23
 #: project/views.py:77 project/views.py:187 project/views.py:412
 msgid "Data provided are invalid"
 msgstr "Les données saisies sont invalides"
@@ -852,7 +856,7 @@ msgstr "Le problème a été sauvegardé avec succès"
 msgid "%(issue_subject)s : %(issue_url)s"
 msgstr "%(issue_subject)s : %(issue_url)s"
 
-#: bugtracker/views.py:143 forum/views.py:106
+#: bugtracker/views.py:143 forum/views.py:115
 msgid "The message has been saved successfully"
 msgstr "Le message a été sauvegardé avec succès"
 
@@ -1431,15 +1435,24 @@ msgstr "Auteur"
 msgid "Created at"
 msgstr "Créé à"
 
-#: forum/views.py:34 templates/menu.html:144
+#: forum/views.py:37 templates/menu.html:144
 msgid "Forum"
 msgstr "Forum"
 
-#: forum/views.py:55
+#: forum/views.py:59
+msgid "A new topic has been posted"
+msgstr "Un nouveau sujet a été posté"
+
+#: forum/views.py:60
+#, python-format
+msgid "%(topic)s : %(topic_url)s"
+msgstr "%(topic)s : %(topic_url)s"
+
+#: forum/views.py:64
 msgid "The topic has been saved successfully"
 msgstr "Le sujet a été sauvegardé avec succès"
 
-#: forum/views.py:65 templates/topic/list.html:5
+#: forum/views.py:74 templates/topic/list.html:5
 msgid "New topic"
 msgstr "Nouveau sujet"
 
@@ -1526,7 +1539,8 @@ msgid ""
 "You will receive an email when a user posts a new message in a topic in "
 "which you participated"
 msgstr ""
-"Vous recevrez un email quand un utilisateur poste un nouveau message dans un sujet auquel vous participez"
+"Vous recevrez un email quand un utilisateur poste un nouveau message dans un "
+"sujet auquel vous participez"
 
 #: notification/views.py:20
 msgid "Notification settings has been saved successfully"
@@ -2038,7 +2052,7 @@ msgstr "Affaires"
 
 #: templates/menu.html:29 templates/menu.html.py:68
 #: templates/contact/edit.html:166 templates/expense/list.html:235
-#: templates/invoice/edit.html:213 templates/proposal/edit.html:238
+#: templates/invoice/edit.html:219 templates/proposal/edit.html:238
 msgid "Add"
 msgstr "Ajouter"
 
@@ -2204,7 +2218,7 @@ msgid "search on %(search_engine_name)s"
 msgstr "rechercher sur %(search_engine_name)s"
 
 #: templates/contact/edit.html:193 templates/contract/edit.html:78
-#: templates/core/settings_edit.html:105 templates/invoice/edit.html:219
+#: templates/core/settings_edit.html:105 templates/invoice/edit.html:225
 #: templates/newsletter/email_users.html:13
 #: templates/notification/edit.html:12 templates/project/edit.html:23
 #: templates/proposal/edit.html:278
@@ -2592,7 +2606,7 @@ msgstr "Montant TTC"
 msgid "Exported file"
 msgstr "Fichier exporté"
 
-#: templates/invoice/detail.html:74 templates/invoice/edit.html:194
+#: templates/invoice/detail.html:74 templates/invoice/edit.html:200
 #: templates/proposal/detail.html:58 templates/proposal/edit.html:220
 msgid "Detail rows"
 msgstr "Lignes de détail"
@@ -2627,7 +2641,7 @@ msgstr "Aucune ligne"
 msgid "new contact"
 msgstr "nouveau contact"
 
-#: templates/invoice/edit.html:207 templates/proposal/edit.html:232
+#: templates/invoice/edit.html:213 templates/proposal/edit.html:232
 msgid "detail"
 msgstr "détail"
 
