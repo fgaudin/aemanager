@@ -193,3 +193,5 @@ CONCURRENT_RESTORE_REQUEST = 5
 
 GOOGLE_API_KEY = '' # http://code.google.com/intl/fr-FR/apis/loader/signup.html
 EXTERNAL_BUG_TRACKER_URL = 'https://github.com/fgaudin/aemanager/issues/%i'
+
+TITLE_PREFIX = 'AEMANAGER - '

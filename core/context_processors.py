@@ -5,4 +5,5 @@ def common(request=None):
             'parent_site_url': settings.PARENT_SITE_URL,
             'version': '1.5',
             'GOOGLE_API_KEY': settings.GOOGLE_API_KEY,
-            'demo_mode': settings.DEMO}
+            'demo_mode': settings.DEMO,
+            'title_prefix': settings.TITLE_PREFIX}
