@@ -1,7 +1,10 @@
 from django.contrib import admin
-from project.models import Project, Proposal, ProposalRow, Contract
+from project.models import Project, Proposal, ProposalRow, Contract, \
+    CatalogItem, CatalogSection
 
 admin.site.register(Contract)
 admin.site.register(Project)
 admin.site.register(Proposal)
 admin.site.register(ProposalRow)
+admin.site.register(CatalogSection)
+admin.site.register(CatalogItem)

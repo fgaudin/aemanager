@@ -50,6 +50,26 @@ jQuery(document).ready(function(){
     jQuery('.balance-payments-field').balanceAll();
     jQuery('.delete-checkbox').children('input').attr('checked', false);
 
+    $('.form-row').delegate('.label-field', 'focusin', function(){
+        if($(this).is(':data(autocomplete)')) return;
+        $(this).autocomplete({
+            source: "{% url catalog_item_search %}",
+            select: function(event, ui){
+                $(this).val(ui.item.label);
+                $(this).nextAll('.category-field').val(ui.item.category);
+                $(this).nextAll('.unit-price-field').trigger('focus');
+                $(this).nextAll('.unit-price-field').val(ui.item.unit_price);
+                $(this).nextAll('.vat-rate-field').val(ui.item.vat_rate);
+                $(this).trigger('focus');
+            }
+        }).data( "autocomplete" )._renderItem = function( ul, item ) {
+            return $( "<li></li>" )
+                .data( "item.autocomplete", item )
+                .append( "<a>" + item.label + " (" + item.section__name + ")</a>" )
+                .appendTo( ul );
+        };
+    });
+
     jQuery('.form-row').delegate('.show-detail', 'click', function(e){
         e.preventDefault();
         jQuery(e.currentTarget).siblings('.row-detail.empty-field').show();

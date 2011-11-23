@@ -3,7 +3,8 @@ from django.utils.translation import ugettext_lazy as _
 from project.models import Project, PROJECT_STATE, PROJECT_STATE_STARTED, \
     Proposal, ProposalRow, Contract, PAYMENT_DELAY_OTHER, \
     PAYMENT_DELAY_TYPE_OTHER_END_OF_MONTH, \
-    PAYMENT_DELAY_TYPE_OTHER_END_OF_MONTH_PLUS_DELAY
+    PAYMENT_DELAY_TYPE_OTHER_END_OF_MONTH_PLUS_DELAY, CatalogItem, \
+    CatalogSection
 from django import forms
 
 class ContractForm(ModelForm):
@@ -77,6 +78,35 @@ class ProposalRowForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ProposalRowForm, self).__init__(*args, **kwargs)
+        self.fields['label'].widget.attrs['class'] = 'label-field'
+        self.fields['category'].widget.attrs['class'] = 'category-field'
         self.fields['quantity'].widget.attrs['class'] = 'quantity-field'
         self.fields['unit_price'].widget.attrs['class'] = 'unit-price-field'
+        self.fields['vat_rate'].widget.attrs['class'] = 'vat-rate-field'
         self.fields['detail'].widget.attrs['class'] = 'row-detail'
+
+class CatalogForm(ModelForm):
+    unit_price = forms.DecimalField(max_digits=12, decimal_places=2, label=_('Unit price'), localize=True)
+    section_label = forms.CharField(max_length=100, label=_('Section'))
+
+    class Meta:
+        model = CatalogItem
+        exclude = ['owner', 'uuid', 'section']
+
+    def __init__(self, *args, **kwargs):
+        super(CatalogForm, self).__init__(*args, **kwargs)
+        self.fields['unit_price'].widget.attrs['class'] = 'unit-price-field'
+
+class SectionForm(ModelForm):
+    class Meta:
+        model = CatalogItem
+        fields = ['section']
+
+    def __init__(self, *args, **kwargs):
+        super(SectionForm, self).__init__(*args, **kwargs)
+        self.fields['section'].widget.attrs['class'] = 'section-field'
+
+class SectionRenameForm(ModelForm):
+    class Meta:
+        model = CatalogSection
+        fields = ['name']

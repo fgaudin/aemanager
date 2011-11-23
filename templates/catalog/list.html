@@ -1,0 +1,389 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block extrahead %}
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/smoothness/jquery-ui-1.8.10.custom.css" media="screen"/>
+<script type="text/javascript">
+(function($){
+    $(this).ajaxError(function() {
+      $.display_errors(['{% trans "An error occurred. Did you activate referer in your browser?" %}']);
+    });
+
+    $.clear_errors = function(){
+        jQuery('.messages').remove();
+    };
+
+    $.display_errors = function(errors){
+        if(errors.length) {
+            jQuery.clear_errors();
+            var el = jQuery('<ul class="messages"></ul>');
+            jQuery(errors).each(function(){
+                jQuery(el).append('<li class="error">' + this + '</li>');
+            });
+            jQuery(el).appendTo("#title");
+        }
+    };
+
+    cancelEdit = function(el){
+        $(el).prev().show()
+        $(el).remove();
+    };
+
+    $.fn.editable = function()
+    {
+        return this.each(function()
+        {
+            jQuery('.edit-row', this).click(function(e){
+                e.preventDefault();
+                var valueRow = jQuery(e.target).parents('tr');
+                $('.cancel').click();
+                var editRow = $(valueRow).clone(false);
+                $(editRow).attr('id', '');
+                var label = $('#id_label').clone(false).val($('.label-col', valueRow).html());
+                $('.label-col', editRow).html(label);
+                var category = $('#id_category').clone(false).val($('.category-value', valueRow).html());
+                $('.category-col', editRow).html(category);
+                var price = $('#id_unit_price').clone(false).val($('.price-col', valueRow).html());
+                $('.price-col', editRow).html(price);
+                var vat_rate = $('#id_vat_rate').clone(false).val($('.vat-value', valueRow).html());
+                $('.vat-col', editRow).html(vat_rate);
+                $('.action-col', editRow).html('<input type="submit" id="ok" value="Ok" /> <img src="{{ MEDIA_URL }}img/ajax-loading.gif" class="expense-edit-loading" style="display:none"/> <a href="#" class="cancel">{% trans "cancel" %}</a>');
+                $('.cancel', editRow).click(function(e){
+                    e.preventDefault();
+                    cancelEdit($(e.target).parents('tr'));
+                });
+                $(valueRow).hide();
+                $(valueRow).after(editRow);
+                jQuery('#ok').click(function(e){
+                    e.preventDefault();
+                    jQuery(this).hide();
+                    jQuery('.expense-edit-loading').show();
+                    var row = $(e.target).parents('tr');
+                    var id = $(row).prev().attr('id');
+                    var label = $('#id_label',row).val();
+                    var category = $('#id_category',row).val();
+                    var price = jQuery('#id_unit_price',row).val();
+                    var vat = jQuery('#id_vat_rate',row).val();
+                    jQuery.post("{% url catalog_edit %}?id="+id,
+                                {"label": label,
+                                 "category": category,
+                                 "unit_price": price,
+                                 "vat_rate": vat,
+                                 "csrfmiddlewaretoken": '{{ csrf_token }}'},
+                                function(data){
+                                    if(data.error == 'ok') {
+                                        var row = jQuery('#' + data.id);
+                                        jQuery('.label-col',row).text(data.label);
+                                        jQuery('.category-col',row).html('<span class="category-value" style="display:none">' + data.category + '</span>' + data.category_label);
+                                        jQuery('.price-col',row).text(data.unit_price);
+                                        jQuery('.vat-col',row).html('<span class="vat-value" style="display:none">' + data.vat_rate + '</span>' + data.vat_rate_label);
+                                        jQuery(row).show();
+                                        jQuery(row).next().remove();
+                                        jQuery.clear_errors();
+                                    } else {
+                                        jQuery.display_errors(data.error_msg);
+                                    }
+                                    jQuery('.expense-edit-loading').hide();
+                                    jQuery('#ok').show();
+                                },
+                                "json");
+
+                });
+            });
+        });
+    };
+
+    $.fn.deletable = function()
+    {
+        return this.each(function()
+        {
+            jQuery('.delete-row', this).click(function(e){
+                e.preventDefault();
+                $('.cancel').click();
+                if (window.confirm('{% trans "Are you sure to want to delete this row" %}')) {
+                    var item_id = jQuery(e.target).parents('tr').attr('id');
+                    jQuery.post("{% url catalog_delete %}",
+                                {"id": item_id,
+                                 "csrfmiddlewaretoken": '{{ csrf_token }}'},
+                                function(data){
+                                    if(data.error == 'ok') {
+                                        jQuery('tr#'+data.id).remove();
+                                        redraw_background();
+                                    }
+                                },
+                                "json");
+                }
+            });
+        });
+    };
+
+    $.fn.movable = function()
+    {
+        return this.each(function()
+        {
+            jQuery('.move-row', this).click(function(e){
+                e.preventDefault();
+                $('.cancel').click();
+                var row = $(e.target).parents('tr');
+                var item_id = $(row).attr('id');
+                var section = $(e.target).next('#id_section').val();
+                if (section) {
+                    $.post("{% url catalog_move %}",
+                            {"id": item_id,
+                             "section": section,
+                             "csrfmiddlewaretoken": '{{ csrf_token }}'},
+                            function(data){
+                                if(data.error == 'ok') {
+                                    $('#section-' + section).after(row);
+                                    redraw_background();
+                                } else {
+                                    jQuery.display_errors(data.error_msg);
+                                }
+                            },
+                            "json");
+                }
+            });
+        });
+    };
+
+    $.fn.renamable = function() {
+        return this.each(function() {
+            $('.rename-section', this).click(function(e){
+                e.preventDefault();
+                $('.cancel').click();
+                var row = $(e.target).parents('tr');
+                $(e.target).hide();
+                $('.delete-section', row).hide();
+                $('.ok', row).unbind('click');
+                $('.cancel', row).unbind('click');
+                var editField = $('#section-rename-model #id_name').clone(false);
+                var value = $('.section-title', row).text();
+                $(editField).val(value);
+                $('.section-title', row).html($(editField)).append('<span style="display:none" id="previous-value">' + value + '</span>');
+                $('.cancel', row).click(function(e){
+                    e.preventDefault();
+                    var row = $(e.target).parents('tr');
+                    $('.ok', row).hide();
+                    $('.cancel', row).hide();
+                    $('.rename-section', row).show();
+                    $('.delete-section', row).show();
+                    var value = $('#previous-value', row).text();
+                    $('.section-title', row).html(value);
+                    $('.ok', row).unbind('click');
+                    $('.cancel', row).unbind('click');
+                });
+                $('.ok', row).click(function(e){
+                    e.preventDefault();
+                    var row = $(e.target).parents('tr');
+                    $('.ok', row).hide();
+                    $('.cancel', row).hide();
+                    $('.section-rename-loading', row).show();
+                    var name = $('#id_name', row).val();
+                    var id = $(row).attr('id').replace('section-','');
+                    $.post("{% url catalog_section_rename %}?id="+id,
+                           {"name": name,
+                            "csrfmiddlewaretoken": '{{ csrf_token }}'},
+                           function(data){
+                                if(data.error == 'ok') {
+                                    $('.section-title', row).html(data.name);
+                                    $('.rename-section', row).show();
+                                    $('.delete-section', row).show();
+                                    $('.ok', row).unbind('click');
+                                    $('.cancel', row).unbind('click');
+                                } else {
+                                    jQuery.display_errors(data.error_msg);
+                                    $('.ok', row).show();
+                                    $('.cancel', row).show();
+                                }
+                                $('.section-rename-loading', row).hide();
+                            },
+                            "json");
+                });
+                $('.ok', row).show();
+                $('.cancel', row).show();
+            });
+        });
+    };
+
+    $.fn.deletable_section = function() {
+        return this.each(function() {
+            $('.delete-section', this).click(function(e){
+                e.preventDefault();
+                $('.cancel').click();
+                var row = $(e.target).parents('tr');
+                $(e.target).hide();
+                $('.rename-section', row).hide();
+                $('.ok', row).unbind('click');
+                $('.cancel', row).unbind('click');
+                $("#id_section option[value='" + $(row).attr('id').replace('section-','') + "']", row).remove();
+                $('.cancel', row).click(function(e){
+                    e.preventDefault();
+                    var row = $(e.target).parents('tr');
+                    $('.ok', row).hide();
+                    $('.cancel', row).hide();
+                    $('.move-to-on-delete', row).hide();
+                    $('.rename-section', row).show();
+                    $('.delete-section', row).show();
+                });
+                $('.ok', row).click(function(e){
+                    e.preventDefault();
+                    var row = $(e.target).parents('tr');
+                    $('.ok', row).hide();
+                    $('.cancel', row).hide();
+                    $('.move-to-on-delete', row).hide();
+                    $('.section-rename-loading', row).show();
+                    var new_section = $('#id_section', row).val();
+                    var id = $(row).attr('id').replace('section-','');
+                    $.post("{% url catalog_section_delete %}?id="+id,
+                           {"section": new_section,
+                            "csrfmiddlewaretoken": '{{ csrf_token }}'},
+                           function(data){
+                                if(data.error == 'ok') {
+                                    $(".section-field option[value='" + $(row).attr('id').replace('section-','') + "']").remove();
+                                    $('#section-'+data.id).after($(row).nextUntil('.catalog-section'));
+                                    $(row).remove();
+                                    redraw_background();
+                                } else {
+                                    jQuery.display_errors(data.error_msg);
+                                    $('.ok', row).show();
+                                    $('.cancel', row).show();
+                                    $('.move-to-on-delete', row).show();
+                                }
+                                $('.section-rename-loading', row).hide();
+                            },
+                            "json");
+                });
+                $('.move-to-on-delete', row).show();
+                $('.ok', row).show();
+                $('.cancel', row).show();
+            });
+        });
+    };
+})(jQuery);
+
+jQuery(document).ready(function(){
+    redraw_background = function(){
+        var rowClass = 'row1';
+        jQuery('.row').each(function(){
+            jQuery(this).removeClass();
+            jQuery(this).addClass(rowClass);
+            jQuery(this).addClass('row');
+            if (rowClass == 'row1') {
+                rowClass = 'row2';
+            } else {
+                rowClass = 'row1';
+            }
+        });
+    };
+
+    jQuery("input#id_section_label").autocomplete({
+        source: "{% url catalog_section_search %}"
+    });
+    $('#add').click(function(e){
+        e.preventDefault();
+        $('.cancel').click();
+        jQuery(this).hide();
+        jQuery('#add-loading').show();
+        var label = jQuery('#id_label').val();
+        var category = jQuery('#id_category').val();
+        var unit_price = jQuery('#id_unit_price').val();
+        var vat_rate = jQuery('#id_vat_rate').val();
+        var section_label = jQuery('#id_section_label').val();
+        jQuery.post("{% url catalog_add %}",
+                    {"label": label,
+                     "category": category,
+                     "unit_price": unit_price,
+                     "vat_rate": vat_rate,
+                     "section_label": section_label,
+                     "csrfmiddlewaretoken": '{{ csrf_token }}'},
+                    function(data){
+                        if(data.error == 'ok') {
+                            var row = $('#row-model').clone();
+                            $(row).attr('id',data.id);
+                            $('.label-col',row).text(data.label);
+                            $('.category-col',row).html('<span class="category-value" style="display:none">' + data.catagory + '</span>' + data.category_label);
+                            $('.price-col',row).text(data.unit_price);
+                            $('.vat-col',row).html('<span class="vat-value" style="display:none">' + data.vat_rate + '</span>' + data.vat_rate_label);
+                            if (!$('#section-' + data.section).length) {
+                                var new_section = $('#section-model').clone();
+                                $(new_section).attr('id','section-' + data.section);
+                                $('.section-title', new_section).html(data.section_label);
+                                $(new_section).renamable().deletable_section();
+                                $('#row-model').after(new_section);
+                                $(new_section).show();
+                                $(".section-field").append('<option value="' + data.section +'">' + data.section_label + '</option>');
+                            }
+                            $('#section-' + data.section).after(row);
+                            jQuery(row).editable().deletable().movable();
+                            $(row).show();
+                            jQuery('#id_label').val('');
+                            jQuery('#id_category').val('');
+                            jQuery('#id_unit_price').val('');
+                            jQuery('#id_vat_rate').val('');
+                            jQuery('#id_section_label').val('');
+                            redraw_background();
+                        } else {
+                            jQuery.display_errors(data.error_msg);
+                        }
+                        jQuery('#add-loading').hide();
+                        jQuery('#add').show();
+                    },
+                    "json");
+    });
+
+    jQuery('.row').editable().deletable().movable();
+    $('.catalog-section').renamable().deletable_section();
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<div id="section-rename-model" style="display:none">{{ sectionRenameForm.name }}</div>
+<div id="section-list-model" style="display:none">{{ sectionForm.section }}</div>
+<div id="catalog-add-form">
+{{ catalogForm }}
+<input type="submit" id="add" />
+<img src="{{ MEDIA_URL }}img/ajax-loading.gif" id="add-loading" style="display:none"/>
+</div>
+<div class="search-list">
+    <table id="catalog">
+        <thead>
+            <tr>
+                <th>{% trans "Label" %}</th>
+                <th>{% trans "Category" %}</th>
+                <th>{% trans "Price" %}</th>
+                <th>{% trans "VAT" %}</th>
+                <th>{% trans "Action" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr id="section-model" class="catalog-section" style="display:none">
+                <td class="section-title" colspan="4"></td>
+                <td class="action-col"><a href="#" class="rename-section">{% trans "rename" %}</a> <a href="#" class="delete-section">{% trans "delete" %}</a><span class="move-to-on-delete" style="display:none">{% trans "move items to" %} {{ sectionForm.section }}</span> <input type="submit" class="ok" value="Ok" style="display:none" /> <img src="{{ MEDIA_URL }}img/ajax-loading.gif" class="section-rename-loading" style="display:none"/> <a href="#" class="cancel" style="display:none">{% trans "cancel" %}</a></td>
+            </tr>
+            <tr id="row-model" class="row" style="display:none">
+                <td class="label-col"></td>
+                <td class="category-col"></td>
+                <td class="price-col"></td>
+                <td class="vat-col"></td>
+                <td class="action-col"><a href="#" class="edit-row">{% trans "edit" %}</a> <a href="#" class="delete-row">{% trans "delete" %}</a> <input type="submit" class="move-row" value="{% trans "move to" %}"/> {{ sectionForm.section }}</td>
+            </tr>
+        {% for section in catalog %}
+            <tr id="section-{{ section.id }}" class="catalog-section">
+                <td class="section-title" colspan="4">{{ section.name }}</td>
+                <td class="action-col"><a href="#" class="rename-section">{% trans "rename" %}</a> <a href="#" class="delete-section">{% trans "delete" %}</a><span class="move-to-on-delete" style="display:none">{% trans "move items to" %} {{ sectionForm.section }}</span> <input type="submit" class="ok" value="Ok" style="display:none" /> <img src="{{ MEDIA_URL }}img/ajax-loading.gif" class="section-rename-loading" style="display:none"/> <a href="#" class="cancel" style="display:none">{% trans "cancel" %}</a></td>
+            </tr>
+            {% for item in section.items.all %}
+            <tr id="{{ item.id }}" class="{% cycle 'row2' 'row1' %} row">
+                <td class="label-col">{{ item.label }}</td>
+                <td class="category-col"><span class="category-value" style="display:none">{{ item.category }}</span>{{ item.get_category_display }}</td>
+                <td class="price-col">{{ item.unit_price }}</td>
+                <td class="vat-col"><span class="vat-value" style="display:none">{{ item.vat_rate|safe|default:'' }}</span>{{ item.vat_rate|default:'' }}</td>
+                <td class="action-col"><a href="#" class="edit-row">{% trans "edit" %}</a> <a href="#" class="delete-row">{% trans "delete" %}</a> <input type="submit" class="move-row" value="{% trans "move to" %}"/> {{ sectionForm.section }}</td>
+            </tr>
+            {% endfor %}
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

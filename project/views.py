@@ -5,12 +5,12 @@ from django.db.transaction import commit_on_success, rollback
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from project.models import Project, PROJECT_STATE_STARTED, Proposal, ProposalRow, \
     Contract, PROJECT_STATE_FINISHED, \
-    ProposalAmountError, PROPOSAL_STATE_SENT
+    ProposalAmountError, PROPOSAL_STATE_SENT, CatalogItem, CatalogSection
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.template.context import RequestContext
 from project.forms import ProjectForm, ProjectSearchForm, ProposalForm, \
-    ProposalRowForm, ContractForm
+    ProposalRowForm, ContractForm, CatalogForm, SectionForm, SectionRenameForm
 from django.core.paginator import EmptyPage, InvalidPage, Paginator
 from django.db.models.query_utils import Q
 from django.forms.models import inlineformset_factory
@@ -24,6 +24,7 @@ import datetime
 from django.utils.encoding import smart_str
 import os
 from django.conf import settings
+from django.utils.formats import localize
 
 @settings_required
 @subscription_required
@@ -521,3 +522,196 @@ def proposal_get_contract(request):
     proposal = get_object_or_404(Proposal, pk=proposal_id, owner=request.user)
     return HttpResponse(simplejson.dumps(proposal.contract_content), mimetype='application/javascript')
 
+@settings_required
+@subscription_required
+def catalog_list(request):
+    user = request.user
+    catalog_sections = CatalogSection.objects.filter(owner=user)
+    catalogForm = CatalogForm()
+    sectionForm = SectionForm()
+    sectionForm.fields['section'].queryset = CatalogSection.objects.filter(owner=user)
+    sectionRenameForm = SectionRenameForm()
+
+    return render_to_response('catalog/list.html',
+                              {'active': 'business',
+                               'title': _('Catalog'),
+                               'catalog': catalog_sections,
+                               'catalogForm': catalogForm,
+                               'sectionForm': sectionForm,
+                               'sectionRenameForm': sectionRenameForm},
+                               context_instance=RequestContext(request))
+
+@settings_required
+@subscription_required
+@commit_on_success
+def catalog_add(request):
+    response = {'error': 'ko'}
+    if request.POST:
+        form = CatalogForm(request.POST)
+        if form.is_valid():
+            item = form.save(commit=False)
+            section, created = CatalogSection.objects.get_or_create(name=form.cleaned_data.get('section_label'),
+                                                                    owner=request.user,
+                                                                    defaults={'name': form.cleaned_data.get('section_label'),
+                                                                              'owner': request.user})
+            item.section = section
+            item.owner = request.user
+            item.save()
+            response['error'] = 'ok'
+            response['id'] = item.id
+            response['label'] = item.label
+            response['category'] = item.category
+            response['category_label'] = item.get_category_display()
+            response['unit_price'] = localize(item.unit_price)
+            response['vat_rate'] = localize(item.vat_rate) or ''
+            response['vat_rate_label'] = item.get_vat_rate_display() or ''
+            response['section'] = item.section.id
+            response['section_label'] = unicode(item.section)
+        else:
+            response['error_msg'] = []
+            for key, msg in form.errors.items():
+                response['error_msg'].append("%s : %s" % (unicode(form[key].label), " ".join(msg)))
+
+    return HttpResponse(simplejson.dumps(response),
+                        mimetype='application/javascript')
+
+@settings_required
+@subscription_required
+def catalog_section_search(request):
+    term = request.GET.get('term')
+    user = request.user
+    data = list(CatalogSection.objects.filter(owner=user, name__icontains=term)
+      .extra(select={'label': 'name',
+                     'value': 'name'})
+      .values('label', 'value'))
+
+    return HttpResponse(simplejson.dumps(data), mimetype='application/javascript')
+
+@settings_required
+@subscription_required
+def catalog_item_search(request):
+    term = request.GET.get('term')
+    user = request.user
+    data = []
+    for row in CatalogItem.objects.filter(owner=user, label__icontains=term)\
+      .order_by('label', 'section__name')\
+      .values('label', 'category', 'unit_price', 'vat_rate', 'section__name'):
+        row['unit_price'] = localize(row['unit_price'])
+        row['vat_rate'] = str(row['vat_rate'])
+        data.append(row)
+
+    return HttpResponse(simplejson.dumps(data), mimetype='application/javascript')
+
+@settings_required
+@subscription_required
+@commit_on_success
+def catalog_edit(request):
+    id = request.GET.get('id')
+    item = get_object_or_404(CatalogItem, pk=id, owner=request.user)
+    response = {'error': 'ko'}
+    if request.POST:
+        form = CatalogForm(request.POST, instance=item)
+        form.fields['section_label'].required = False
+        if form.is_valid():
+            item = form.save()
+            response['error'] = 'ok'
+            response['id'] = item.id
+            response['label'] = item.label
+            response['category'] = item.category
+            response['category_label'] = item.get_category_display()
+            response['unit_price'] = localize(item.unit_price)
+            response['vat_rate'] = localize(item.vat_rate) or ''
+            response['vat_rate_label'] = item.get_vat_rate_display() or ''
+            response['section'] = item.section.id
+            response['section_label'] = unicode(item.section)
+        else:
+            response['error_msg'] = []
+            for key, msg in form.errors.items():
+                response['error_msg'].append("%s : %s" % (unicode(form[key].label), " ".join(msg)))
+
+    return HttpResponse(simplejson.dumps(response),
+                        mimetype='application/javascript')
+
+@settings_required
+@subscription_required
+@commit_on_success
+def catalog_delete(request):
+    response = {'error': 'ko'}
+    if request.POST:
+        id = int(request.POST.get('id'))
+        item = get_object_or_404(CatalogItem, pk=id, owner=request.user)
+        item.delete()
+        response['error'] = 'ok'
+        response['id'] = id
+
+    return HttpResponse(simplejson.dumps(response),
+                        mimetype='application/javascript')
+
+@settings_required
+@subscription_required
+@commit_on_success
+def catalog_move(request):
+    response = {'error': 'ko'}
+    if request.POST:
+        form = SectionForm(request.POST)
+        form.fields['section'].queryset = CatalogSection.objects.filter(owner=request.user)
+        if form.is_valid():
+            id = int(request.POST.get('id'))
+            item = get_object_or_404(CatalogItem, pk=id, owner=request.user)
+            item.section = form.cleaned_data.get('section')
+            item.save()
+            response['error'] = 'ok'
+            response['id'] = id
+        else:
+            response['error_msg'] = []
+            for key, msg in form.errors.items():
+                response['error_msg'].append("%s : %s" % (unicode(form[key].label), " ".join(msg)))
+
+    return HttpResponse(simplejson.dumps(response),
+                        mimetype='application/javascript')
+
+@settings_required
+@subscription_required
+@commit_on_success
+def catalog_section_rename(request):
+    response = {'error': 'ko'}
+    id = int(request.GET.get('id'))
+    section = get_object_or_404(CatalogSection, pk=id, owner=request.user)
+    if request.POST:
+        form = SectionRenameForm(request.POST, instance=section)
+        if form.is_valid():
+            section = form.save()
+            response['error'] = 'ok'
+            response['id'] = section.id
+            response['name'] = section.name
+        else:
+            response['error_msg'] = []
+            for key, msg in form.errors.items():
+                response['error_msg'].append("%s : %s" % (unicode(form[key].label), " ".join(msg)))
+
+    return HttpResponse(simplejson.dumps(response),
+                        mimetype='application/javascript')
+
+@settings_required
+@subscription_required
+@commit_on_success
+def catalog_section_delete(request):
+    response = {'error': 'ko'}
+    id = int(request.GET.get('id'))
+    if request.POST:
+        form = SectionForm(request.POST)
+        form.fields['section'].queryset = CatalogSection.objects.filter(owner=request.user).exclude(pk=id)
+        if form.is_valid():
+            section = get_object_or_404(CatalogSection, pk=id, owner=request.user)
+            new_section = form.cleaned_data.get('section')
+            CatalogItem.objects.filter(section=section).update(section=new_section)
+            section.delete()
+            response['error'] = 'ok'
+            response['id'] = new_section.id
+        else:
+            response['error_msg'] = []
+            for key, msg in form.errors.items():
+                response['error_msg'].append("%s : %s" % (unicode(form[key].label), " ".join(msg)))
+
+    return HttpResponse(simplejson.dumps(response),
+                        mimetype='application/javascript')

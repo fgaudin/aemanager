@@ -71,8 +71,11 @@ class InvoiceRowForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(InvoiceRowForm, self).__init__(*args, **kwargs)
+        self.fields['label'].widget.attrs['class'] = 'label-field'
         self.fields['proposal'].widget.attrs['class'] = 'proposal-field'
         self.fields['balance_payments'].widget.attrs['class'] = 'balance-payments-field'
+        self.fields['category'].widget.attrs['class'] = 'category-field'
         self.fields['quantity'].widget.attrs['class'] = 'quantity-field'
         self.fields['unit_price'].widget.attrs['class'] = 'unit-price-field'
+        self.fields['vat_rate'].widget.attrs['class'] = 'vat-rate-field'
         self.fields['detail'].widget.attrs['class'] = 'row-detail'

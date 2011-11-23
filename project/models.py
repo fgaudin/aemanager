@@ -408,3 +408,25 @@ def update_proposal_amount(sender, instance, created, **kwargs):
 
 pre_save.connect(update_row_amount, sender=ProposalRow)
 post_save.connect(update_proposal_amount, sender=ProposalRow)
+
+class CatalogSection(OwnedObject):
+    name = models.CharField(max_length=100, verbose_name=_('Name'))
+
+    class Meta:
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
+
+class CatalogItem(OwnedObject):
+    label = models.CharField(max_length=255, verbose_name=_('Label'))
+    category = models.IntegerField(choices=ROW_CATEGORY, verbose_name=_('Category'))
+    unit_price = models.DecimalField(max_digits=12, decimal_places=2, verbose_name=_('Unit price'))
+    vat_rate = models.DecimalField(choices=VAT_RATES, decimal_places=1, max_digits=4, verbose_name=_('Vat'), blank=True, null=True)
+    section = models.ForeignKey(CatalogSection, verbose_name=_('Section'), blank=True, related_name='items')
+
+    class Meta:
+        ordering = ['label']
+
+    def __unicode__(self):
+        return self.label

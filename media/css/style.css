@@ -639,3 +639,28 @@ table#forum {
 #topic-create-form #id_topic-title {
     width:500px;
 }
+
+#catalog .category-col {
+    width: 100px;
+}
+
+#catalog .price-col {
+    width: 80px;
+}
+
+#catalog .vat-col {
+    width: 80px;
+}
+
+#catalog .action-col {
+    width: 350px;
+}
+
+.catalog-section td {
+    background-color: #d5ebff;
+}
+
+.section-title {
+    text-transform: uppercase;
+    font-weight: bold;
+}
