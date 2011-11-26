@@ -147,6 +147,13 @@ PROFESSIONAL_FORMATION_TAX_RATE = {AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_TRADER
                                    AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_CRAFTSMAN_ALSACE: 0.17,
                                    AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_LIBERAL: 0.2}
 
+AUTOENTREPRENEUR_REGISTER_RM = 1
+AUTOENTREPRENEUR_REGISTER_RCS = 2
+AUTOENTREPRENEUR_REGISTER_RSEIRL = 3
+AUTOENTREPRENEUR_REGISTER = ((AUTOENTREPRENEUR_REGISTER_RM, 'RM'),
+                             (AUTOENTREPRENEUR_REGISTER_RCS, 'RCS'),
+                             (AUTOENTREPRENEUR_REGISTER_RSEIRL, 'RSEIRL'))
+
 store = FileSystemStorage(location=settings.FILE_UPLOAD_DIR)
 
 def logo_upload_to_handler(instance, filename):
@@ -171,6 +178,8 @@ class UserProfile(models.Model):
     logo_file = models.FileField(upload_to=logo_upload_to_handler, null=True, blank=True, storage=store, verbose_name=_('Custom header'), help_text=_('will appear in place of your personnal informations on proposals and invoices. Maximum width and height: 252x137'))
     uuid = models.CharField(max_length=36, unique=True, default=uuid.uuid4)
     vat_number = models.CharField(max_length=20, default='', null=True, blank=True, verbose_name=_('VAT number'), help_text=_('If you overrun the second sales limit, you need to declare VAT. Filling this field enables VAT management on invoices'))
+    register = models.IntegerField(choices=AUTOENTREPRENEUR_REGISTER, null=True, blank=True, verbose_name=_('Registration register'))
+    registration_city = models.CharField(max_length=255, null=True, blank=True, verbose_name=_('Registration city'))
 
     def __unicode__(self):
         return self.user.__unicode__()

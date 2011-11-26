@@ -98,6 +98,12 @@ jQuery(document).ready(function(){
     {% with form.vat_number as field %}
     {% include "field.html" %}
     {% endwith %}
+    {% with form.register as field %}
+    {% include "field.html" %}
+    {% endwith %}
+    {% with form.registration_city as field %}
+    {% include "field.html" %}
+    {% endwith %}
     {% endwith %}
     </fieldset>
 

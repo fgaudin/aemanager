@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-01 04:00+0200\n"
+"POT-Creation-Date: 2011-11-26 22:36+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -100,7 +100,7 @@ msgstr "Date"
 #: accounts/models.py:31 accounts/models.py:203 accounts/models.py:204
 #: accounts/models.py:206 accounts/models.py:207 accounts/models.py:208
 #: accounts/models.py:209 autoentrepreneur/forms.py:13
-#: autoentrepreneur/models.py:109 autoentrepreneur/models.py:164
+#: autoentrepreneur/models.py:109 autoentrepreneur/models.py:171
 #: project/models.py:33 project/models.py:183 project/models.py:184
 #: project/models.py:186 project/models.py:187
 msgid "format: mm/dd/yyyy"
@@ -253,7 +253,7 @@ msgid "Execution dates : %(begin_date)s to %(end_date)s"
 msgstr "Date d'exécution : %(begin_date)s au %(end_date)s"
 
 #: accounts/models.py:328 templates/invoice/detail.html:81
-#: templates/invoice/edit.html:48 templates/invoice/edit.html.py:127
+#: templates/invoice/edit.html:48 templates/invoice/edit.html.py:132
 msgid "Proposal"
 msgstr "Devis"
 
@@ -341,7 +341,7 @@ msgstr ""
 "La date de paiement est supérieure à la date des pénalités, est-ce normal ?"
 
 #: accounts/views.py:391 contact/views.py:83 core/views.py:313
-#: forum/views.py:58 forum/views.py:109 notification/views.py:23
+#: forum/views.py:67 forum/views.py:118 notification/views.py:23
 #: project/views.py:77 project/views.py:187 project/views.py:412
 msgid "Data provided are invalid"
 msgstr "Les données saisies sont invalides"
@@ -384,11 +384,11 @@ msgstr ""
 "Votre abonnement a expiré. Vous devez vous réabonner pour continuer à "
 "utiliser %(site_name)s"
 
-#: autoentrepreneur/forms.py:9 autoentrepreneur/models.py:159
+#: autoentrepreneur/forms.py:9 autoentrepreneur/models.py:166
 msgid "Company name"
 msgstr "Nom de la société"
 
-#: autoentrepreneur/forms.py:10 autoentrepreneur/models.py:160
+#: autoentrepreneur/forms.py:10 autoentrepreneur/models.py:167
 #: contact/models.py:36
 msgid "Company id"
 msgstr "SIRET"
@@ -401,28 +401,28 @@ msgstr ""
 "votre SIRET"
 
 #: autoentrepreneur/forms.py:11 autoentrepreneur/models.py:35
-#: autoentrepreneur/models.py:162 templates/core/admin_dashboard.html:27
+#: autoentrepreneur/models.py:169 templates/core/admin_dashboard.html:27
 msgid "Activity"
 msgstr "Activité"
 
-#: autoentrepreneur/forms.py:12 autoentrepreneur/models.py:163
+#: autoentrepreneur/forms.py:12 autoentrepreneur/models.py:170
 msgid "Professional category"
 msgstr "Catégorie professionnelle"
 
-#: autoentrepreneur/forms.py:13 autoentrepreneur/models.py:164
+#: autoentrepreneur/forms.py:13 autoentrepreneur/models.py:171
 #: templates/backup/index.html:23 templates/backup/index.html.py:72
 msgid "Creation date"
 msgstr "Date de création"
 
-#: autoentrepreneur/forms.py:14 autoentrepreneur/models.py:165
+#: autoentrepreneur/forms.py:14 autoentrepreneur/models.py:172
 msgid "Creation help"
 msgstr "ACCRE"
 
-#: autoentrepreneur/forms.py:15 autoentrepreneur/models.py:166
+#: autoentrepreneur/forms.py:15 autoentrepreneur/models.py:173
 msgid "Freeing tax payment"
 msgstr "Prélèvement libératoire sur l'impôt"
 
-#: autoentrepreneur/forms.py:16 autoentrepreneur/models.py:167
+#: autoentrepreneur/forms.py:16 autoentrepreneur/models.py:174
 msgid "Payment option"
 msgstr "Option de paiement"
 
@@ -509,44 +509,44 @@ msgstr "Artisan"
 msgid "Liberal profession"
 msgstr "Profession libérale"
 
-#: autoentrepreneur/models.py:157 contact/forms.py:40
+#: autoentrepreneur/models.py:164 contact/forms.py:40
 #: templates/contact/search.html:21
 msgid "Phone number"
 msgstr "Téléphone"
 
-#: autoentrepreneur/models.py:157 autoentrepreneur/models.py:158
+#: autoentrepreneur/models.py:164 autoentrepreneur/models.py:165
 msgid "will appear on your proposals if set"
 msgstr "apparaîtra sur vos devis si renseigné"
 
-#: autoentrepreneur/models.py:158
+#: autoentrepreneur/models.py:165
 msgid "Professional email"
 msgstr "Email professionnel"
 
-#: autoentrepreneur/models.py:161 backup/views.py:134 contact/models.py:42
+#: autoentrepreneur/models.py:168 backup/views.py:134 contact/models.py:42
 msgid "Address"
 msgstr "Adresse"
 
-#: autoentrepreneur/models.py:168
+#: autoentrepreneur/models.py:175
 msgid "Unregister date"
 msgstr "Date de désinscription"
 
-#: autoentrepreneur/models.py:169
+#: autoentrepreneur/models.py:176
 msgid "IBAN/BBAN"
 msgstr "IBAN/RIB"
 
-#: autoentrepreneur/models.py:169 autoentrepreneur/models.py:170
+#: autoentrepreneur/models.py:176 autoentrepreneur/models.py:177
 msgid "will appear on your invoices if set"
 msgstr "apparaîtra sur vos factures si renseigné"
 
-#: autoentrepreneur/models.py:170
+#: autoentrepreneur/models.py:177
 msgid "BIC/SWIFT"
 msgstr "BIC/SWIFT"
 
-#: autoentrepreneur/models.py:171
+#: autoentrepreneur/models.py:178
 msgid "Custom header"
 msgstr "En-tête personnalisé"
 
-#: autoentrepreneur/models.py:171
+#: autoentrepreneur/models.py:178
 msgid ""
 "will appear in place of your personnal informations on proposals and "
 "invoices. Maximum width and height: 252x137"
@@ -554,11 +554,11 @@ msgstr ""
 "apparaîtra à la place de vos informations personnelles sur les devis et "
 "factures. Largeur/Hauteur maximales : 252x137"
 
-#: autoentrepreneur/models.py:173
+#: autoentrepreneur/models.py:180
 msgid "VAT number"
 msgstr "N° TVA"
 
-#: autoentrepreneur/models.py:173
+#: autoentrepreneur/models.py:180
 msgid ""
 "If you overrun the second sales limit, you need to declare VAT. Filling this "
 "field enables VAT management on invoices"
@@ -566,12 +566,20 @@ msgstr ""
 "Si vous dépassez le second plafond, vous devez déclarer la TVA. Remplir ce "
 "champ active la gestion de la TVA sur les factures"
 
-#: autoentrepreneur/models.py:187 autoentrepreneur/tests.py:716
+#: autoentrepreneur/models.py:181
+msgid "Registration register"
+msgstr "Registre d'immatriculation"
+
+#: autoentrepreneur/models.py:182
+msgid "Registration city"
+msgstr "Ville d'immatriculation"
+
+#: autoentrepreneur/models.py:196 autoentrepreneur/tests.py:724
 #, python-format
 msgid "You've just unregistered from %(site)s"
 msgstr "Vous venez de vous désinscrire de %(site)s"
 
-#: autoentrepreneur/models.py:188
+#: autoentrepreneur/models.py:197
 #, python-format
 msgid ""
 "You have left the site and your data will been deleted in "
@@ -588,7 +596,7 @@ msgstr ""
 "Notre service évolue en permanence et s'il ne correspond pas à vos besoins "
 "aujourd'hui, vous pouvez revenir le tester plus tard."
 
-#: autoentrepreneur/models.py:194
+#: autoentrepreneur/models.py:203
 #: templates/registration/activation_email.txt:3
 #: templates/registration/password_reset_email.html:13
 #, python-format
@@ -852,7 +860,7 @@ msgstr "Le problème a été sauvegardé avec succès"
 msgid "%(issue_subject)s : %(issue_url)s"
 msgstr "%(issue_subject)s : %(issue_url)s"
 
-#: bugtracker/views.py:143 forum/views.py:106
+#: bugtracker/views.py:143 forum/views.py:115
 msgid "The message has been saved successfully"
 msgstr "Le message a été sauvegardé avec succès"
 
@@ -1431,15 +1439,24 @@ msgstr "Auteur"
 msgid "Created at"
 msgstr "Créé à"
 
-#: forum/views.py:34 templates/menu.html:144
+#: forum/views.py:37 templates/menu.html:144
 msgid "Forum"
 msgstr "Forum"
 
-#: forum/views.py:55
+#: forum/views.py:59
+msgid "A new topic has been posted"
+msgstr "Un nouveau sujet a été posté"
+
+#: forum/views.py:60
+#, python-format
+msgid "%(topic)s : %(topic_url)s"
+msgstr "%(topic)s : %(topic_url)s"
+
+#: forum/views.py:64
 msgid "The topic has been saved successfully"
 msgstr "Le sujet a été sauvegardé avec succès"
 
-#: forum/views.py:65 templates/topic/list.html:5
+#: forum/views.py:74 templates/topic/list.html:5
 msgid "New topic"
 msgstr "Nouveau sujet"
 
@@ -1526,7 +1543,8 @@ msgid ""
 "You will receive an email when a user posts a new message in a topic in "
 "which you participated"
 msgstr ""
-"Vous recevrez un email quand un utilisateur poste un nouveau message dans un sujet auquel vous participez"
+"Vous recevrez un email quand un utilisateur poste un nouveau message dans un "
+"sujet auquel vous participez"
 
 #: notification/views.py:20
 msgid "Notification settings has been saved successfully"
@@ -2038,7 +2056,7 @@ msgstr "Affaires"
 
 #: templates/menu.html:29 templates/menu.html.py:68
 #: templates/contact/edit.html:166 templates/expense/list.html:235
-#: templates/invoice/edit.html:213 templates/proposal/edit.html:238
+#: templates/invoice/edit.html:219 templates/proposal/edit.html:238
 msgid "Add"
 msgstr "Ajouter"
 
@@ -2204,7 +2222,7 @@ msgid "search on %(search_engine_name)s"
 msgstr "rechercher sur %(search_engine_name)s"
 
 #: templates/contact/edit.html:193 templates/contract/edit.html:78
-#: templates/core/settings_edit.html:105 templates/invoice/edit.html:219
+#: templates/core/settings_edit.html:111 templates/invoice/edit.html:225
 #: templates/newsletter/email_users.html:13
 #: templates/notification/edit.html:12 templates/project/edit.html:23
 #: templates/proposal/edit.html:278
@@ -2592,7 +2610,7 @@ msgstr "Montant TTC"
 msgid "Exported file"
 msgstr "Fichier exporté"
 
-#: templates/invoice/detail.html:74 templates/invoice/edit.html:194
+#: templates/invoice/detail.html:74 templates/invoice/edit.html:200
 #: templates/proposal/detail.html:58 templates/proposal/edit.html:220
 msgid "Detail rows"
 msgstr "Lignes de détail"
@@ -2627,7 +2645,7 @@ msgstr "Aucune ligne"
 msgid "new contact"
 msgstr "nouveau contact"
 
-#: templates/invoice/edit.html:207 templates/proposal/edit.html:232
+#: templates/invoice/edit.html:213 templates/proposal/edit.html:232
 msgid "detail"
 msgstr "détail"
 
