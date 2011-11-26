@@ -392,6 +392,7 @@ class Row(OwnedObject):
 
     class Meta:
         abstract = True
+        ordering = ['id']
 
 def update_row_amount(sender, instance, **kwargs):
     row = instance
