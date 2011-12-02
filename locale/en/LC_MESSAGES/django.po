@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-02 08:49+0100\n"
+"POT-Creation-Date: 2011-12-02 09:06+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,7 +25,7 @@ msgstr ""
 msgid "French"
 msgstr ""
 
-#: accounts/forms.py:8 accounts/models.py:36 accounts/models.py:204
+#: accounts/forms.py:8 accounts/models.py:38 accounts/models.py:206
 #: accounts/views.py:179 accounts/views.py:253 backup/views.py:134
 #: project/models.py:182 project/models.py:389
 #: templates/contact/detail.html:98 templates/expense/list.html:220
@@ -34,7 +34,7 @@ msgstr ""
 msgid "Amount"
 msgstr ""
 
-#: accounts/forms.py:20 accounts/models.py:202 templates/invoice/list.html:20
+#: accounts/forms.py:20 accounts/models.py:204 templates/invoice/list.html:20
 msgid "Invoice id"
 msgstr ""
 
@@ -43,7 +43,7 @@ msgstr ""
 msgid "An integer less than or equal to %d. Must be sequential."
 msgstr ""
 
-#: accounts/forms.py:24 accounts/models.py:212 backup/views.py:137
+#: accounts/forms.py:24 accounts/models.py:214 backup/views.py:137
 msgid "Penalty rate"
 msgstr ""
 
@@ -72,79 +72,83 @@ msgstr ""
 msgid "Unit price"
 msgstr ""
 
-#: accounts/models.py:26
+#: accounts/models.py:27
 msgid "Cash"
 msgstr ""
 
-#: accounts/models.py:27
+#: accounts/models.py:28
 msgid "Bank card"
 msgstr ""
 
-#: accounts/models.py:28
+#: accounts/models.py:29
 msgid "Transfer"
 msgstr ""
 
-#: accounts/models.py:29
+#: accounts/models.py:30
 msgid "Check"
 msgstr ""
 
-#: accounts/models.py:30
+#: accounts/models.py:31
 msgid "Paypal"
 msgstr ""
 
-#: accounts/models.py:33 accounts/views.py:179 accounts/views.py:253
+#: accounts/models.py:32
+msgid "Debit"
+msgstr ""
+
+#: accounts/models.py:35 accounts/views.py:179 accounts/views.py:253
 #: templates/expense/list.html:217
 msgid "Date"
 msgstr ""
 
-#: accounts/models.py:33 accounts/models.py:205 accounts/models.py:206
-#: accounts/models.py:208 accounts/models.py:209 accounts/models.py:210
-#: accounts/models.py:211 autoentrepreneur/forms.py:13
+#: accounts/models.py:35 accounts/models.py:207 accounts/models.py:208
+#: accounts/models.py:210 accounts/models.py:211 accounts/models.py:212
+#: accounts/models.py:213 autoentrepreneur/forms.py:13
 #: autoentrepreneur/models.py:109 autoentrepreneur/models.py:171
 #: project/models.py:33 project/models.py:183 project/models.py:184
 #: project/models.py:186 project/models.py:187
 msgid "format: mm/dd/yyyy"
 msgstr ""
 
-#: accounts/models.py:34 backup/views.py:134 project/models.py:180
+#: accounts/models.py:36 backup/views.py:134 project/models.py:180
 #: templates/expense/list.html:218 templates/project/detail.html:29
 msgid "Reference"
 msgstr ""
 
-#: accounts/models.py:35 accounts/views.py:179 templates/expense/list.html:219
+#: accounts/models.py:37 accounts/views.py:179 templates/expense/list.html:219
 msgid "Supplier"
 msgstr ""
 
-#: accounts/models.py:37 accounts/models.py:207 accounts/views.py:179
+#: accounts/models.py:39 accounts/models.py:209 accounts/views.py:179
 #: accounts/views.py:253 backup/views.py:135 templates/expense/list.html:221
 #: templates/invoice/list.html:26
 msgid "Payment type"
 msgstr ""
 
-#: accounts/models.py:38 templates/expense/list.html:222
+#: accounts/models.py:40 templates/expense/list.html:222
 msgid "Description"
 msgstr ""
 
-#: accounts/models.py:54
+#: accounts/models.py:56
 msgid "Edited"
 msgstr ""
 
-#: accounts/models.py:55 newsletter/models.py:17 project/models.py:128
+#: accounts/models.py:57 newsletter/models.py:17 project/models.py:128
 #: templates/newsletter/email_users.html:25
 msgid "Sent"
 msgstr ""
 
-#: accounts/models.py:56 autoentrepreneur/models.py:44 core/views.py:460
+#: accounts/models.py:58 autoentrepreneur/models.py:44 core/views.py:460
 msgid "Paid"
 msgstr ""
 
-#: accounts/models.py:201 accounts/views.py:253 backup/views.py:134
+#: accounts/models.py:203 accounts/views.py:253 backup/views.py:134
 #: project/forms.py:29 project/models.py:29 project/models.py:108
 #: templates/invoice/list.html:23 templates/project/list.html:20
 msgid "Customer"
 msgstr ""
 
-#: accounts/models.py:203 autoentrepreneur/models.py:108 backup/views.py:134
+#: accounts/models.py:205 autoentrepreneur/models.py:108 backup/views.py:134
 #: bugtracker/models.py:35 project/forms.py:30 project/models.py:109
 #: project/models.py:181 templates/backup/index.html:24
 #: templates/backup/index.html.py:73 templates/contact/detail.html:97
@@ -155,112 +159,112 @@ msgstr ""
 msgid "State"
 msgstr ""
 
-#: accounts/models.py:205 backup/views.py:135 templates/invoice/list.html:21
+#: accounts/models.py:207 backup/views.py:135 templates/invoice/list.html:21
 msgid "Edition date"
 msgstr ""
 
-#: accounts/models.py:206 backup/views.py:135
+#: accounts/models.py:208 backup/views.py:135
 msgid "Payment date"
 msgstr ""
 
-#: accounts/models.py:208 backup/views.py:136 templates/invoice/list.html:22
+#: accounts/models.py:210 backup/views.py:136 templates/invoice/list.html:22
 msgid "Paid date"
 msgstr ""
 
-#: accounts/models.py:209 backup/views.py:136
+#: accounts/models.py:211 backup/views.py:136
 msgid "Execution begin date"
 msgstr ""
 
-#: accounts/models.py:210 backup/views.py:136
+#: accounts/models.py:212 backup/views.py:136
 msgid "Execution end date"
 msgstr ""
 
-#: accounts/models.py:211 backup/views.py:137
+#: accounts/models.py:213 backup/views.py:137
 msgid "Penalty date"
 msgstr ""
 
-#: accounts/models.py:213 backup/views.py:137
+#: accounts/models.py:215 backup/views.py:137
 msgid "Discount conditions"
 msgstr ""
 
-#: accounts/models.py:221
+#: accounts/models.py:223
 #, python-format
 msgid "invoice #%d"
 msgstr ""
 
-#: accounts/models.py:253
+#: accounts/models.py:255
 #, python-format
 msgid "Invoice id must be less than or equal to %d"
 msgstr ""
 
-#: accounts/models.py:255 accounts/views.py:389
+#: accounts/models.py:257 accounts/views.py:389
 msgid "Invoice id must be unique"
 msgstr ""
 
-#: accounts/models.py:265 accounts/views.py:386
+#: accounts/models.py:267 accounts/views.py:386
 msgid "Amounts invoiced can't be greater than proposals remaining amounts"
 msgstr ""
 
-#: accounts/models.py:281
+#: accounts/models.py:283
 #, python-format
 msgid "invoice_%(invoice_id)d.pdf"
 msgstr ""
 
-#: accounts/models.py:286
+#: accounts/models.py:288
 #, python-format
 msgid "Invoice #%(invoice_id)d"
 msgstr ""
 
-#: accounts/models.py:288
+#: accounts/models.py:290
 #, python-format
 msgid "INVOICE #%d"
 msgstr ""
 
-#: accounts/models.py:299
+#: accounts/models.py:301
 #, python-format
 msgid "Payment date : %s"
 msgstr ""
 
-#: accounts/models.py:300
+#: accounts/models.py:302
 #, python-format
 msgid "Penalty begins on : %s"
 msgstr ""
 
-#: accounts/models.py:301
+#: accounts/models.py:303
 #, python-format
 msgid "Penalty rate : %s"
 msgstr ""
 
-#: accounts/models.py:302
+#: accounts/models.py:304
 #, python-format
 msgid "Discount conditions : %s"
 msgstr ""
 
-#: accounts/models.py:305
+#: accounts/models.py:307
 #, python-format
 msgid "IBAN/BBAN : %s"
 msgstr ""
 
-#: accounts/models.py:307
+#: accounts/models.py:309
 #, python-format
 msgid "BIC/SWIFT : %s"
 msgstr ""
 
-#: accounts/models.py:314 project/models.py:286
+#: accounts/models.py:316 project/models.py:286
 #, python-format
 msgid "Execution dates : %(begin_date)s to %(end_date)s"
 msgstr ""
 
-#: accounts/models.py:330 templates/invoice/detail.html:81
+#: accounts/models.py:332 templates/invoice/detail.html:81
 #: templates/invoice/edit.html:48 templates/invoice/edit.html.py:152
 msgid "Proposal"
 msgstr ""
 
-#: accounts/models.py:331
+#: accounts/models.py:333
 msgid "Balance payments for the proposal"
 msgstr ""
 
-#: accounts/models.py:331
+#: accounts/models.py:333
 msgid ""
 "\"Balancing payments for the proposal\" means there will be no future "
 "invoices for the selected proposal. Thus the amount remaining to invoice for "

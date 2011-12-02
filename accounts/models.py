@@ -23,11 +23,13 @@ PAYMENT_TYPE_BANK_CARD = 2
 PAYMENT_TYPE_TRANSFER = 3
 PAYMENT_TYPE_CHECK = 4
 PAYMENT_TYPE_PAYPAL = 5
+PAYMENT_TYPE_DEBIT = 6
 PAYMENT_TYPE = ((PAYMENT_TYPE_CASH, _('Cash')),
                 (PAYMENT_TYPE_BANK_CARD, _('Bank card')),
                 (PAYMENT_TYPE_TRANSFER, _('Transfer')),
                 (PAYMENT_TYPE_CHECK, _('Check')),
-                (PAYMENT_TYPE_PAYPAL, _('Paypal')))
+                (PAYMENT_TYPE_PAYPAL, _('Paypal')),
+                (PAYMENT_TYPE_DEBIT, _('Debit')))
 
 class Expense(OwnedObject):
     date = models.DateField(verbose_name=_('Date'), help_text=_('format: mm/dd/yyyy'), db_index=True)
