@@ -155,7 +155,12 @@ class ProposalTemplate(object):
         self.story.append(Spacer(self.doc.width, 0.25 * inch))
 
         data = []
-        msg = u"Dispensé d'immatriculation au registre du commerce et des sociétés (RCS) et au répertoire des métiers (RM)"
+        if self.user.get_profile().register:
+            msg = u'%s %s %s' % (self.user.get_profile().get_register_display(),
+                                 self.user.get_profile().registration_city,
+                                 self.user.get_profile().company_id[:9])
+        else:
+            msg = u"Dispensé d'immatriculation au registre du commerce et des sociétés (RCS) et au répertoire des métiers (RM)"
         data.append([Paragraph(msg, self.styleN),
                     '',
                     Paragraph("<br/>" + _("Date : %s") % (localize(document_date)), self.styleH2)])

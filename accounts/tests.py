@@ -15,7 +15,8 @@ from accounts.models import INVOICE_STATE_EDITED, Invoice, InvoiceRow, \
     INVOICE_STATE_SENT, InvoiceRowAmountError, PAYMENT_TYPE_CHECK, \
     PAYMENT_TYPE_CASH, Expense, INVOICE_STATE_PAID
 from contact.models import Country, Contact, CONTACT_TYPE_PERSON
-from autoentrepreneur.models import UserProfile
+from autoentrepreneur.models import UserProfile, \
+    AUTOENTREPRENEUR_REGISTER_RSEIRL
 from django.contrib.webdesign import lorem_ipsum
 
 class ExpensePermissionTest(TestCase):
@@ -906,6 +907,58 @@ class InvoiceTest(TestCase):
         invariant_content = content[0:66] + content[67:110] + content[111:-1]
         self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
                           "8d6ca232060a96f8ad6855bdce59dc2c")
+
+    def testDownloadPdfWithRegistrationNumber(self):
+        """
+        Tests non-regression on pdf
+        """
+        profile = User.objects.get(pk=1).get_profile()
+        profile.iban_bban = 'FR76 1234 1234 1234 1234 1234 123'
+        profile.bic = 'CCBPFRABCDE'
+
+        profile.register = AUTOENTREPRENEUR_REGISTER_RSEIRL
+        profile.registration_city = 'Paris'
+        profile.save()
+
+        customer_address = self.proposal.project.customer.address
+        customer_address.street = u"128 boulevard des champs élysées\nEspace ZAC du champs de mars\nBP 140"
+        customer_address.zipcode = '75001'
+        customer_address.city = 'Paris CEDEX 1'
+        customer_address.save()
+
+        i = Invoice.objects.create(customer_id=self.proposal.project.customer_id,
+                                   invoice_id=1,
+                                   state=INVOICE_STATE_EDITED,
+                                   amount='1000',
+                                   edition_date=datetime.date(2010, 8, 31),
+                                   payment_date=datetime.date(2010, 9, 30),
+                                   paid_date=None,
+                                   payment_type=PAYMENT_TYPE_CHECK,
+                                   execution_begin_date=datetime.date(2010, 8, 1),
+                                   execution_end_date=datetime.date(2010, 8, 7),
+                                   penalty_date=datetime.date(2010, 10, 8),
+                                   penalty_rate='1.5',
+                                   discount_conditions='Nothing',
+                                   owner_id=1)
+
+        i_row = InvoiceRow.objects.create(proposal_id=self.proposal.id,
+                                          invoice_id=i.id,
+                                          label='Day of work',
+                                          category=ROW_CATEGORY_SERVICE,
+                                          quantity=10,
+                                          unit_price='100',
+                                          balance_payments=False,
+                                          owner_id=1)
+
+        response = self.client.get(reverse('invoice_download', kwargs={'id': i.id}))
+        self.assertEqual(response.status_code, 200)
+        f = open('/tmp/invoice_with_registration.pdf', 'w')
+        f.write(response.content)
+        f.close()
+        content = response.content.split("\n")
+        invariant_content = content[0:66] + content[67:110] + content[111:-1]
+        self.assertEquals(hashlib.md5("\n".join(invariant_content)).hexdigest(),
+                          "e40423e4ab500b4816a5436e796d829f")
 
     def testBug240(self):
         """

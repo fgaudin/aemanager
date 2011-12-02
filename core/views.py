@@ -291,6 +291,10 @@ def settings_edit(request):
     if request.method == 'POST':
         userform = UserForm(request.POST, prefix="user", instance=user)
         profileform = UserProfileForm(request.POST, request.FILES, prefix="profile", instance=profile)
+        if request.POST.get('profile-register'):
+            profileform.fields['registration_city'].required = True
+        if request.POST.get('profile-registration_city'):
+            profileform.fields['register'].required = True
         addressform = AddressForm(request.POST, prefix="address", instance=address)
 
         if userform.is_valid() and profileform.is_valid() and addressform.is_valid():
