@@ -236,6 +236,9 @@ jQuery(document).ready(function(){
       </div>
     </div>
     {% endwith %}
+    {% with proposalForm.footer_note as field %}
+    {% include "field.html" %}
+    {% endwith %}
     <div class="form-row">
     <div><label>{% trans "Detail rows" %} :</label></div>
     {{ proposalrowformset.management_form }}

@@ -50,6 +50,9 @@
       <label>{{ proposal|verbose_name:"payment_delay" }} :</label> {{ proposal.get_payment_delay }}
       </div>
     </div>
+    {% with proposal as object %}{% with "footer_note" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}{% endwith %}
     <div class="detail-row">
       <div><label>{% trans "Exported file" %} :</label><a href="{% url proposal_download proposal.id %}">{% trans "download pdf file" %}</a></div>
     </div>

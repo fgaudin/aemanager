@@ -216,6 +216,9 @@ jQuery(document).ready(function(){
     {% with invoiceForm.discount_conditions as field %}
     {% include "field.html" %}
     {% endwith %}
+    {% with invoiceForm.footer_note as field %}
+    {% include "field.html" %}
+    {% endwith %}
     <div class="form-row">
     <div><label>{% trans "Detail rows" %} :</label></div>
     {{ invoicerowformset.management_form }}

@@ -58,6 +58,10 @@ class ProposalTemplate(object):
     styleDetail.fontName = 'Helvetica-Oblique'
     styleDetail.textColor = colors.gray
 
+    styleNSmall = ParagraphStyle({})
+    styleNSmall.fontSize = 8
+    styleNSmall.leading = 14
+
     def __init__(self, response, user):
         self.response = response
         self.user = user

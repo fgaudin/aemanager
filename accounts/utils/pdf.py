@@ -3,9 +3,6 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import inch
 
 class InvoiceTemplate(ProposalTemplate):
-    styleNSmall = ParagraphStyle({})
-    styleNSmall.fontSize = 8
-    styleNSmall.leading = 14
 
     def __init__(self, response, user):
         super(InvoiceTemplate, self).__init__(response, user)

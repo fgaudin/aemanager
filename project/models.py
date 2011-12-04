@@ -3,7 +3,7 @@
 import unicodedata
 from reportlab.platypus import Paragraph
 from reportlab.lib.units import inch
-from reportlab.platypus import Table, TableStyle
+from reportlab.platypus import Table, TableStyle, Spacer
 
 from decimal import Decimal
 from django.db import models
@@ -189,6 +189,7 @@ class Proposal(OwnedObject):
     payment_delay_other = models.IntegerField(blank=True, null=True)
     payment_delay_type_other = models.IntegerField(choices=PAYMENT_DELAY_TYPE_OTHER, blank=True, null=True)
     contract_file = models.FileField(upload_to=proposal_upload_to_handler, null=True, blank=True, storage=store, verbose_name=_('Uploaded contract'), help_text=_('max. %(FILE_MAX_SIZE)s') % {'FILE_MAX_SIZE': settings.FILE_MAX_SIZE})
+    footer_note = models.CharField(max_length=90, blank=True, null=True, verbose_name=_('Footer note'))
 
     objects = ProposalManager()
 
@@ -284,6 +285,10 @@ class Proposal(OwnedObject):
 
         if self.begin_date and self.end_date:
             data[0][0].append(Paragraph(_("Execution dates : %(begin_date)s to %(end_date)s") % {'begin_date': localize(self.begin_date), 'end_date' : localize(self.end_date)}, ProposalTemplate.styleN))
+
+        if self.footer_note:
+            data[0][0].append(Spacer(proposal_template.doc.width, 0.1 * inch))
+            data[0][0].append(Paragraph(self.footer_note, ProposalTemplate.styleNSmall))
 
         footer_table = Table(data, [4.5 * inch, 0.3 * inch, 2.5 * inch], [1 * inch])
         footer_table.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'TOP'), ]))

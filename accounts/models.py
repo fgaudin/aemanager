@@ -213,7 +213,7 @@ class Invoice(OwnedObject):
     penalty_date = models.DateField(blank=True, null=True, verbose_name=_("Penalty date"), help_text=_('format: mm/dd/yyyy'))
     penalty_rate = models.DecimalField(blank=True, null=True, max_digits=4, decimal_places=2, verbose_name=_("Penalty rate"))
     discount_conditions = models.CharField(max_length=100, blank=True, null=True, verbose_name=_("Discount conditions"))
-
+    footer_note = models.CharField(max_length=90, blank=True, null=True, verbose_name=_('Footer note'))
     objects = InvoiceManager()
 
     class Meta:
@@ -302,8 +302,13 @@ class Invoice(OwnedObject):
                       Paragraph(_("Penalty begins on : %s") % (localize(self.penalty_date) or ''), InvoiceTemplate.styleN),
                       Paragraph(_("Penalty rate : %s") % (localize(self.penalty_rate) or ''), InvoiceTemplate.styleN),
                       Paragraph(_("Discount conditions : %s") % (self.discount_conditions or ''), InvoiceTemplate.styleN)]
-        if self.owner.get_profile().iban_bban:
+
+        if self.footer_note:
+            left_block.append(Spacer(invoice_template.doc.width, 0.1 * inch))
+            left_block.append(Paragraph(self.footer_note, InvoiceTemplate.styleNSmall))
+        else:
             left_block.append(Spacer(invoice_template.doc.width, 0.2 * inch))
+        if self.owner.get_profile().iban_bban:
             left_block.append(Paragraph(_("IBAN/BBAN : %s") % (self.owner.get_profile().iban_bban), InvoiceTemplate.styleNSmall))
             if self.owner.get_profile().bic:
                 left_block.append(Paragraph(_("BIC/SWIFT : %s") % (self.owner.get_profile().bic), InvoiceTemplate.styleNSmall))

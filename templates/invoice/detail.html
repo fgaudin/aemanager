@@ -66,6 +66,9 @@
     {% with invoice as object %}{% with "discount_conditions" as name %}
     {% include "detail_field.html" %}
     {% endwith %}{% endwith %}
+    {% with invoice as object %}{% with "footer_note" as name %}
+    {% include "detail_field.html" %}
+    {% endwith %}{% endwith %}
     <div class="detail-row">
       <div><label>{% trans "Exported file" %} :</label><a href="{% url invoice_download invoice.id %}">{% trans "download pdf file" %}</a></div>
     </div>

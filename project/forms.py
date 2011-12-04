@@ -43,6 +43,7 @@ class ProposalForm(ModelForm):
         self.fields['begin_date'].widget.attrs['class'] = 'date'
         self.fields['end_date'].widget.attrs['class'] = 'date'
         self.fields['expiration_date'].widget.attrs['class'] = 'date'
+        self.fields['footer_note'].widget.attrs['size'] = '90'
 
     def clean(self):
         super(ProposalForm, self).clean()

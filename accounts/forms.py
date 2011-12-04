@@ -39,6 +39,7 @@ class InvoiceForm(ModelForm):
         self.fields['execution_begin_date'].widget.attrs['class'] = 'date'
         self.fields['execution_end_date'].widget.attrs['class'] = 'date'
         self.fields['penalty_date'].widget.attrs['class'] = 'date'
+        self.fields['footer_note'].widget.attrs['size'] = '90'
 
     def clean(self):
         super(InvoiceForm, self).clean()
