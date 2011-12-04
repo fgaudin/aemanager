@@ -8,7 +8,8 @@ from project.models import Project, PROJECT_STATE_PROSPECT, \
     PROJECT_STATE_FINISHED, Proposal, PROPOSAL_STATE_DRAFT, ROW_CATEGORY_SERVICE, \
     PROPOSAL_STATE_SENT, ROW_CATEGORY_PRODUCT, ProposalRow, \
     ProposalAmountError, Contract, PAYMENT_DELAY_30_DAYS, PAYMENT_DELAY_OTHER, \
-    PAYMENT_DELAY_TYPE_OTHER_END_OF_MONTH, VAT_RATES_19_6
+    PAYMENT_DELAY_TYPE_OTHER_END_OF_MONTH, VAT_RATES_19_6, CatalogItem, \
+    CatalogSection
 from accounts.models import Invoice, InvoiceRow, INVOICE_STATE_EDITED, \
     PAYMENT_TYPE_CHECK
 from contact.models import Contact, Address, Country, CONTACT_TYPE_PERSON
@@ -17,6 +18,7 @@ import hashlib
 from django.contrib.auth.models import User
 from django.contrib.webdesign import lorem_ipsum
 from autoentrepreneur.models import AUTOENTREPRENEUR_REGISTER_RSEIRL
+from django.utils import simplejson
 
 class ContractPermissionTest(TestCase):
     fixtures = ['test_users', 'test_contacts']
@@ -1204,3 +1206,410 @@ class Bug31Test(TestCase):
     def testDuplicateInvoicesOnProposal(self):
         response = self.client.get(reverse('proposal_detail', kwargs={'id': 10}))
         self.assertEquals(len(response.context['invoices']), 2)
+
+class CatalogPermissionTest(TestCase):
+
+    fixtures = ['test_users']
+
+    def setUp(self):
+        self.client.login(username='test', password='test')
+        self.user1 = User.objects.get(pk=1)
+        self.user2 = User.objects.get(pk=2)
+
+    def testList(self):
+        """
+        Should not display other users' items and sections
+        """
+        section1 = CatalogSection.objects.create(name='Section user1',
+                                                 owner=self.user1)
+        item1 = CatalogItem.objects.create(label='Item user1',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           unit_price=1,
+                                           section=section1,
+                                           owner=self.user1)
+        section2 = CatalogSection.objects.create(name='Section user2',
+                                                 owner=self.user2)
+        item2 = CatalogItem.objects.create(label='Item user2',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           unit_price=1,
+                                           section=section2,
+                                           owner=self.user2)
+
+        response = self.client.get(reverse('catalog_list'))
+        self.assertEquals(response.status_code, 200)
+        catalog = response.context['catalog']
+        self.assertEquals(catalog.count(), 1)
+        self.assertEquals(catalog[0], section1)
+
+    def testAdd(self):
+        """
+        Try to add an item having the same name as an item owned by another user
+        and in a section owned by another user
+        should create the item and a new section
+        """
+        section2 = CatalogSection.objects.create(name='Section user2',
+                                                 owner=self.user2)
+        item2 = CatalogItem.objects.create(label='Item user2',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           unit_price=1,
+                                           section=section2,
+                                           owner=self.user2)
+
+        response = self.client.post(reverse('catalog_add'),
+                                    {'label': 'Item user2',
+                                     'category': ROW_CATEGORY_SERVICE,
+                                     'unit_price': 1,
+                                     'section_label': 'Section user2'})
+        self.assertEquals(response.status_code, 200)
+        data = simplejson.loads(response.content)
+        item1 = CatalogItem.objects.get(pk=data['id'])
+        self.assertEquals(item1.owner, self.user1)
+        self.assertNotEquals(item1, item2)
+        self.assertEquals(item1.section.owner, self.user1)
+        self.assertNotEquals(item1.section, item2.section)
+
+    def testSectionSearch(self):
+        """
+        Should not return other users' sections
+        """
+        section1 = CatalogSection.objects.create(name='Section user1',
+                                                 owner=self.user1)
+        section2 = CatalogSection.objects.create(name='Section user2',
+                                                 owner=self.user2)
+
+        response = self.client.get(reverse('catalog_section_search'),
+                                   {'term': 'Section'})
+
+        self.assertEquals(response.status_code, 200)
+        data = simplejson.loads(response.content)
+        self.assertEquals(len(data), 1)
+        self.assertEquals(data[0]['value'], 'Section user1')
+        self.assertEquals(data[0]['label'], 'Section user1')
+
+    def testItemSearch(self):
+        """
+        Should not return other users' items
+        """
+        section1 = CatalogSection.objects.create(name='Section user1',
+                                                 owner=self.user1)
+        item1 = CatalogItem.objects.create(label='Item user1',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           unit_price=1,
+                                           section=section1,
+                                           owner=self.user1)
+        section2 = CatalogSection.objects.create(name='Section user2',
+                                                 owner=self.user2)
+        item2 = CatalogItem.objects.create(label='Item user2',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           unit_price=1,
+                                           section=section2,
+                                           owner=self.user2)
+
+        response = self.client.get(reverse('catalog_item_search'),
+                                   {'term': 'Item'})
+
+        self.assertEquals(response.status_code, 200)
+        data = simplejson.loads(response.content)
+        self.assertEquals(len(data), 1)
+        self.assertEquals(data[0]['label'], 'Item user1')
+
+    def testItemEdit(self):
+        """
+        Should return 404 if trying to edit an other user's item
+        """
+        section2 = CatalogSection.objects.create(name='Section user2',
+                                                 owner=self.user2)
+        item2 = CatalogItem.objects.create(label='Item user2',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           unit_price=1,
+                                           section=section2,
+                                           owner=self.user2)
+
+        response = self.client.post(reverse('catalog_edit') + '?id=' + str(item2.id),
+                                    {'label': 'Item user1',
+                                     'category': ROW_CATEGORY_SERVICE,
+                                     'unit_price': 1})
+        self.assertEquals(response.status_code, 404)
+
+    def testItemDelete(self):
+        """
+        Should not be able to delete an other user's item
+        """
+        section2 = CatalogSection.objects.create(name='Section user2',
+                                                 owner=self.user2)
+        item2 = CatalogItem.objects.create(label='Item user2',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           unit_price=1,
+                                           section=section2,
+                                           owner=self.user2)
+
+        response = self.client.post(reverse('catalog_delete'),
+                                    {'id': item2.id})
+        self.assertEquals(response.status_code, 404)
+
+    def testItemMove(self):
+        """
+        Should not be able to move an other user's item
+        Should not be able to move item to an other user's section
+        """
+        section1 = CatalogSection.objects.create(name='Section user1',
+                                                 owner=self.user1)
+        item1 = CatalogItem.objects.create(label='Item user1',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           unit_price=1,
+                                           section=section1,
+                                           owner=self.user1)
+        section2 = CatalogSection.objects.create(name='Section user2',
+                                                 owner=self.user2)
+        item2 = CatalogItem.objects.create(label='Item user2',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           unit_price=1,
+                                           section=section2,
+                                           owner=self.user2)
+
+        response = self.client.post(reverse('catalog_move'),
+                                    {'id': item2.id,
+                                     'section': section1.id})
+        self.assertEquals(response.status_code, 404)
+
+        response = self.client.post(reverse('catalog_move'),
+                                    {'id': item1.id,
+                                     'section': section2.id})
+        self.assertEquals(response.status_code, 200)
+        data = simplejson.loads(response.content)
+        self.assertEquals(data['error'], 'ko')
+
+    def testSectionRename(self):
+        """
+        Should not be able to rename an other user's section
+        """
+        section2 = CatalogSection.objects.create(name='Section user2',
+                                                 owner=self.user2)
+
+        response = self.client.post(reverse('catalog_section_rename') + '?id=' + str(section2.id),
+                                    {'name': 'Section user1'})
+        self.assertEquals(response.status_code, 404)
+
+    def testSectionDelete(self):
+        """
+        Should not be able to delete an other user's section
+        Should not be able to move items of the deleted section to an other
+        user's section
+        """
+        section1 = CatalogSection.objects.create(name='Section user1',
+                                                 owner=self.user1)
+        item1 = CatalogItem.objects.create(label='Item user1',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           unit_price=1,
+                                           section=section1,
+                                           owner=self.user1)
+        section2 = CatalogSection.objects.create(name='Section user2',
+                                                 owner=self.user2)
+        item2 = CatalogItem.objects.create(label='Item user2',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           unit_price=1,
+                                           section=section2,
+                                           owner=self.user2)
+
+        response = self.client.post(reverse('catalog_section_delete') + '?id=' + str(section2.id),
+                                    {'section': section1.id})
+        self.assertEquals(response.status_code, 404)
+
+        response = self.client.post(reverse('catalog_section_delete') + '?id=' + str(section1.id),
+                                    {'section': section2.id})
+        self.assertEquals(response.status_code, 200)
+        data = simplejson.loads(response.content)
+        self.assertEquals(data['error'], 'ko')
+
+class CatalogTest(TestCase):
+
+    fixtures = ['test_users']
+
+    def setUp(self):
+        self.client.login(username='test', password='test')
+        self.user1 = User.objects.get(pk=1)
+
+    def testList(self):
+        section1 = CatalogSection.objects.create(name='Section1',
+                                                 owner=self.user1)
+        item1 = CatalogItem.objects.create(label='Item1',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           unit_price=1,
+                                           section=section1,
+                                           owner=self.user1)
+        section2 = CatalogSection.objects.create(name='Section2',
+                                                 owner=self.user1)
+        item2 = CatalogItem.objects.create(label='Item2',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           unit_price=1,
+                                           section=section2,
+                                           owner=self.user1)
+
+        response = self.client.get(reverse('catalog_list'))
+        self.assertEquals(response.status_code, 200)
+        catalog = response.context['catalog']
+        self.assertEquals(catalog.count(), 2)
+        self.assertEquals(catalog[0], section1)
+        self.assertEquals(catalog[1], section2)
+
+    def testAdd(self):
+        response = self.client.post(reverse('catalog_add'),
+                                    {'label': 'Item1',
+                                     'category': ROW_CATEGORY_SERVICE,
+                                     'unit_price': 1,
+                                     'section_label': 'Section1'})
+        self.assertEquals(response.status_code, 200)
+        data = simplejson.loads(response.content)
+        item1 = CatalogItem.objects.get(pk=data['id'])
+        self.assertEquals(item1.label, 'Item1')
+        self.assertEquals(item1.category, ROW_CATEGORY_SERVICE)
+        self.assertEquals(item1.unit_price, 1)
+        self.assertEquals(item1.owner, self.user1)
+        self.assertEquals(item1.section.name, 'Section1')
+        self.assertEquals(item1.section.owner, self.user1)
+
+    def testSectionSearch(self):
+        section1 = CatalogSection.objects.create(name='Section1',
+                                                 owner=self.user1)
+        section2 = CatalogSection.objects.create(name='Section2',
+                                                 owner=self.user1)
+
+        response = self.client.get(reverse('catalog_section_search'),
+                                   {'term': 'Section'})
+
+        self.assertEquals(response.status_code, 200)
+        data = simplejson.loads(response.content)
+        self.assertEquals(len(data), 2)
+        self.assertEquals(data[0]['value'], 'Section1')
+        self.assertEquals(data[0]['label'], 'Section1')
+        self.assertEquals(data[1]['value'], 'Section2')
+        self.assertEquals(data[1]['label'], 'Section2')
+
+        response = self.client.get(reverse('catalog_section_search'),
+                                   {'term': '1'})
+
+        self.assertEquals(response.status_code, 200)
+        data = simplejson.loads(response.content)
+        self.assertEquals(len(data), 1)
+        self.assertEquals(data[0]['value'], 'Section1')
+        self.assertEquals(data[0]['label'], 'Section1')
+
+    def testItemSearch(self):
+        section1 = CatalogSection.objects.create(name='Section1',
+                                                 owner=self.user1)
+        item1 = CatalogItem.objects.create(label='Item1',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           unit_price=1,
+                                           section=section1,
+                                           owner=self.user1)
+        section2 = CatalogSection.objects.create(name='Section2',
+                                                 owner=self.user1)
+        item2 = CatalogItem.objects.create(label='Item2',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           unit_price=1,
+                                           section=section2,
+                                           owner=self.user1)
+
+        response = self.client.get(reverse('catalog_item_search'),
+                                   {'term': 'Item'})
+
+        self.assertEquals(response.status_code, 200)
+        data = simplejson.loads(response.content)
+        self.assertEquals(len(data), 2)
+        self.assertEquals(data[0]['label'], 'Item1')
+        self.assertEquals(data[0]['category'], ROW_CATEGORY_SERVICE)
+        self.assertEquals(data[0]['unit_price'], '1.00')
+        self.assertEquals(data[0]['vat_rate'], 'None')
+        self.assertEquals(data[0]['section__name'], 'Section1')
+
+    def testItemEdit(self):
+        section1 = CatalogSection.objects.create(name='Section1',
+                                                 owner=self.user1)
+        item1 = CatalogItem.objects.create(label='Item1',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           unit_price=1,
+                                           section=section1,
+                                           owner=self.user1)
+
+        response = self.client.post(reverse('catalog_edit') + '?id=' + str(item1.id),
+                                    {'label': 'Item bis',
+                                     'category': ROW_CATEGORY_PRODUCT,
+                                     'unit_price': 2,
+                                     'vat_rate': VAT_RATES_19_6})
+        self.assertEquals(response.status_code, 200)
+        data = simplejson.loads(response.content)
+        item = CatalogItem.objects.get(pk=data['id'])
+        self.assertEquals(item.label, 'Item bis')
+        self.assertEquals(item.category, ROW_CATEGORY_PRODUCT)
+        self.assertEquals(item.unit_price, 2)
+        self.assertEquals(item.vat_rate, VAT_RATES_19_6)
+
+    def testItemDelete(self):
+        section1 = CatalogSection.objects.create(name='Section1',
+                                                 owner=self.user1)
+        item1 = CatalogItem.objects.create(label='Item1',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           unit_price=1,
+                                           section=section1,
+                                           owner=self.user1)
+
+        response = self.client.post(reverse('catalog_delete'),
+                                    {'id': item1.id})
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(CatalogItem.objects.count(), 0)
+
+    def testItemMove(self):
+        section1 = CatalogSection.objects.create(name='Section1',
+                                                 owner=self.user1)
+        item1 = CatalogItem.objects.create(label='Item1',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           unit_price=1,
+                                           section=section1,
+                                           owner=self.user1)
+        section2 = CatalogSection.objects.create(name='Section2',
+                                                 owner=self.user1)
+        item2 = CatalogItem.objects.create(label='Item2',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           unit_price=1,
+                                           section=section2,
+                                           owner=self.user1)
+
+        response = self.client.post(reverse('catalog_move'),
+                                    {'id': item1.id,
+                                     'section': section2.id})
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(CatalogItem.objects.get(pk=item1.id).section.id, section2.id)
+
+    def testSectionRename(self):
+        section1 = CatalogSection.objects.create(name='Section1',
+                                                 owner=self.user1)
+
+        response = self.client.post(reverse('catalog_section_rename') + '?id=' + str(section1.id),
+                                    {'name': 'Section bis'})
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(CatalogSection.objects.get(pk=section1.id).name, 'Section bis')
+
+    def testSectionDelete(self):
+        section1 = CatalogSection.objects.create(name='Section1',
+                                                 owner=self.user1)
+        item1 = CatalogItem.objects.create(label='Item1',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           unit_price=1,
+                                           section=section1,
+                                           owner=self.user1)
+        section2 = CatalogSection.objects.create(name='Section2',
+                                                 owner=self.user1)
+        item2 = CatalogItem.objects.create(label='Item2',
+                                           category=ROW_CATEGORY_SERVICE,
+                                           unit_price=1,
+                                           section=section2,
+                                           owner=self.user1)
+
+        response = self.client.post(reverse('catalog_section_delete') + '?id=' + str(section1.id),
+                                    {'section': section2.id})
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(CatalogSection.objects.count(), 1)
+        items = CatalogItem.objects.all()
+        self.assertEquals(items.count(), 2)
+        self.assertEquals(items.filter(section=section2).count(), 2)
+
