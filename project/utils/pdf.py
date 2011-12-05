@@ -103,7 +103,7 @@ class ProposalTemplate(object):
     def add_headers(self, proposal, customer, document_date):
 
         data = []
-        user_header_content = """
+        user_header_content = u"""
         %s %s<br/>
         %s<br/>
         %s %s<br/>
@@ -123,7 +123,7 @@ class ProposalTemplate(object):
         if self.user.get_profile().professional_email:
             user_header_content = "%s%s<br/>" % (user_header_content, self.user.get_profile().professional_email)
 
-        customer_header_content = """
+        customer_header_content = u"""
         <br/><br/><br/><br/>
         %s<br/>
         %s<br/>
