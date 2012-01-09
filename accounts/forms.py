@@ -63,7 +63,7 @@ class InvoiceForm(ModelForm):
         return cleaned_data
 
 class InvoiceRowForm(ModelForm):
-    quantity = forms.DecimalField(max_digits=5, decimal_places=1, label=_('Quantity'), localize=True)
+    quantity = forms.DecimalField(max_digits=6, decimal_places=2, label=_('Quantity'), localize=True)
     unit_price = forms.DecimalField(max_digits=12, decimal_places=2, label=_('Unit price'), localize=True)
 
     class Meta:

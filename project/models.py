@@ -391,7 +391,7 @@ VAT_RATES = ((VAT_RATES_19_6, _('%s%%') % (localize(VAT_RATES_19_6))),
 class Row(OwnedObject):
     label = models.CharField(max_length=255, verbose_name=_('Label'))
     category = models.IntegerField(choices=ROW_CATEGORY, verbose_name=_('Category'))
-    quantity = models.DecimalField(max_digits=5, decimal_places=1, verbose_name=_('Quantity'))
+    quantity = models.DecimalField(max_digits=6, decimal_places=2, verbose_name=_('Quantity'))
     unit_price = models.DecimalField(max_digits=12, decimal_places=2, verbose_name=_('Unit price'))
     amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True, verbose_name=_('Amount'))
     vat_rate = models.DecimalField(choices=VAT_RATES, decimal_places=1, max_digits=4, verbose_name=_('Vat'), blank=True, null=True)

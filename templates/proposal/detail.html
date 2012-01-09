@@ -80,9 +80,9 @@
            <tr class="{% cycle 'row1' 'row2' %}">
                 <td>{{ proposalrow.label }}</td>
                 <td>{{ proposalrow.get_category_display }}</td>
-                <td>{{ proposalrow.quantity|floatformat }}</td>
-                <td>{{ proposalrow.unit_price|floatformat }}</td>
-                <td>{{ proposalrow.unit_price|multiply:proposalrow.quantity|floatformat }}</td>
+                <td>{{ proposalrow.quantity|floatformat:"-2" }}</td>
+                <td>{{ proposalrow.unit_price|floatformat:"-2" }}</td>
+                <td>{{ proposalrow.unit_price|multiply:proposalrow.quantity|floatformat:"-2" }}</td>
                 {% if user.get_profile.vat_number %}
                 <td>{{ proposalrow.vat_rate|default:'' }}</td>
                 {% endif %}
