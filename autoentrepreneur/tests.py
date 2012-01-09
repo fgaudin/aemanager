@@ -38,6 +38,16 @@ class SubscriptionTest(TestCase):
     def setUp(self):
         Subscription.objects.all().delete()
         today = datetime.date.today()
+
+        limit_defined = SalesLimit.objects.filter(year=today.year).count()
+        if not limit_defined:
+            sale_limits = SalesLimit.objects.filter(year=2011)
+            for sl in sale_limits:
+                SalesLimit.objects.create(year=today.year,
+                                          activity=sl.activity,
+                                          limit=sl.limit,
+                                          limit2=sl.limit2)
+
         # generate limit for next year
         sale_limits = SalesLimit.objects.filter(year=today.year)
         for sl in sale_limits:

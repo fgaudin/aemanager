@@ -380,9 +380,11 @@ ROW_CATEGORY = ((ROW_CATEGORY_SERVICE, _('Service')),
                 (ROW_CATEGORY_PRODUCT, _('Product')))
 
 VAT_RATES_19_6 = Decimal('19.6')
+VAT_RATES_7 = Decimal('7')
 VAT_RATES_5_5 = Decimal('5.5')
 VAT_RATES_2_1 = Decimal('2.1')
 VAT_RATES = ((VAT_RATES_19_6, _('%s%%') % (localize(VAT_RATES_19_6))),
+             (VAT_RATES_7, _('%s%%') % (localize(VAT_RATES_7))),
              (VAT_RATES_5_5, _('%s%%') % (localize(VAT_RATES_5_5))),
              (VAT_RATES_2_1, _('%s%%') % (localize(VAT_RATES_2_1))),)
 
