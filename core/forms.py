@@ -32,7 +32,7 @@ class PasswordForm(forms.Form):
 
 class RegistrationFormUniqueEmailAndTos(RegistrationFormUniqueEmail):
     tos = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class': 'required'}),
-                             label=_(u'I have read and agree to the Terms of Sale and Service'),
+                             label=_(u'I have read and agree to the Terms of Service'),
                              error_messages={'required': _("You must agree to the terms to register")})
 
     def __init__(self, *args, **kwargs):

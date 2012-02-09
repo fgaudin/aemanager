@@ -408,7 +408,8 @@ def subscribe(request):
                                'price': price,
                                'not_paid_subscriptions': not_paid_subscriptions,
                                'paypal_url': settings.PAYPAL_URL,
-                               'button_id': settings.PAYPAL_BUTTON_ID},
+                               'button_id': settings.PAYPAL_BUTTON_ID,
+                               'free_subscription': settings.FREE_SUBSCRIPTION},
                               context_instance=RequestContext(request))
 
 def subscription_paid(request):

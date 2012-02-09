@@ -544,8 +544,11 @@ def user_post_save(sender, instance, created, **kwargs):
         profile.save()
 
         today = datetime.date.today()
+        default_state = SUBSCRIPTION_STATE_TRIAL
+        if settings.FREE_SUBSCRIPTION:
+            default_state = SUBSCRIPTION_STATE_FREE
         subscription = Subscription.objects.create(owner=instance,
-                                                   state=SUBSCRIPTION_STATE_TRIAL,
+                                                   state=default_state,
                                                    expiration_date=today + datetime.timedelta(settings.TRIAL_DURATION),
                                                    transaction_id='TRIAL-%i%i%i-%i' % (today.year, today.month, today.day, instance.id))
 

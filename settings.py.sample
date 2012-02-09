@@ -173,6 +173,7 @@ BUGTRACKER_VOTES = 10
 LOGO_URL = 'http://example.com/static/img/logo.png'
 PARENT_SITE_URL = 'http://www.example.com'
 TRIAL_DURATION = 30
+FREE_SUBSCRIPTION = False
 SERVICE_PROVIDER_EMAIL = '' # when subscription is paid, create invoice for this account
 
 if DEBUG_TOOLBAR:
