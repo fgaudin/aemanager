@@ -227,12 +227,10 @@ class UserProfile(models.Model):
         return settings_defined
 
     def is_allowed(self):
-        try:
-            Subscription.objects.get(owner=self.user,
-                                     state__in=[SUBSCRIPTION_STATE_FREE])
+        if Subscription.objects.filter(owner=self.user,
+                                       state__in=[SUBSCRIPTION_STATE_FREE]).count():
             return True
-        except:
-            pass
+
         if Subscription.objects.filter(owner=self.user,
                                        state__in=[SUBSCRIPTION_STATE_PAID, SUBSCRIPTION_STATE_TRIAL],
                                        expiration_date__gte=datetime.date.today()).count():

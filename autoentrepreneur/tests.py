@@ -36,6 +36,7 @@ class SubscriptionTest(TestCase):
     fixtures = ['test_users']
 
     def setUp(self):
+        settings.FREE_SUBSCRIPTION = False
         Subscription.objects.all().delete()
         today = datetime.date.today()
 
