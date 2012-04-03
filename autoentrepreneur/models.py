@@ -386,7 +386,10 @@ class UserProfile(models.Model):
 
         freeing_tax_payment = self.freeing_tax_payment
 
-        one_year_back = datetime.date(reference_date.year - 1, reference_date.month, reference_date.day)
+        if reference_date.month == 2 and reference_date.day == 29:
+            one_year_back = datetime.date(reference_date.year - 1, reference_date.month, 28)
+        else:
+            one_year_back = datetime.date(reference_date.year - 1, reference_date.month, reference_date.day)
         first_year = True
         if one_year_back.year >= self.creation_date.year:
             first_year = False

@@ -1724,3 +1724,25 @@ class TaxTest(TestCase):
         profile.professional_category = AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_LIBERAL
         profile.save()
         self.assertEquals(profile.get_professional_training_tax_rate(), 0.2)
+
+    def testLeapYear(self):
+        SalesLimit.objects.create(year=2012, activity=AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC, limit=80000, limit2=88000)
+        SalesLimit.objects.create(year=2012, activity=AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC, limit=32000, limit2=34000)
+        SalesLimit.objects.create(year=2012, activity=AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC, limit=32000, limit2=34000)
+        SalesLimit.objects.create(year=2012, activity=AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC, limit=32000, limit2=34000)
+
+        profile = self.user.get_profile()
+        profile.creation_date = datetimestub.DatetimeStub.date(2011, 1, 1)
+        profile.freeing_tax_payment = False
+        profile.creation_help = False
+        profile.payment_option = AUTOENTREPRENEUR_PAYMENT_OPTION_MONTHLY
+        profile.save()
+
+
+        autoentrepreneur.models.datetime.date.mock_year = 2012
+        autoentrepreneur.models.datetime.date.mock_month = 2
+        autoentrepreneur.models.datetime.date.mock_day = 29
+
+        profile.activity = AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC
+        profile.save()
+        self.assertEquals(profile.get_tax_rate(), 12.0)
