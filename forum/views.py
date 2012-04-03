@@ -16,7 +16,7 @@ from django.conf import settings
 
 @settings_required
 def topic_list(request):
-    topic_list = Topic.objects.all().annotate(last_date=Max('messages__creation_date')).order_by('-last_date')
+    topic_list = Topic.objects.exclude(messages=None).annotate(last_date=Max('messages__creation_date')).order_by('-last_date')
 
     paginator = Paginator(topic_list, 25)
 

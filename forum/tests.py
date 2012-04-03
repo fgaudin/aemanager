@@ -129,7 +129,7 @@ class ForumTest(TestCase):
 
         call_command('notify_forum')
 
-        self.assertEquals(len(mail.outbox), 2)
+        self.assertEquals(len(mail.outbox), 3)
         self.assertEquals(mail.outbox[0].subject, u'Un nouveau message a \xe9t\xe9 post\xe9 en r\xe9ponse \xe0 "New topic"')
         self.assertTrue(mail.outbox[0].body.startswith(u'test3 a r\xe9pondu :\n\nNew answer 2\n\nPour r\xe9pondre \xe0 ce message : https://example.com/forum/topic/detail/2/?page=-1#last'))
 
