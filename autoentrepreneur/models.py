@@ -36,6 +36,9 @@ class SalesLimit(models.Model):
     limit = models.IntegerField(verbose_name=_('Limit'))
     limit2 = models.IntegerField(verbose_name=_('Limit 2'))
 
+    def __unicode__(self):
+        return u"%s - %s - %s/%s" % (self.year, self.get_activity_display(), self.limit, self.limit2)
+
 SUBSCRIPTION_STATE_NOT_PAID = 1
 SUBSCRIPTION_STATE_PAID = 2
 SUBSCRIPTION_STATE_TRIAL = 3
@@ -133,6 +136,19 @@ TAX_RATE_WITHOUT_FREEING = {AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC: [3, 6, 9
                             AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC: [5.4, 10.7, 16, 21.3],
                             AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC: [5.3, 9.2, 13.8, 18.3]
                             }
+
+TAX_RATE_WITH_FREEING_2013 = {AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC: [4.5, 8, 11.5, 15],
+                              AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC: [7.9, 14, 20.2, 26.3],
+                              AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC: [8.4, 14.5, 20.7, 26.8],
+                              AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC: [7.6, 12.9, 18.2, 23.5]
+                              }
+
+TAX_RATE_WITHOUT_FREEING_2013 = {AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC: [3.5, 7, 10.5, 14],
+                                 AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC: [6.2, 12.3, 18.5, 24.6],
+                                 AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC: [6.2, 12.3, 18.5, 24.6],
+                                 AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC: [5.4, 10.7, 16, 21.3]
+                                 }
+
 
 AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_TRADER = 1
 AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_CRAFTSMAN = 2
@@ -410,6 +426,17 @@ class UserProfile(models.Model):
         if paid > limit:
             freeing_tax_payment = False
 
+        if reference_date.year >= 2013:
+            if freeing_tax_payment:
+                tax_rates = TAX_RATE_WITH_FREEING_2013
+            else:
+                tax_rates = TAX_RATE_WITHOUT_FREEING_2013
+        else:
+            if freeing_tax_payment:
+                tax_rates = TAX_RATE_WITH_FREEING
+            else:
+                tax_rates = TAX_RATE_WITHOUT_FREEING
+
         if not period_is_only_overrun and self.creation_help:
             year = self.creation_date.year + 1
             month = self.get_quarter(self.creation_date)[0] * 3 - 1
@@ -421,31 +448,15 @@ class UserProfile(models.Model):
                                                    first_period_end_date.month,
                                                    first_period_end_date.day)
             if reference_date <= first_period_end_date:
-                if freeing_tax_payment:
-                    tax_rate = TAX_RATE_WITH_FREEING[self.activity][0]
-                else:
-                    tax_rate = TAX_RATE_WITHOUT_FREEING[self.activity][0]
+                tax_rate = tax_rates[self.activity][0]
             elif reference_date <= second_period_end_date:
-                if freeing_tax_payment:
-                    tax_rate = TAX_RATE_WITH_FREEING[self.activity][1]
-                else:
-                    tax_rate = TAX_RATE_WITHOUT_FREEING[self.activity][1]
+                tax_rate = tax_rates[self.activity][1]
             elif reference_date <= third_period_end_date:
-                if freeing_tax_payment:
-                    tax_rate = TAX_RATE_WITH_FREEING[self.activity][2]
-                else:
-                    tax_rate = TAX_RATE_WITHOUT_FREEING[self.activity][2]
-
+                tax_rate = tax_rates[self.activity][2]
             else:
-                if freeing_tax_payment:
-                    tax_rate = TAX_RATE_WITH_FREEING[self.activity][3]
-                else:
-                    tax_rate = TAX_RATE_WITHOUT_FREEING[self.activity][3]
+                tax_rate = tax_rates[self.activity][3]
         else:
-            if freeing_tax_payment:
-                tax_rate = TAX_RATE_WITH_FREEING[self.activity][3]
-            else:
-                tax_rate = TAX_RATE_WITHOUT_FREEING[self.activity][3]
+            tax_rate = tax_rates[self.activity][3]
 
         if reference_date.year >= 2011:
             tax_rate = tax_rate + self.get_professional_training_tax_rate()
