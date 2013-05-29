@@ -87,12 +87,13 @@ class NotificationTest(TestCase):
         self.assertEquals(len(mail.outbox), 0)
 
     def test_late_invoices(self):
+        payment_date = datetime.date.today() - datetime.timedelta(1)
         i = Invoice.objects.create(customer_id=self.proposal1.project.customer_id,
                                    invoice_id=1,
                                    state=INVOICE_STATE_SENT,
                                    amount='100',
                                    edition_date=datetime.date.today() - datetime.timedelta(3),
-                                   payment_date=datetime.date.today() - datetime.timedelta(1),
+                                   payment_date=payment_date,
                                    paid_date=None,
                                    owner_id=1)
 
@@ -101,14 +102,16 @@ class NotificationTest(TestCase):
         self.assertEquals(len(mail.outbox), 1)
         self.assertEquals(mail.outbox[0].subject, u"Vous avez des factures \xe0 traiter")
         self.assertEquals(mail.outbox[0].to, ['%s %s <%s>' % (self.user.first_name, self.user.last_name, self.user.email)])
-        self.assertEquals(mail.outbox[0].body, u"Vous avez des factures en attente d'une action de votre part.\n\nLe paiement des factures suivantes est en retard. Soit vous avez re\xe7u le paiement et vous avez oubli\xe9 de les mettre \xe0 jour, soit vous devriez relancer vos clients :\n\n - Facture 1 \xe0 Contact 1 (date de paiement : 17/05/2011)\n\n\nRendez vous sur votre tableau de bord pour voir et modifier ces factures : https://example.com/\n\nPour modifier vos param\xe8tres de notification : https://example.com/home/notifications/\n\nL'\xe9quipe example.com\n\nVous recevez cet email car vous \xeates inscrit(e) sur https://example.com. Si vous voulez quitter le site, veuillez cliquer sur le lien ci-dessous pour vous d\xe9sinscrire. Attention, si vous avez un abonnement, celui-ci sera perdu.\nhttps://example.com/home/unregister/")
+        body = u"Vous avez des factures en attente d'une action de votre part.\n\nLe paiement des factures suivantes est en retard. Soit vous avez re\xe7u le paiement et vous avez oubli\xe9 de les mettre \xe0 jour, soit vous devriez relancer vos clients :\n\n - Facture 1 \xe0 Contact 1 (date de paiement : %s)\n\n\nRendez vous sur votre tableau de bord pour voir et modifier ces factures : https://example.com/\n\nPour modifier vos param\xe8tres de notification : https://example.com/home/notifications/\n\nL'\xe9quipe example.com\n\nVous recevez cet email car vous \xeates inscrit(e) sur https://example.com. Si vous voulez quitter le site, veuillez cliquer sur le lien ci-dessous pour vous d\xe9sinscrire. Attention, si vous avez un abonnement, celui-ci sera perdu.\nhttps://example.com/home/unregister/" % (payment_date.strftime('%d/%m/%Y'))
+        self.assertEquals(mail.outbox[0].body, body)
 
     def test_invoices_to_send(self):
+        edition_date = datetime.date.today() - datetime.timedelta(1)
         i = Invoice.objects.create(customer_id=self.proposal1.project.customer_id,
                                    invoice_id=1,
                                    state=INVOICE_STATE_EDITED,
                                    amount='100',
-                                   edition_date=datetime.date.today() - datetime.timedelta(1),
+                                   edition_date=edition_date,
                                    payment_date=datetime.date.today() + datetime.timedelta(1),
                                    paid_date=None,
                                    owner_id=1)
@@ -118,24 +121,27 @@ class NotificationTest(TestCase):
         self.assertEquals(len(mail.outbox), 1)
         self.assertEquals(mail.outbox[0].subject, u"Vous avez des factures \xe0 traiter")
         self.assertEquals(mail.outbox[0].to, ['%s %s <%s>' % (self.user.first_name, self.user.last_name, self.user.email)])
-        self.assertEquals(mail.outbox[0].body, u'Vous avez des factures en attente d\'une action de votre part.\n\nLa date d\'\xe9dition des factures suivantes est d\xe9pass\xe9e et elles n\'ont toujours pas le statut "envoy\xe9e". Soit vous avez oubli\xe9 de les mettre \xe0 jour, soit vous devriez les envoyer \xe0 vos clients :\n\n - Facture 1 \xe0 Contact 1 (date d\'\xe9dition : 17/05/2011)\n\nRendez vous sur votre tableau de bord pour voir et modifier ces factures : https://example.com/\n\nPour modifier vos param\xe8tres de notification : https://example.com/home/notifications/\n\nL\'\xe9quipe example.com\n\nVous recevez cet email car vous \xeates inscrit(e) sur https://example.com. Si vous voulez quitter le site, veuillez cliquer sur le lien ci-dessous pour vous d\xe9sinscrire. Attention, si vous avez un abonnement, celui-ci sera perdu.\nhttps://example.com/home/unregister/')
+        body = u'Vous avez des factures en attente d\'une action de votre part.\n\nLa date d\'\xe9dition des factures suivantes est d\xe9pass\xe9e et elles n\'ont toujours pas le statut "envoy\xe9e". Soit vous avez oubli\xe9 de les mettre \xe0 jour, soit vous devriez les envoyer \xe0 vos clients :\n\n - Facture 1 \xe0 Contact 1 (date d\'\xe9dition : %s)\n\nRendez vous sur votre tableau de bord pour voir et modifier ces factures : https://example.com/\n\nPour modifier vos param\xe8tres de notification : https://example.com/home/notifications/\n\nL\'\xe9quipe example.com\n\nVous recevez cet email car vous \xeates inscrit(e) sur https://example.com. Si vous voulez quitter le site, veuillez cliquer sur le lien ci-dessous pour vous d\xe9sinscrire. Attention, si vous avez un abonnement, celui-ci sera perdu.\nhttps://example.com/home/unregister/' % (edition_date.strftime('%d/%m/%Y'))
+        self.assertEquals(mail.outbox[0].body, body)
 
     def test_twice(self):
+        edition_date = datetime.date.today() - datetime.timedelta(1)
         i = Invoice.objects.create(customer_id=self.proposal1.project.customer_id,
                                    invoice_id=1,
                                    state=INVOICE_STATE_EDITED,
                                    amount='100',
-                                   edition_date=datetime.date.today() - datetime.timedelta(1),
+                                   edition_date=edition_date,
                                    payment_date=datetime.date.today() + datetime.timedelta(1),
                                    paid_date=None,
                                    owner_id=1)
 
+        payment_date = datetime.date.today() - datetime.timedelta(1)
         i2 = Invoice.objects.create(customer_id=self.proposal1.project.customer_id,
                                     invoice_id=2,
                                     state=INVOICE_STATE_SENT,
                                     amount='100',
                                     edition_date=datetime.date.today() - datetime.timedelta(3),
-                                    payment_date=datetime.date.today() - datetime.timedelta(1),
+                                    payment_date=payment_date,
                                     paid_date=None,
                                     owner_id=1)
 
@@ -144,24 +150,27 @@ class NotificationTest(TestCase):
         self.assertEquals(len(mail.outbox), 1)
         self.assertEquals(mail.outbox[0].subject, u"Vous avez des factures \xe0 traiter")
         self.assertEquals(mail.outbox[0].to, ['%s %s <%s>' % (self.user.first_name, self.user.last_name, self.user.email)])
-        self.assertEquals(mail.outbox[0].body, u'Vous avez des factures en attente d\'une action de votre part.\n\nLe paiement des factures suivantes est en retard. Soit vous avez re\xe7u le paiement et vous avez oubli\xe9 de les mettre \xe0 jour, soit vous devriez relancer vos clients :\n\n - Facture 2 \xe0 Contact 1 (date de paiement : 17/05/2011)\n\nLa date d\'\xe9dition des factures suivantes est d\xe9pass\xe9e et elles n\'ont toujours pas le statut "envoy\xe9e". Soit vous avez oubli\xe9 de les mettre \xe0 jour, soit vous devriez les envoyer \xe0 vos clients :\n\n - Facture 1 \xe0 Contact 1 (date d\'\xe9dition : 17/05/2011)\n\nRendez vous sur votre tableau de bord pour voir et modifier ces factures : https://example.com/\n\nPour modifier vos param\xe8tres de notification : https://example.com/home/notifications/\n\nL\'\xe9quipe example.com\n\nVous recevez cet email car vous \xeates inscrit(e) sur https://example.com. Si vous voulez quitter le site, veuillez cliquer sur le lien ci-dessous pour vous d\xe9sinscrire. Attention, si vous avez un abonnement, celui-ci sera perdu.\nhttps://example.com/home/unregister/')
+        body = u'Vous avez des factures en attente d\'une action de votre part.\n\nLe paiement des factures suivantes est en retard. Soit vous avez re\xe7u le paiement et vous avez oubli\xe9 de les mettre \xe0 jour, soit vous devriez relancer vos clients :\n\n - Facture 2 \xe0 Contact 1 (date de paiement : %s)\n\nLa date d\'\xe9dition des factures suivantes est d\xe9pass\xe9e et elles n\'ont toujours pas le statut "envoy\xe9e". Soit vous avez oubli\xe9 de les mettre \xe0 jour, soit vous devriez les envoyer \xe0 vos clients :\n\n - Facture 1 \xe0 Contact 1 (date d\'\xe9dition : %s)\n\nRendez vous sur votre tableau de bord pour voir et modifier ces factures : https://example.com/\n\nPour modifier vos param\xe8tres de notification : https://example.com/home/notifications/\n\nL\'\xe9quipe example.com\n\nVous recevez cet email car vous \xeates inscrit(e) sur https://example.com. Si vous voulez quitter le site, veuillez cliquer sur le lien ci-dessous pour vous d\xe9sinscrire. Attention, si vous avez un abonnement, celui-ci sera perdu.\nhttps://example.com/home/unregister/' % (payment_date.strftime('%d/%m/%Y'), edition_date.strftime('%d/%m/%Y'))
+        self.assertEquals(mail.outbox[0].body, body)
 
     def test_one_email_by_user(self):
+        edition_date = datetime.date.today() - datetime.timedelta(1)
         i = Invoice.objects.create(customer_id=self.proposal1.project.customer_id,
                                    invoice_id=1,
                                    state=INVOICE_STATE_EDITED,
                                    amount='100',
-                                   edition_date=datetime.date.today() - datetime.timedelta(1),
+                                   edition_date=edition_date,
                                    payment_date=datetime.date.today() + datetime.timedelta(1),
                                    paid_date=None,
                                    owner_id=1)
 
+        payment_date = datetime.date.today() - datetime.timedelta(1)
         i2 = Invoice.objects.create(customer_id=self.proposal1.project.customer_id,
                                     invoice_id=2,
                                     state=INVOICE_STATE_SENT,
                                     amount='100',
                                     edition_date=datetime.date.today() - datetime.timedelta(3),
-                                    payment_date=datetime.date.today() - datetime.timedelta(1),
+                                    payment_date=payment_date,
                                     paid_date=None,
                                     owner_id=2)
 
@@ -170,8 +179,10 @@ class NotificationTest(TestCase):
         self.assertEquals(len(mail.outbox), 2)
         self.assertEquals(mail.outbox[0].subject, u"Vous avez des factures \xe0 traiter")
         self.assertEquals(mail.outbox[0].to, ['%s %s <%s>' % (self.user.first_name, self.user.last_name, self.user.email)])
-        self.assertEquals(mail.outbox[0].body, u'Vous avez des factures en attente d\'une action de votre part.\n\nLa date d\'\xe9dition des factures suivantes est d\xe9pass\xe9e et elles n\'ont toujours pas le statut "envoy\xe9e". Soit vous avez oubli\xe9 de les mettre \xe0 jour, soit vous devriez les envoyer \xe0 vos clients :\n\n - Facture 1 \xe0 Contact 1 (date d\'\xe9dition : 17/05/2011)\n\nRendez vous sur votre tableau de bord pour voir et modifier ces factures : https://example.com/\n\nPour modifier vos param\xe8tres de notification : https://example.com/home/notifications/\n\nL\'\xe9quipe example.com\n\nVous recevez cet email car vous \xeates inscrit(e) sur https://example.com. Si vous voulez quitter le site, veuillez cliquer sur le lien ci-dessous pour vous d\xe9sinscrire. Attention, si vous avez un abonnement, celui-ci sera perdu.\nhttps://example.com/home/unregister/')
+        body = u'Vous avez des factures en attente d\'une action de votre part.\n\nLa date d\'\xe9dition des factures suivantes est d\xe9pass\xe9e et elles n\'ont toujours pas le statut "envoy\xe9e". Soit vous avez oubli\xe9 de les mettre \xe0 jour, soit vous devriez les envoyer \xe0 vos clients :\n\n - Facture 1 \xe0 Contact 1 (date d\'\xe9dition : %s)\n\nRendez vous sur votre tableau de bord pour voir et modifier ces factures : https://example.com/\n\nPour modifier vos param\xe8tres de notification : https://example.com/home/notifications/\n\nL\'\xe9quipe example.com\n\nVous recevez cet email car vous \xeates inscrit(e) sur https://example.com. Si vous voulez quitter le site, veuillez cliquer sur le lien ci-dessous pour vous d\xe9sinscrire. Attention, si vous avez un abonnement, celui-ci sera perdu.\nhttps://example.com/home/unregister/' % (edition_date.strftime('%d/%m/%Y'))
+        self.assertEquals(mail.outbox[0].body, body)
         user2 = User.objects.get(pk=2)
         self.assertEquals(mail.outbox[1].subject, u"Vous avez des factures \xe0 traiter")
         self.assertEquals(mail.outbox[1].to, ['%s %s <%s>' % (user2.first_name, user2.last_name, user2.email)])
-        self.assertEquals(mail.outbox[1].body, u"Vous avez des factures en attente d'une action de votre part.\n\nLe paiement des factures suivantes est en retard. Soit vous avez re\xe7u le paiement et vous avez oubli\xe9 de les mettre \xe0 jour, soit vous devriez relancer vos clients :\n\n - Facture 2 \xe0 Contact 1 (date de paiement : 17/05/2011)\n\n\nRendez vous sur votre tableau de bord pour voir et modifier ces factures : https://example.com/\n\nPour modifier vos param\xe8tres de notification : https://example.com/home/notifications/\n\nL'\xe9quipe example.com\n\nVous recevez cet email car vous \xeates inscrit(e) sur https://example.com. Si vous voulez quitter le site, veuillez cliquer sur le lien ci-dessous pour vous d\xe9sinscrire. Attention, si vous avez un abonnement, celui-ci sera perdu.\nhttps://example.com/home/unregister/")
+        body = u"Vous avez des factures en attente d'une action de votre part.\n\nLe paiement des factures suivantes est en retard. Soit vous avez re\xe7u le paiement et vous avez oubli\xe9 de les mettre \xe0 jour, soit vous devriez relancer vos clients :\n\n - Facture 2 \xe0 Contact 1 (date de paiement : %s)\n\n\nRendez vous sur votre tableau de bord pour voir et modifier ces factures : https://example.com/\n\nPour modifier vos param\xe8tres de notification : https://example.com/home/notifications/\n\nL'\xe9quipe example.com\n\nVous recevez cet email car vous \xeates inscrit(e) sur https://example.com. Si vous voulez quitter le site, veuillez cliquer sur le lien ci-dessous pour vous d\xe9sinscrire. Attention, si vous avez un abonnement, celui-ci sera perdu.\nhttps://example.com/home/unregister/" % (payment_date.strftime('%d/%m/%Y'))
+        self.assertEquals(mail.outbox[1].body, body)

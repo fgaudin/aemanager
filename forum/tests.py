@@ -130,10 +130,16 @@ class ForumTest(TestCase):
         call_command('notify_forum')
 
         self.assertEquals(len(mail.outbox), 3)
-        self.assertEquals(mail.outbox[0].subject, u'Un nouveau message a \xe9t\xe9 post\xe9 en r\xe9ponse \xe0 "New topic"')
-        self.assertTrue(mail.outbox[0].body.startswith(u'test3 a r\xe9pondu :\n\nNew answer 2\n\nPour r\xe9pondre \xe0 ce message : https://example.com/forum/topic/detail/2/?page=-1#last'))
+        emails = [mail.outbox[0].subject, mail.outbox[1].subject, mail.outbox[2].subject]
+        subject = u'Un nouveau message a \xe9t\xe9 post\xe9 en r\xe9ponse \xe0 "New topic"'
+        self.assertTrue(subject in emails)
+        message_idx = emails.index(subject)
+        self.assertTrue(mail.outbox[message_idx].body.startswith(u'test3 a r\xe9pondu :\n\nNew answer 2\n\nPour r\xe9pondre \xe0 ce message : https://example.com/forum/topic/detail/2/?page=-1#last'))
 
-        self.assertEquals(mail.outbox[1].to, ['%s %s <%s>' % (self.user.first_name, self.user.last_name, self.user.email)])
-        self.assertEquals(mail.outbox[0].to, ['%s %s <%s>' % (self.user2.first_name, self.user2.last_name, self.user2.email)])
+        self.assertEquals(mail.outbox[message_idx].to, ['%s %s <%s>' % (self.user2.first_name, self.user2.last_name, self.user2.email)])
+        to = [mail.outbox[0].to, mail.outbox[1].to, mail.outbox[2].to]
+        to.remove(mail.outbox[message_idx].to)
+        self.assertTrue(['%s %s <%s>' % (self.user.first_name, self.user.last_name, self.user.email)] in to)
+
 
         self.assertEquals(MessageNotification.objects.count(), 0)

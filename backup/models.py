@@ -403,7 +403,7 @@ class RestoreRequest(models.Model):
         do_restore()
 
     def restore_files(self):
-        paths = ['proposal', 'contract']
+        paths = ['proposal', 'contract', 'logo']
         if self.action == RESTORE_ACTION_DELETE_ALL_AND_RESTORE:
             # delete proposal and contract directory
             for dir_path in paths:

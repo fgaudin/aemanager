@@ -1,0 +1,11 @@
+django==1.2.7
+psycopg2==2.4.1
+django-extensions
+werkzeug
+south
+reportlab
+pypdf
+html5lib
+pisa
+pil
+django-registration

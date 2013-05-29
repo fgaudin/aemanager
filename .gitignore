@@ -10,6 +10,6 @@ media/img/logo.png
 media/img/favicon.ico
 application.wsgi
 apache.conf
-uploaded_files
+/uploaded_files
 htmlcov
 .coverage

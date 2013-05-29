@@ -19,22 +19,15 @@ Django and other stuff
 ------
 Install with your package manager :
 
-libjpeg libjpeg-dev libfreetype6 libfreetype6-dev
+libjpeg62 libjpeg62-dev libfreetype6 libfreetype6-dev
 
 then do
 
-easy_install django psycopg2 django-extensions werkzeug south reportlab pypdf html5lib pisa pil
-
-For django-registration :
-
-download source from https://bitbucket.org/ubernostrum/django-registration/src
-
-$ source ~/venv/django1.2/bin/activate
-$ python setup.py install # in registration directory
+pip install -r requirements.txt
 
 For csv export :
 
-download source from https://github.com/jdunck/python-unicodecsv
+download source from https://github.com/jdunck/python-unicodecsv/archive/0.8.0.tar.gz
 
 $ source ~/venv/django1.2/bin/activate
 $ python setup.py install # in unicodecsv directory
@@ -42,7 +35,7 @@ $ python setup.py install # in unicodecsv directory
 Handling file upload
 --------------------
 File upload is managed by django (set FILE_UPLOAD_DIR in settings)
-However, files serving is done by apache using to apache mod_xsendfile to deals
+However, files serving is done by apache using the apache mod_xsendfile to deals
 with access control.
 
 First install apache2-prefork-dev with you package manager
@@ -82,3 +75,9 @@ Then to run it, do not forget to activate your virtualenv then do :
 $ python manage.py runserver_plus
 
 Then go to http://localhost:8000
+
+# to run the unit tests
+$ python manage.py test accounts announcement autoentrepreneur backup bugtracker contact core faq forum newsletter notification project
+
+# to run a local smtp server for debugging, with the default configuration
+$ python -m smtpd -n -c DebuggingServer localhost:1025
