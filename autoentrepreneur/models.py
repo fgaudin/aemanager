@@ -149,6 +149,18 @@ TAX_RATE_WITHOUT_FREEING_2013 = {AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC: [3.
                                  AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC: [5.4, 10.7, 16, 21.3]
                                  }
 
+TAX_RATE_WITH_FREEING_2014 = {AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC: [4.6, 8.1, 11.6, 15.1],
+                              AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC: [7.9, 14, 20.2, 26.3],
+                              AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC: [8.4, 14.5, 20.7, 26.8],
+                              AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC: [8.1, 13.9, 19.7, 25.5]
+                              }
+
+TAX_RATE_WITHOUT_FREEING_2014 = {AUTOENTREPRENEUR_ACTIVITY_PRODUCT_SALE_BIC: [3.6, 7.1, 10.6, 14.1],
+                                 AUTOENTREPRENEUR_ACTIVITY_SERVICE_BIC: [6.2, 12.3, 18.5, 24.6],
+                                 AUTOENTREPRENEUR_ACTIVITY_SERVICE_BNC: [6.2, 12.3, 18.5, 24.6],
+                                 AUTOENTREPRENEUR_ACTIVITY_LIBERAL_BNC: [5.9, 11.7, 17.5, 23.3]
+                                 }
+
 
 AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_TRADER = 1
 AUTOENTREPRENEUR_PROFESSIONAL_CATEGORY_CRAFTSMAN = 2
@@ -426,7 +438,12 @@ class UserProfile(models.Model):
         if paid > limit:
             freeing_tax_payment = False
 
-        if reference_date.year >= 2013:
+        if reference_date.year >= 2014:
+            if freeing_tax_payment:
+                tax_rates = TAX_RATE_WITH_FREEING_2014
+            else:
+                tax_rates = TAX_RATE_WITHOUT_FREEING_2014
+        elif reference_date.year == 2013:
             if freeing_tax_payment:
                 tax_rates = TAX_RATE_WITH_FREEING_2013
             else:
