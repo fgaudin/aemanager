@@ -1,3 +1,5 @@
+**Cette application n'est plus maintenue. Libre à vous de forker le projet et de lui donner une seconde vie.**
+
 =========
 Aemanager
 =========
